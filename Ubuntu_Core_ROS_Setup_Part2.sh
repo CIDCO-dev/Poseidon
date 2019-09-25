@@ -17,12 +17,12 @@ curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE
 
 # Actual Installation
 sudo apt-get update
-sudo apt-get install ros-kinetic-ros-base g++ -y
+sudo apt install ros-melodic-ros-base g++ -y
 
 # Initialize rosdep
 sudo rosdep init
 rosdep update
 
 # Environment setup
-echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 source ~/.bashrc

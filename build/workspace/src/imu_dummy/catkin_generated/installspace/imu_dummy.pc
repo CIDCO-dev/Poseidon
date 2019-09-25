@@ -1,0 +1,8 @@
+prefix=/home/glm/src/Poseidon/install
+
+Name: imu_dummy
+Description: Description of imu_dummy
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/glm/src/Poseidon/install/lib 
+Requires: 

@@ -1,0 +1,2 @@
+gnss_dummy:imu_dummy:sonar_dummy
+-DCATKIN_DEVEL_PREFIX=/home/glm/src/Poseidon/src/workspace/devel -DCMAKE_INSTALL_PREFIX=/home/glm/src/Poseidon/src/workspace/install -G Unix Makefiles

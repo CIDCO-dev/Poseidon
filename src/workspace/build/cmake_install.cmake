@@ -126,7 +126,9 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/glm/src/Poseidon/src/workspace/build/gtest/cmake_install.cmake")
-  include("/home/glm/src/Poseidon/src/workspace/build/imu_base/cmake_install.cmake")
+  include("/home/glm/src/Poseidon/src/workspace/build/gnss_dummy/cmake_install.cmake")
+  include("/home/glm/src/Poseidon/src/workspace/build/imu_dummy/cmake_install.cmake")
+  include("/home/glm/src/Poseidon/src/workspace/build/sonar_dummy/cmake_install.cmake")
 
 endif()
 

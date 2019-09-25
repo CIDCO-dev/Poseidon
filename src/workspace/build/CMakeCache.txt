@@ -296,6 +296,12 @@ gmock_build_tests:BOOL=OFF
 gmock_main_LIB_DEPENDS:STATIC=general;-lpthread;
 
 //Value Computed by CMake
+gnss_dummy_BINARY_DIR:STATIC=/home/glm/src/Poseidon/src/workspace/build/gnss_dummy
+
+//Value Computed by CMake
+gnss_dummy_SOURCE_DIR:STATIC=/home/glm/src/Poseidon/src/workspace/src/gnss_dummy
+
+//Value Computed by CMake
 googletest-distribution_BINARY_DIR:STATIC=/home/glm/src/Poseidon/src/workspace/build/gtest
 
 //Value Computed by CMake
@@ -376,6 +382,12 @@ sbes_dummy_BINARY_DIR:STATIC=/home/glm/src/Poseidon/src/workspace/build/sbes_dum
 
 //Value Computed by CMake
 sbes_dummy_SOURCE_DIR:STATIC=/home/glm/src/Poseidon/src/workspace/src/sbes_dummy
+
+//Value Computed by CMake
+sonar_dummy_BINARY_DIR:STATIC=/home/glm/src/Poseidon/src/workspace/build/sonar_dummy
+
+//Value Computed by CMake
+sonar_dummy_SOURCE_DIR:STATIC=/home/glm/src/Poseidon/src/workspace/src/sonar_dummy
 
 //The directory containing a CMake configuration file for std_msgs.
 std_msgs_DIR:PATH=/opt/ros/melodic/share/std_msgs/cmake
@@ -485,7 +497,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=7
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

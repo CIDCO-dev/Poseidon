@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install utilities with the YES answer to apt prompt
-sudo apt install gcc python3-dev python3-pip python3-setuptools -y
+sudo apt install gcc python3-dev python3-pip python3-setuptools git curl -y
 
 # Install RPi.GPIO
 pip3 install RPi.GPIO
@@ -17,12 +17,12 @@ curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE
 
 # Actual Installation
 sudo apt-get update
-sudo apt install ros-melodic-ros-base g++ -y
+sudo apt install ros-kinetic-ros-base g++ -y
 
 # Initialize rosdep
 sudo rosdep init
 rosdep update
 
 # Environment setup
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 source ~/.bashrc

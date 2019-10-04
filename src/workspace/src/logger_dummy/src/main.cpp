@@ -42,7 +42,7 @@ void sonarCallback(const geometry_msgs::PointStamped& sonar)
 {
   outputSonar << sonar.header.stamp.toSec()
      << sep << sonar.point.z
-     << std::endl; 
+     << std::endl;
 }
 
 bool init(){
@@ -98,7 +98,7 @@ std::string getStringDate(){
 
   strftime(buffer,sizeof(buffer),"%Y_%m_%d",timeinfo);
   std::string date(buffer);
-  
+
   return date;
 }
 
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
   outputSonarFile = outputFolder + "/" + getStringDate() + "_sonar.txt";
 
   if (init()){
-     ros::init(argc, argv, "logger_dummy");
+     ros::init(argc, argv, "logger_text");
 
      ros::NodeHandle n;
 

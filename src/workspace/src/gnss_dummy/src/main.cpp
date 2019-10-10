@@ -21,7 +21,7 @@ class GNSS{
 		}
 
 		void run(){
-			ros::Rate loop_rate(200);
+			ros::Rate loop_rate(10);
 
 		        while(ros::ok()){
 

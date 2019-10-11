@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(logger_text)
+project(binary_decoder)
 
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
 
@@ -11,6 +11,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(logger_text src/main.cpp)
-target_link_libraries(logger_text ${catkin_LIBRARIES})
+add_executable(binary_decoder src/main.cpp)
+target_link_libraries(binary_decoder ${catkin_LIBRARIES})
+
 

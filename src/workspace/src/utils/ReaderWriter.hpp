@@ -16,42 +16,71 @@ public:
 	~Writer(){}
 
 	bool writeGnss(Position pos){
-		  outGnss << pos.timeStamp
+                if (!outGnss) {
+                        std::cerr << "Could not open GNSS file" << std::endl;
+                        return false;
+                }
+		outGnss << pos.timeStamp
      			<< sep << pos.x
      			<< sep << pos.y
 		     	<< sep << pos.z
      			<< std::endl;
+		return true;
 	}
 
         bool writeImu(Imu imu){
-                  outImu << imu.timeStamp
+                if (!outImu) {
+                        std::cerr << "Could not open IMU file" << std::endl;
+                        return false;
+                }
+                outImu << imu.timeStamp
                         << sep << imu.w
                         << sep << imu.x
                         << sep << imu.y
                         << sep << imu.z
                         << std::endl;
+		return true;
         }
 
         bool writeSonar(Sonar sonar){
-                  outSonar << sonar.timeStamp
+                if (!outImu) {
+                        std::cerr << "Could not open SONAR file" << std::endl;
+                        return false;
+                }
+                outSonar << sonar.timeStamp
                         << sep << sonar.depth
                         << std::endl;
+		return true;
         }
 
-	bool writeBinGnss(Position pos){
-		std::cout << "GNSS: " << pos.timeStamp << ";" << pos.x << ";" << pos.y << ";" << pos.z << std::endl;
+	bool writeBinGnss(Position &pos){
+		if (!outGnss) {
+			std::cerr << "Could not open GNSS file" << std::endl;
+			return false;
+		}
 		outGnss.write((char *)&pos, sizeof(Position));
+		outGnss.flush();
+		return true;
 	}
 
-        bool writeBinImu(Imu imu){
-		std::cout << "IMU: " << imu.timeStamp << ";" << imu.w << ";" << imu.x << ";" << imu.y << ";" << imu.z << std::endl;
-                outImu.write((char *)&imu, sizeof(Imu));
-        }
+	bool writeBinImu(Imu &imu){
+		if (!outImu) {
+			std::cerr << "Could not open IMU file" << std::endl;
+			return false;
+		}
+		outImu.write((char *)&imu, sizeof(Imu));
+		return true;
+	}
 
-        bool writeBinSonar(Sonar sonar){
-		std::cout << "Sonar: " << sonar.timeStamp << ";" << sonar.depth << std::endl;
-                outGnss.write((char *)&sonar, sizeof(Sonar));
-        }
+	bool writeBinSonar(Sonar &sonar){
+		if (!outSonar) {
+			std::cerr << "Could not open SONAR file" << std::endl;
+			return false;
+		}
+		outSonar.write((char *)&sonar, sizeof(Sonar));
+		outSonar.flush();
+		return true;
+	}
 
 	bool init(std::string gnssFileName, std::string imuFileName, std::string sonarFileName, bool isBinary){
 	  	if(isBinary == false){
@@ -127,7 +156,7 @@ public:
                 outTextSonarFile = sonarFileName.substr(0, sonarFileName.find(sep));
                 outTextSonarFile += ".txt";
 
-		writer = new Writer(outTextGnssFile, outTextImuFile, outTextSonarFile, true);
+		writer = new Writer(outTextGnssFile, outTextImuFile, outTextSonarFile, false);
 	}
 	~Reader(){}
 

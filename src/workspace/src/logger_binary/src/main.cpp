@@ -18,6 +18,7 @@
 Position pos;
 Imu imu;
 Sonar sonar;
+
 Writer *writer;
 
 std::string outputGnssFile;

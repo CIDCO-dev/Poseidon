@@ -13,30 +13,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <inttypes.h>
-
-struct Position {
-  uint64_t timeStamp;
-  double x;
-  double y;
-  double z;
-};
-
-struct Imu {
-  uint64_t timeStamp;
-  double w;
-  double x;
-  double y;
-  double z;
-};
-
-struct Sonar {
-  uint64_t timeStamp;
-  double depth;
-};
+#include "../../utils/ReaderWriter.hpp"
 
 Position pos;
 Imu imu;
 Sonar sonar;
+
+Writer *writer;
 
 std::string outputGnssFile;
 std::string outputImuFile;
@@ -47,106 +30,54 @@ std::ofstream outputImu;
 std::ofstream outputSonar;
 std::string sep = ";";
 
+uint64_t buildTimeStamp(int sec, int nsec);
+
 void gnssCallback(const geometry_msgs::PoseStamped& gnss)
 {
-  std::ostringstream os;
-  os << gnss.header.stamp.sec;
-  os << gnss.header.stamp.nsec;
-  std::string ntime = os.str();
-
-  uint64_t timestamp;
-  std::istringstream iss(ntime.c_str());
-  iss >> timestamp;
-
-  pos.timeStamp = timestamp;
+  pos.timeStamp = buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
   pos.x = gnss.pose.position.x;
   pos.y = gnss.pose.position.y;
   pos.z = gnss.pose.position.z;
 
-  outputGnss.write((char *)&pos, sizeof(pos));
+  writer->writeBinGnss(pos);
 }
 
 void imuCallback(const geometry_msgs::PoseStamped& imuMsgs)
 {
-  std::ostringstream os;
-  os << imuMsgs.header.stamp.sec;
-  os << imuMsgs.header.stamp.nsec;
-  std::string ntime = os.str();
-
-  uint64_t timestamp;
-  std::istringstream iss(ntime.c_str());
-  iss >> timestamp;
-
-  imu.timeStamp = timestamp;
+  imu.timeStamp = buildTimeStamp(imuMsgs.header.stamp.sec, imuMsgs.header.stamp.nsec);
   imu.w = imuMsgs.pose.orientation.w;
   imu.x = imuMsgs.pose.orientation.x;
   imu.y = imuMsgs.pose.orientation.y;
   imu.z = imuMsgs.pose.orientation.z;
 
-  outputImu.write((char *)&imu, sizeof(imu));
+  writer->writeBinImu(imu);
 }
 
 void sonarCallback(const geometry_msgs::PointStamped& sonarMsgs)
 {
+  sonar.timeStamp = buildTimeStamp(sonarMsgs.header.stamp.sec, sonarMsgs.header.stamp.nsec);
+  sonar.depth = sonarMsgs.point.z;
+
+  writer->writeBinSonar(sonar);
+}
+
+uint64_t buildTimeStamp(int sec, int nsec){
   std::ostringstream os;
-  os << sonarMsgs.header.stamp.sec;
-  os << sonarMsgs.header.stamp.nsec;
+  os << sec;
+  os << nsec;
   std::string ntime = os.str();
 
   uint64_t timestamp;
   std::istringstream iss(ntime.c_str());
   iss >> timestamp;
 
-  sonar.timeStamp = timestamp;
-  sonar.depth = sonarMsgs.point.z;
-
-  outputSonar.write((char *)&sonar, sizeof(sonar));
-}
-
-bool init(){
-    outputGnss.open(outputGnssFile.c_str(), std::ios::binary);
-    outputImu.open(outputImuFile.c_str(), std::ios::binary);
-    outputSonar.open(outputSonarFile.c_str(), std::ios::binary);
-
-  if (!outputGnss) {
-     std::cerr << "Could not open file: " << outputGnssFile << std::endl;
-     return false;
-  }
-  if (!outputImu) {
-     std::cerr << "Could not open file: " << outputImuFile << std::endl;
-     return false;
-  }
-  if (!outputSonar) {
-     std::cerr << "Could not open file: " << outputSonarFile << std::endl;
-     return false;
-  }
-
-  outputGnss << std::fixed << std::setprecision(10);
-  outputImu << std::fixed << std::setprecision(10);
-  outputSonar << std::fixed << std::setprecision(10);
-
-  return true;
-}
-
-std::string getStringDate(){
-
-  time_t rawtime;
-  struct tm * timeinfo;
-  char buffer[80];
-
-  time (&rawtime);
-  timeinfo = localtime(&rawtime);
-
-  strftime(buffer,sizeof(buffer),"%Y_%m_%d",timeinfo);
-  std::string date(buffer);
-
-  return date;
+  return timestamp;
 }
 
 int main(int argc, char **argv)
 {
   if(argc != 2){
-    std::cout << "Missing output file path" << std::endl;
+    std::cout << "Missing output folder path" << std::endl;
     return 1;
   }
 
@@ -157,17 +88,17 @@ int main(int argc, char **argv)
   outputImuFile = outputFolder + + "/" + getStringDate() + "_imu.bin";
   outputSonarFile = outputFolder + "/" + getStringDate() + "_sonar.bin";
 
-  if (init()){
-     ros::init(argc, argv, "logger_binary");
+  writer = new Writer(outputGnssFile, outputImuFile, outputSonarFile, true);
 
-     ros::NodeHandle n;
+  ros::init(argc, argv, "logger_binary");
 
-     ros::Subscriber sub1 = n.subscribe("position", 1000, gnssCallback);
-     ros::Subscriber sub2 = n.subscribe("pose", 1000, imuCallback);
-     ros::Subscriber sub3 = n.subscribe("depth", 1000, sonarCallback);
+  ros::NodeHandle n;
 
-     ros::spin();
-  }
+  ros::Subscriber sub1 = n.subscribe("position", 1000, gnssCallback);
+  ros::Subscriber sub2 = n.subscribe("pose", 1000, imuCallback);
+  ros::Subscriber sub3 = n.subscribe("depth", 1000, sonarCallback);
+
+  ros::spin();
 
   return 0;
 }

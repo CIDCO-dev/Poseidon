@@ -1,8 +1,0 @@
-prefix=/home/cidco-hydroball/Workspace/Poseidon/install
-
-Name: gnss_dummy
-Description: Description of gnss_dummy
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/cidco-hydroball/Workspace/Poseidon/install/lib 
-Requires: 

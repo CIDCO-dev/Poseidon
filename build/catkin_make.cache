@@ -1,2 +1,0 @@
-workspace/src/binary_decoder:workspace/src/gnss_dummy:workspace/src/imu_dummy:workspace/src/logger_binary:workspace/src/logger_text:workspace/src/sonar_dummy
--DCATKIN_DEVEL_PREFIX=/home/cidco-hydroball/Workspace/Poseidon/devel -DCMAKE_INSTALL_PREFIX=/home/cidco-hydroball/Workspace/Poseidon/install -G Unix Makefiles

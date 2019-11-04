@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/imu_dummy.dir/src/main.cpp.o"
-  "/home/glm/src/Poseidon/devel/lib/imu_dummy/imu_dummy.pdb"
-  "/home/glm/src/Poseidon/devel/lib/imu_dummy/imu_dummy"
+  "/home/cidco-hydroball/Workspace/Poseidon/devel/lib/imu_dummy/imu_dummy.pdb"
+  "/home/cidco-hydroball/Workspace/Poseidon/devel/lib/imu_dummy/imu_dummy"
 )
 
 # Per-language clean rules from dependency scanning.

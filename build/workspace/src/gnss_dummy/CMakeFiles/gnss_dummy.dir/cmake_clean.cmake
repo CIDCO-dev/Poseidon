@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/gnss_dummy.dir/src/main.cpp.o"
-  "/home/glm/src/Poseidon/devel/lib/gnss_dummy/gnss_dummy.pdb"
-  "/home/glm/src/Poseidon/devel/lib/gnss_dummy/gnss_dummy"
+  "/home/cidco-hydroball/Workspace/Poseidon/devel/lib/gnss_dummy/gnss_dummy.pdb"
+  "/home/cidco-hydroball/Workspace/Poseidon/devel/lib/gnss_dummy/gnss_dummy"
 )
 
 # Per-language clean rules from dependency scanning.

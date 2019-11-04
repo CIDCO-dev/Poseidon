@@ -1,8 +1,0 @@
-prefix=/home/glm/src/Poseidon/src/workspace/devel
-
-Name: gps_dummy
-Description: Description of gps_dummy
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/glm/src/Poseidon/src/workspace/devel/lib 
-Requires: 

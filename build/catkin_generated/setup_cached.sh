@@ -7,7 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/glm/src/Poseidon/devel:$CMAKE_PREFIX_PATH"
-export PWD="/home/glm/src/Poseidon/build"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/glm/src/Poseidon/devel/share/common-lisp"
-export ROS_PACKAGE_PATH="/home/glm/src/Poseidon/src:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/cidco-hydroball/Workspace/Poseidon/devel:$CMAKE_PREFIX_PATH"
+export PWD="/home/cidco-hydroball/Workspace/Poseidon/build"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/cidco-hydroball/Workspace/Poseidon/devel/share/common-lisp"
+export ROS_PACKAGE_PATH="/home/cidco-hydroball/Workspace/Poseidon/src:$ROS_PACKAGE_PATH"

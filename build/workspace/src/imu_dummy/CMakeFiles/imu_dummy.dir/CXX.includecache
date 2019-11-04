@@ -1,4 +1,4 @@
-#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
 
 #IncludeRegexScan: ^.*$
 
@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/glm/src/Poseidon/src/workspace/src/imu_dummy/src/main.cpp
+/home/cidco-hydroball/Workspace/Poseidon/src/workspace/src/imu_dummy/src/main.cpp
 ros/ros.h
-/home/glm/src/Poseidon/src/workspace/src/imu_dummy/src/ros/ros.h
+/home/cidco-hydroball/Workspace/Poseidon/src/workspace/src/imu_dummy/src/ros/ros.h
 geometry_msgs/PoseStamped.h
-/home/glm/src/Poseidon/src/workspace/src/imu_dummy/src/geometry_msgs/PoseStamped.h
+/home/cidco-hydroball/Workspace/Poseidon/src/workspace/src/imu_dummy/src/geometry_msgs/PoseStamped.h
 
 /opt/ros/melodic/include/geometry_msgs/Point.h
 string

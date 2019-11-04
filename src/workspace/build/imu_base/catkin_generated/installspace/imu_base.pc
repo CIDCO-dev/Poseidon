@@ -1,8 +1,0 @@
-prefix=/home/glm/src/Poseidon/src/workspace/install
-
-Name: imu_base
-Description: Description of imu_base
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/glm/src/Poseidon/src/workspace/install/lib 
-Requires: 

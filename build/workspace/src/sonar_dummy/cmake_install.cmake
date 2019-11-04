@@ -1,8 +1,8 @@
-# Install script for directory: /home/glm/src/Poseidon/src/workspace/src/sonar_dummy
+# Install script for directory: /home/cidco-hydroball/Workspace/Poseidon/src/workspace/src/sonar_dummy
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/glm/src/Poseidon/install")
+  set(CMAKE_INSTALL_PREFIX "/home/cidco-hydroball/Workspace/Poseidon/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -32,18 +32,23 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
   set(CMAKE_INSTALL_SO_NO_EXE "1")
 endif()
 
-if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/glm/src/Poseidon/build/workspace/src/sonar_dummy/catkin_generated/installspace/sonar_dummy.pc")
+# Is this installation the result of a crosscompile?
+if(NOT DEFINED CMAKE_CROSSCOMPILING)
+  set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/cidco-hydroball/Workspace/Poseidon/build/workspace/src/sonar_dummy/catkin_generated/installspace/sonar_dummy.pc")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sonar_dummy/cmake" TYPE FILE FILES
-    "/home/glm/src/Poseidon/build/workspace/src/sonar_dummy/catkin_generated/installspace/sonar_dummyConfig.cmake"
-    "/home/glm/src/Poseidon/build/workspace/src/sonar_dummy/catkin_generated/installspace/sonar_dummyConfig-version.cmake"
+    "/home/cidco-hydroball/Workspace/Poseidon/build/workspace/src/sonar_dummy/catkin_generated/installspace/sonar_dummyConfig.cmake"
+    "/home/cidco-hydroball/Workspace/Poseidon/build/workspace/src/sonar_dummy/catkin_generated/installspace/sonar_dummyConfig-version.cmake"
     )
 endif()
 
-if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sonar_dummy" TYPE FILE FILES "/home/glm/src/Poseidon/src/workspace/src/sonar_dummy/package.xml")
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sonar_dummy" TYPE FILE FILES "/home/cidco-hydroball/Workspace/Poseidon/src/workspace/src/sonar_dummy/package.xml")
 endif()
 

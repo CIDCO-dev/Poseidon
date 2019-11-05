@@ -1,8 +1,15 @@
-# Have to start 'roscore' before calling this script
+# It is necessary to start 'roscore' before calling this script
 
-devel/lib/logger_binary/logger_binary ~/Documents/PoseidonOutput &
+# Parameter to provide in the command line: The folder path where to put 
+# the output files from logger_binary and logger_text
+# e.g. 
+# ./launch.sh ~/Documents/PoseidonOutput
+
+
+devel/lib/logger_binary/logger_binary "$1" &
 LOGGER_BINARY=$!
-devel/lib/logger_text/logger_text ~/Documents/PoseidonOutput &
+
+devel/lib/logger_text/logger_text "$1" &
 LOGGER_TEXT=$!
 
 devel/lib/imu_dummy/imu_dummy &

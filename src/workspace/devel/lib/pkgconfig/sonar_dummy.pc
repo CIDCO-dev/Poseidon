@@ -1,8 +1,0 @@
-prefix=/home/glm/src/Poseidon/src/workspace/devel
-
-Name: sonar_dummy
-Description: Description of sonar_dummy
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/glm/src/Poseidon/src/workspace/devel/lib 
-Requires: 

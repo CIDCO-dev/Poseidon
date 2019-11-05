@@ -9,11 +9,17 @@
 class Writer
 {
 public:
-	Writer(std::string gnss, std::string imu, std::string sonar, bool bin){
+	Writer(std::string gnss, std::string imu, std::string sonar, bool bin)
+     : setupOK( false ), sep( ";" )
+    {
 		init(gnss, imu, sonar, bin);
 	}
 
 	~Writer(){}
+
+    bool getSetupOK() {
+        return setupOK;
+    }
 
 	bool writeGnss(Position pos){
                 if (!outGnss) {
@@ -92,7 +98,7 @@ public:
                         outImu.open(imuFileName.c_str(), std::ios::binary);
                         outSonar.open(sonarFileName.c_str(), std::ios::binary);
 		}
-		sep = ";";
+		// sep = ";";
 
 	  	if (!outGnss) {
 	     		std::cerr << "Could not open file: " << gnssFileName << std::endl;
@@ -129,8 +135,15 @@ public:
 		     		<< sep << "Depth"
      				<< std::endl;
 		}
+
+        setupOK = true;
+
 	  	return true;
 	}
+
+
+
+    bool setupOK;
 
 	std::ofstream outGnss;
 	std::ofstream outImu;
@@ -234,7 +247,8 @@ std::string getStringDate(){
         time (&rawtime);
         timeinfo = localtime(&rawtime);
 
-        strftime(buffer,sizeof(buffer),"%Y_%m_%d",timeinfo);
+        // strftime(buffer,sizeof(buffer),"%Y_%m_%d",timeinfo);
+        strftime(buffer,sizeof(buffer),"%Y.%m.%d_%H%M%S",timeinfo);
         std::string date(buffer);
 
         return date;

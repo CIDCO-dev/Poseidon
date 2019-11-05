@@ -9,17 +9,12 @@
 #include "std_msgs/String.h"
 #include <ctime>
 #include <iostream>
-// #include <fstream>
 #include <sstream>
 #include <string>
 #include <stdint.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include "../../utils/ReaderWriter.hpp"
-
-// Position pos;
-// Imu imu;
-// Sonar sonar;
 
 
 // It would be possible to have the callback functions
@@ -28,16 +23,6 @@
 // http://docs.ros.org/melodic/api/roscpp/html/classros_1_1NodeHandle.html#a317fe4c05919e0bf3fb5162ccb2f7c28
 
 Writer *writer;
-
-// std::string outputGnssFile;
-// std::string outputImuFile;
-// std::string outputSonarFile;
-// std::string outputFolder;
-
-// std::ofstream outputGnss;
-// std::ofstream outputImu;
-// std::ofstream outputSonar;
-// std::string sep = ";";
 
 uint64_t buildTimeStamp(int sec, int nsec){
   std::ostringstream os;
@@ -105,8 +90,6 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  // std::string folderPath(argv[1]);
-  // std::string outputFolder = folderPath;
 
   std::string outputFolder(argv[1]);
 

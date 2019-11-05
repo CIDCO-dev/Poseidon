@@ -1,0 +1,15 @@
+<launch>
+
+<arg name="loggerPath"/>
+
+<node pkg="logger_binary" name="logger_binary" type="logger_binary" output="screen" args="$(arg loggerPath)"/>
+
+<node pkg="logger_text" name="logger_text" type="logger_text" output="screen" args="$(arg loggerPath)"/>
+
+<node pkg="gnss_dummy" name="gnss_dummy" type="gnss_dummy" output="screen"/>
+
+<node pkg="sonar_dummy" name="sonar_dummy" type="sonar_dummy" output="screen"/>
+
+<node pkg="imu_dummy" name="imu_dummy" type="imu_dummy" output="screen"/>
+
+</launch>

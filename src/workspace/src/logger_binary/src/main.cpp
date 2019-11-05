@@ -76,8 +76,19 @@ uint64_t buildTimeStamp(int sec, int nsec){
 
 int main(int argc, char **argv)
 {
-  if(argc != 2){
-    std::cout << "Missing output folder path" << std::endl;
+
+//   std::cout << "\nlogger_binary, argc: " << argc << "\n" << std::endl;
+
+//   for ( int count = 0; count < argc; count++)
+//     std::cout << count << ", '" << argv[ count ] << "'" << std::endl;
+
+//   std::cout << "\n" << std::endl;
+
+  if(argc < 2){
+
+    // std::cout << "\nif(argc < 2), argc: " << argc << std::endl;
+
+    std::cout << "logger_binary, Missing output folder path" << std::endl;
     return 1;
   }
 

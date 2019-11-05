@@ -234,7 +234,8 @@ std::string getStringDate(){
         time (&rawtime);
         timeinfo = localtime(&rawtime);
 
-        strftime(buffer,sizeof(buffer),"%Y_%m_%d",timeinfo);
+        // strftime(buffer,sizeof(buffer),"%Y_%m_%d",timeinfo);
+        strftime(buffer,sizeof(buffer),"%Y.%m.%d_%H%M%S",timeinfo);
         std::string date(buffer);
 
         return date;

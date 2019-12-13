@@ -8,7 +8,7 @@
 snap refresh
 
 # Install the classic shell (To use apt)
-snap install classic --/beta --devmode
+snap install classic --beta --devmode
 echo "######################################"
 echo "# Part 1 DONE, now onto Part 2       #"
 echo "# When the running command is over,  #"

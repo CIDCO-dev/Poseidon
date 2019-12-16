@@ -27,7 +27,7 @@ echo --------------------
 # Setup sources.list
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' >> log.txt 2> /dev/null
 # Setup keys
-sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 >> log.txt
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 >> log.txt 2> /dev/null
 curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | sudo apt-key add - >> log.txt 2> /dev/null
 
 # Actual Installation
@@ -45,6 +45,11 @@ echo --------------------
 echo Updating ROSdep
 echo --------------------
 rosdep update >> log.txt 2> /dev/null
+
+echo --------------------
+echo Installing Tools
+echo --------------------
+sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null
 
 clear
 #instaling system installation script here

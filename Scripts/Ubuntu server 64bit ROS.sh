@@ -41,6 +41,9 @@ echo --------------------
 echo Initialize ROSdep
 echo --------------------
 sudo rosdep init
+echo --------------------
+echo Updating ROSdep
+echo --------------------
 rosdep update
 
 

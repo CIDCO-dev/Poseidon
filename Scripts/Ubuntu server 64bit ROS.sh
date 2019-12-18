@@ -51,6 +51,24 @@ echo Installing Tools
 echo --------------------
 sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null
 
+echo --------------------
+echo Installing Network-Manager
+echo --------------------
+sudo apt-get install network-manager
+echo --------------------
+echo Installing TNetwork Service
+echo --------------------
+sudo systemctl start NetworkManager.service
+sudo systemctl enable NetworkManager.service
+echo --------------------
+echo Creating Wifi HotSpot
+echo --------------------
+nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234"
+echo --------------------
+echo 
+echo --------------------
+
+
 clear
 #instaling system installation script here
 echo --------------------

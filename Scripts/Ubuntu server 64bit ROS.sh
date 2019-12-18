@@ -51,6 +51,7 @@ echo Installing Tools
 echo --------------------
 sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null
 
+
 echo --------------------
 echo Installing Network-Manager
 echo --------------------
@@ -77,6 +78,7 @@ sudo systemctl enable lighttpd.service > log.txt 2> /dev/null
 
 iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination localhost:80
 iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination localhost:80
+
 
 clear
 #instaling system installation script here

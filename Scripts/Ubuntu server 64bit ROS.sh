@@ -54,20 +54,25 @@ sudo apt install python-rosinstall python-rosinstall-generator python-wstool bui
 echo --------------------
 echo Installing Network-Manager
 echo --------------------
-sudo apt-get install network-manager
+sudo apt-get install network-manager -y > log.txt 2> /dev/null
 echo --------------------
-echo Installing TNetwork Service
+echo Installing Network Service
 echo --------------------
-sudo systemctl start NetworkManager.service
-sudo systemctl enable NetworkManager.service
+sudo systemctl start NetworkManager.service > log.txt 2> /dev/null
+sudo systemctl enable NetworkManager.service > log.txt 2> /dev/null
 echo --------------------
 echo Creating Wifi HotSpot
 echo --------------------
-nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234"
+nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" > log.txt 2> /dev/null
 echo --------------------
-echo 
+echo Installing web server
 echo --------------------
-
+sudo apt install lighttpd -y > log.txt 2> /dev/null
+echo --------------------
+echo Installing web service
+echo --------------------
+sudo systemctl start lighttpd.service > log.txt 2> /dev/null
+sudo systemctl enable lighttpd.service > log.txt 2> /dev/null
 
 clear
 #instaling system installation script here

@@ -64,6 +64,7 @@ echo --------------------
 echo Creating Wifi HotSpot
 echo --------------------
 nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" > log.txt 2> /dev/null
+nmcli dev wlan0 autoconnect yes
 echo --------------------
 echo Installing web server
 echo --------------------
@@ -73,6 +74,9 @@ echo Installing web service
 echo --------------------
 sudo systemctl start lighttpd.service > log.txt 2> /dev/null
 sudo systemctl enable lighttpd.service > log.txt 2> /dev/null
+
+iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination localhost:80
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination localhost:80
 
 clear
 #instaling system installation script here

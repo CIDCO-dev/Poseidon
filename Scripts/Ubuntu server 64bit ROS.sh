@@ -73,7 +73,7 @@ sudo nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" >> lo
 sudo nmcli con modify Hotspot autoconnect yes
 sudo nmcli con modify Hotspot ipv4.addresses 192.168.1.1/24,192.168.1.1
 sudo nmcli con reload
-sudo services network-manager restart
+sudo service network-manager restart
 echo --------------------
 echo Installing web server
 echo --------------------

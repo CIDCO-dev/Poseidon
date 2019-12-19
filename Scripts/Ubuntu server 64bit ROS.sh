@@ -87,11 +87,20 @@ sudo systemctl enable lighttpd.service >> log.txt 2> /dev/null
 #sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
 #sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
 #remplacer par un captive portal
-
+echo --------------------
+echo Installing web site
+echo --------------------
 cd /var/www/ 
 sudo git clone https://github.com/Ddoiron-cidco/Poseidon_web.git 
 sudo rm -r -d html 
 sudo mv Poseidon_web html 
+echo --------------------
+echo Connfiguring time system
+echo --------------------
+cd /opt/
+sudo git clone https://github.com/CIDCO-dev/RaspberryPi.git
+cd RaspberryPi/setupScript
+./setup.sh
 
 #clear
 #instaling system installation script here

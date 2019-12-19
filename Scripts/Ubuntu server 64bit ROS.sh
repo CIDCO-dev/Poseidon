@@ -6,6 +6,12 @@ echo Updating Deb.
 echo --------------------
 sudo apt update >> log.txt 2> /dev/null
 
+#upgrade the dist
+echo --------------------
+echo Updating Dist.
+echo --------------------
+sudo apt dist-upgrade -y >> log.txt 2> /dev/null
+
 #upgrade the apps
 echo --------------------
 echo Updating Apps.

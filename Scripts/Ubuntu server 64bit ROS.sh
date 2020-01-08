@@ -53,6 +53,15 @@ echo --------------------
 rosdep update >> log.txt 2> /dev/null
 
 echo --------------------
+echo Downloading Poseidon
+echo --------------------
+sudo git clone https://github.com/Ddoiron-cidco/Poseidon.git
+echo --------------------
+echo CInstalling Poseidon
+echo --------------------
+
+
+echo --------------------
 echo Installing Tools
 echo --------------------
 sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null

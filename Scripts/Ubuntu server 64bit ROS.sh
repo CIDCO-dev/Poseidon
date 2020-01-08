@@ -52,9 +52,31 @@ echo --------------------
 sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null
 
 echo --------------------
-echo Installing Time Tools
+echo Installing Network-Manager
 echo --------------------
-sudo apt install chrony gpsd -y  >> log.txt 2> /dev/null
+sudo apt-get install network-manager -y > log.txt 2> /dev/null
+echo --------------------
+echo Installing Network Service
+echo --------------------
+sudo systemctl start NetworkManager.service > log.txt 2> /dev/null
+sudo systemctl enable NetworkManager.service > log.txt 2> /dev/null
+echo --------------------
+echo Creating Wifi HotSpot
+echo --------------------
+nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" > log.txt 2> /dev/null
+nmcli dev wlan0 autoconnect yes
+echo --------------------
+echo Installing web server
+echo --------------------
+sudo apt install lighttpd -y > log.txt 2> /dev/null
+echo --------------------
+echo Installing web service
+echo --------------------
+sudo systemctl start lighttpd.service > log.txt 2> /dev/null
+sudo systemctl enable lighttpd.service > log.txt 2> /dev/null
+
+iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination localhost:80
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination localhost:80
 
 clear
 #instaling system installation script here

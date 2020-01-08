@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#update the apps
+sudo apt update
+
+#upgrade the apps
+sudo apt upgrade -y
+
 # Install utilities with the YES answer to apt prompt
 sudo apt install gcc python3-dev python3-pip python3-setuptools git curl -y
 
@@ -17,8 +23,9 @@ curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE
 
 # Actual Installation
 sudo apt-get update
-sudo apt install ros-kinetic-ros-base g++ -y
 
+
+sudo apt install ros-melodic-ros-base g++ -y
 # Initialize rosdep
 sudo rosdep init
 rosdep update

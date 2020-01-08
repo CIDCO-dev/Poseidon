@@ -51,6 +51,11 @@ echo Installing Tools
 echo --------------------
 sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null
 
+echo --------------------
+echo Installing Time Tools
+echo --------------------
+sudo apt install chrony gpsd -y  >> log.txt 2> /dev/null
+
 clear
 #instaling system installation script here
 echo --------------------

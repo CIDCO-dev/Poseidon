@@ -55,6 +55,7 @@ rosdep update >> log.txt 2> /dev/null
 echo --------------------
 echo Downloading Poseidon
 echo --------------------
+cd ~/
 sudo git clone https://github.com/Ddoiron-cidco/Poseidon.git
 echo --------------------
 echo CInstalling Poseidon

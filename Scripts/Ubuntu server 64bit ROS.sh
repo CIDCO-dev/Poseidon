@@ -93,6 +93,7 @@ echo --------------------
 sudo systemctl start lighttpd.service >> log.txt 2> /dev/null
 sudo systemctl enable lighttpd.service >> log.txt 2> /dev/null
 
+
 #sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
 #sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
 #remplacer par un captive portal

@@ -6,6 +6,12 @@ echo Updating Deb.
 echo --------------------
 sudo apt update >> log.txt 2> /dev/null
 
+#upgrade the dist
+echo --------------------
+echo Updating Dist.
+echo --------------------
+sudo apt dist-upgrade -y >> log.txt 2> /dev/null
+
 #upgrade the apps
 echo --------------------
 echo Updating Apps.
@@ -47,16 +53,66 @@ echo --------------------
 rosdep update >> log.txt 2> /dev/null
 
 echo --------------------
+echo Downloading Poseidon
+echo --------------------
+sudo git clone https://github.com/Ddoiron-cidco/Poseidon.git
+echo --------------------
+echo CInstalling Poseidon
+echo --------------------
+
+
+echo --------------------
 echo Installing Tools
 echo --------------------
 sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null
 
 echo --------------------
-echo Installing Time Tools
+echo Installing Network-Manager
 echo --------------------
-sudo apt install chrony gpsd -y  >> log.txt 2> /dev/null
+sudo apt-get install network-manager -y >> log.txt 2> /dev/null
+echo --------------------
+echo Installing Network Service
+echo --------------------
+sudo systemctl start NetworkManager.service >> log.txt 2> /dev/null
+sudo systemctl enable NetworkManager.service >> log.txt 2> /dev/null
+echo --------------------
+echo Creating Wifi HotSpot
+echo --------------------
+sudo nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" >> log.txt 2> /dev/null
+sudo nmcli con modify Hotspot autoconnect yes
+sudo nmcli con modify Hotspot ipv4.addresses 192.168.1.1/24,192.168.1.1
+sudo nmcli con reload
+sudo service network-manager restart
+echo --------------------
+echo Installing web server
+echo --------------------
+sudo apt install lighttpd -y >> log.txt 2> /dev/null
+echo --------------------
+echo Installing web service
+echo --------------------
+sudo systemctl start lighttpd.service >> log.txt 2> /dev/null
+sudo systemctl enable lighttpd.service >> log.txt 2> /dev/null
 
-clear
+
+#sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
+#sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
+#remplacer par un captive portal
+echo --------------------
+echo Installing web site
+echo --------------------
+cd /var/www/ 
+sudo git clone https://github.com/Ddoiron-cidco/Poseidon_web.git 
+sudo rm -r -d html 
+sudo mv Poseidon_web html 
+echo --------------------
+echo Connfiguring time system
+echo --------------------
+cd /opt/
+sudo git clone https://github.com/CIDCO-dev/RaspberryPi.git
+cd RaspberryPi/setupScript
+./setup.sh
+
+#clear
 #instaling system installation script here
 echo --------------------
 echo End of script 

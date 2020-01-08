@@ -85,6 +85,14 @@ sudo nmcli con modify Hotspot ipv4.addresses 192.168.1.1/24,192.168.1.1
 sudo nmcli con reload
 sudo service network-manager restart
 echo --------------------
+echo Configuring network interface
+echo --------------------
+cd /etc/netplan
+sudo sed -i '            addresses:' 50-cloud-init.yaml
+sudo sed -i '              - 192.168.2.101/24' 50-cloud-init.yaml
+sudo netplan apply
+
+echo --------------------
 echo Installing web server
 echo --------------------
 sudo apt install lighttpd -y >> log.txt 2> /dev/null

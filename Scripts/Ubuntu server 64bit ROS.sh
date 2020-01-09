@@ -88,8 +88,8 @@ echo --------------------
 echo Configuring network interface
 echo --------------------
 cd /etc/netplan
-sudo sed -i '            addresses:' 50-cloud-init.yaml
-sudo sed -i '              - 192.168.2.101/24' 50-cloud-init.yaml
+sudo echo '            addresses:' >> 50-cloud-init.yaml
+sudo echo '              - 192.168.2.101/24' >> 50-cloud-init.yaml
 sudo netplan apply
 
 echo --------------------
@@ -129,9 +129,10 @@ echo --------------------
 echo Connfiguring time system
 echo --------------------
 
-sudo git clone https://github.com/CIDCO-dev/RaspberryPi.git
+sudo git clone https://github.com/Ddoiron-cidco/RaspberryPi.git
 cd RaspberryPi/setupScript
 ./setup.sh
 echo --------------------
 echo End of script 
 echo --------------------
+

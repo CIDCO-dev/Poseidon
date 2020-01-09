@@ -113,6 +113,14 @@ cd /var/www/
 sudo git clone https://github.com/Ddoiron-cidco/Poseidon_web.git 
 sudo rm -r -d html 
 sudo mv Poseidon_web html 
+
+
+##########
+##########
+#D'ont add command after d'hits line!!!
+##########
+##########
+
 echo --------------------
 echo Connfiguring time system
 echo --------------------
@@ -120,9 +128,6 @@ cd /opt/
 sudo git clone https://github.com/CIDCO-dev/RaspberryPi.git
 cd RaspberryPi/setupScript
 ./setup.sh
-
-#clear
-#instaling system installation script here
 echo --------------------
 echo End of script 
 echo --------------------

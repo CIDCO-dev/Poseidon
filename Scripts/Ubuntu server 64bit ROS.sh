@@ -113,7 +113,11 @@ cd /var/www/
 sudo git clone https://github.com/Ddoiron-cidco/Poseidon_web.git 
 sudo rm -r -d html 
 sudo mv Poseidon_web html 
-
+echo --------------------
+echo Downloading WiringPi
+echo --------------------
+cd /opt/
+sudo git clone https://github.com/Ddoiron-cidco/WiringPi.git
 
 ##########
 ##########
@@ -124,7 +128,7 @@ sudo mv Poseidon_web html
 echo --------------------
 echo Connfiguring time system
 echo --------------------
-cd /opt/
+
 sudo git clone https://github.com/CIDCO-dev/RaspberryPi.git
 cd RaspberryPi/setupScript
 ./setup.sh

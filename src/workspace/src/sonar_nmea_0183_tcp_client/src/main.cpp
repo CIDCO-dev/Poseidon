@@ -90,8 +90,8 @@ class Sonar{
 
 								sonarTopic.publish(msg);
 
-								std::cout << line << std::endl;
-								std::cout << depthMeters << std::endl;
+								//std::cout << line << std::endl;
+								//std::cout << depthMeters << std::endl;
 							}
 
 							line = "";

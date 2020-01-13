@@ -118,7 +118,8 @@ echo Downloading WiringPi
 echo --------------------
 cd /opt/
 sudo git clone https://github.com/Ddoiron-cidco/WiringPi.git
-
+cd /opt/WiringPi/
+./build
 ##########
 ##########
 #D'ont add command after d'hits line!!!
@@ -131,7 +132,7 @@ echo --------------------
 
 sudo git clone https://github.com/Ddoiron-cidco/RaspberryPi.git
 cd RaspberryPi/setupScript
-./setup.sh
+sudo ./setup.sh
 echo --------------------
 echo End of script 
 echo --------------------

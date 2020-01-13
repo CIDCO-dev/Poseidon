@@ -87,9 +87,8 @@ sudo service network-manager restart
 echo --------------------
 echo Configuring network interface
 echo --------------------
-cd /etc/netplan
-sudo echo '            addresses:' >> 50-cloud-init.yaml
-sudo echo '              - 192.168.2.101/24' >> 50-cloud-init.yaml
+sudo bash -c 'echo '            addresses:' >> /etc/netplan50-cloud-init.yaml'
+sudo bash -c 'echo '              - 192.168.2.101/24' >> /etc/netplan50-cloud-init.yaml'
 sudo netplan apply
 
 echo --------------------
@@ -103,9 +102,7 @@ sudo systemctl start lighttpd.service >> log.txt 2> /dev/null
 sudo systemctl enable lighttpd.service >> log.txt 2> /dev/null
 
 
-#sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
-#sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1:80 >> log.txt 2> /dev/null
-#remplacer par un captive portal
+#installer un captive portal
 echo --------------------
 echo Installing web site
 echo --------------------

@@ -56,7 +56,7 @@ echo --------------------
 echo Downloading Poseidon
 echo --------------------
 cd ~/
-sudo git clone https://github.com/Ddoiron-cidco/Poseidon.git
+git clone https://github.com/Ddoiron-cidco/Poseidon.git
 echo --------------------
 echo CInstalling Poseidon
 echo --------------------
@@ -107,14 +107,14 @@ echo --------------------
 echo Installing web site
 echo --------------------
 cd /var/www/ 
-sudo git clone https://github.com/Ddoiron-cidco/Poseidon_web.git 
+git clone https://github.com/Ddoiron-cidco/Poseidon_web.git 
 sudo rm -r -d html 
 sudo mv Poseidon_web html 
 echo --------------------
 echo Downloading WiringPi
 echo --------------------
 cd /opt/
-sudo git clone https://github.com/Ddoiron-cidco/WiringPi.git
+git clone https://github.com/Ddoiron-cidco/WiringPi.git
 cd /opt/WiringPi/
 ./build
 
@@ -122,7 +122,7 @@ echo --------------------
 echo Connfiguring time system
 echo --------------------
 
-sudo git clone https://github.com/Ddoiron-cidco/RaspberryPi.git
+git clone https://github.com/Ddoiron-cidco/RaspberryPi.git
 
 echo --------------------
 echo Connfiguring uart

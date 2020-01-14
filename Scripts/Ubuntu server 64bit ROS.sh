@@ -129,7 +129,8 @@ echo Connfiguring uart
 echo --------------------
 
 sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt'
-stty -F /dev/ttyAMA0 raw 9600 cs8 clocal -cstopb
+sudo systemctl mask serial-getty@ttyAMA0.service
+
 
 echo --------------------
 echo Install GPSD

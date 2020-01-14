@@ -46,7 +46,7 @@ sudo apt install ros-melodic-ros-base g++ -y >> log.txt 2> /dev/null
 echo --------------------
 echo Initialize ROSdep
 echo --------------------
-sudo rosdep init >> log.txt 2> /dev/null
+rosdep init >> log.txt 2> /dev/null
 echo --------------------
 echo Updating ROSdep
 echo --------------------
@@ -87,8 +87,26 @@ sudo service network-manager restart
 echo --------------------
 echo Configuring network interface
 echo --------------------
-sudo bash -c 'echo '            addresses:' >> /etc/netplan/50-cloud-init.yaml'
-sudo bash -c 'echo '              - 192.168.2.101/24' >> /etc/netplan/50-cloud-init.yaml'
+
+
+sudo bash -c 'cat << EOF2 > /etc/netplan/50-cloud-init.yaml
+# This file is generated from information provided by
+# the datasource.  Changes to it will not persist across an instance.
+# To disable cloud-init s network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+network:
+    version: 2
+    ethernets:
+        eth0:
+            dhcp4: true
+            match:
+                macaddress: b8:27:eb:47:75:13
+            set-name: eth0
+            addresses:
+              - 192.168.2.101/24
+EOF2'
+
 sudo netplan apply
 
 echo --------------------
@@ -107,55 +125,49 @@ echo --------------------
 echo Installing web site
 echo --------------------
 cd /var/www/ 
-git clone https://github.com/Ddoiron-cidco/Poseidon_web.git 
-sudo rm -r -d html 
+sudo git clone https://github.com/Ddoiron-cidco/Poseidon_web.git >> log.txt 2> /dev/null
+sudo rm -r -d html  >> log.txt 2> /dev/null
 sudo mv Poseidon_web html 
 echo --------------------
 echo Downloading WiringPi
 echo --------------------
-cd /opt/
-git clone https://github.com/Ddoiron-cidco/WiringPi.git
-cd /opt/WiringPi/
-./build
+cd ~/
+git clone https://github.com/Ddoiron-cidco/WiringPi.git  >> log.txt 2> /dev/null
+cd WiringPi/
+./build  >> log.txt 2> /dev/null
 
 echo --------------------
 echo Connfiguring time system
 echo --------------------
 
-git clone https://github.com/Ddoiron-cidco/RaspberryPi.git
+git clone https://github.com/Ddoiron-cidco/RaspberryPi.git  >> log.txt 2> /dev/null
 
 echo --------------------
 echo Connfiguring uart
 echo --------------------
 
-sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt'
-sudo systemctl mask serial-getty@ttyAMA0.service
+sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt'  >> log.txt 2> /dev/null
+sudo systemctl mask serial-getty@ttyAMA0.service  >> log.txt 2> /dev/null
 
 
 echo --------------------
 echo Install GPSD
 echo --------------------
 
-sudo apt-get install gpsd gpsd-clients -y
+sudo apt-get install gpsd gpsd-clients -y  >> log.txt 2> /dev/null
 sudo cp /etc/default/gpsd "/etc/default/gpsd.bak$(date +"%Y%m%d_%H%M%S")"
 sudo bash -c 'cat << EOF2 > /etc/default/gpsd
-
 # Default settings for the gpsd init script and the hotplug wrapper.
-
 # Start the gpsd daemon automatically at boot time
 START_DAEMON="true"
-
 # Use USB hotplugging to add new USB devices automatically to the daemon
 USBAUTO="true"
-
 # Devices gpsd should collect to at boot time.
 # They need to be read/writeable, either by user gpsd or the group dialout.
 DEVICES="/dev/ttyAMA0"
-
 # Other options you want to pass to gpsd
 GPSD_OPTIONS="-n"
 GPSD_SOCKET="/var/run/gpsd.sock"
-
 EOF2'
 
 sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.target.wants/
@@ -164,36 +176,28 @@ echo --------------------
 echo Install PPS Suport tools
 echo --------------------
 
-sudo apt-get install pps-tools -y
-sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'
-sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
-
+sudo apt-get install pps-tools -y  >> log.txt 2> /dev/null
+sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
+sudo bash -c 'echo "pps-ldisc" >> /etc/modules'  
 echo --------------------
 echo Install Chrony
 echo --------------------
 
-sudo apt-get install chrony -y
+sudo apt-get install chrony -y  >> log.txt 2> /dev/null
 
 sudo bash -c 'cat << EOF2 > /etc/chrony/chrony.conf
-
 # PPS: /dev/pps0: Kernel-mode PPS ref-clock for the precise seconds
 refclock  PPS /dev/pps0  refid PPS  precision 1e-9  lock NMEA  poll 3  trust  prefer
-
 # SHM(2), gpsd: PPS data from shared memory provided by gpsd
 #refclock  SHM 2  refid PPSx  precision 1e-9  poll 3  trust
-
 # SOCK, gpsd: PPS data from socket provided by gpsd
 #refclock  SOCK /var/run/chrony.pps0.sock  refid PPSy  precision 1e-9  poll 3  trust
-
 # SHM(0), gpsd: NMEA data from shared memory provided by gpsd
 refclock  SHM 0  refid NMEA  precision 1e-3  offset 0.5  delay 0.2  poll 3  trust  require
-
 # any NTP clients are allowed to access the NTP server.
 allow
-
 # allows to appear synchronised to NTP clients, even when it is not.
 local
-
 # Stratum1 Servers
 # https://www.meinbergglobal.com/english/glossary/public-time-server.htm
 #
@@ -213,36 +217,27 @@ local
 #server  ntp2.sp.se  iburst  noselect
 # Other NTP Servers
 #pool  de.pool.ntp.org  iburst  noselect
-
 # This directive specify the location of the file containing ID/key pairs for
 # NTP authentication.
 keyfile /etc/chrony/chrony.keys
-
 # This directive specify the file into which chronyd will store the rate
 # information.
 driftfile /var/lib/chrony/chrony.drift
-
 # Uncomment the following line to turn logging on.
 #log tracking measurements statistics
-
 # Log files location.
 logdir /var/log/chrony
-
 # Stop bad estimates upsetting machine clock.
 maxupdateskew 100.0
-
 # This directive tells 'chronyd' to parse the 'adjtime' file to find out if the
 # real-time clock keeps local time or UTC. It overrides the 'rtconutc' directive.
 hwclockfile /etc/adjtime
-
 # This directive enables kernel synchronisation (every 11 minutes) of the
 # real-time clock. Note that it can’t be used along with the 'rtcfile' directive.
 rtcsync
-
 # Step the system clock instead of slewing it if the adjustment is larger than
 # one second, but only in the first three clock updates.
 makestep 1 3
-
 EOF2'
 
 
@@ -252,3 +247,4 @@ echo --------------------
 echo End of script 
 echo --------------------
 
+reboot

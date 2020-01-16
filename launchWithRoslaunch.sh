@@ -3,7 +3,7 @@
 # e.g. 
 # ./launchWithRoslaunch.sh  ~/Documents/PoseidonOutput
 
-source src/workspace/devel/setup.bash
+source devel/setup.bash
 
 roslaunch src/workspace/launch/hydroball.launch loggerPath:="$1"
 

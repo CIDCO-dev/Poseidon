@@ -15,8 +15,9 @@ mv ~/Poseidon/src/workspace/ros_gpsd/gps_common ~/Poseidon/src/workspace/src
 mv ~/Poseidon/src/workspace/ros_gpsd/gps_umd ~/Poseidon/src/workspace/src
 cd ~/Poseidon/src/workspace/
 catkin_init_workspace
+cd /home/ubuntu/Poseidon/
+catkin_make -j1
 
 echo --------------------------------------------------
 echo End
-echo run catkin_make in ~/Poseidon/src/workspace
 echo --------------------------------------------------

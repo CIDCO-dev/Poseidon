@@ -129,7 +129,7 @@ cd WiringPi/
 echo --------------------
 echo Connfiguring time system
 echo --------------------
-
+cd ~/
 git clone https://github.com/Ddoiron-cidco/RaspberryPi.git  >> log.txt 2> /dev/null
 
 echo --------------------

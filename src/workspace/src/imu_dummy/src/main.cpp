@@ -2,7 +2,7 @@
 #define MAIN_CPP
 
 #include "ros/ros.h"
-#include "geometry_msgs/PoseStamped.h"
+#include "sensor_msgs/Imu.h"
 
 class IMU{
 	private:
@@ -13,11 +13,11 @@ class IMU{
 
 	public:
 		IMU(){
-			imuTopic = node.advertise<geometry_msgs::PoseStamped>("pose", 1000);
+			imuTopic = node.advertise<sensor_msgs::Imu>("pose", 1000);
 		}
 
 		//Angles in radians
-		void convertToQuaternion(double yaw, double pitch, double roll,geometry_msgs::PoseStamped & pose){
+		void convertToQuaternion(double yaw, double pitch, double roll,sensor_msgs::Imu& pose){
 			// Abbreviations for the various angular functions
 			double cy = cos(yaw * 0.5);
 			double sy = sin(yaw * 0.5);
@@ -26,10 +26,10 @@ class IMU{
 			double cr = cos(roll * 0.5);
 			double sr = sin(roll * 0.5);
 
-			pose.pose.orientation.w = cy * cp * cr + sy * sp * sr;
-			pose.pose.orientation.x = cy * cp * sr - sy * sp * cr;
-			pose.pose.orientation.y = sy * cp * sr + cy * sp * cr;
-			pose.pose.orientation.z = sy * cp * cr - cy * sp * sr;
+			pose.orientation.w = cy * cp * cr + sy * sp * sr;
+			pose.orientation.x = cy * cp * sr - sy * sp * cr;
+			pose.orientation.y = sy * cp * sr + cy * sp * cr;
+			pose.orientation.z = sy * cp * cr - cy * sp * sr;
 		}
 
 
@@ -40,7 +40,7 @@ class IMU{
 
 		        while(ros::ok()){
 
-                		geometry_msgs::PoseStamped msg;
+                		sensor_msgs::Imu msg;
 
 				msg.header.seq=++sequenceNumber;
 				msg.header.stamp=ros::Time::now();

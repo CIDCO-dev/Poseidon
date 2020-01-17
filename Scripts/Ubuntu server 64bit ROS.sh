@@ -114,10 +114,12 @@ sudo systemctl enable lighttpd.service >> log.txt 2> /dev/null
 echo --------------------
 echo Installing web site
 echo --------------------
-cd /var/www/ 
-sudo git clone https://github.com/Ddoiron-cidco/Poseidon_web.git >> log.txt 2> /dev/null
+cd /var/
+sudo chmod +644 www
+cd www/ 
+git clone https://github.com/Ddoiron-cidco/Poseidon_web.git >> log.txt 2> /dev/null
 sudo rm -r -d html  >> log.txt 2> /dev/null
-sudo mv Poseidon_web html 
+mv Poseidon_web html 
 echo --------------------
 echo Downloading WiringPi
 echo --------------------

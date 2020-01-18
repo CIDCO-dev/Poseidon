@@ -1,15 +1,19 @@
 <launch>
 
 <arg name="loggerPath"/>
+<arg name="sonarip" value="192.168.0.88"/>
+<arg name="sonarport" value="5000"/>
+<arg name="gpsip" value="_host:=127.0.0.1"/>
+<arg name="gpsport" value="_port:=2947"/>
 
 <node pkg="logger_binary" name="logger_binary" type="logger_binary" output="screen" args="$(arg loggerPath)"/>
 
 <node pkg="logger_text" name="logger_text" type="logger_text" output="screen" args="$(arg loggerPath)"/>
 
-<node pkg="gnss_dummy" name="gnss_dummy" type="gnss_dummy" output="screen"/>
+<node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsip) $(arg gpsport)"/> 
 
-<node pkg="sonar_dummy" name="sonar_dummy" type="sonar_dummy" output="screen"/>
+<node pkg="sonar_nmea_0183_tcp_client" name="Sonar" type="sonar_nmea_0183_tcp_client" output="screen" args="$(arg sonarip) $(arg sonarport)"/>
 
-<node pkg="imu_dummy" name="imu_dummy" type="imu_dummy" output="screen"/>
+<node pkg="imu_dummy" name="IMU" type="imu_dummy" output="screen"/>
 
 </launch>

@@ -4,7 +4,9 @@
 #define MAIN_CPP
 
 #include "ros/ros.h"
-#include "geometry_msgs/PoseStamped.h"
+#include "sensor_msgs/NavSatFix.h"
+#include "sensor_msgs/Imu.h"
+//#include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PointStamped.h"
 #include "std_msgs/String.h"
 #include <ctime>
@@ -37,27 +39,27 @@ uint64_t buildTimeStamp(int sec, int nsec){
   return timestamp;
 }
 
-void gnssCallback(const geometry_msgs::PoseStamped& gnss)
+void gnssCallback(const sensor_msgs::NavSatFix& gnss)
 {
   Position pos;
 
   pos.timeStamp = buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
-  pos.x = gnss.pose.position.x;
-  pos.y = gnss.pose.position.y;
-  pos.z = gnss.pose.position.z;
+  pos.x = gnss.longitude;
+  pos.y = gnss.latitude;
+  pos.z = gnss.altitude;
 
   writer->writeGnss(pos);
 }
 
-void imuCallback(const geometry_msgs::PoseStamped& imuMsgs)
+void imuCallback(const sensor_msgs::Imu& imuMsgs)
 {
   Imu imu;
 
   imu.timeStamp = buildTimeStamp(imuMsgs.header.stamp.sec, imuMsgs.header.stamp.nsec);
-  imu.w = imuMsgs.pose.orientation.w;
-  imu.x = imuMsgs.pose.orientation.x;
-  imu.y = imuMsgs.pose.orientation.y;
-  imu.z = imuMsgs.pose.orientation.z;
+  imu.w = imuMsgs.orientation.w;
+  imu.x = imuMsgs.orientation.x;
+  imu.y = imuMsgs.orientation.y;
+  imu.z = imuMsgs.orientation.z;
 
   writer->writeImu(imu);
 }
@@ -112,7 +114,7 @@ int main(int argc, char **argv)
 
   ros::NodeHandle n;
 
-  ros::Subscriber sub1 = n.subscribe("position", 1000, gnssCallback);
+  ros::Subscriber sub1 = n.subscribe("fix", 1000, gnssCallback);
   ros::Subscriber sub2 = n.subscribe("pose", 1000, imuCallback);
   ros::Subscriber sub3 = n.subscribe("depth", 1000, sonarCallback);
 

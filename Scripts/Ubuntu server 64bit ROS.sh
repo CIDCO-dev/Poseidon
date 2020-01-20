@@ -235,7 +235,7 @@ EOF2'
 echo --------------------
 echo Spi Rule
 echo --------------------
-groupadd spi
+
 sudo bash -c 'cat << EOF2 > /etc/udev/rules.d/50-spi.rules
 KERNEL=="spidev*", GROUP="dialout", MODE="0664"
 EOF2'

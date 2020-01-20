@@ -2,7 +2,7 @@
 #define MAIN_CPP
 
 #include "ros/ros.h"
-#include "geometry_msgs/PoseStamped.h"
+#include "sensor_msgs/NavSatFix.h"
 
 class GNSS{
 	private:
@@ -17,7 +17,7 @@ class GNSS{
 
 	public:
 		GNSS(){
-			gnssTopic = node.advertise<geometry_msgs::PoseStamped>("position", 1000);
+			gnssTopic = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
 		}
 
 		void run(){
@@ -25,19 +25,20 @@ class GNSS{
 
 		        while(ros::ok()){
 
-                		geometry_msgs::PoseStamped msg;
+                		sensor_msgs::NavSatFix msg;
 
 				msg.header.seq=++sequenceNumber;
 				msg.header.stamp=ros::Time::now();
+				msg.header.stamp.nsec=0;
 
 				longitude += 0.0000001 * (rand() % 10 - 5);
 				latitude  += 0.0000001 * (rand() % 10 - 5);
 
 				double ellipsoidalHeight    = sin(sequenceNumber*42+100)*10;
 
-				msg.pose.position.x=longitude;
-				msg.pose.position.y=latitude;
-				msg.pose.position.z=ellipsoidalHeight;
+				msg.longitude=longitude;
+				msg.latitude=latitude;
+				msg.altitude=ellipsoidalHeight;
 
 		                gnssTopic.publish(msg);
                 		ros::spinOnce();

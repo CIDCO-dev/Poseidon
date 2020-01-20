@@ -17,6 +17,7 @@
 
 
 class Sonar{
+
 	private:
 		ros::NodeHandle node;
 		ros::Publisher sonarTopic;
@@ -30,7 +31,8 @@ class Sonar{
 		Sonar(char * serverAddress, char * serverPort) : serverAddress(serverAddress),serverPort(serverPort){
 
 		}
-
+                
+          
 		void run(){
 
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
@@ -67,12 +69,15 @@ class Sonar{
 
 					//FIXME: Holy wasted-syscalls Batman, that's inefficient!
 					while(read(s,&ch,1)==1){
+						if(ros::isShuttingDown()){
+						close(s);
+						}	
 						if(ch == '\n'){
 							char talkerId[2];
 							double  depthFeet;
 							double  depthMeters;
 							double  depthFathoms;
-							unsigned char checksum;
+							unsigned int checksum;
 
 							//Lookout for DBT strings such as
 							// $SDDBT,30.9,f,9.4,M,5.1,F*35
@@ -114,17 +119,15 @@ class Sonar{
 		}
 
 };
-
+#endif
 int main(int argc,char** argv){
 	ros::init(argc, argv, "sonar");
 
 	//TODO: Get params from command line
 
-	Sonar sonar("192.168.0.88","5000");
+	Sonar sonar(argv[1],argv[2]);
 	sonar.run();
 
-	return 0;
+
 }
 
-
-#endif

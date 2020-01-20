@@ -124,7 +124,20 @@ int main(int argc,char** argv){
 	ros::init(argc, argv, "sonar");
 
 	//TODO: Get params from command line
-
+        s = inet_pton(AF_INET, argv[1], buf);
+           if (s <= 0) {
+               if (s == 0)
+                   fprintf(stderr, "Bad Ip format : xxx.xxx.xxx.xxx");
+               else
+                   perror("inet_pton");
+               exit(EXIT_FAILURE);
+           }
+	
+	If (argv[2]<1024) & (argv[2]>65535) {
+		fprintf(stderr, "Port mus be 1024 to 65535");
+		exit(EXIT_FAILURE);  
+	   }
+		
 	Sonar sonar(argv[1],argv[2]);
 	sonar.run();
 

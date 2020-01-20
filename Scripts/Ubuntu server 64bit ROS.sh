@@ -108,6 +108,10 @@ echo Installing web service
 echo --------------------
 sudo systemctl start lighttpd.service >> log.txt 2> /dev/null
 sudo systemctl enable lighttpd.service >> log.txt 2> /dev/null
+echo --------------------
+echo Installing web socket
+echo --------------------
+sudo apt install libwebsocketpp-dev
 
 
 #installer un captive portal

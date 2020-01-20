@@ -120,9 +120,11 @@ class Sonar{
 
 };
 #endif
+int s;
+char buf[INET_ADDRSTRLEN];
 int main(int argc,char** argv){
 	ros::init(argc, argv, "sonar");
-
+	
 	//TODO: Get params from command line
         s = inet_pton(AF_INET, argv[1], buf);
            if (s <= 0) {
@@ -133,7 +135,7 @@ int main(int argc,char** argv){
                exit(EXIT_FAILURE);
            }
 	
-	If (argv[2]<1024) & (argv[2]>65535) {
+	if (*argv[2]<1024 && *argv[2]>65535) {
 		fprintf(stderr, "Port mus be 1024 to 65535");
 		exit(EXIT_FAILURE);  
 	   }

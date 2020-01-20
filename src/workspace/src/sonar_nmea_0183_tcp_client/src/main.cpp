@@ -27,12 +27,16 @@ class Sonar{
 		std::string serverAddress;
 		std::string serverPort;
 
+		bool useDepth = true;
+		bool usePosition = false;
+		bool useAttitude = false;
+
+
 	public:
-		Sonar(char * serverAddress, char * serverPort) : serverAddress(serverAddress),serverPort(serverPort){
+		Sonar(char * serverAddress, char * serverPort, bool useDepth,bool usePosition,bool useAttitude) : serverAddress(serverAddress),serverPort(serverPort),useDepth(useDepth),usePosition(usePosition),useAttitude(useAttitude){
 
 		}
-                
-          
+
 		void run(){
 
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
@@ -69,9 +73,11 @@ class Sonar{
 
 					//FIXME: Holy wasted-syscalls Batman, that's inefficient!
 					while(read(s,&ch,1)==1){
+
 						if(ros::isShuttingDown()){
-						close(s);
-						}	
+							close(s);
+						}
+
 						if(ch == '\n'){
 							char talkerId[2];
 							double  depthFeet;
@@ -99,6 +105,8 @@ class Sonar{
 								//std::cout << depthMeters << std::endl;
 							}
 
+							//TODO: parse GGA and attitude strings
+
 							line = "";
 						}
 						else{
@@ -119,30 +127,48 @@ class Sonar{
 		}
 
 };
-#endif
-int s;
-char buf[INET_ADDRSTRLEN];
+
+
 int main(int argc,char** argv){
 	ros::init(argc, argv, "sonar");
-	
-	//TODO: Get params from command line
-        s = inet_pton(AF_INET, argv[1], buf);
-           if (s <= 0) {
-               if (s == 0)
-                   fprintf(stderr, "Bad Ip format : xxx.xxx.xxx.xxx");
-               else
-                   perror("inet_pton");
-               exit(EXIT_FAILURE);
-           }
-	
-	if (*argv[2]<1024 && *argv[2]>65535) {
-		fprintf(stderr, "Port mus be 1024 to 65535");
-		exit(EXIT_FAILURE);  
-	   }
-		
-	Sonar sonar(argv[1],argv[2]);
-	sonar.run();
 
+	std::string addr;
+	int port;
 
+	//if no params present. use default values of 127.0.0.1:5000
+	if(!ros::param::get("ip_address", addr)){
+		addr = "127.0.0.1";
+	}
+
+	if(!ros::param::get("port", port)){
+		port = 5000;
+	}
+
+	int a,b,c,d;
+
+	//verify IP address
+	if(
+		sscanf(addr.c_str(),"%d.%d.%d.%d",&a,&b,&c,&d)==4 &&
+		a > 0 && a <= 255 &&
+		b >= 0 && b <= 255 &&
+		c >= 0 && c <= 255 &&
+		d >= 0 && d <= 255 
+	){
+
+		if(
+			port > 0 && port <= 65535
+		){
+			//TODO: get useDepth/usePOsition/useAttitude from parameters
+			Sonar sonar(argv[1],argv[2],true,true,true);
+			sonar.run();
+		}
+		else{
+			std::cerr << "Bad TCP port: " << port << std::endl;
+		}
+	}
+	else{
+		std::cerr << "Bad IP address: " << addr << std::endl;
+	}
 }
 
+#endif

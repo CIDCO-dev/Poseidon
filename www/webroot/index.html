@@ -18,10 +18,11 @@
 
   <script>
     function processState(state){
-        
+      
+	// Update dashboard top marquees  
         if(!state.position || !state.attitude || !state.depth){
             $("#systemStatus").removeClass("bg-success").addClass("bg-danger");
-            $("#systemStatusText").text("Check sensors");            
+            $("#systemStatusText").text("Check sensors");
         }
         else{
             $("#systemStatus").removeClass("bg-danger").addClass("bg-success");
@@ -54,6 +55,8 @@
             $("#sonarStatus").removeClass("bg-success").addClass("bg-danger");
             $("#sonarStatusText").text("No Sonar Data");
         }
+
+        //TODO: update rest
     }
       
     var socket = new WebSocket("ws://localhost:9002");
@@ -61,6 +64,7 @@
     socket.onmessage = function (event) {
         processState(event.data);
     }        
+
   </script>
 </head>
 

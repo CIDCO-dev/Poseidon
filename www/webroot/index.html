@@ -59,7 +59,7 @@
         //TODO: update rest
     }
       
-    var socket = new WebSocket("ws://localhost:9002");
+    var socket = new WebSocket("ws://192.168.0.183:9002");
 
     socket.onmessage = function (event) {
         processState(event.data);

@@ -15,13 +15,69 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+class StateController{
+	public:
+		StateController(){
+			positionTopic = n.subscribe("fix", 1000, &StateController::gnssCallback,this);
+			attitudeTopic = n.subscribe("pose", 1000, &StateController::imuCallback,this);
+			sonarTopic    = n.subscribe("depth", 1000, &StateController::sonarCallback,this);
+		}
 
-// It would be possible to have the callback functions
-// be part of class Writer so that a global variable Writer *writer
-// would not be required
-// http://docs.ros.org/melodic/api/roscpp/html/classros_1_1NodeHandle.html#a317fe4c05919e0bf3fb5162ccb2f7c28
+		void gnssCallback(const sensor_msgs::NavSatFix& gnss){
+			lastPosition = &gnss;
+                        
+                        //TODO: check if position/ attitude / depth are not too far away in time
+                        longitude = lastPosition->longitude;
+                        latitude  = lastPosition->latitude;
+                        altitude  = lastPosition->altitude;
+                        memcpy(&covarianceMatrix,&(lastPosition->position_covariance),9*sizeof(double));
+                        
+                        stateUpdated();
+		}
 
-Writer *writer;
+		void imuCallback(const sensor_msgs::Imu& imu){
+			lastAttitude = &imu;
+                        
+//                        heading = 
+                        
+                        stateUpdated();
+		}
+
+		void sonarCallback(const geometry_msgs::PointStamped& sonar){
+			lastDepth = &sonar;
+                        
+                        stateUpdated();
+		}
+
+		//TODO: add other sensor callbacks
+
+		void stateUpdated(){
+                    //TODO: kalmanize?
+		}
+
+	private:
+		//State
+		double      longitude;
+		double      latitude;
+		double      altitude;
+                double      covarianceMatrix[9];
+                
+		double      pitch;
+		double      heading;
+		double      roll;
+
+		double      depth;
+
+		//Observed state
+		const sensor_msgs::NavSatFix *   	lastPosition = NULL;
+		const sensor_msgs::Imu *		lastAttitude = NULL;
+		const geometry_msgs::PointStamped *	lastDepth    = NULL;
+
+		ros::NodeHandle n;
+		ros::Subscriber positionTopic;
+		ros::Subscriber attitudeTopic;
+		ros::Subscriber sonarTopic;
+};
 
 uint64_t buildTimeStamp(int sec, int nsec){
   std::ostringstream os;
@@ -36,57 +92,16 @@ uint64_t buildTimeStamp(int sec, int nsec){
   return timestamp;
 }
 
-void gnssCallback(const sensor_msgs::NavSatFix& gnss)
-{
-  Position pos;
-
-  pos.timeStamp = buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
-  pos.x = gnss.longitude;
-  pos.y = gnss.latitude;
-  pos.z = gnss.altitude;
-
-  writer->writeGnss(pos);
-}
-
-void imuCallback(const sensor_msgs::Imu& imuMsgs)
-{
-  Imu imu;
-
-  imu.timeStamp = buildTimeStamp(imuMsgs.header.stamp.sec, imuMsgs.header.stamp.nsec);
-  imu.w = imuMsgs.orientation.w;
-  imu.x = imuMsgs.orientation.x;
-  imu.y = imuMsgs.orientation.y;
-  imu.z = imuMsgs.orientation.z;
-
-  writer->writeImu(imu);
-}
-
-void sonarCallback(const geometry_msgs::PointStamped& sonarMsgs)
-{
-  Sonar sonar;
-  sonar.timeStamp = buildTimeStamp(sonarMsgs.header.stamp.sec,
-                                    sonarMsgs.header.stamp.nsec);
-  sonar.depth = sonarMsgs.point.z;
-
-  writer->writeSonar(sonar);
-}
-
 
 int main(int argc, char **argv)
 {
-
   ros::init(argc, argv, "state_controller");
 
-  ros::NodeHandle n;
-
-  ros::Subscriber sub1 = n.subscribe("fix", 1000, gnssCallback);
-  ros::Subscriber sub2 = n.subscribe("pose", 1000, imuCallback);
-  ros::Subscriber sub3 = n.subscribe("depth", 1000, sonarCallback);
+  StateController state;
 
   ros::spin();
 
   return 0;
 }
-
 
 #endif

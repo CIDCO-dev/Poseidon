@@ -14,7 +14,9 @@
 
 <node pkg="sonar_nmea_0183_tcp_client" name="sonar" type="sonar_nmea_0183_tcp_client" output="screen" args="$(arg sonarAddress) $(arg sonarPort)"/>
 
-<node pkg="imu_dummy" name="imu_dummy" type="imu_dummy" output="screen"/>
+<node pkg="imu_dummy" name="imu_dummy" type="imu_dummy"/>
+
+<node pkg="state_controller" name="state_controller" type="state_controller" />
 
 <node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket"/>
 

@@ -20,7 +20,7 @@
     function processState(state){
       
 	// Update dashboard top marquees  
-        if(!state.position || !state.attitude || !state.depth){
+        if(!state.position.length || !state.attitude.length || !state.depth.length){
             $("#systemStatus").removeClass("bg-success").addClass("bg-danger");
             $("#systemStatusText").text("Check sensors");
         }
@@ -29,16 +29,16 @@
             $("#systemStatusText").text("OK");
         }
         
-        if(state.position){
+        if(state.position.length){
             $("#gnssStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#gnssStatusText").text();
+            $("#gnssStatusText").text(state.position[0] + "," + state.position[1]);
         }
         else{
             $("#gnssStatus").removeClass("bg-success").addClass("bg-danger");
             $("#gnssStatusText").text("No Position Data");
         }
         
-        if(state.attitude){
+        if(state.attitude.length){
             $("#imuStatus").removeClass("bg-danger").addClass("bg-success");
             $("#imuStatusText").text();
         }
@@ -47,7 +47,7 @@
             $("#imuStatusText").text("No IMU Data");
         }
         
-        if(state.depth){
+        if(state.depth.length){
             $("#sonarStatus").removeClass("bg-danger").addClass("bg-success");
             $("#sonarStatusText").text();
         }
@@ -62,7 +62,8 @@
     var socket = new WebSocket("ws://192.168.0.183:9002");
 
     socket.onmessage = function (event) {
-        processState(event.data);
+        var state = JSON.parse(event.data);
+        processState(state);
     }        
 
   </script>

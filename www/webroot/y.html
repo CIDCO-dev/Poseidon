@@ -37,7 +37,7 @@
 	<script>
 		var m = L.map('map').setView([42.09618442380296, -71.5045166015625], 8);
 		
-		var shpfile = new L.Shapefile('ne_10m_admin_0_countries.zip', {
+		var shpfile = new L.Shapefile('/map/ne_10m_admin_0_countries.zip', {
 			onEachFeature: function(feature, layer) {
 				if (feature.properties) {
 					layer.bindPopup(Object.keys(feature.properties).map(function(k) {

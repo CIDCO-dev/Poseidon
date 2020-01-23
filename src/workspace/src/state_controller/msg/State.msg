@@ -1,0 +1,3 @@
+sensor_msgs/NavSatFix position
+sensor_msgs/Imu attitude
+geometry_msgs/PointStamped depth

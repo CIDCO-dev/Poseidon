@@ -32,7 +32,6 @@ class IMU{
 			pose.orientation.z = sy * cp * cr - cy * sp * sr;
 		}
 
-
 		void run(){
 			ros::Rate loop_rate(200);
 

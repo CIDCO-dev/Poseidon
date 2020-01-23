@@ -20,7 +20,7 @@
     function processState(state){
       
 	// Update dashboard top marquees  
-        if(!state.position || !state.attitude || !state.depth){
+        if(!state.position.length || !state.attitude.length || !state.depth.length){
             $("#systemStatus").removeClass("bg-success").addClass("bg-danger");
             $("#systemStatusText").text("Check sensors");
         }
@@ -29,16 +29,16 @@
             $("#systemStatusText").text("OK");
         }
         
-        if(state.position){
+        if(state.position.length){
             $("#gnssStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#gnssStatusText").text();
+            $("#gnssStatusText").text(state.position[0] + "," + state.position[1]);
         }
         else{
             $("#gnssStatus").removeClass("bg-success").addClass("bg-danger");
             $("#gnssStatusText").text("No Position Data");
         }
         
-        if(state.attitude){
+        if(state.attitude.length){
             $("#imuStatus").removeClass("bg-danger").addClass("bg-success");
             $("#imuStatusText").text();
         }
@@ -47,7 +47,7 @@
             $("#imuStatusText").text("No IMU Data");
         }
         
-        if(state.depth){
+        if(state.depth.length){
             $("#sonarStatus").removeClass("bg-danger").addClass("bg-success");
             $("#sonarStatusText").text();
         }
@@ -55,6 +55,7 @@
             $("#sonarStatus").removeClass("bg-success").addClass("bg-danger");
             $("#sonarStatusText").text("No Sonar Data");
         }
+
 
         //TODO: update rest
     }
@@ -148,10 +149,11 @@
             <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
           </div>
 
+
           <!-- Status Row -->
           <div class="row">
 		<div class="col-xl-3 col-md-6 mb-4">
-                  <div id="systemStatus" class="card bg-success text-white shadow">
+                  <div id="systemStatus" class="card bg-warning text-white shadow">
                     <div class="card-body">
                       System Status
                       <div id="systemStatusText" class="text-white-50 small">Waiting for data...</div>
@@ -160,7 +162,7 @@
                 </div>
 
                  <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="gnssStatus" class="card bg-success text-white shadow">
+                  <div id="gnssStatus" class="card bg-warning text-white shadow">
                     <div class="card-body">
                       GNSS
                       <div id="gnssStatusText" class="text-white-50 small">Waiting for data...</div>
@@ -169,7 +171,7 @@
                 </div>
 
                  <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="imuStatus" class="card bg-success text-white shadow">
+                  <div id="imuStatus" class="card bg-warning text-white shadow">
                     <div class="card-body">
                       IMU
                       <div id="imuStatusText" class="text-white-50 small">Waiting for data...</div>
@@ -178,7 +180,7 @@
                 </div>
 
                  <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="sonarStatus" class="card bg-success text-white shadow">
+                  <div id="sonarStatus" class="card bg-warning text-white shadow">
                     <div class="card-body">
                       Sonar
                       <div id="sonarStatusText" class="text-white-50 small">Waiting for data...</div>
@@ -186,7 +188,6 @@
                   </div>
                 </div>
           </div>
-
 	  <!-- Gauges row -->
           <div class="row">
 

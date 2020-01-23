@@ -20,48 +20,51 @@
     function processState(state){
       
 	// Update dashboard top marquees  
+        
         if(!state.position.length || !state.attitude.length || !state.depth.length){
-            $("#systemStatus").removeClass("bg-success").addClass("bg-danger");
-            $("#systemStatusText").text("Check sensors");
+            $("#systemStatus").removeClass("d-none").addClass("d-block");
+            
+            $("#systemStatusText").text("Check connexion with sensors");
         }
         else{
-            $("#systemStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#systemStatusText").text("OK");
+            $("#systemStatus").removeClass("d-block").addClass("d-none");
+            $("#systemStatusText").text();
         }
         
         if(state.position.length){
-            $("#gnssStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#gnssStatusText").text(state.position[0] + "," + state.position[1]);
+            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            $("#gnssStatusText").removeClass("bg-gradient-warning").text(state.position[0] + "," + state.position[1]);
         }
         else{
-            $("#gnssStatus").removeClass("bg-success").addClass("bg-danger");
-            $("#gnssStatusText").text("No Position Data");
+            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+            $("#gnssStatusText").removeClass("bg-gradient-warning").text("No Position Data");
         }
         
         if(state.attitude.length){
-            $("#imuStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#imuStatusText").text();
+            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            $("#imuStatusText").text(state.attitude[0] + "," + state.attitude[1] + "," + state.attitude[2]);
         }
         else{
-            $("#imuStatus").removeClass("bg-success").addClass("bg-danger");
+            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
             $("#imuStatusText").text("No IMU Data");
         }
         
         if(state.depth.length){
-            $("#sonarStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#sonarStatusText").text();
+            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            $("#sonarStatusText").text(state.depth[0]);
         }
         else{
-            $("#sonarStatus").removeClass("bg-success").addClass("bg-danger");
+            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
             $("#sonarStatusText").text("No Sonar Data");
         }
 
         //TODO: update rest
     }
       
-    var socket = new WebSocket("ws://192.168.0.183:9002");
+    var socket = new WebSocket("ws://192.168.0.203:9002");
 
     socket.onmessage = function (event) {
+        console.log(event.data);
         var state = JSON.parse(event.data);
         processState(state);
     }        
@@ -149,40 +152,59 @@
             <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
           </div>
 
+          <div id="systemStatus" class="alert alert-danger d-none">
+              <strong> Warning: </strong> <div id="systemStatusText"></div>
+          </div>
+          
           <!-- Status Row -->
           <div class="row">
-		<div class="col-xl-3 col-md-6 mb-4">
-                  <div id="systemStatus" class="card bg-danger text-white shadow">
-                    <div class="card-body">
-                      System Status
-                      <div id="systemStatusText" class="text-white-50 small">Waiting for data...</div>
-                    </div>
-                  </div>
-                </div>
+              
 
-                 <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="gnssStatus" class="card bg-danger text-white shadow">
+
+                 <div class="col-xl-4 col-md-6 mb-4">
+                  <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
                     <div class="card-body">
                       GNSS
-                      <div id="gnssStatusText" class="text-white-50 small">Waiting for data...</div>
+                      <div class="row">
+                          <div class="col mr-2">
+                            <div id="gnssStatusText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                          </div>
+                        <div class="col-auto">
+                          <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
+                        </div>                          
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                 <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="imuStatus" class="card bg-danger text-white shadow">
+                 <div class="col-xl-4 col-md-6 mb-4">
+                  <div id="imuStatus" class="card bg-gradient-warning text-white shadow">
                     <div class="card-body">
                       IMU
-                      <div id="imuStatusText" class="text-white-50 small">Waiting for data...</div>
+                      <div class="row">
+                          <div class="col mr-2">
+                            <div id="imuStatusText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                          </div>
+                        <div class="col-auto">
+                          <i class="fas fa-ship fa-2x text-gray-300"></i>
+                        </div>                          
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                 <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="sonarStatus" class="card bg-danger text-white shadow">
+                 <div class="col-xl-4 col-md-6 mb-4">
+                  <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
                     <div class="card-body">
-                      Sonar
-                      <div id="sonarStatusText" class="text-white-50 small">Waiting for data...</div>
+                      Depth (m)
+                      <div class="row">
+                          <div class="col mr-2">
+                            <div id="sonarStatusText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                          </div>
+                        <div class="col-auto">
+                          <i class="fas fa-rss fa-rotate-180 fa-2x text-gray-300"></i>
+                        </div>                          
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -192,7 +214,7 @@
           <div class="row">
 
             <!-- Content Column -->
-            <div class="col-lg-6 mb-4">
+            <div class="col-lg-9 mb-6">
 
               <!-- Project Card Example -->
               <div class="card shadow mb-4">
@@ -201,6 +223,23 @@
                 </div>
                 <div class="card-body">
 
+
+
+
+                </div>
+              </div>
+            </div>
+            
+            <!-- Content Column -->
+            <div class="col-lg-3 mb-6">
+
+              <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">System</h6>
+                </div>
+                <div class="card-body">
+                    
                   <h4 class="small font-weight-bold">Battery Level <span class="float-right">20%</span></h4>
                   <div class="progress mb-4">
                     <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
@@ -214,22 +253,7 @@
                   <h4 class="small font-weight-bold">Internal Temperature <span class="float-right">20%</span></h4>
                   <div class="progress mb-4">
                     <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-
-                </div>
-              </div>
-            </div>
-            
-            <!-- Content Column -->
-            <div class="col-lg-6 mb-4">
-
-              <!-- Project Card Example -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">System</h6>
-                </div>
-                <div class="card-body">
+                  </div>                    
 
                   <h4 class="small font-weight-bold">CPU Load <span class="float-right">20%</span></h4>
                   <div class="progress mb-4">

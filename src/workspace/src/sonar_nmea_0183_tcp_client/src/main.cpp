@@ -14,6 +14,65 @@
 //ROS
 #include "ros/ros.h"
 #include "geometry_msgs/PointStamped.h"
+#include "sensor_msgs/NavSatFix.h"
+
+
+typedef struct{
+    char talkerId[2];
+    double utcTime;
+    
+    double latitude; 
+    char northOrSouth;
+    
+    double longitude; 
+    char eastOrWest;
+    
+    int quality;
+    
+    int nbSatellites;
+    
+    double hdop;
+    
+    double antennaAltitude;
+    
+    double geoidalSeparation;
+    
+    int dgpsAge;
+    int dgpsStationId;    
+    
+    unsigned int checksum;
+} ggaData;
+
+typedef struct{
+    char talkerId[2];
+    double  depthFeet;
+    double  depthMeters;
+    double  depthFathoms;
+    unsigned int checksum;    
+}dbtData;
+
+bool extractGGA(std::string & s,ggaData & data){   
+    
+    int c = sscanf(s.c_str(),"$%2sGGA,%lf,%lf,%1s,%lf,%1s,%d,%d,%lf,%lf,M,%lf,M,%d,%d*%2x",&data.talkerId,&data.utcTime,&data.latitude,&data.northOrSouth,&data.longitude,&data.eastOrWest,&data.quality,&data.nbSatellites,&data.hdop,&data.antennaAltitude,&data.geoidalSeparation,&data.dgpsAge,&data.dgpsStationId);
+       
+    if(c >= 8){
+        int longDegrees =( (double)data.longitude / 100);
+        double longMinutes = (data.longitude - (longDegrees*100)) / (double)60;
+        double sign = (data.eastOrWest=='E')?1:-1;
+        
+        data.longitude = sign* (longDegrees + longMinutes );
+        
+        int latDegrees = (double)(data.latitude / 100);
+        double latMinutes = (data.latitude - (latDegrees*100)) / (double)60;
+        sign = (data.northOrSouth=='N')?1:-1;        
+
+        data.latitude  = sign * (latDegrees+latMinutes);
+
+        return true;
+    }
+    
+    return false;
+}
 
 
 class Sonar{
@@ -21,9 +80,11 @@ class Sonar{
 	private:
 		ros::NodeHandle node;
 		ros::Publisher sonarTopic;
+                ros::Publisher gnssTopic;
 
-		uint32_t sequenceNumber;
-
+		uint32_t depthSequenceNumber;
+                uint32_t gpsSequenceNumber;
+                
 		std::string serverAddress;
 		std::string serverPort;
 
@@ -40,6 +101,7 @@ class Sonar{
 		void run(){
 
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
+                        gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
 
 			ros::Rate retry_rate(1);
 
@@ -79,35 +141,60 @@ class Sonar{
 						}
 
 						if(ch == '\n'){
-							char talkerId[2];
-							double  depthFeet;
-							double  depthMeters;
-							double  depthFathoms;
-							unsigned int checksum;
+                                                    dbtData dbt;    
+                                                    ggaData gga;
 
-							//Lookout for DBT strings such as
-							// $SDDBT,30.9,f,9.4,M,5.1,F*35
-							if(sscanf(line.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",talkerId,&depthFeet,&depthMeters,&depthFathoms,&checksum) == 5){
+                                                    //parse DBT strings such as $SDDBT,30.9,f,9.4,M,5.1,F*35
+                                                    if(sscanf(line.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
 
-								//TODO: checksum
-								//process depth
+                                                        //TODO: checksum
+                                                        //process depth
 
-								geometry_msgs::PointStamped msg;
+                                                        geometry_msgs::PointStamped msg;
 
-                        			                msg.header.seq=++sequenceNumber;
-								msg.header.stamp=ros::Time::now();
+                        			        msg.header.seq=++depthSequenceNumber;
+                                                        msg.header.stamp=ros::Time::now();
 
-								msg.point.z = depthMeters;
+                                                        msg.point.z = dbt.depthMeters;
 
-								sonarTopic.publish(msg);
+                                                        sonarTopic.publish(msg);
+                                                    }
+                                                        
+                                                    //parse GGA position strings
+                                                    else if(extractGGA(line,gga)){
+                                                        sensor_msgs::NavSatFix msg;
+                                                            
+                        			        msg.header.seq=++gpsSequenceNumber;
+                                                        msg.header.stamp=ros::Time::now();
+                                                        
+                                                        switch(gga.quality){
+                                                            //No fix
+                                                            case 0:
+                                                                msg.status.status=-1;
+                                                                break;
+                                                            
+                                                            //GPS Fix
+                                                            case 1:
+                                                                msg.status.status=0;
+                                                                break;
+                                                                
+                                                            //DGPS
+                                                            case 2:
+                                                                msg.status.status=2;
+                                                        }
+                                                        
+                                                        msg.latitude  = gga.latitude;
+                                                        msg.longitude = gga.longitude;
+                                                        msg.altitude  = gga.antennaAltitude;
+                                                        
+                                                        msg.position_covariance_type= 0;
 
-								//std::cout << line << std::endl;
-								//std::cout << depthMeters << std::endl;
-							}
-
-							//TODO: parse GGA and attitude strings
-
-							line = "";
+                                                            
+                                                        gnssTopic.publish(msg);
+                                                    }
+							
+                                                    //TODO: parse attitude strings
+                                                    line = "";
 						}
 						else{
 							line.append(1,ch);

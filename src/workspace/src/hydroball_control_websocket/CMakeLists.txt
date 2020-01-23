@@ -14,6 +14,7 @@ project(hydroball_control_websocket)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  state_controller
 )
 
 ## System dependencies are found with CMake's conventions

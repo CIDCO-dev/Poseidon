@@ -1,0 +1,7 @@
+### Module positions - created on 30/01/2020 14:22:30 ###
+### Printed by Pcbnew version kicad (5.1.5)-3
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val          Package                        PosX       PosY       Rot  Side
+U2        MCP3426-xSN  SOIC-8_3.9x4.9mm_P1.27mm    38.3166   -55.1068  270.0000  top
+## End

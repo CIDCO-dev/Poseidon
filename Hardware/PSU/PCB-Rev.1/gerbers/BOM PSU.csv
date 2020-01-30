@@ -1,0 +1,35 @@
+Designator,MFG PN,qty,link
+J1,71918-214LF,1,https://www.digikey.ca/products/en?keywords=609-4495-ND
+"J2,J7",TB007-508-02BE,2,https://www.digikey.ca/products/en?keywords=102-6203-ND 
+"J3-J6,J9-J16",B2B-EH-A(LF)(SN),12,https://www.digikey.ca/products/en?keywords=455-1611-ND 
+"F1,F2",56000001009,2,https://www.digikey.ca/products/en?keywords=WK6235-ND 
+D1,MBR340RLG,1,https://www.digikey.ca/products/en?keywords=MBR340RLGOSCT-ND 
+D2-D6,WP710A10SECK/J3,5, https://www.digikey.ca/products/en/optoelectronics/led-indication-discrete/105?k=754-1756-ND
+"R1,R14,R15",MFR-25FBF52-10K,3,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-10K/13219 
+R2,MFR-25FBF52-7K87,1,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-7K87/13199 
+R3,MFR-25FBF52-1K27,1,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-1K27/13031 
+R5,MFR-25FBF52-20K,1,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-20K/13276 
+R6,MFR-25FBF52-2K87,1,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-2K87/13116 
+R7,MFR-25FBF52-24K9,,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-24K9/13294 
+R10,CFR-25JB-52-220R,1,https://www.digikey.ca/en/products/detail/yageo/CFR-25JB-52-220R/1295 
+R11-13,MFR-25FBF52-1K,3,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-1K/13011 
+R16,MFR-25FBF52-2K,1,https://www.digikey.ca/en/products/detail/yageo/MFR-25FBF52-2K/13070 
+R17,CFR-25JB-52-560R,1,https://www.digikey.ca/en/products/detail/yageo/CFR-25JB-52-560R/2464 
+R18,CFR-25JB-52-3K9,1,https://www.digikey.ca/en/products/detail/yageo/CFR-25JB-52-3K9/1473 
+"C1,C15,C18",C322C104K5R5TA,3,https://www.digikey.ca/en/products/detail/kemet/C322C104K5R5TA/818105 
+"C2,C3",ECA-1VM100I,2,https://www.digikey.ca/en/products/detail/panasonic-electronic-components/ECA-1VM100I/6109447 
+"C4,C8,C11",ECA-1HHG101B,3,https://www.digikey.ca/en/products/detail/panasonic-electronic-components/ECA-1HHG101B/413609 
+"C5,C10,C12",ECA-1HM470,3,https://www.digikey.ca/en/products/detail/panasonic-electronic-components/ECA-1HM470/245040 
+"C7,C9",ECA-1HM331,2,https://www.digikey.ca/en/products/detail/panasonic-electronic-components/ECA-1HM331/245043 
+"C13,C17",FG26X5R1H106KRT06,2,https://www.digikey.ca/en/products/detail/tdk-corporation/FG26X5R1H106KRT06/5812039 
+C14,FG24X5R1H475KRT00,1,https://www.digikey.ca/en/products/detail/tdk-corporation/FG24X5R1H475KRT00/7384775 
+C16,S102K33Y5PP63K5R,1,https://www.digikey.ca/en/products/detail/vishay-bc-components/S102K33Y5PP63K5R/2356789 
+"L1,L2,L4",RL622-1R0K-RC,3,https://www.digikey.ca/en/products/detail/bourns-inc/RL622-1R0K-RC/946859 
+L3,RL622-2R2K-RC,1,https://www.digikey.ca/en/products/detail/bourns-inc/RL622-2R2K-RC/946861 
+"Q1-Q3,Q5",2N7000,4,https://www.digikey.ca/en/products/detail/on-semiconductor/2N7000/244278 
+Q4,FQP27P06,1,https://www.digikey.ca/en/products/detail/on-semiconductor/FQP27P06/965349 
+PS1,PDQE20-Q24-S24-D,1,https://www.digikey.ca/en/products/detail/cui-inc/PDQE20-Q24-S24-D/10230159 
+PS2,SKMW30F-05,1,https://www.digikey.ca/en/products/detail/mean-well-usa-inc/SKMW30F-05/7706818 
+PS3,OKI-78SR-3.3/1.5-W36H-C,1,https://www.digikey.ca/en/products/detail/murata-power-solutions-inc/OKI-78SR-3-3-1-5-W36H-C/4878851 
+U1,PIC12F1501-I/P,1,https://www.digikey.ca/en/products/detail/microchip-technology/PIC12F1501-I-P/3046615 
+U2,MCP3426A0T-E/SN,1,https://www.digikey.ca/en/products/detail/microchip-technology/MCP3426A0T-E-SN/2178722 

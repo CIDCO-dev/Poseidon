@@ -29,13 +29,13 @@
 <node pkg="inertial_sense" name="IMU" type="inertial_sense_node" output="screen">
   <remap from="ins" to="pose"/>
   <param name="port" value="/dev/imu"/>
-  <param name="INS_rpy_radians" value="0,0,90"/>
+  <!-- <param name="INS_rpy_radians" value="0,0,90"/> //-->
 </node>
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 <node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
-
+<node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen"/>
 
   
 

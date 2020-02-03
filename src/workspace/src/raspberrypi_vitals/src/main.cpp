@@ -2,7 +2,7 @@
 #define MAIN_CPP
 
 #include "ros/ros.h"
-#include "hydro_vitals/sysinfo.h"
+#include "raspberrypi_vitals/sysinfo.h"
 #include <iostream>
 #include <fstream>
 #include <string>

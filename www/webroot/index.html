@@ -70,8 +70,6 @@
           <span>System Config</span></a>
       </li>
 
-
-
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
 
@@ -114,12 +112,10 @@
           </div>
           
           <!-- Status Row -->
-          <div class="row">
-
-              
+          <div class="row">            
 
 		<!-- GNSS top marquee //-->
-                 <div class="col-xl-4 col-md-4 mb-4">
+                 <div class="col-lg-4 mb-4">
                   <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
@@ -153,7 +149,7 @@
 
 
 		<!-- IMU top marquee //-->
-                 <div class="col-xl-4 col-md-4 mb-4">
+                 <div class="col-lg-4 mb-4">
                   <div id="imuStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
@@ -191,11 +187,11 @@
 
 
 		<!-- Sonar top marquee //-->
-                 <div class="col-xl-4 col-md-4 mb-4">
+                 <div class="col-lg-4 mb-4">
                   <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
-                      <h6>Depth</h6>
+                      <h6>Sonar</h6>
                       <div class="row">
                           <div class="col mr-2">
                             <div class="row">
@@ -238,7 +234,7 @@
     
                 <div class="card-body">
 
-                  <div id="map" style="width: 100%; height: 400px;" class="card-body">
+                  <div id="map" style="width: 100%; height: 600px;" class="card-body">
 
                   </div>
 
@@ -265,7 +261,7 @@
 
                   <div class="chart-area">
                     <div id="chartContainer">
-                      <canvas id="lineChart"></canvas>
+                      <canvas id="attitudeChart"></canvas>
                     </div>
                   </div>
 
@@ -275,7 +271,32 @@
             
           </div>
 
+           <!-- Depth Card --> 
+	 <div class="row">
+            <div class="col-lg-12 mb-4">
+              <div class="card shadow mb-4">
+
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">Depth</h6>
+                </div>
+
+                <div class="card-body">
+                  <div class="chart-area">
+                    <div id="depthChartContainer">
+                      <canvas id="depthChart"></canvas>
+			<br style="clear:both"/>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
         </div>
+
+
         <!-- /.container-fluid -->
 
       </div>
@@ -326,21 +347,33 @@
 <script>
 	
 
-	var depth = 0.0;
+	var depth = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
         //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
         //Chart.defaults.global.defaultFontColor = '#858796'
 		
-	var ctxL = document.getElementById("lineChart").getContext('2d');
-		var myLineChart = new Chart(ctxL, {
+	var ctxAttitude = document.getElementById("attitudeChart").getContext('2d');
+	var attitudeChart = new Chart(ctxAttitude, {
 		type: 'line',
 		data: {
 		labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
-		datasets: [{label: "Pitch", backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
-		           {label: "Roll", backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
-		options: { responsive: true, animation: false, elements: {point:{radius: 0}}} });
+		datasets: [{label: "Pitch", data:imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
+		           {label: "Roll", data:imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
+		options: { responsive: true, animation: false, elements: {point:{radius: 0}}} 
+	});
+
+        var ctxDepth = document.getElementById("depthChart").getContext('2d');
+        var depthChart = new Chart(ctxDepth, 
+	{
+               	type: 'line',
+		labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+               	data: {
+               		datasets: [ {label: "Depth(m)", data:depth , backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] 
+		},
+	        options: { responsive: true, animation: false, elements: {point:{radius: 0}} }
+	});
 
 	var gauge = new RadialGauge({
 	    renderTo: 'imuz',
@@ -418,9 +451,6 @@
         var oldstate = 0;
         var m = new L.map("map").setView([0, 0], 23);
         var polycolor = "";
-        var depth = 0.0;
-        var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-        var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
         //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
         //Chart.defaults.global.defaultFontColor = '#858796'
@@ -512,27 +542,20 @@
 
 //**********  IMU roll/pitch plot
 
-		imu_x .push(state.attitude[1]);
-		imu_x .shift();
-		imu_y .push(state.attitude[2]);
-		imu_y .shift();
-		
+	imu_x .push(state.attitude[1]);
+	imu_x .shift();
+
+	imu_y .push(state.attitude[2]);
+	imu_y .shift();
+
+	depth.push(state.depth);
+	depth.shift();		
 	
-		myLineChart.destroy();
+	attitudeChart.update();
+	depthChart.update();
 
-		myLineChart = new Chart(ctxL, {
-		type: 'line',
-		data: {
-		labels: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
-		datasets: [{label: "Roll", data: imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2}, 
-		           {label: "Pitch", data: imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 }, ] },
-		options: {responsive: true, animation: false, elements: {point:{radius: 0}}} });
- 		
-		//myLineChart.update();
-
-		gauge.value = (state.attitude[0]+180);
+	gauge.value = (state.attitude[0]+180);
 		
-
 // Vitals bars
 
 //********** Uptime

@@ -63,11 +63,6 @@
           <i class="fas fa-fw fa-database"></i>
           <span>Download Data</span></a>
       </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="goal.html">
-          <i class="fas fa-fw fa-bullseye"></i>
-          <span>Goal Planner</span></a>
-      </li>
 
     <li class="nav-item inactive">
         <a class="nav-link" href="config.html">
@@ -546,7 +541,7 @@
 	
 
 //********** CPU temperature 
-	if(state.vitals[0]>50){
+	if(state.vitals[0]>60){
             $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
             
         }

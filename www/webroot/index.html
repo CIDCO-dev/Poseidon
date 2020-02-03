@@ -119,17 +119,25 @@
                   <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
-                      GNSS
+                      <h6>GNSS</h6>
                       <div class="row">
                           <div class="col mr-2">
-			    <div class="row">
-				<div class="col-xl-6 col-md-6">
-	                            <div id="gnssStatusText1" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-				</div>
-				<div class="col-xl-6 col-md-6">
-        	                    <div id="gnssStatusText2" class="text-gray-200 h6 font-weight-bold"></div>
-				</div>
+                            <div class="row">
+                                <div class="col-xl-6 col-md-6">
+                                    <div>Longitude</div>
+                                    <div id="gnssLongitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
+                                </div>
+                                <div class="col-xl-6 col-md-6">
+                                    <div>Latitude</div>
+                                    <div id="gnssLatitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
+                                </div>
                             </div>
+                            <div class="row">
+                               <div class="col-xl-12 col-md-12">
+                                <div id="gnssStatusText">Waiting for data...</div>
+                               </div>
+                            </div>
+
                           </div>
                         <div class="col-auto">
                           <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
@@ -144,22 +152,28 @@
                   <div id="imuStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
-                      IMU
+		
+                      <h6>IMU</h6>
                       <div class="row">
                           <div class="col mr-2">
 			    <div class="row">
 				<div class="col-xl-4 col-md-4">
 				    <div>Heading</div>
-	                            <div id="imuStatusText1" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
+	                            <div id="imuHeadingValue" class="text-gray-200 h6 font-weight-bold"></div>
 				</div>
 				<div class="col-xl-4 col-md-4">
 				    <div>Pitch</div>
-        	                    <div id="imuStatusText2" class="text-gray-200 h6 font-weight-bold"></div>
+        	                    <div id="imuPitchValue" class="text-gray-200 h6 font-weight-bold"></div>
 				</div>
 				<div class="col-xl-4 col-md-4">
 				    <div>Roll</div>
-                	            <div id="imuStatusText3" class="text-gray-200 h6 font-weight-bold"></div>
+                	            <div id="imuRollValue" class="text-gray-200 h6 font-weight-bold"></div>
 				</div>
+			    </div>
+			    <div class="row">
+			       <div class="col-xl-12 col-md-12">
+				<div id="imuStatusText">Waiting for data...</div>
+			       </div>
 			    </div>
                           </div>
                         <div class="col-auto">
@@ -175,13 +189,22 @@
                   <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
-                      Depth (m)
+                      <h6>Depth</h6>
                       <div class="row">
                           <div class="col mr-2">
-                            <div id="sonarStatusText1" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-                            <div id="sonarStatusText2" class="text-gray-200 h6 font-weight-bold"></div>
-                            <div id="sonarStatusText3" class="text-gray-200 h6 font-weight-bold"></div>
+                            <div class="row">
+                                <div class="col-xl-4 col-md-4">
+                                    <div>Meters</div>
+                                    <div id="sonarDepthValue" class="text-gray-200 h6 font-weight-bold"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                               <div class="col-xl-12 col-md-12">
+                                <div id="sonarStatusText">Waiting for data...</div>
+                               </div>
+                            </div>
                           </div>
+
                         <div class="col-auto">
                           <i class="fas fa-rss fa-rotate-180 fa-2x text-gray-300"></i>
                         </div>                          
@@ -413,35 +436,41 @@
         
         if(state.position.length){
             $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#gnssStatusText1").removeClass("bg-gradient-warning").text(state.position[0]);
-            $("#gnssStatusText2").removeClass("bg-gradient-warning").text(state.position[1]);
+            $("#gnssLongitudeValue").text(state.position[0]);
+            $("#gnssLatitudeValue").text(state.position[1]);
+	    $("#gnssStatusText").text("");
         }
         else{
             $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#gnssStatusText1").text("No Position Data");
-            $("#gnssStatusText2").text("");
+            $("#gnssLongitudeValue").text("");
+            $("#gnssLatitudeValue").text("");
+            $("#gnssStatusText").text("No GNSS Data...");
         }
         
         if(state.attitude.length){
             $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#imuStatusText1").text(state.attitude[0]);
-            $("#imuStatusText2").text(state.attitude[1]);
-            $("#imuStatusText3").text(state.attitude[2]);
+            $("#imuHeadingValue").text(state.attitude[0]);
+            $("#imuPitchValue").text(state.attitude[1]);
+            $("#imuRollValue").text(state.attitude[2]);
+	    $("#imuStatusText").text("");
         }
         else{
             $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#imuStatusText1").text("No IMU Data");
-            $("#imuStatusText2").text("");
-            $("#imuStatusText3").text("");
+            $("#imuHeadingValue").text("");
+            $("#imuPitchValue").text("");
+            $("#imuRollValue").text("");        
+	    $("#imuStatusText").text("No IMU Data");
         }
         
         if(state.depth.length){
             $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#sonarStatusText1").text(state.depth[0]);
+            $("#sonarDepthValue").text(state.depth[0]);
+            $("#sonarStatusText").text("");
         }
         else{
             $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#sonarStatusText1").text("No Sonar Data");
+            $("#sonarDepthValue").text("");
+            $("#sonarStatusText").text("No Sonar Data");
         }
 
 //**********  gestion des donnée de l'imu

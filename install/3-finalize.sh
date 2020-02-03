@@ -105,11 +105,6 @@ rtcsync
 makestep 1 3
 EOF2'
 
-echo "[+] Enabling SPI"
-sudo bash -c 'cat << EOF2 > /etc/udev/rules.d/50-spi.rules
-KERNEL=="spidev*", GROUP="dialout", MODE="0664"
-EOF2'
-
 echo "[+] Firmware switch"
 sudo bash -c 'cat << EOF2 > /boot/firmware/config.txt
 # Please DO NOT modify this file; if you need to modify the boot config, the

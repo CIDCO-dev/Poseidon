@@ -33,6 +33,10 @@
 
 # from https://github.com/github/gitignore/blob/master/ROS.gitignore
 
+src/workspace/build/
+src/workspace/devel/
+www/webroot/record/
+
 devel/
 logs/
 build/

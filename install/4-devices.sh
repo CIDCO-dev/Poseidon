@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "[+] Enabling SPI"
+sudo bash -c 'cat << EOF2 > /etc/udev/rules.d/50-spi.rules
+KERNEL=="spidev*", GROUP="dialout", MODE="0664"
+EOF2'
+
+
+echo "[+] Remapping hydrographic devices"
+
+#Intertial sense IMUs use a FT232-based USB-serial chip, and thus appear as such through idVendor 0x0403 and idProduct 0x$
+#rs232 sonar dongle appears as PL2303 with idVendor 0x067b and idProduct 0x2303
+
+sudo bash -c 'cat << EOF > /etc/udev/rules.d/99-usb-serial.rules
+KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", SYMLINK+="imu"
+KERNEL=="ttyUSB*", ATTRS{idVendor}=="067b", SYMLINK+="sonar"
+EOF'

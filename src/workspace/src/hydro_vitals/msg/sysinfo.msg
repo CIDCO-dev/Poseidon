@@ -7,4 +7,4 @@ float64 uptime
 float64 vbat
 float64 rh
 float64 temp
-
+float64 psi

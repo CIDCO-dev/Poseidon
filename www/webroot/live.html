@@ -17,15 +17,9 @@
 	<!--[if lte IE 8]>
 			<link rel="stylesheet" href="/leaflet/leaflet.ie.css" />
 		<![endif]-->
-  <link rel="stylesheet" href="/leaflet/gh-pages.css" />
 
 
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
-  <script src="/leaflet/leaflet.js"></script>
-  <script src="/leaflet/catiline.js"></script>
-  <script src="/leaflet/leaflet.shpfile.js"></script>
-  <script src="/leaflet/leaflet-heat.js"></script>
-  <script src="/leaflet/leaflet.hotline.js"></script>
 
 </head>
 
@@ -334,51 +328,6 @@
 	
     function processState(state){
        
-//********** Update dashboard top marquees  
-        
-        if(!state.position.length || !state.attitude.length || !state.depth.length){
-            $("#systemStatus").removeClass("d-none").addClass("d-block");
-            
-            $("#systemStatusText").text("Check connexion with sensors and reload the page.");
-        }
-        else{
-            $("#systemStatus").removeClass("d-block").addClass("d-none");
-            $("#systemStatusText").text();
-        }
-        
-        if(state.position.length){
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#gnssStatusText1").removeClass("bg-gradient-warning").text(state.position[0]);
-            $("#gnssStatusText2").removeClass("bg-gradient-warning").text(state.position[1]);
-        }
-        else{
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#gnssStatusText1").text("No Position Data");
-            $("#gnssStatusText2").text("No Position Data");
-        }
-        
-        if(state.attitude.length){
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#imuStatusText1").text(state.attitude[0]);
-            $("#imuStatusText2").text(state.attitude[1]);
-            $("#imuStatusText3").text(state.attitude[2]);
-        }
-        else{
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#imuStatusText1").text("No IMU Data");
-            $("#imuStatusText2").text("No IMU Data");
-            $("#imuStatusText3").text("No IMU Data");
-        }
-        
-        if(state.depth.length){
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#sonarStatusText1").text(state.depth[0]);
-        }
-        else{
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#sonarStatusText1").text("No Sonar Data");
-        }
-
 //********** tracé sur la carte
 
   
@@ -424,17 +373,12 @@ curentweight= (23-currentZoom)*6+23;
         //TODO: update rest
     }
       
-  var mutexrx = 0;    
   var socket = new WebSocket("ws://" + window.location.hostname +":9002");
-    if (mutexrx==0){	
-    	socket.onmessage = function (event) {
-        	console.log(event.data);
-		mutexrx = 1;
-	        var state = JSON.parse(event.data);
-	        processState(state);
-		mutexrx = 0;
-	}
-    }  
+  socket.onmessage = function (event) {
+  	console.log(event.data);
+        var state = JSON.parse(event.data);
+        processState(state);
+  }
 Â  </script>
 
 </html>

@@ -9,8 +9,8 @@ project(hydro_vitals)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-    message_generation
-    std_msgs
+  message_generation
+  std_msgs
 
 )
 
@@ -72,6 +72,7 @@ find_package(catkin REQUIRED COMPONENTS
  generate_messages(
    DEPENDENCIES
    std_msgs  # Or other packages containing msgs
+
  )
 
 ################################################
@@ -107,6 +108,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES hydro_vitals
   CATKIN_DEPENDS message_runtime
+
 #  DEPENDS system_lib
 )
 
@@ -205,3 +207,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+add_executable(hydro_vitals src/main.cpp)
+target_link_libraries(hydro_vitals ${catkin_LIBRARIES})

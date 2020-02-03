@@ -32,7 +32,7 @@ class HBV{
 
 	public:
 		HBV(){
-			HBVTopic = node.advertise<hydro_vitals::sysinfo>("sysvit", 1000);
+			HBVTopic = node.advertise<raspberrypi_vitals::sysinfo>("sysvit", 1000);
 		}
 
 		void run(){
@@ -40,7 +40,7 @@ class HBV{
 
 		        while(ros::ok()){
 
-                		hydro_vitals::sysinfo msg;
+                		raspberrypi_vitals::sysinfo msg;
 
 				msg.header=++sequenceNumber;
 

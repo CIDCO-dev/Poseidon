@@ -6,9 +6,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-
-//TODO: init serial port with: sudo stty -F /dev/ttyUSB0 cs8 -parenb -cstopb clocal -crtscts -echo speed 115200
+#include <termios.h>
+#include <errno.h>
 
 #pragma pack(1)
 typedef struct{
@@ -46,7 +45,7 @@ typedef struct{
 	uint8_t serialStatus;
 	uint8_t reserved[2];
 	uint8_t range;
-	uint8_t profileRange;
+	uint8_t profileRange[2];
 	uint8_t dataBytes[2];
 } Imagenex852ReturnDataHeader;
 
@@ -63,36 +62,92 @@ class Imagenex852{
 		}
 
 		void run(){
-
+			//open serial port
 			deviceFile = open(devicePath.c_str(),O_RDWR);
 
-			if(deviceFile >= 0){
-				ROS_INFO("Sonar file opened on %s",devicePath.c_str());
+			if(deviceFile < 0){
+                               ROS_ERROR("Error while opening file %s : %s",devicePath.c_str(),strerror(errno));
+                               throw std::invalid_argument(strerror(errno));
+			}
 
-				ros::Rate loop_rate( 1 );
+			//Get serial port config
+			struct termios tty;
+			memset(&tty, 0, sizeof tty);
 
-			        while(ros::ok()){
-        	        		geometry_msgs::PointStamped msg;
+			if(tcgetattr(deviceFile, &tty) ==0) {
 
-			                msg.header.seq=sequenceNumber++;
-                			msg.header.stamp=ros::Time::now();
-					msg.header.frame_id = "sonar";
+				//Set serial port config
+				tty.c_cflag &= ~PARENB; //No parity
+				tty.c_cflag &= ~CSTOPB; //One Stop bit
+				tty.c_cflag |= CS8;     // 8 bits
+				tty.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control
+				tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines
+				tty.c_lflag &= ~ICANON;
+				tty.c_lflag &= ~ECHO; // Disable echo
+				tty.c_lflag &= ~ECHOE; // Disable erasure
+				tty.c_lflag &= ~ECHONL; // Disable new-line echo
+				tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
+				tty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
+				tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
+				tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
+				tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
+				tty.c_cc[VTIME] = 10;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
+				tty.c_cc[VMIN] = 0;
 
-        		        	msg.point.z = measureDepth(500);
+				cfsetispeed(&tty, B115200);
+				cfsetospeed(&tty, B115200);
 
-                			sonarTopic.publish(msg);
+				if(tcsetattr(deviceFile,TCSANOW,&tty) == 0){
+					ROS_INFO("Sonar file opened on %s",devicePath.c_str());
 
-					ros::spinOnce();
-			                loop_rate.sleep();
-        			}
+					ros::Rate loop_rate( 1 );
+
+				        while(ros::ok()){
+	        	        		geometry_msgs::PointStamped msg;
+
+			                	msg.header.seq=sequenceNumber++;
+                				msg.header.stamp=ros::Time::now();
+						msg.header.frame_id = "sonar";
+
+        		        		msg.point.z = measureDepth(500);
+
+                				sonarTopic.publish(msg);
+
+						ros::spinOnce();
+			                	loop_rate.sleep();
+        				}
+				}
+				else{
+					ROS_ERROR("Error while configuring serial port %s : %s",devicePath.c_str(),strerror(errno));
+					throw std::invalid_argument(strerror(errno));
+				}
 			}
 			else{
-				ROS_ERROR("Error while opening %s : %s",devicePath.c_str(),strerror(errno));
-				throw std::invalid_argument(strerror(errno));
+ 	                       ROS_ERROR("Error while fetching serial port configuration on %s : %s",devicePath.c_str(),strerror(errno));
+                               throw std::invalid_argument(strerror(errno));
 			}
 		}
 
+		int serialRead(uint8_t * buf,unsigned int sz){
+			unsigned int totalRead = 0;
+
+			while(totalRead < sz){
+				unsigned int bytesRead = read(deviceFile,& (buf[totalRead]),sz - totalRead);
+
+				if(bytesRead > 0){
+	 				totalRead += bytesRead;
+				}
+				else{
+					return bytesRead;
+				}
+			}
+
+			return totalRead;
+		}
+
 		double measureDepth(int dataPoints){
+			double depth = 0;
+
 			Imagenex852SwitchDataCommand cmd;
 			memset(&cmd,0,sizeof(Imagenex852SwitchDataCommand));
 
@@ -105,7 +160,7 @@ class Imagenex852{
 			cmd.absorption  = 0x14    ; //20 = 0.2db    675kHz
 			cmd.pulseLength = 150     ; //1-255 -> 1us to 255us in 1us increments
 			cmd.profileMinimumRange =  0; //Min range in meters / 10
-			cmd.triggerControl = 0x02;
+			cmd.triggerControl = 0x00;
 			cmd.dataPoints  = dataPoints/10;
 			cmd.profile     = 0;
 			cmd.switchDelay = 0;
@@ -116,30 +171,36 @@ class Imagenex852{
 
 			if( (nbBytes = write(deviceFile,&cmd,sizeof(Imagenex852SwitchDataCommand))) == 27){
 
-				ROS_INFO("Sent command (%d bytes)",nbBytes);
+				//ROS_INFO("Sent command (%d bytes)",nbBytes);
 
 				Imagenex852ReturnDataHeader hdr;
 
-				if( (nbBytes = read(deviceFile,&hdr,sizeof(Imagenex852ReturnDataHeader))) == 11){
+				if( (nbBytes = serialRead((uint8_t*)&hdr,sizeof(Imagenex852ReturnDataHeader))) == 12){
 
-					ROS_INFO("Read %d bytes header",nbBytes);
+					//ROS_INFO("Read %d bytes header",nbBytes);
 
-					ROS_INFO("%c%c%c",hdr.magic[0],hdr.magic[1],hdr.magic[2]);
-/*
+					//ROS_INFO("%c%c%c",hdr.magic[0],hdr.magic[1],hdr.magic[2]);
+
 					if(dataPoints > 0){
 						uint8_t echoData[dataPoints];
 
-						deviceFile.read((char*)echoData,dataPoints);
+						nbBytes = serialRead(echoData,dataPoints);
 
-						ROS_INFO("Read data points");
+						//ROS_INFO("Read %d data points",nbBytes);
 					}
-*/
+
 					uint8_t terminationCharacter;
- 
+
 					do{
-						ROS_INFO("ding");
-						read(deviceFile,&terminationCharacter,sizeof(uint8_t));
+						serialRead(&terminationCharacter,sizeof(uint8_t));
 					} while(terminationCharacter != 0xFC);
+
+					uint16_t profileHigh = (hdr.profileRange[1] & 0x7E) >> 1;
+					uint16_t profileLow  = ((hdr.profileRange[1] & 0x01) << 7) | (hdr.profileRange[0] & 0x7F);
+
+					uint16_t depthCentimeters = (profileHigh << 8) | profileLow;
+
+					depth = (double)depthCentimeters / (double) 100;
 				}
 				else{
 					ROS_ERROR("Cannot read return data header (%d bytes read)",nbBytes);
@@ -148,7 +209,7 @@ class Imagenex852{
 			else{
 				ROS_ERROR("Cannot write switch data command (%d bytes written)",nbBytes);
 			}
-			return 42.0;
+			return depth;
 		}
 
 	private:

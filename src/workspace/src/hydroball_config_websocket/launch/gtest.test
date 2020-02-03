@@ -1,0 +1,3 @@
+<launch>
+	<test test-name="Unit-Tests" pkg="testing" type="testing-test" name="JustAName"/>
+</launch>

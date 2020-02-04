@@ -16,6 +16,10 @@
 
 <node pkg="imu_dummy" name="IMU" type="imu_dummy" output="screen"/>
 
+<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals" output="screen"/>
+  
+<node pkg="state_controller" name="state_controller" type="state_controller" output="screen"/>
+
 <node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket" output="screen"/>
 
 </launch>

@@ -58,10 +58,72 @@
             $("#sonarStatusText").text("No Sonar Data");
         }
 
+//**********
+//**********
+//**********
+//**********
+//**********
+//**********
+//********** 
+//********** CPU load
+	if(state.vitals[1]<90){
+            $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            
+        }
+	 else{
+             $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+        }
+
+	$("#cpuloadText").text(state.vitals[1] + "%");
+	$("#cpuload").width(state.vitals[1] + "%");
+	
+
+//********** CPU temperature 
+	if(state.vitals[0]>50){
+            $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+            
+        }
+	 else{
+             $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+        }
+
+	$("#cputempText").text(state.vitals[0] + "C");
+	$("#cputemp").width(state.vitals[0] + "%");
+
+
+//********** Memory
+	if(state.vitals[2]>10){
+            $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            
+        }
+	 else{
+             $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+        }
+
+	$("#freeramText").text(100 - state.vitals[2] + "%");
+	$("#freeram").width(100 - state.vitals[2] + "%");
+	
+
+
+//********** HDD value
+ 	if(state.vitals[3]>20){
+            $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            
+        }
+	 else{
+             $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+        }
+
+	$("#freehddText").text(100 - state.vitals[3] + "%");
+	$("#freehdd").width(100 - state.vitals[3] + "%");
+	
+
+
+
         //TODO: update rest
     }
       
-    var socket = new WebSocket("ws://192.168.0.203:9002");
+    var socket = new WebSocket("ws://192.168.0.183:9002");
 
     socket.onmessage = function (event) {
         console.log(event.data);
@@ -248,37 +310,37 @@
                     
                   <h4 class="small font-weight-bold">Battery Level <span class="float-right">20%</span></h4>
                   <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="batvolt" class="progress-bar bg-danger" role="progressbar" style="width: 20%"  aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
                   <h4 class="small font-weight-bold">Internal Moisture <span class="float-right">20%</span></h4>
                   <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="moisture" class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
                   <h4 class="small font-weight-bold">Internal Temperature <span class="float-right">20%</span></h4>
                   <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="temp" class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>                    
 
-                  <h4 class="small font-weight-bold">CPU Load <span class="float-right">20%</span></h4>
+                  <h4 class="small font-weight-bold">CPU Load <span id="cpuloadText" class="float-right">20%</span></h4>
                   <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="cpuload" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
-                  <h4 class="small font-weight-bold">CPU Temperature <span class="float-right">20%</span></h4>
+                  <h4 class="small font-weight-bold">CPU Temperature <span id="cputempText" class="float-right">20%</span></h4>
                   <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="cputemp" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
-                  <h4 class="small font-weight-bold">Memory Usage <span class="float-right">20%</span></h4>
+                  <h4 class="small font-weight-bold">Memory Usage <span id="freeramText" class="float-right">20%</span></h4>
                   <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="freeram" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
-                  <h4 class="small font-weight-bold">Disk Space <span class="float-right">40%</span></h4>
+                  <h4 class="small font-weight-bold">Disk Space <span id="freehddText" class="float-right">40%</span></h4>
                   <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="freehdd" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
                 </div>

@@ -11,9 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   message_generation
   std_msgs
-
 )
-
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -72,7 +70,6 @@ find_package(catkin REQUIRED COMPONENTS
  generate_messages(
    DEPENDENCIES
    std_msgs  # Or other packages containing msgs
-
  )
 
 ################################################
@@ -107,8 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES raspberrypi_vitals
-  CATKIN_DEPENDS message_runtime
-
+  CATKIN_DEPENDS roscpp std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -119,8 +115,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+ include
+ ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -209,5 +205,7 @@ include_directories(
 # catkin_add_nosetests(test)
 
 
+
 add_executable(raspberrypi_vitals src/main.cpp)
 target_link_libraries(raspberrypi_vitals ${catkin_LIBRARIES})
+

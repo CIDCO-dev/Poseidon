@@ -12,7 +12,7 @@
 
 <rosparam subst_value="True">
 
-    inertial_sense_node: { port: "/dev/ttyUSB0",
+    inertial_sense_node: { port: "/dev/imu",
                            baud: 921600,
                            navigation_dt_ms: 10,
                            stream_INS: true,
@@ -21,12 +21,15 @@
                            stream_GPS_info: false,
                            stream_baro: false,
                            stream_mag: false,
-                           stream_preint_IMU: false
+                           stream_preint_IMU: false,
+                           INS_rpy_radians : [0,0,1.57]
                          }
 </rosparam>
 
 <node pkg="inertial_sense" name="IMU" type="inertial_sense_node" output="screen">
   <remap from="ins" to="pose"/>
+  <param name="port" value="/dev/imu"/>
+  <param name="INS_rpy_radians" value="0,0,90"/>
 </node>
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsdIp) $(arg gpsdPort)"/>

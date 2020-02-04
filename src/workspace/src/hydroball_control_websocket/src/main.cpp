@@ -83,7 +83,7 @@ public:
                 ss << "\"position\":[],";
             }
             else{
-                ss << "\"position\":[" << std::setprecision(12) << (int) state.position.longitude << "," <<  state.position.latitude  << "],";
+                ss << "\"position\":[" << std::setprecision(12) << state.position.longitude << "," <<  state.position.latitude  << "],";
             }
 
             if(!state.attitude.header.seq){
@@ -100,19 +100,31 @@ public:
             }
 
             if(!state.depth.header.seq){
-                ss << "\"depth\":[]";
+                ss << "\"depth\":[],";
             }
             else{
-                ss << "\"depth\":[" << std::setprecision(6) << state.depth.point.z  << "]";
+                ss << "\"depth\":[" << std::setprecision(6) << state.depth.point.z  << "],";
             }
 
-            ss << "}";
+            
+
+	    if(!state.vitals.header){
+                ss << "\"vitals\":[],";
+            }
+            else{//state.position.longitude
+                
+              ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "]";
+            }
+           
+ 	    ss << "}";
 
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
                  srv.send(it,ss.str(),websocketpp::frame::opcode::text);
             }
-            
+
+	  
+
             lastTimestamp = timestamp;
         }
     }

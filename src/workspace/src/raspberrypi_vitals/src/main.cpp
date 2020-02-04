@@ -32,7 +32,7 @@ class HBV{
 
 	public:
 		HBV(){
-			HBVTopic = node.advertise<raspberrypi_vitals::sysinfo>("sysvit", 1000);
+			HBVTopic = node.advertise<raspberrypi_vitals::sysinfo>("vitals", 1000);
 		}
 
 		void run(){

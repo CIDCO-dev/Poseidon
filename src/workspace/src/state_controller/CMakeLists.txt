@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
   message_generation
+  raspberrypi_vitals
 )
 
 ## System dependencies are found with CMake's conventions
@@ -74,6 +75,7 @@ add_message_files(
    std_msgs
    sensor_msgs
    geometry_msgs
+   raspberrypi_vitals
  )
 
 ################################################
@@ -108,7 +110,7 @@ add_message_files(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES state_controller
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_runtime raspberrypi_vitals
 #  DEPENDS system_lib
 )
 

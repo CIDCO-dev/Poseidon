@@ -7,6 +7,8 @@
 #include "geometry_msgs/PointStamped.h"
 #include "state_controller/State.h"
 #include "std_msgs/String.h"
+#include "raspberrypi_vitals/sysinfo.h"
+
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -21,7 +23,9 @@ class StateController{
 			positionTopic = n.subscribe("fix", 1000, &StateController::gnssCallback,this);
 			attitudeTopic = n.subscribe("pose", 1000, &StateController::imuCallback,this);
 			sonarTopic    = n.subscribe("depth", 1000, &StateController::sonarCallback,this);
+                        vitalsTopic   = n.subscribe("vitals", 1000, &StateController::vitalsCallback,this);
                         
+
                         stateTopic    = n.advertise<state_controller::State>("state", 1000);
                         
                         state.position.status.status = -1;
@@ -42,6 +46,12 @@ class StateController{
                     stateUpdated();
 		}
 
+		void vitalsCallback(const raspberrypi_vitals::sysinfo& vital){
+                    memcpy(&state.vitals,&vital,sizeof(vital));
+                    stateUpdated();
+		}
+
+
 		//TODO: add other sensor callbacks
 
 		void stateUpdated(){
@@ -60,6 +70,7 @@ class StateController{
             ros::Subscriber positionTopic;
             ros::Subscriber attitudeTopic;
             ros::Subscriber sonarTopic;
+	    ros::Subscriber vitalsTopic;
                 
             //output topic
             ros::Publisher  stateTopic;

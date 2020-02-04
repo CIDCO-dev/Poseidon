@@ -49,7 +49,7 @@
           <span>Dashboard</span></a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="live.html">
+        <a class="nav-link" href="status.html">
           <i class="fas fa-fw fa-globe-americas"></i>
           <span>Live Data</span></a>
       </li>
@@ -109,106 +109,41 @@
           </div>
           
           <!-- Status Row -->
-          <div class="row">
-
-              
-
-
-                 <div class="col-xl-4 col-md-4 mb-4">
-                  <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      GNSS
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div id="gnssStatusText1" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-                            <div id="gnssStatusText2" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-                            <div id="gnssStatusText3" class="text-gray-200 h6 font-weight-bold"> </div>
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                 <div class="col-xl-4 col-md-4 mb-4">
-                  <div id="imuStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      IMU
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div id="imuStatusText1" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-                            <div id="imuStatusText2" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-                            <div id="imuStatusText3" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-ship fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                 <div class="col-xl-4 col-md-4 mb-4">
-                  <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      Depth (m)
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div id="sonarStatusText1" class="text-gray-200 h6 font-weight-bold">Waiting for data...</div>
-                            <div id="sonarStatusText2" class="text-gray-200 h6 font-weight-bold"> </div>
-                            <div id="sonarStatusText3" class="text-gray-200 h6 font-weight-bold"> </div>
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-rss fa-rotate-180 fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-          </div>
-
-	  <!-- Gauges row -->
-          <div class="row">
-
-            <!-- Content Column -->
-            <div class="col-lg-6 mb-6">
-
-              <!-- Project Card Example -->
               <div class="card shadow mb-4">
-                <div class="card-header py-3" >
-                  <h6 class="m-0 font-weight-bold text-primary">Map</h6>
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">System</h6>
                 </div>
-		<div class="card-body">
-		
-                <div  id="map" style="width: 100%; height: 400px;" class="card-body">
+                <div class="card-body">
 
-                </div>
+                  <h4 class="small font-weight-bold">Up Time<span id="uptimeText" class="float-right">N/A</span></h4>
+                  <div class="mb-4">
+                  </div>
+
+                  <h4 class="small font-weight-bold">CPU Load <span id="cpuloadText" class="float-right">N/A</span></h4>
+                  <div class="progress mb-4">
+                    <div id="cpuload" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <h4 class="small font-weight-bold">CPU Temperature <span id="cputempText" class="float-right">N/A</span></h4>
+                  <div class="progress mb-4">
+                    <div id="cputemp" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <h4 class="small font-weight-bold">Memory Usage <span id="freeramText" class="float-right">N/A</span></h4>
+                  <div class="progress mb-4">
+                    <div id="freeram" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <h4 class="small font-weight-bold">Disk Space <span id="freehddText" class="float-right">N/A</span></h4>
+                  <div class="progress mb-4">
+                    <div id="freehdd" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
                 </div>
               </div>
             </div>
 
-  
-         
- 	  
-            <!-- Content Column -->
-            <div class="col-lg-3 mb-6">
-
-              <!-- Project Card Example -->
-              
-
-            </div>            
-            
           </div>
-
-
-
 
         </div>
         <!-- /.container-fluid -->
@@ -259,69 +194,53 @@
  
 </body>
 <script>
-	var latlon = Array(2);
-	var currentpolyline = Array(10);
-	var currentpolyline1 = Array(10);
-	var currentpolyline2 = Array(10);
-	var currentpolyline3 = Array(10);
-	var currentpolyline4 = Array(10);
-	var currentpolyline5 = Array(10);
-	var currentpolyline6 = Array(10);
-	var currentpolyline7 = Array(10);
-	var currentpolyline8 = Array(10);
-	var qp = Array(3);
-	var quakePoints = Array(10);
-	var quakePoints1 = Array(10);
-	var quakePoints2 = Array(10);
-	var quakePoints3 = Array(10);
-	var quakePoints4 = Array(10);
-	var quakePoints5 = Array(10);
-	var quakePoints6 = Array(10);
-	var quakePoints7 = Array(10);
-	var quakePoints8 = Array(10);
-	currentpolyline = currentpolyline.filter(item => item);
-	quakePoints = quakePoints.filter(item => item);
-	var oldstate = 0;
-	var m = new L.map(map).setView([0, 0], 23);
-	var polycolor = "";
-	var depth = 0.0;
-	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-
-        //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        //Chart.defaults.global.defaultFontColor = '#858796'
-		
-	L.control.scale().addTo(m);
-
-	var polynew = new L.polyline([]).addTo(m);
-	var polyline = new L.polyline([]).addTo(m);
-        var polyLatLngs = [];
-
-	var newhotline = new L.hotline([], {}).addTo(m);
-	var hotlineLayer = new L.hotline([], {}).addTo(m);
-	var hotlineLayer1 = new L.hotline([], {}).addTo(m);
-	var hotqp = [];
-	var curentweight = 23;
-	var smootf = 5;
-
-	var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
-		onEachFeature: function(feature, layer) {
-			if (feature.properties) {
-				layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-					return k + ": " + feature.properties[k];
-				}).join("<br />"), {
-					maxHeight: 200
-				});
-			}
-		}
-	});
-	shpfile.addTo(m);
-	shpfile.once("data:loaded", function() {
-	console.log("finished loaded shapefile");
-	});
-	var currentZoom = m.getZoom();
-	
     function processState(state){
+
+	// Vitals bars
+
+	// Uptime
+        var timeup    = state.vitals[4];
+        var jourup  = Math.floor(timeup/86400);
+        var heureup = Math.floor((timeup-(jourup *86400))/3600);
+        var minuteup  = Math.floor((timeup-(jourup*86400+heureup*3600))/60);
+        var secondeup = Math.floor(timeup-((jourup * 86400) + (heureup * 3600) + (minuteup * 60)));
+        var uptime    = jourup + " ";
+        if (heureup<10){uptime = uptime + "0" }
+        uptime    = uptime + heureup + ":";
+        if (minuteup<10){uptime = uptime + "0" }
+        uptime    = uptime + minuteup + ":";
+        if (secondeup<10){uptime = uptime + "0" }
+        uptime    = uptime + secondeup;
+        $("#uptimeText").text(uptime);
+
+
+	// CPU load
+        $("#cpuload").removeClass("bg-gradient-warning").removeClass((state.vitals[1]<90 ?"bg-gradient-danger":"bg-gradient-success")).addClass( (state.vitals[1]<90 ? "bg-gradient-success" : "bg-gradient-danger"));
+
+        $("#cpuloadText").text(state.vitals[1] + "%");
+        $("#cpuload").width(state.vitals[1] + "%");
+
+
+	// CPU temperature
+        $("#cputemp").removeClass("bg-gradient-warning").removeClass( (state.vitals[0]>60 ?"bg-gradient-success":"bg-gradient-danger")).addClass( ( state.vitals[0]>60 ?"bg-gradient-danger":"bg-gradient-success"));
+
+        $("#cputempText").text(state.vitals[0] + "\u00B0" + "C");
+        $("#cputemp").width(state.vitals[0] + "%");
+
+
+	// Memory
+        $("#freeram").removeClass("bg-gradient-warning").removeClass(( state.vitals[2]>10 ? "bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.vitals[2]>10 ? "bg-gradient-success" : "bg-gradient-danger" );
+
+        $("#freeramText").text(100 - state.vitals[2] + "%");
+        $("#freeram").width(100 - state.vitals[2] + "%");
+
+	// HDD free space
+        $("#freehdd").removeClass("bg-gradient-warning").removeClass( ( state.vitals[3]>20 ?"bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.vitals[3]>20 ? "bg-gradient-success" : "bg-gradient-danger"));
+
+        $("#freehddText").text(100 - state.vitals[3] + "%");
+        $("#freehdd").width(100 - state.vitals[3] + "%");
+    }
+
        
 //********** tracé sur la carte
 
@@ -361,9 +280,6 @@ curentweight= (23-currentZoom)*6+23;
 
 		
 		}
-
-
-
 
         //TODO: update rest
     }

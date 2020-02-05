@@ -23,6 +23,7 @@ class HBV{
 		double loadavg;
 		string totalram;
 		string freeram;
+		string freeram1;
 		double f_totalram;
 		double f_freeram;
 		double f_ram;
@@ -71,6 +72,7 @@ class HBV{
 				ffram.open ("/proc/meminfo");
 				if (ffram.is_open()){
 				getline (ffram,totalram);
+				getline (ffram,freeram1);
 				getline (ffram,freeram);
 				ffram.close();}
 				totalram.erase (totalram.begin(), totalram.begin()+18);

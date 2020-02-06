@@ -34,9 +34,9 @@ class StateController{
 		}
 
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss){
-                    if( gnss.header.seq > old_fix_seq) { 
+                    if( gnss.header.stamp.secs > old_fix_seq) { 
 			memcpy(&state.position,&gnss,sizeof(gnss));
-			old_fix_seq = gnss.header.seq;
+			old_fix_seq = gnss.header.stamp.secs;
                     	stateUpdated();
 			}
 		}

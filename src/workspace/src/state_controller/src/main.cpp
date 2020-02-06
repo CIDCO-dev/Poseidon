@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+int old_fix_seq;
+
 class StateController{
 	public:
 		StateController(){
@@ -32,8 +34,11 @@ class StateController{
 		}
 
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss){
-                    memcpy(&state.position,&gnss,sizeof(gnss));
-                    stateUpdated();
+                    if( gnss.header.seq > old_fix_seq) { 
+			memcpy(&state.position,&gnss,sizeof(gnss));
+			old_fix_seq = gnss.header.seq;
+                    	stateUpdated();
+			}
 		}
 
 		void imuCallback(const sensor_msgs::Imu& imu){

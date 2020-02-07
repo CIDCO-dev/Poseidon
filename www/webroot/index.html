@@ -24,7 +24,7 @@
   <script src="/leaflet/leaflet.js"></script>
   <script src="/leaflet/catiline.js"></script>
   <script src="/leaflet/leaflet.shpfile.js"></script>
-  <script src="/leaflet/leaflet-heat.js"></script>
+  <script src="/leaflet/leaflet.hotline.js"></script>
 
 </head>
 
@@ -283,31 +283,34 @@
  
 </body>
 <script>
-var quakePoints = [
-[48.5396,-68.1242,1.7345],
-[48.8725,-68.9561,2.6901],
-[48.8992,-68.3117,4.6968],
-[48.7495,-68.02,  1.8642],
-[48.7008,-68.0876,2.1629],
-[48.7371,-68.0682,2.0408],
-[48.372, -68.3502,2.7565],
-[48.7511,-68.0623,2.4531],
-[48.7557,-68.3391,2.1871],
-[48.6881,-68.2726,3.1336],
-[48.7463,-68.1194,2.7113],
-[48.6966,-68.1238,2.4168]];
+var latlon = Array(2);
+var polyl = Array(10);
+var qp = Array(3);
+var quakePoints = Array(10);
+polyl = polyl.filter(item => item);
+quakePoints = quakePoints.filter(item => item);
+var oldstate = 0;
+
+
 		var m = L.map(map).setView([-41.286, 174.796], 8);
 		
 		var polyline = L.polyline([]).addTo(m);
 		//m.panTo([-41.286, 174.796]);
 
-		var heat = L.heatLayer(quakePoints,{
-            	radius: 20,
-            	blur: 20, 
-            	maxZoom: 10,
-        	}).addTo(m);
+		/*var hotlineLayer = L.hotline([], {
+			min: 150,
+			max: 350,
+			palette: {
+				0.0: '#008800',
+				0.5: '#ffff00',
+				1.0: '#ff0000'
+			},
+			weight: 5,
+			outlineColor: '#000000',
+			outlineWidth: 1
+		}).addTo(m);*/
 
-var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
+		var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
 			onEachFeature: function(feature, layer) {
 				if (feature.properties) {
 					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
@@ -379,16 +382,36 @@ var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
 /// ajout du tracé pour identifier ce qui as été scaner
 
 */
+if (state.vitals[4] > oldstate){
+oldstate = state.vitals[4];
 
+//positionne la carte sur la position gps
 m.panTo([state.position[1], state.position[0]]);
-polyline = L.polyline([
-            		[41.286, -74.796],
-            		[41.292, -74.788],[41.26, -74.76],
-            		[41.29, -74.78]],
-	    		{color: 'red'}
-            		).addTo(m);
+
+//dessine la ligne parcourue
+latlon = [state.position[1], state.position[0]];
+if (latlon.length > 0) {polyl.push(latlon);}
+polyline = L.polyline(polyl,{color: 'red'}).addTo(m);
+
+//dessine le niveau de profondeur
+//qp = [state.position[1], state.position[0], state.depth[0]];
+//if (qp.length > 0) {quakePoints .push(qp);}
+//heat = L.heatLayer(quakePoints,{radius: 25, blur: 15, maxZoom: 10, max: 20,gradient: {0.4: 'red', 0.65: 'lime', 1: 'blue'} }).addTo(m);
+/*hotlineLayer = L.hotline(quakePoints, {
+			min: 150,
+			max: 350,
+			palette: {
+				0.0: '#ff0000',
+				5.0: '#00ff00',
+				10.0: '#0000ff'
+			},
+			weight: 160,
+			outlineColor: '#000000',
+			outlineWidth: 0
+		}).addTo(m);*/
 
 
+}
 //**********
 //**********
 //**********

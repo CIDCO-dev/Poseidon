@@ -37,7 +37,7 @@ class HBV{
 		}
 
 		void run(){
-			ros::Rate loop_rate(0.5);
+			ros::Rate loop_rate(1);
 
 		        while(ros::ok()){
 

@@ -24,6 +24,7 @@
   <script src="/leaflet/leaflet.js"></script>
   <script src="/leaflet/catiline.js"></script>
   <script src="/leaflet/leaflet.shpfile.js"></script>
+  <script src="/leaflet/leaflet-heat.js"></script>
   <script src="/leaflet/leaflet.hotline.js"></script>
 
 </head>
@@ -182,20 +183,42 @@
           <div class="row">
 
             <!-- Content Column -->
-            <div class="col-lg-9 mb-6">
+            <div class="col-lg-6 mb-6">
 
               <!-- Project Card Example -->
               <div class="card shadow mb-4">
-                <div class="card-header py-3">
+                <div class="card-header py-3" >
                   <h6 class="m-0 font-weight-bold text-primary">Enclosure</h6>
                 </div>
-                <div  id="map" style="width: 800px; height: 600px;" class="card-body">
+		<div class="card-body">
+                <div  id="map" style="width: 100%; height: 400px;" class="card-body">
 
-
+                </div>
                 </div>
               </div>
             </div>
             
+            <!-- Content Column -->
+            <div class="col-lg-3 mb-6">
+ 	      <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">Attitude</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+		    <div id="chartContainer">
+                    <canvas id="lineChart"></canvas>
+		    </div> 
+		    <div id="gaugeContainer">
+		    <canvas id="imuz"></canvas>
+		    </div>  
+
+                  </div>
+                </div>
+              </div>
+	   </div>
+ 
             <!-- Content Column -->
             <div class="col-lg-3 mb-6">
 
@@ -206,7 +229,11 @@
                 </div>
                 <div class="card-body">
                     
-                  <h4 class="small font-weight-bold">CPU Load <span id="cpuloadText" class="float-right">N/A</span></h4>
+                  <h4 class="small font-weight-bold">Up Time<span id="uptimeText" class="float-right">N/A</span></h4>
+                  <div class="mb-4">
+                  </div>
+
+		  <h4 class="small font-weight-bold">CPU Load <span id="cpuloadText" class="float-right">N/A</span></h4>
                   <div class="progress mb-4">
                     <div id="cpuload" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
@@ -275,7 +302,8 @@
   <script src="js/sb-admin-2.min.js"></script>
 
   <!-- Page level plugins -->
-  <!-- <script src="vendor/chart.js/Chart.min.js"></script> -->
+  <script src="js/Chart.min.js"></script>
+  <script src="js/gauge.min.js"></script>
 
   <!-- Page level custom scripts -->
   <!-- <script src="js/demo/chart-area-demo.js"></script> -->
@@ -283,49 +311,135 @@
  
 </body>
 <script>
-var latlon = Array(2);
-var polyl = Array(10);
-var qp = Array(3);
-var quakePoints = Array(10);
-polyl = polyl.filter(item => item);
-quakePoints = quakePoints.filter(item => item);
-var oldstate = 0;
+	var latlon = Array(2);
+	var currentpolyline = Array(10);
+	var qp = Array(3);
+	var quakePoints = Array(10);
+	currentpolyline = currentpolyline.filter(item => item);
+	quakePoints = quakePoints.filter(item => item);
+	var oldstate = 0;
+	var m = L.map(map).setView([0, 0], 17);
+	var polycolor = "";
+	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
-
-		var m = L.map(map).setView([-41.286, 174.796], 8);
+Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+Chart.defaults.global.defaultFontColor = '#858796'
 		
-		var polyline = L.polyline([]).addTo(m);
-		//m.panTo([-41.286, 174.796]);
+	L.control.scale().addTo(m);
 
-		/*var hotlineLayer = L.hotline([], {
-			min: 150,
-			max: 350,
-			palette: {
-				0.0: '#008800',
-				0.5: '#ffff00',
-				1.0: '#ff0000'
-			},
-			weight: 5,
-			outlineColor: '#000000',
-			outlineWidth: 1
-		}).addTo(m);*/
+	var polyline = L.polyline([]).addTo(m);
 
-		var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
-			onEachFeature: function(feature, layer) {
-				if (feature.properties) {
-					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-						return k + ": " + feature.properties[k];
-					}).join("<br />"), {
-						maxHeight: 200
-					});
-				}
+	//var heat = L.heatLayer([]).addTo(m);
+
+	var hotlineLayer = L.hotline([]).addTo(m);
+
+	var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
+		onEachFeature: function(feature, layer) {
+			if (feature.properties) {
+				layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+					return k + ": " + feature.properties[k];
+				}).join("<br />"), {
+					maxHeight: 200
+				});
 			}
-		});
-		shpfile.addTo(m);
-		shpfile.once("data:loaded", function() {
-			console.log("finished loaded shapefile");
-		});
-	
+		}
+	});
+	shpfile.addTo(m);
+	shpfile.once("data:loaded", function() {
+	console.log("finished loaded shapefile");
+	});
+
+	var gauge = new RadialGauge({
+    renderTo: 'imuz',
+    minValue: 0,
+    maxValue: 360,
+    majorTicks: [
+        "180",
+        "-135",
+        "-90",
+        "-45",
+        "0",
+        "45",
+        "90",
+        "135",
+        "180"
+    ],
+    minorTicks: 22,
+    ticksAngle: 360,
+    startAngle: 0,
+    strokeTicks: false,
+    highlights: false,
+    colorPlate: "#222",
+    colorMajorTicks: "#f5f5f5",
+    colorMinorTicks: "#ddd",
+    colorNumbers: "#ccc",
+    colorNeedle: "rgba(240, 128, 128, 1)",
+    colorNeedleEnd: "rgba(255, 160, 122, .9)",
+    valueBox: false,
+    valueTextShadow: false,
+    colorCircleInner: "#fff",
+    colorNeedleCircleOuter: "#ccc",
+    needleCircleSize: 10,
+    needleCircleOuter: false,
+    animationRule: "linear",
+    needleType: "line",
+    needleStart: 25,
+    needleEnd: 99,
+    needleWidth: 5,
+    borders: true,
+    borderInnerWidth: 0,
+    borderMiddleWidth: 0,
+    borderOuterWidth: 3,
+    colorBorderOuter: "#ccc",
+    colorBorderOuterEnd: "#ccc",
+    colorNeedleShadowDown: "#222",
+    borderShadowWidth: 0,
+    
+    animationDuration: 150,
+    animateOnInit: true
+}).draw();
+
+
+function perc2color(percol,mincol,maxcol) {
+            var basecol = (maxcol - mincol);
+
+            if (basecol == 0) { percol= 100; }
+            else {
+                percol= (percol - mincol) / basecol * 100; 
+            }
+            var r, g, b = 0;
+
+
+            if (percol< 20) {
+                r = 255;
+                g = Math.round(percol/20*100);
+                b = 0;
+            }
+            else if (percol< 40) {
+                r = Math.round(255 - (percol-20)/20*100);
+                g = 255;
+                b = 0;
+            }
+            else if (percol< 60) {
+                r = 0;
+                g = 255;
+                b = Math.round((percol-40)/20*100);
+            }
+            else if (percol< 80) {
+                r = 0;
+                g = Math.round(255 - (percol-60)/20*100);
+                b = 255;
+            }
+            else {
+                r = Math.round((percol-80)/20*100);;
+                g = 0;
+                b = 255;
+            }
+            var h = r * 0x10000 + g * 0x100 + b * 0x1;
+            return '#' + ('000000' + h.toString(16)).slice(-6);
+        };
+
     function processState(state){
         
 	// Update dashboard top marquees  
@@ -373,51 +487,76 @@ var oldstate = 0;
             $("#sonarStatusText1").text("No Sonar Data");
         }
 
-//**********
+//********** tracé sur la carte
 
-/*  
-//focus sur la derniere position
+  
+	//focus sur la derniere position
 
+	if (state.vitals[4] > oldstate){
+		oldstate = state.vitals[4];
 
-/// ajout du tracé pour identifier ce qui as été scaner
+		//positionne la carte sur la position gps
+		m.panTo([state.position[1], state.position[0]]);
 
-*/
-if (state.vitals[4] > oldstate){
-oldstate = state.vitals[4];
+		//dessine la ligne parcourue
+		latlon = [state.position[1], state.position[0]];
+		currentpolyline .push(latlon);
+		polycolor = perc2color(state.depth[0],0,100);
+		polyline = L.polyline([currentpolyline ],{weight: 20,opacity:1, color: polycolor}).addTo(m);
+		currentpolyline =[latlon];
 
-//positionne la carte sur la position gps
-m.panTo([state.position[1], state.position[0]]);
+		//dessine le niveau de profondeur
+		qp = [state.position[1], state.position[0], state.depth[0]];
+		quakePoints.push(qp);
 
-//dessine la ligne parcourue
-latlon = [state.position[1], state.position[0]];
-if (latlon.length > 0) {polyl.push(latlon);}
-polyline = L.polyline(polyl,{color: 'red'}).addTo(m);
+		//heat = L.heatLayer(quakePoints,{radius: 25, blur: 15, maxZoom: 10, max: 20,gradient: {0.4: 'red', 0.65: 'lime', 1: 'blue'} }).addTo(m);
 
-//dessine le niveau de profondeur
-//qp = [state.position[1], state.position[0], state.depth[0]];
-//if (qp.length > 0) {quakePoints .push(qp);}
-//heat = L.heatLayer(quakePoints,{radius: 25, blur: 15, maxZoom: 10, max: 20,gradient: {0.4: 'red', 0.65: 'lime', 1: 'blue'} }).addTo(m);
-/*hotlineLayer = L.hotline(quakePoints, {
+		/*hotlineLayer = L.hotline(quakePoints, {
 			min: 150,
 			max: 350,
 			palette: {
 				0.0: '#ff0000',
-				5.0: '#00ff00',
-				10.0: '#0000ff'
+				0.5: '#00ff00',
+				1.0: '#0000ff'
 			},
 			weight: 160,
 			outlineColor: '#000000',
 			outlineWidth: 0
-		}).addTo(m);*/
+			}).addTo(m);*/
 
+		quakePoints=[qp];
+		}
+//**********  gestion des donnée de l'imu
+		imu_x .push(state.attitude[0]);
+		imu_x .shift();
+		imu_y .push(state.attitude[1]);
+		imu_y .shift();
+		var ctxL = document.getElementById("lineChart").getContext('2d');
+		var myLineChart = new Chart(ctxL, {
+		type: 'line',
+		data: {
+		labels: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+		datasets: [{label: "Pitch", data: imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
+		           {label: "Roll", data: imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
+		options: {responsive: true, animation: false, elements: {point:{radius: 0}}} });
+ 
+		gauge.value = (state.attitude[2]+180);
+		
 
-}
 //**********
 //**********
 //**********
 //**********
-//**********
-//********** 
+//********** Up time 
+	var timeup    = state.vitals[4];
+	var jourup  = Math.floor(timeup/86400);
+	var heureup = Math.floor((timeup-(jourup *86400))/3600);
+	var minuteup  = Math.floor((timeup-(jourup*86400+heureup*3600))/60);
+	var secondeup = Math.floor(timeup-((jourup * 86400) + (heureup * 3600) + (minuteup * 60)));
+	var uptime    = jourup + " " + heureup + ":" + minuteup + ":" + secondeup;
+	$("#uptimeText").text(uptime);
+
+ 
 //********** CPU load
 	if(state.vitals[1]<90){
             $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");

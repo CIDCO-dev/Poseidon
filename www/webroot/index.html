@@ -191,12 +191,35 @@
                   <h6 class="m-0 font-weight-bold text-primary">Enclosure</h6>
                 </div>
 		<div class="card-body">
+		<div id="mapText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
                 <div  id="map" style="width: 100%; height: 400px;" class="card-body">
 
                 </div>
                 </div>
               </div>
             </div>
+
+            <!-- Content Column -->
+            <div class="col-lg-3 mb-6">
+ 	      <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">memory detail</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+		    <div id="dText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText2" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText3" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText4" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText5" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText6" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		   
+
+                  </div>
+                </div>
+              </div>
+	   </div>
             
             <!-- Content Column -->
             <div class="col-lg-3 mb-6">
@@ -210,7 +233,23 @@
 		    <div id="chartContainer">
                     <canvas id="lineChart"></canvas>
 		    </div> 
-		    <div id="gaugeContainer">
+		   
+
+                  </div>
+                </div>
+              </div>
+	   </div>
+
+ 	    <!-- Content Column -->
+            <div class="col-lg-3 mb-6">
+ 	      <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">Attitude</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+		   <div id="gaugeContainer">
 		    <canvas id="imuz"></canvas>
 		    </div>  
 
@@ -219,6 +258,7 @@
               </div>
 	   </div>
  
+
             <!-- Content Column -->
             <div class="col-lg-3 mb-6">
 
@@ -308,31 +348,67 @@
   <!-- Page level custom scripts -->
   <!-- <script src="js/demo/chart-area-demo.js"></script> -->
   <!-- <script src="js/demo/chart-pie-demo.js"></script> -->
+
  
 </body>
 <script>
 	var latlon = Array(2);
 	var currentpolyline = Array(10);
+	var currentpolyline1 = Array(10);
+	var currentpolyline2 = Array(10);
+	var currentpolyline3 = Array(10);
+	var currentpolyline4 = Array(10);
+	var currentpolyline5 = Array(10);
+	var currentpolyline6 = Array(10);
+	var currentpolyline7 = Array(10);
+	var currentpolyline8 = Array(10);
 	var qp = Array(3);
 	var quakePoints = Array(10);
+	var quakePoints1 = Array(10);
+	var quakePoints2 = Array(10);
+	var quakePoints3 = Array(10);
+	var quakePoints4 = Array(10);
+	var quakePoints5 = Array(10);
+	var quakePoints6 = Array(10);
+	var quakePoints7 = Array(10);
+	var quakePoints8 = Array(10);
 	currentpolyline = currentpolyline.filter(item => item);
 	quakePoints = quakePoints.filter(item => item);
 	var oldstate = 0;
-	var m = L.map(map).setView([0, 0], 17);
+	var m = new L.map(map).setView([0, 0], 23);
 	var polycolor = "";
+	var depth = 0.0;
 	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
-Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-Chart.defaults.global.defaultFontColor = '#858796'
+        //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        //Chart.defaults.global.defaultFontColor = '#858796'
 		
 	L.control.scale().addTo(m);
 
-	var polyline = L.polyline([]).addTo(m);
+	var polynew = new L.polyline([]).addTo(m);
+	var polyline = new L.polyline([]).addTo(m);
+	var polyline1 = new L.polyline([]).addTo(m);
+	var polyline2 = new L.polyline([]).addTo(m);
+	var polyline3 = new L.polyline([]).addTo(m);
+	var polyline4 = new L.polyline([]).addTo(m);
+	var polyline5 = new L.polyline([]).addTo(m);
+	var polyline6 = new L.polyline([]).addTo(m);
+	var polyline7 = new L.polyline([]).addTo(m);
+	var polyline8 = new L.polyline([]).addTo(m);
+        var polyLatLngs = [];
 
-	//var heat = L.heatLayer([]).addTo(m);
-
-	var hotlineLayer = L.hotline([]).addTo(m);
+	var newhotline = new L.hotline([], {}).addTo(m);
+	var hotlineLayer = new L.hotline([], {}).addTo(m);
+	var hotlineLayer1 = new L.hotline([], {}).addTo(m);
+	var hotlineLayer2 = new L.hotline([], {}).addTo(m);
+	var hotlineLayer3 = new L.hotline([], {}).addTo(m);
+	var hotlineLayer4 = new L.hotline([], {}).addTo(m);
+	var hotlineLayer5 = new L.hotline([], {}).addTo(m);
+	var hotlineLayer6 = new L.hotline([], {}).addTo(m);
+	var hotlineLayer7 = new L.hotline([], {}).addTo(m);
+	var hotlineLayer8 = new L.hotline([], {}).addTo(m);
+	var hotqp = [];
 
 	var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
 		onEachFeature: function(feature, layer) {
@@ -349,100 +425,60 @@ Chart.defaults.global.defaultFontColor = '#858796'
 	shpfile.once("data:loaded", function() {
 	console.log("finished loaded shapefile");
 	});
-
+	var currentZoom = m.getZoom();
 	var gauge = new RadialGauge({
-    renderTo: 'imuz',
-    minValue: 0,
-    maxValue: 360,
-    majorTicks: [
-        "180",
-        "-135",
-        "-90",
-        "-45",
-        "0",
-        "45",
-        "90",
-        "135",
-        "180"
-    ],
-    minorTicks: 22,
-    ticksAngle: 360,
-    startAngle: 0,
-    strokeTicks: false,
-    highlights: false,
-    colorPlate: "#222",
-    colorMajorTicks: "#f5f5f5",
-    colorMinorTicks: "#ddd",
-    colorNumbers: "#ccc",
-    colorNeedle: "rgba(240, 128, 128, 1)",
-    colorNeedleEnd: "rgba(255, 160, 122, .9)",
-    valueBox: false,
-    valueTextShadow: false,
-    colorCircleInner: "#fff",
-    colorNeedleCircleOuter: "#ccc",
-    needleCircleSize: 10,
-    needleCircleOuter: false,
-    animationRule: "linear",
-    needleType: "line",
-    needleStart: 25,
-    needleEnd: 99,
-    needleWidth: 5,
-    borders: true,
-    borderInnerWidth: 0,
-    borderMiddleWidth: 0,
-    borderOuterWidth: 3,
-    colorBorderOuter: "#ccc",
-    colorBorderOuterEnd: "#ccc",
-    colorNeedleShadowDown: "#222",
-    borderShadowWidth: 0,
-    
-    animationDuration: 150,
-    animateOnInit: true
-}).draw();
+	    renderTo: 'imuz',
+	    minValue: 0,
+	    maxValue: 360,
+	    majorTicks: [
+	        "180",
+	        "-135",
+	        "-90",
+	        "-45",
+	        "0",
+	        "45",
+	        "90",
+	        "135",
+	        "180"
+	    ],
+	    minorTicks: 22,
+	    ticksAngle: 360,	
+	    startAngle: 0,
+	    strokeTicks: false,
+	    highlights: false,
+	    colorPlate: "#222",
+	    colorMajorTicks: "#f5f5f5",
+	    colorMinorTicks: "#ddd",
+	    colorNumbers: "#ccc",
+	    colorNeedle: "rgba(240, 128, 128, 1)",
+	    colorNeedleEnd: "rgba(255, 160, 122, .9)",
+	    valueBox: false,
+	    valueTextShadow: false,
+	    colorCircleInner: "#fff",
+	    colorNeedleCircleOuter: "#ccc",
+	    needleCircleSize: 10,
+	    needleCircleOuter: false,
+	    animationRule: "linear",
+	    needleType: "line",
+	    needleStart: 25,
+	    needleEnd: 99,
+	    needleWidth: 5,
+	    borders: true,
+	    borderInnerWidth: 0,
+	    borderMiddleWidth: 0,
+	    borderOuterWidth: 3,
+	    colorBorderOuter: "#ccc",
+	    colorBorderOuterEnd: "#ccc",
+	    colorNeedleShadowDown: "#222",
+	    borderShadowWidth: 0,
+	    animationDuration: 150,
+	    animateOnInit: true
+	}).draw();
 
-
-function perc2color(percol,mincol,maxcol) {
-            var basecol = (maxcol - mincol);
-
-            if (basecol == 0) { percol= 100; }
-            else {
-                percol= (percol - mincol) / basecol * 100; 
-            }
-            var r, g, b = 0;
-
-
-            if (percol< 20) {
-                r = 255;
-                g = Math.round(percol/20*100);
-                b = 0;
-            }
-            else if (percol< 40) {
-                r = Math.round(255 - (percol-20)/20*100);
-                g = 255;
-                b = 0;
-            }
-            else if (percol< 60) {
-                r = 0;
-                g = 255;
-                b = Math.round((percol-40)/20*100);
-            }
-            else if (percol< 80) {
-                r = 0;
-                g = Math.round(255 - (percol-60)/20*100);
-                b = 255;
-            }
-            else {
-                r = Math.round((percol-80)/20*100);;
-                g = 0;
-                b = 255;
-            }
-            var h = r * 0x10000 + g * 0x100 + b * 0x1;
-            return '#' + ('000000' + h.toString(16)).slice(-6);
-        };
 
     function processState(state){
-        
-	// Update dashboard top marquees  
+       
+//********** Update dashboard top marquees  
         
         if(!state.position.length || !state.attitude.length || !state.depth.length){
             $("#systemStatus").removeClass("d-none").addClass("d-block");
@@ -500,31 +536,43 @@ function perc2color(percol,mincol,maxcol) {
 
 		//dessine la ligne parcourue
 		latlon = [state.position[1], state.position[0]];
-		currentpolyline .push(latlon);
-		polycolor = perc2color(state.depth[0],0,100);
-		polyline = L.polyline([currentpolyline ],{weight: 20,opacity:1, color: polycolor}).addTo(m);
-		currentpolyline =[latlon];
-
-		//dessine le niveau de profondeur
 		qp = [state.position[1], state.position[0], state.depth[0]];
+		currentpolyline .push(latlon);
 		quakePoints.push(qp);
+		polyline.remove();
+		hotlineLayer.remove();
+		polyline = L.polyline([currentpolyline ],{weight: 2,opacity:1, color:'red'}).addTo(m);
+		hotlineLayer =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+		polyLatLngs = polyline.getLatLngs();
+		
+		if (currentpolyline.length == 200) 
+			{
+			polyline1 = L.polyline(currentpolyline,{weight: 2,opacity:1, color:'red'}).addTo(m);
+			currentpolyline= [latlon];
+			hotlineLayer1 =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+			quakePoints = [qp];
+			
+			}
+		//inscrire d'autre détail
+		
+currentZoom = m.getZoom();
 
-		//heat = L.heatLayer(quakePoints,{radius: 25, blur: 15, maxZoom: 10, max: 20,gradient: {0.4: 'red', 0.65: 'lime', 1: 'blue'} }).addTo(m);
+		
+		$("#mapText ").text(currentZoom);
 
-		/*hotlineLayer = L.hotline(quakePoints, {
-			min: 150,
-			max: 350,
-			palette: {
-				0.0: '#ff0000',
-				0.5: '#00ff00',
-				1.0: '#0000ff'
-			},
-			weight: 160,
-			outlineColor: '#000000',
-			outlineWidth: 0
-			}).addTo(m);*/
+		$("#dText1 ").text(currentpolyline.length);
+		[polyLatLngs] = polyline.getLatLngs();
+		$("#dText2 ").text(polyLatLngs.length);
+		[polyLatLngs] = polyline1.getLatLngs();
+		$("#dText3 ").text(polyLatLngs.length);
+		//[polyLatLngs] = hotlineLayer.getLatLngs();
+		$("#dText4 ").text(polyLatLngs.length);
+		//[polyLatLngs] = hotlineLayer1.getLatLngs();
+		$("#dText5 ").text(polyLatLngs.length);
+		//polyLatLngs = polyline.getLatLngs();
+		$("#dText6 ").text(currentZoom);
 
-		quakePoints=[qp];
+		
 		}
 //**********  gestion des donnée de l'imu
 		imu_x .push(state.attitude[0]);

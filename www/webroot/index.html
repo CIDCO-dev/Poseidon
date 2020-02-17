@@ -388,27 +388,14 @@
 
 	var polynew = new L.polyline([]).addTo(m);
 	var polyline = new L.polyline([]).addTo(m);
-	var polyline1 = new L.polyline([]).addTo(m);
-	var polyline2 = new L.polyline([]).addTo(m);
-	var polyline3 = new L.polyline([]).addTo(m);
-	var polyline4 = new L.polyline([]).addTo(m);
-	var polyline5 = new L.polyline([]).addTo(m);
-	var polyline6 = new L.polyline([]).addTo(m);
-	var polyline7 = new L.polyline([]).addTo(m);
-	var polyline8 = new L.polyline([]).addTo(m);
         var polyLatLngs = [];
 
 	var newhotline = new L.hotline([], {}).addTo(m);
 	var hotlineLayer = new L.hotline([], {}).addTo(m);
 	var hotlineLayer1 = new L.hotline([], {}).addTo(m);
-	var hotlineLayer2 = new L.hotline([], {}).addTo(m);
-	var hotlineLayer3 = new L.hotline([], {}).addTo(m);
-	var hotlineLayer4 = new L.hotline([], {}).addTo(m);
-	var hotlineLayer5 = new L.hotline([], {}).addTo(m);
-	var hotlineLayer6 = new L.hotline([], {}).addTo(m);
-	var hotlineLayer7 = new L.hotline([], {}).addTo(m);
-	var hotlineLayer8 = new L.hotline([], {}).addTo(m);
 	var hotqp = [];
+	var curentweight = 23;
+	var smootf = 5;
 
 	var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
 		onEachFeature: function(feature, layer) {
@@ -530,7 +517,8 @@
 
 	if (state.vitals[4] > oldstate){
 		oldstate = state.vitals[4];
-
+currentZoom = m.getZoom();
+curentweight= (23-currentZoom)*6+23; 
 		//positionne la carte sur la position gps
 		m.panTo([state.position[1], state.position[0]]);
 
@@ -541,21 +529,21 @@
 		quakePoints.push(qp);
 		polyline.remove();
 		hotlineLayer.remove();
-		polyline = L.polyline([currentpolyline ],{weight: 2,opacity:1, color:'red'}).addTo(m);
-		hotlineLayer =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+		polyline = L.polyline([currentpolyline ],{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
+		hotlineLayer =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: curentweight,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
 		polyLatLngs = polyline.getLatLngs();
 		
-		if (currentpolyline.length == 200) 
+		/*if (currentpolyline.length == 200) 
 			{
-			polyline1 = L.polyline(currentpolyline,{weight: 2,opacity:1, color:'red'}).addTo(m);
+			polyline1 = L.polyline(currentpolyline,{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
 			currentpolyline= [latlon];
-			hotlineLayer1 =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+			hotlineLayer1 =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
 			quakePoints = [qp];
 			
-			}
+			}*/
 		//inscrire d'autre détail
 		
-currentZoom = m.getZoom();
+
 
 		
 		$("#mapText ").text(currentZoom);

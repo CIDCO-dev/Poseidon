@@ -26,8 +26,46 @@ uint16_t ADCTempVal = 0;
 
 void motorLcallback(const catarob_control::motorL)
 {
-//   fd = wiringPiI2CSetup(0x60);
-//result = wiringPiI2CWriteReg16(fd, 0x40, (i & 0xfff) );//
+    BYTE *WRbuffer;
+    //Allocation des buffer de ecriture
+    WRbuffer=(BYTE*)malloc(15*sizeof(BYTE));
+    WRbuffer[0]=(0);
+    WRbuffer[1]=(0x75);		//pwm low
+    WRbuffer[2]=(0x00);		//pwm high
+    WRbuffer[3]=(0x01);		//relais low
+    WRbuffer[4]=(0x00);		//relais hi
+    WRbuffer[5]=(0x02);		//imax low
+    WRbuffer[6]=(0xcc);		//imax hi
+    WRbuffer[7]=(0x01);		//relais1 loq
+    WRbuffer[8]=(0x00);		//relais1 hi
+    WRbuffer[9]=(0x01);		//relais2 low
+    WRbuffer[10]=(0x00);	//relais2 hi
+    WRbuffer[11]=(0x01);	//relais3 low
+    WRbuffer[12]=(0x00);	//relais3 hi
+    WRbuffer[13]=(0x00);	//utilisation i2c
+
+    unsigned char checksum=99;
+    for(int i=1;i<=13;i++)
+    {
+    checksum = checksum xor WRbuffer[i];
+    }
+    WRbuffer[14] = checksum;
+
+    wiringPiI2CWrite (fdL, WRbuffer[0]);
+    wiringPiI2CWrite (fdL, WRbuffer[1]);
+    wiringPiI2CWrite (fdL, WRbuffer[2]);
+    wiringPiI2CWrite (fdL, WRbuffer[3]);
+    wiringPiI2CWrite (fdL, WRbuffer[4]);
+    wiringPiI2CWrite (fdL, WRbuffer[5]);
+    wiringPiI2CWrite (fdL, WRbuffer[6]);
+    wiringPiI2CWrite (fdL, WRbuffer[7]);
+    wiringPiI2CWrite (fdL, WRbuffer[8]);	
+    wiringPiI2CWrite (fdL, WRbuffer[9]);
+    wiringPiI2CWrite (fdL, WRbuffer[10]);
+    wiringPiI2CWrite (fdL, WRbuffer[11]);
+    wiringPiI2CWrite (fdL, WRbuffer[12]);
+    wiringPiI2CWrite (fdL, WRbuffer[13]);
+    wiringPiI2CWrite (fdL, WRbuffer[14]);
   }
 
 void motorRcallback(const catarob_control::motorR)

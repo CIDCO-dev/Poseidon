@@ -6,6 +6,10 @@
 <arg name="gpsip" value="_host:=127.0.0.1"/>
 <arg name="gpsport" value="_port:=2947"/>
 
+<node pkg="ublox_gps" type="ublox_gps" name="ublox_gps" output="screen" clear_params="false" respawn="true" respawn_delay="30">
+    <rosparam command="load" file="$(find ublox_gps)/config/zed-f9p.yaml" />
+</node>
+
 <node pkg="logger_binary" name="logger_binary" type="logger_binary" output="screen" args="$(arg loggerPath)"/>
 
 <node pkg="logger_text" name="logger_text" type="logger_text" output="screen" args="$(arg loggerPath)"/>
@@ -19,9 +23,6 @@
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals" output="screen"/>
   
 <node pkg="state_controller" name="state_controller" type="state_controller" output="screen"/>
-
-<node pkg="catarob_control" name="catarob_control" type="catarob_control" output="screen"/>
-
 
 <node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket"/>
 

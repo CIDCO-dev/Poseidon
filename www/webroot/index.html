@@ -13,125 +13,20 @@
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
+  <link rel="stylesheet" href="/leaflet/leaflet.css" />
+	<!--[if lte IE 8]>
+			<link rel="stylesheet" href="/leaflet/leaflet.ie.css" />
+		<![endif]-->
+  <link rel="stylesheet" href="/leaflet/gh-pages.css" />
+
 
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <script src="/leaflet/leaflet.js"></script>
+  <script src="/leaflet/catiline.js"></script>
+  <script src="/leaflet/leaflet.shpfile.js"></script>
+  <script src="/leaflet/leaflet-heat.js"></script>
+  <script src="/leaflet/leaflet.hotline.js"></script>
 
-  <script>
-    function processState(state){
-      
-	// Update dashboard top marquees  
-        
-        if(!state.position.length || !state.attitude.length || !state.depth.length){
-            $("#systemStatus").removeClass("d-none").addClass("d-block");
-            
-            $("#systemStatusText").text("Check connexion with sensors");
-        }
-        else{
-            $("#systemStatus").removeClass("d-block").addClass("d-none");
-            $("#systemStatusText").text();
-        }
-        
-        if(state.position.length){
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#gnssStatusText").removeClass("bg-gradient-warning").text(state.position[0] + "," + state.position[1]);
-        }
-        else{
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#gnssStatusText").removeClass("bg-gradient-warning").text("No Position Data");
-        }
-        
-        if(state.attitude.length){
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#imuStatusText").text(state.attitude[0] + "," + state.attitude[1] + "," + state.attitude[2]);
-        }
-        else{
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#imuStatusText").text("No IMU Data");
-        }
-        
-        if(state.depth.length){
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#sonarStatusText").text(state.depth[0]);
-        }
-        else{
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#sonarStatusText").text("No Sonar Data");
-        }
-
-//**********
-//**********
-//**********
-//**********
-//**********
-//**********
-//********** 
-//********** CPU load
-	if(state.vitals[1]<90){
-            $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            
-        }
-	 else{
-             $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-        }
-
-	$("#cpuloadText").text(state.vitals[1] + "%");
-	$("#cpuload").width(state.vitals[1] + "%");
-	
-
-//********** CPU temperature 
-	if(state.vitals[0]>50){
-            $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            
-        }
-	 else{
-             $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-        }
-
-	$("#cputempText").text(state.vitals[0] + "C");
-	$("#cputemp").width(state.vitals[0] + "%");
-
-
-//********** Memory
-	if(state.vitals[2]>10){
-            $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            
-        }
-	 else{
-             $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-        }
-
-	$("#freeramText").text(100 - state.vitals[2] + "%");
-	$("#freeram").width(100 - state.vitals[2] + "%");
-	
-
-
-//********** HDD value
- 	if(state.vitals[3]>20){
-            $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            
-        }
-	 else{
-             $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-        }
-
-	$("#freehddText").text(100 - state.vitals[3] + "%");
-	$("#freehdd").width(100 - state.vitals[3] + "%");
-	
-
-
-
-        //TODO: update rest
-    }
-      
-    var socket = new WebSocket("ws://192.168.0.183:9002");
-
-    socket.onmessage = function (event) {
-        console.log(event.data);
-        var state = JSON.parse(event.data);
-        processState(state);
-    }        
-
-Â  </script>
 </head>
 
 <body id="page-top">
@@ -231,7 +126,9 @@
                       GNSS
                       <div class="row">
                           <div class="col mr-2">
-                            <div id="gnssStatusText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="gnssStatusText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="gnssStatusText2" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="gnssStatusText3" class="text-gray-200 h4 font-weight-bold"> </div>
                           </div>
                         <div class="col-auto">
                           <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
@@ -249,7 +146,9 @@
                       IMU
                       <div class="row">
                           <div class="col mr-2">
-                            <div id="imuStatusText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="imuStatusText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="imuStatusText2" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="imuStatusText3" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
                           </div>
                         <div class="col-auto">
                           <i class="fas fa-ship fa-2x text-gray-300"></i>
@@ -267,7 +166,9 @@
                       Depth (m)
                       <div class="row">
                           <div class="col mr-2">
-                            <div id="sonarStatusText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="sonarStatusText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                            <div id="sonarStatusText2" class="text-gray-200 h4 font-weight-bold"> </div>
+                            <div id="sonarStatusText3" class="text-gray-200 h4 font-weight-bold"> </div>
                           </div>
                         <div class="col-auto">
                           <i class="fas fa-rss fa-rotate-180 fa-2x text-gray-300"></i>
@@ -282,22 +183,82 @@
           <div class="row">
 
             <!-- Content Column -->
-            <div class="col-lg-9 mb-6">
+            <div class="col-lg-6 mb-6">
 
               <!-- Project Card Example -->
               <div class="card shadow mb-4">
-                <div class="card-header py-3">
+                <div class="card-header py-3" >
                   <h6 class="m-0 font-weight-bold text-primary">Enclosure</h6>
                 </div>
-                <div class="card-body">
+		<div class="card-body">
+		<div id="mapText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+                <div  id="map" style="width: 100%; height: 400px;" class="card-body">
 
-
-
-
+                </div>
                 </div>
               </div>
             </div>
+
+            <!-- Content Column -->
+            <div class="col-lg-3 mb-6">
+ 	      <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">memory detail</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+		    <div id="dText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText2" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText3" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText4" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText5" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		    <div id="dText6" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		   
+
+                  </div>
+                </div>
+              </div>
+	   </div>
             
+            <!-- Content Column -->
+            <div class="col-lg-3 mb-6">
+ 	      <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">Attitude</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+		    <div id="chartContainer">
+                    <canvas id="lineChart"></canvas>
+		    </div> 
+		   
+
+                  </div>
+                </div>
+              </div>
+	   </div>
+
+ 	    <!-- Content Column -->
+            <div class="col-lg-3 mb-6">
+ 	      <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">Attitude</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+		   <div id="gaugeContainer">
+		    <canvas id="imuz"></canvas>
+		    </div>  
+
+                  </div>
+                </div>
+              </div>
+	   </div>
+ 
+
             <!-- Content Column -->
             <div class="col-lg-3 mb-6">
 
@@ -308,39 +269,28 @@
                 </div>
                 <div class="card-body">
                     
-                  <h4 class="small font-weight-bold">Battery Level <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div id="batvolt" class="progress-bar bg-danger" role="progressbar" style="width: 20%"  aria-valuemin="0" aria-valuemax="100"></div>
+                  <h4 class="small font-weight-bold">Up Time<span id="uptimeText" class="float-right">N/A</span></h4>
+                  <div class="mb-4">
                   </div>
 
-                  <h4 class="small font-weight-bold">Internal Moisture <span class="float-right">20%</span></h4>
+		  <h4 class="small font-weight-bold">CPU Load <span id="cpuloadText" class="float-right">N/A</span></h4>
                   <div class="progress mb-4">
-                    <div id="moisture" class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="cpuload" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
-                  <h4 class="small font-weight-bold">Internal Temperature <span class="float-right">20%</span></h4>
+                  <h4 class="small font-weight-bold">CPU Temperature <span id="cputempText" class="float-right">N/A</span></h4>
                   <div class="progress mb-4">
-                    <div id="temp" class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>                    
-
-                  <h4 class="small font-weight-bold">CPU Load <span id="cpuloadText" class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div id="cpuload" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="cputemp" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
-                  <h4 class="small font-weight-bold">CPU Temperature <span id="cputempText" class="float-right">20%</span></h4>
+                  <h4 class="small font-weight-bold">Memory Usage <span id="freeramText" class="float-right">N/A</span></h4>
                   <div class="progress mb-4">
-                    <div id="cputemp" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="freeram" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
-                  <h4 class="small font-weight-bold">Memory Usage <span id="freeramText" class="float-right">20%</span></h4>
+                  <h4 class="small font-weight-bold">Disk Space <span id="freehddText" class="float-right">N/A</span></h4>
                   <div class="progress mb-4">
-                    <div id="freeram" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-                  <h4 class="small font-weight-bold">Disk Space <span id="freehddText" class="float-right">40%</span></h4>
-                  <div class="progress mb-4">
-                    <div id="freehdd" class="progress-bar bg-danger" role="progressbar" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div id="freehdd" class="progress-bar bg-gradient-danger" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
 
                 </div>
@@ -380,24 +330,6 @@
     <i class="fas fa-angle-up"></i>
   </a>
 
-  <!-- Logout Modal-->
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">Ãƒâ€”</span>
-          </button>
-        </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
@@ -410,12 +342,323 @@
   <script src="js/sb-admin-2.min.js"></script>
 
   <!-- Page level plugins -->
-  <!-- <script src="vendor/chart.js/Chart.min.js"></script> -->
+  <script src="js/Chart.min.js"></script>
+  <script src="js/gauge.min.js"></script>
 
   <!-- Page level custom scripts -->
   <!-- <script src="js/demo/chart-area-demo.js"></script> -->
   <!-- <script src="js/demo/chart-pie-demo.js"></script> -->
 
+ 
 </body>
+<script>
+	var latlon = Array(2);
+	var currentpolyline = Array(10);
+	var currentpolyline1 = Array(10);
+	var currentpolyline2 = Array(10);
+	var currentpolyline3 = Array(10);
+	var currentpolyline4 = Array(10);
+	var currentpolyline5 = Array(10);
+	var currentpolyline6 = Array(10);
+	var currentpolyline7 = Array(10);
+	var currentpolyline8 = Array(10);
+	var qp = Array(3);
+	var quakePoints = Array(10);
+	var quakePoints1 = Array(10);
+	var quakePoints2 = Array(10);
+	var quakePoints3 = Array(10);
+	var quakePoints4 = Array(10);
+	var quakePoints5 = Array(10);
+	var quakePoints6 = Array(10);
+	var quakePoints7 = Array(10);
+	var quakePoints8 = Array(10);
+	currentpolyline = currentpolyline.filter(item => item);
+	quakePoints = quakePoints.filter(item => item);
+	var oldstate = 0;
+	var m = new L.map(map).setView([0, 0], 23);
+	var polycolor = "";
+	var depth = 0.0;
+	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+        //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        //Chart.defaults.global.defaultFontColor = '#858796'
+		
+	L.control.scale().addTo(m);
+
+	var polynew = new L.polyline([]).addTo(m);
+	var polyline = new L.polyline([]).addTo(m);
+        var polyLatLngs = [];
+
+	var newhotline = new L.hotline([], {}).addTo(m);
+	var hotlineLayer = new L.hotline([], {}).addTo(m);
+	var hotlineLayer1 = new L.hotline([], {}).addTo(m);
+	var hotqp = [];
+	var curentweight = 23;
+	var smootf = 5;
+
+	var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
+		onEachFeature: function(feature, layer) {
+			if (feature.properties) {
+				layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+					return k + ": " + feature.properties[k];
+				}).join("<br />"), {
+					maxHeight: 200
+				});
+			}
+		}
+	});
+	shpfile.addTo(m);
+	shpfile.once("data:loaded", function() {
+	console.log("finished loaded shapefile");
+	});
+	var currentZoom = m.getZoom();
+	var gauge = new RadialGauge({
+	    renderTo: 'imuz',
+	    minValue: 0,
+	    maxValue: 360,
+	    majorTicks: [
+	        "180",
+	        "-135",
+	        "-90",
+	        "-45",
+	        "0",
+	        "45",
+	        "90",
+	        "135",
+	        "180"
+	    ],
+	    minorTicks: 22,
+	    ticksAngle: 360,	
+	    startAngle: 0,
+	    strokeTicks: false,
+	    highlights: false,
+	    colorPlate: "#222",
+	    colorMajorTicks: "#f5f5f5",
+	    colorMinorTicks: "#ddd",
+	    colorNumbers: "#ccc",
+	    colorNeedle: "rgba(240, 128, 128, 1)",
+	    colorNeedleEnd: "rgba(255, 160, 122, .9)",
+	    valueBox: false,
+	    valueTextShadow: false,
+	    colorCircleInner: "#fff",
+	    colorNeedleCircleOuter: "#ccc",
+	    needleCircleSize: 10,
+	    needleCircleOuter: false,
+	    animationRule: "linear",
+	    needleType: "line",
+	    needleStart: 25,
+	    needleEnd: 99,
+	    needleWidth: 5,
+	    borders: true,
+	    borderInnerWidth: 0,
+	    borderMiddleWidth: 0,
+	    borderOuterWidth: 3,
+	    colorBorderOuter: "#ccc",
+	    colorBorderOuterEnd: "#ccc",
+	    colorNeedleShadowDown: "#222",
+	    borderShadowWidth: 0,
+	    animationDuration: 150,
+	    animateOnInit: true
+	}).draw();
+
+
+    function processState(state){
+       
+//********** Update dashboard top marquees  
+        
+        if(!state.position.length || !state.attitude.length || !state.depth.length){
+            $("#systemStatus").removeClass("d-none").addClass("d-block");
+            
+            $("#systemStatusText").text("Check connexion with sensors");
+        }
+        else{
+            $("#systemStatus").removeClass("d-block").addClass("d-none");
+            $("#systemStatusText").text();
+        }
+        
+        if(state.position.length){
+            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            $("#gnssStatusText1").removeClass("bg-gradient-warning").text(state.position[0]);
+            $("#gnssStatusText2").removeClass("bg-gradient-warning").text(state.position[1]);
+        }
+        else{
+            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+            $("#gnssStatusText1").text("No Position Data");
+            $("#gnssStatusText2").text("No Position Data");
+        }
+        
+        if(state.attitude.length){
+            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            $("#imuStatusText1").text(state.attitude[0]);
+            $("#imuStatusText2").text(state.attitude[1]);
+            $("#imuStatusText3").text(state.attitude[2]);
+        }
+        else{
+            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+            $("#imuStatusText1").text("No IMU Data");
+            $("#imuStatusText2").text("No IMU Data");
+            $("#imuStatusText3").text("No IMU Data");
+        }
+        
+        if(state.depth.length){
+            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            $("#sonarStatusText1").text(state.depth[0]);
+        }
+        else{
+            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+            $("#sonarStatusText1").text("No Sonar Data");
+        }
+
+//********** tracé sur la carte
+
+  
+	//focus sur la derniere position
+
+	if (state.vitals[4] > oldstate){
+		oldstate = state.vitals[4];
+currentZoom = m.getZoom();
+curentweight= (23-currentZoom)*6+23; 
+		//positionne la carte sur la position gps
+		m.panTo([state.position[1], state.position[0]]);
+
+		//dessine la ligne parcourue
+		latlon = [state.position[1], state.position[0]];
+		qp = [state.position[1], state.position[0], state.depth[0]];
+		currentpolyline .push(latlon);
+		quakePoints.push(qp);
+		polyline.remove();
+		hotlineLayer.remove();
+		polyline = L.polyline([currentpolyline ],{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
+		hotlineLayer =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: curentweight,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+		polyLatLngs = polyline.getLatLngs();
+		
+		/*if (currentpolyline.length == 200) 
+			{
+			polyline1 = L.polyline(currentpolyline,{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
+			currentpolyline= [latlon];
+			hotlineLayer1 =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+			quakePoints = [qp];
+			
+			}*/
+		//inscrire d'autre détail
+		
+
+
+		
+		$("#mapText ").text(currentZoom);
+
+		$("#dText1 ").text(currentpolyline.length);
+		[polyLatLngs] = polyline.getLatLngs();
+		$("#dText2 ").text(polyLatLngs.length);
+		[polyLatLngs] = polyline1.getLatLngs();
+		$("#dText3 ").text(polyLatLngs.length);
+		//[polyLatLngs] = hotlineLayer.getLatLngs();
+		$("#dText4 ").text(polyLatLngs.length);
+		//[polyLatLngs] = hotlineLayer1.getLatLngs();
+		$("#dText5 ").text(polyLatLngs.length);
+		//polyLatLngs = polyline.getLatLngs();
+		$("#dText6 ").text(currentZoom);
+
+		
+		}
+//**********  gestion des donnée de l'imu
+		imu_x .push(state.attitude[0]);
+		imu_x .shift();
+		imu_y .push(state.attitude[1]);
+		imu_y .shift();
+		var ctxL = document.getElementById("lineChart").getContext('2d');
+		var myLineChart = new Chart(ctxL, {
+		type: 'line',
+		data: {
+		labels: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+		datasets: [{label: "Pitch", data: imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
+		           {label: "Roll", data: imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
+		options: {responsive: true, animation: false, elements: {point:{radius: 0}}} });
+ 
+		gauge.value = (state.attitude[2]+180);
+		
+
+//**********
+//**********
+//**********
+//**********
+//********** Up time 
+	var timeup    = state.vitals[4];
+	var jourup  = Math.floor(timeup/86400);
+	var heureup = Math.floor((timeup-(jourup *86400))/3600);
+	var minuteup  = Math.floor((timeup-(jourup*86400+heureup*3600))/60);
+	var secondeup = Math.floor(timeup-((jourup * 86400) + (heureup * 3600) + (minuteup * 60)));
+	var uptime    = jourup + " " + heureup + ":" + minuteup + ":" + secondeup;
+	$("#uptimeText").text(uptime);
+
+ 
+//********** CPU load
+	if(state.vitals[1]<90){
+            $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            
+        }
+	 else{
+             $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+        }
+
+	$("#cpuloadText").text(state.vitals[1] + "%");
+	$("#cpuload").width(state.vitals[1] + "%");
+	
+
+//********** CPU temperature 
+	if(state.vitals[0]>50){
+            $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+            
+        }
+	 else{
+             $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+        }
+
+	$("#cputempText").text(state.vitals[0] + "\u00B0" + "C");
+	$("#cputemp").width(state.vitals[0] + "%");
+
+
+//********** Memory
+	if(state.vitals[2]>10){
+            $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            
+        }
+	 else{
+             $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+        }
+
+	$("#freeramText").text(100 - state.vitals[2] + "%");
+	$("#freeram").width(100 - state.vitals[2] + "%");
+	
+
+
+//********** HDD value
+ 	if(state.vitals[3]>20){
+            $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+            
+        }
+	 else{
+             $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
+        }
+
+	$("#freehddText").text(100 - state.vitals[3] + "%");
+	$("#freehdd").width(100 - state.vitals[3] + "%");
+	
+
+
+
+        //TODO: update rest
+    }
+      
+    var socket = new WebSocket("ws://192.168.0.183:9002");
+
+    socket.onmessage = function (event) {
+        console.log(event.data);
+        var state = JSON.parse(event.data);
+        processState(state);
+    }        
+
+Â  </script>
 
 </html>

@@ -27,10 +27,10 @@ class GoalPlanner{
 
 	private:
 		
-		//ROS handle
+		// ROS handle
 		ros::NodeHandle node;
 
-		//Input topics
+		// Input topics
 		ros::Subscriber stateTopic;
 
 		// Output topics
@@ -45,16 +45,12 @@ class GoalPlanner{
 	public:
 		GoalPlanner(){
 
-
 			// Advertise to topics: destination (to pilot)
 			destinationTopic = node.advertise<goal_planner::Destination>("destination", 1000);
 
 			// Subscribe to topics: state (from state_controller)
 			stateTopic = node.subscribe("state", 1000, &GoalPlanner::stateCallback, this);
 
-
-
-			
 		}
 
 
@@ -69,6 +65,7 @@ class GoalPlanner{
 
 
 		void run(){
+
 			ros::Rate loop_rate( 0.1 );
 
 			while ( ros::ok() ){
@@ -81,33 +78,48 @@ class GoalPlanner{
 				// If there is a current goal:
 				// {
 
-					// If goal is a destinaton and currentPosition from the state_contoller 
-					// is close enough to the currentDestination
-					// {
-
-						// The destination goal is met
-
-						// If the next goal in the list is a destination, publish this new destination
+						// If goal is a destinaton
 						// {
+								// If currentPosition from the state_contoller 
+								// is close enough to the currentDestination
+								// {
+
+										// The destination goal is reached
+
+										// If the next goal in the list is a destination
+										// {
+												// Set this as the current goal, 
+												// Remove this goal from the list
+												// Publish this new destination
+										// }
+										// else 
+										// {
+												// Publish a destination that will tell the motors to stop (or maintain the position?)
+										// }
+
+
+								// }
 
 						// }
-
-						// Else: publish a destination that will tell the motors to stop (or maintain the position?)
+						// else 
 						// {
-
+								// Deal with other goal types
 						// }
 
-
-					// }
 
 
 				// }
 
 
-				// If no current goal, load goal from the list if any
+				// If no current goal
 				// {
-
-				// }	
+						// If there is a goal in the list
+						// {
+							// Set this as the current goal, 
+							// Remove this goal from the list
+							// Publish this goal
+						// }
+				// }			
 
 				ros::spinOnce();
 				loop_rate.sleep();

@@ -75,9 +75,11 @@ class Pilot{
 			while ( ros::ok() ){
 
 
-				// If there is a destination:
-				// 		Based on the currentPosition, control the motors to get to the currentDestination
+				// If there is a destination
+				//{ 
+						// Based on the currentPosition, control the motors to get to the currentDestination
 
+				// }
 
 				ros::spinOnce();
 				loop_rate.sleep();

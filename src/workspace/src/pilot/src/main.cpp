@@ -28,7 +28,7 @@ class Pilot{
 
 		//Input topics
 		ros::Subscriber stateTopic;
-		ros::Subscriber destinationTopic;
+		ros::Subscriber waypointTopic;
 
 		// Output topics
 		ros::Publisher motor_L;
@@ -36,7 +36,7 @@ class Pilot{
 
 
 
-		Position currentDestination;
+		Position currentWaypoint;
 		Position currentPosition;
 
 
@@ -53,8 +53,8 @@ class Pilot{
 			// Subscribe to topics: state (from state_controller), to know the current position
 			stateTopic = node.subscribe("state", 1000, &Pilot::stateCallback, this);
 
-			// Subscribe to topics: destination (from GoalPlanner)
-			destinationTopic = node.subscribe("destination", 1000, &Pilot::destinationCallback, this);
+			// Subscribe to topics: waypoint (from GoalPlanner)
+			waypointTopic = node.subscribe("waypoint", 1000, &Pilot::waypointCallback, this);
 
 			
 		}
@@ -65,8 +65,8 @@ class Pilot{
 
 		}
 
-		// Callback for destination
-		void Pilot::destinationCallback( const goal_planner::Destination& destination ) {
+		// Callback for waypoint
+		void Pilot::waypointCallback( const goal_planner::Waypoint& waypoint ) {
 
 		}
 
@@ -76,9 +76,9 @@ class Pilot{
 			while ( ros::ok() ){
 
 
-				// If there is a destination
+				// If there is a currentWaypoint
 				//{ 
-						// Based on the currentPosition, control the motors to get to the currentDestination
+						// Based on the currentPosition, control the motors to get to the currentWaypoint
 
 				// }
 

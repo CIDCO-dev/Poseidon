@@ -34,7 +34,7 @@ class GoalPlanner{
 		ros::Subscriber stateTopic;
 
 		// Output topics
-		ros::Publisher destinationTopic;
+		ros::Publisher waypointTopic;
 
 
 		std::list<Goal> goals;
@@ -46,7 +46,7 @@ class GoalPlanner{
 		GoalPlanner(){
 
 			// Advertise to topics: destination (to pilot)
-			destinationTopic = node.advertise<goal_planner::Destination>("destination", 1000);
+			waypointTopic = node.advertise<goal_planner::Waypoint>("waypoint", 1000);
 
 			// Subscribe to topics: state (from state_controller)
 			stateTopic = node.subscribe("state", 1000, &GoalPlanner::stateCallback, this);
@@ -78,23 +78,23 @@ class GoalPlanner{
 				// If there is a current goal:
 				// {
 
-						// If goal is a destinaton
+						// If goal is a waypoint
 						// {
 								// If currentPosition from the state_contoller 
-								// is close enough to the currentDestination
+								// is close enough to the currentWaypoint (MBES-lib: src/math/Distance.hpp, function haversine)
 								// {
 
 										// The destination goal is reached
 
-										// If the next goal in the list is a destination
+										// If the next goal in the list is a waypoint
 										// {
 												// Set this as the current goal, 
 												// Remove this goal from the list
-												// Publish this new destination
+												// Publish this new waypoint
 										// }
 										// else 
 										// {
-												// Publish a destination that will tell the motors to stop (or maintain the position?)
+												// Publish a waypoint that will tell the motors to stop (or maintain the position?)
 										// }
 
 

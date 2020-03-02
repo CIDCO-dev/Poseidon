@@ -39,10 +39,10 @@ class MOTOR{
 	public:
 
 		MOTOR(){
-		ros::Subscriber motor_L = n.subscribe("auv/motor/left", 1000, &MOTOR::motorLcallback,this);
-		ros::Subscriber motor_R = n.subscribe("auv/motor/right", 1000, &MOTOR::motorRcallback,this);
-		state_L= n.advertise<catarob_control::state>("auv/state/left", 1000);
-		state_R= n.advertise<catarob_control::state>("auv/state/right", 1000);
+		ros::Subscriber motor_L = n.subscribe("motor/left", 1000, &MOTOR::motorLcallback,this);
+		ros::Subscriber motor_R = n.subscribe("motor/right", 1000, &MOTOR::motorRcallback,this);
+		state_L= n.advertise<catarob_control::state>("state/left", 1000);
+		state_R= n.advertise<catarob_control::state>("state/right", 1000);
 		}
 	void i2ctransmit(char id,char pwm,char imaxl,char imaxh,char relay){
 		BYTE *WRbuffer;

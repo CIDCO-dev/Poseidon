@@ -2,10 +2,9 @@
 #define MAIN_CPP
 
 #include "ros/ros.h"
-#include "catarob_control/motorL.h"
-#include "catarob_control/motorR.h"
-#include "catarob_control/stateL.h"
-#include "catarob_control/stateR.h"
+#include "catarob_control/motor.h"
+#include "catarob_control/state.h"
+
 
 #include <wiringPiI2C.h>
   
@@ -24,51 +23,11 @@ int fdL,fdR;
 unsigned short pt_cei012c_tab_ech[30] = {96,124,157,196,241,290,343,398,455,512,567,619,668,712,753,788,820,847,871,892,910,925,938,949,959,967,974,981,986,990};
 uint16_t ADCTempVal = 0;
 
-void motorLcallback(const catarob_control::motorL)
+void motorLcallback(const catarob_control::motor)
 {
-    BYTE *WRbuffer;
-    //Allocation des buffer de ecriture
-    WRbuffer=(BYTE*)malloc(15*sizeof(BYTE));
-    WRbuffer[0]=(0);
-    WRbuffer[1]=(0x75);		//pwm low
-    WRbuffer[2]=(0x00);		//pwm high
-    WRbuffer[3]=(0x01);		//relais low
-    WRbuffer[4]=(0x00);		//relais hi
-    WRbuffer[5]=(0x02);		//imax low
-    WRbuffer[6]=(0xcc);		//imax hi
-    WRbuffer[7]=(0x01);		//relais1 loq
-    WRbuffer[8]=(0x00);		//relais1 hi
-    WRbuffer[9]=(0x01);		//relais2 low
-    WRbuffer[10]=(0x00);	//relais2 hi
-    WRbuffer[11]=(0x01);	//relais3 low
-    WRbuffer[12]=(0x00);	//relais3 hi
-    WRbuffer[13]=(0x00);	//utilisation i2c
-
-    unsigned char checksum=99;
-    for(int i=1;i<=13;i++)
-    {
-    checksum = checksum xor WRbuffer[i];
-    }
-    WRbuffer[14] = checksum;
-
-    wiringPiI2CWrite (fdL, WRbuffer[0]);
-    wiringPiI2CWrite (fdL, WRbuffer[1]);
-    wiringPiI2CWrite (fdL, WRbuffer[2]);
-    wiringPiI2CWrite (fdL, WRbuffer[3]);
-    wiringPiI2CWrite (fdL, WRbuffer[4]);
-    wiringPiI2CWrite (fdL, WRbuffer[5]);
-    wiringPiI2CWrite (fdL, WRbuffer[6]);
-    wiringPiI2CWrite (fdL, WRbuffer[7]);
-    wiringPiI2CWrite (fdL, WRbuffer[8]);	
-    wiringPiI2CWrite (fdL, WRbuffer[9]);
-    wiringPiI2CWrite (fdL, WRbuffer[10]);
-    wiringPiI2CWrite (fdL, WRbuffer[11]);
-    wiringPiI2CWrite (fdL, WRbuffer[12]);
-    wiringPiI2CWrite (fdL, WRbuffer[13]);
-    wiringPiI2CWrite (fdL, WRbuffer[14]);
   }
 
-void motorRcallback(const catarob_control::motorR)
+void motorRcallback(const catarob_control::motor)
 {
   }
 
@@ -81,10 +40,10 @@ class MOTOR{
 		
 	public:
 		MOTOR(){
-		ros::Subscriber motor_L = n.subscribe("motor/left", 1000, motorLcallback);
-		ros::Subscriber motor_R = n.subscribe("motor/right", 1000, motorRcallback);
-		state_L= n.advertise<catarob_control::stateL>("state/left", 1000);
-		state_R= n.advertise<catarob_control::stateR>("state/right", 1000);
+		ros::Subscriber motor_L = n.subscribe("auv/motor/left", 1000, motorLcallback);
+		ros::Subscriber motor_R = n.subscribe("auv/motor/right", 1000, motorRcallback);
+		state_L= n.advertise<catarob_control::state>("auv/state/left", 1000);
+		state_R= n.advertise<catarob_control::state>("auv/state/right", 1000);
 		}
 		
 	void run(){
@@ -93,7 +52,7 @@ class MOTOR{
 			
 
 			
-			catarob_control::stateL msg1;
+			catarob_control::state msg1;
 			msg1.status	= (unsigned short)wiringPiI2CReadReg8(fdL, 0x02)*256+wiringPiI2CReadReg8(fdL, 0x03);
 			ADCTempVal 	= wiringPiI2CReadReg8(fdL, 0x04)*256+wiringPiI2CReadReg8(fdL, 0x05);
 			if (ADCTempVal<=1023){
@@ -136,7 +95,7 @@ class MOTOR{
 			state_L.publish(msg1);
 			
 			
-			catarob_control::stateR msg2;
+			catarob_control::state msg2;
 			msg2.status	= (unsigned short)wiringPiI2CReadReg8(fdR, 0x02)*256+wiringPiI2CReadReg8(fdR, 0x03);
 			ADCTempVal 	= wiringPiI2CReadReg8(fdR, 0x04)*256+wiringPiI2CReadReg8(fdR, 0x05);
 			if (ADCTempVal<=1023){

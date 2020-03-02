@@ -22,14 +22,9 @@ using namespace std;
 int fdL,fdR;
 unsigned short pt_cei012c_tab_ech[30] = {96,124,157,196,241,290,343,398,455,512,567,619,668,712,753,788,820,847,871,892,910,925,938,949,959,967,974,981,986,990};
 uint16_t ADCTempVal = 0;
+typedef unsigned char BYTE;
+		
 
-void motorLcallback(const catarob_control::motor)
-{
-  }
-
-void motorRcallback(const catarob_control::motor)
-{
-  }
 
 class MOTOR{
 	private:
@@ -37,15 +32,112 @@ class MOTOR{
 		ros::Publisher state_L;
 		ros::Publisher state_R;
 		
+
 		
 	public:
+
 		MOTOR(){
-		ros::Subscriber motor_L = n.subscribe("auv/motor/left", 1000, motorLcallback);
-		ros::Subscriber motor_R = n.subscribe("auv/motor/right", 1000, motorRcallback);
+		ros::Subscriber motor_L = n.subscribe("auv/motor/left", 1000, &MOTOR::motorLcallback,this);
+		ros::Subscriber motor_R = n.subscribe("auv/motor/right", 1000, &MOTOR::motorRcallback,this);
 		state_L= n.advertise<catarob_control::state>("auv/state/left", 1000);
 		state_R= n.advertise<catarob_control::state>("auv/state/right", 1000);
 		}
+
+	void motorLcallback(const catarob_control::motor& motor_L)
+	{
+BYTE *WRbuffer;
+    		//Allocation des buffer de ecriture
+    		WRbuffer=(BYTE*)malloc(15*sizeof(BYTE));
+    	WRbuffer[0]= 0;
+    	WRbuffer[1]= motor_L.pwm;		//pwm low
+    	WRbuffer[2]= 0x00;		//pwm high
+    	WRbuffer[3]= motor_L.relay;		//relais low
+    	WRbuffer[4]= 0x00;		//relais hi
+    	WRbuffer[5]= motor_L.imaxl;		//imax low
+    	WRbuffer[6]= motor_L.imaxh;		//imax hi
+    	WRbuffer[7]= motor_L.relay;		//relais1 loq
+    	WRbuffer[8]= 0x00;		//relais1 hi
+    	WRbuffer[9]= motor_L.relay;		//relais2 low
+    	WRbuffer[10]=0x00;		//relais2 hi
+    	WRbuffer[11]=motor_L.relay;		//relais3 low
+    	WRbuffer[12]=0x00;		//relais3 hi
+    	WRbuffer[13]=51;		//utilisation i2c
+
+    	//création du checksum
+    	unsigned char checksum=99;
+    	for(int i=1;i<=13;i++)
+    	{
+    	checksum = checksum xor WRbuffer[i];
+    	}
+    	WRbuffer[14] = checksum;
+
+    	//écriture des valeur sur le port i2c
+    	wiringPiI2CWriteReg8 (fdL, 0x00, WRbuffer[1]);
+    	wiringPiI2CWriteReg8 (fdL, 0x01, WRbuffer[2]);
+    	wiringPiI2CWriteReg8 (fdL, 0x02, WRbuffer[3]);
+    	wiringPiI2CWriteReg8 (fdL, 0x03, WRbuffer[4]);
+    	wiringPiI2CWriteReg8 (fdL, 0x04, WRbuffer[5]);
+    	wiringPiI2CWriteReg8 (fdL, 0x05, WRbuffer[6]);
+    	wiringPiI2CWriteReg8 (fdL, 0x06, WRbuffer[7]);
+    	wiringPiI2CWriteReg8 (fdL, 0x07, WRbuffer[8]);	
+    	wiringPiI2CWriteReg8 (fdL, 0x08, WRbuffer[9]);
+    	wiringPiI2CWriteReg8 (fdL, 0x09, WRbuffer[10]);
+    	wiringPiI2CWriteReg8 (fdL, 0x0A, WRbuffer[11]);
+    	wiringPiI2CWriteReg8 (fdL, 0x0B, WRbuffer[12]);
+    	wiringPiI2CWriteReg8 (fdL, 0x0C, WRbuffer[13]);
+    	wiringPiI2CWriteReg8 (fdL, 0x0D, WRbuffer[14]);
+free(WRbuffer);
+	}
+
+	void motorRcallback(const catarob_control::motor& motor_R)
+	{
+BYTE *WRbuffer;
+    		//Allocation des buffer de ecriture
+    		WRbuffer=(BYTE*)malloc(15*sizeof(BYTE));
+	WRbuffer[0]= 0;
+    	WRbuffer[1]= motor_R.pwm;		//pwm low
+    	WRbuffer[2]= 0x00;		//pwm high
+    	WRbuffer[3]= motor_R.relay;		//relais low
+    	WRbuffer[4]= 0x00;		//relais hi
+    	WRbuffer[5]= motor_R.imaxl;		//imax low
+    	WRbuffer[6]= motor_R.imaxh;		//imax hi
+    	WRbuffer[7]= motor_R.relay;		//relais1 loq
+    	WRbuffer[8]= 0x00;		//relais1 hi
+    	WRbuffer[9]= motor_R.relay;		//relais2 low
+    	WRbuffer[10]=0x00;		//relais2 hi
+    	WRbuffer[11]=motor_R.relay;		//relais3 low
+    	WRbuffer[12]=0x00;		//relais3 hi
+    	WRbuffer[13]=51;		//utilisation i2c
+
+    	//création du checksum
+    	unsigned char checksum=99;
+    	for(int i=1;i<=13;i++)
+    	{
+    	checksum = checksum xor WRbuffer[i];
+    	}
+    	WRbuffer[14] = checksum;
+
+    	//écriture des valeur sur le port i2c
+    	wiringPiI2CWriteReg8 (fdR, 0x00, WRbuffer[1]);
+    	wiringPiI2CWriteReg8 (fdR, 0x01, WRbuffer[2]);
+    	wiringPiI2CWriteReg8 (fdR, 0x02, WRbuffer[3]);
+    	wiringPiI2CWriteReg8 (fdR, 0x03, WRbuffer[4]);
+    	wiringPiI2CWriteReg8 (fdR, 0x04, WRbuffer[5]);
+    	wiringPiI2CWriteReg8 (fdR, 0x05, WRbuffer[6]);
+    	wiringPiI2CWriteReg8 (fdR, 0x06, WRbuffer[7]);
+    	wiringPiI2CWriteReg8 (fdR, 0x07, WRbuffer[8]);	
+    	wiringPiI2CWriteReg8 (fdR, 0x08, WRbuffer[9]);
+    	wiringPiI2CWriteReg8 (fdR, 0x09, WRbuffer[10]);
+    	wiringPiI2CWriteReg8 (fdR, 0x0A, WRbuffer[11]);
+    	wiringPiI2CWriteReg8 (fdR, 0x0B, WRbuffer[12]);
+    	wiringPiI2CWriteReg8 (fdR, 0x0C, WRbuffer[13]);
+    	wiringPiI2CWriteReg8 (fdR, 0x0D, WRbuffer[14]);
+free(WRbuffer);
+	}
+
 		
+
+
 	void run(){
 		ros::Rate loop_rate(1);
 		while(ros::ok()){

@@ -45,6 +45,7 @@ class Pilot{
 		Pilot(){
 
 
+
 			// Advertise to topics: motor/left and motor/right
 			motor_L = node.advertise<catarob_control::motorL>("motor/left", 1000);
 			motor_R = node.advertise<catarob_control::motorR>("motor/right", 1000);

@@ -206,5 +206,8 @@ include_directories(
 # catkin_add_nosetests(test)
 
 add_executable(catarob_control src/main.cpp)
+
+add_dependencies( catarob_control catarob_control_generate_messages_cpp )
+
 target_link_libraries(catarob_control ${catkin_LIBRARIES} -lwiringPi -lrt)
 

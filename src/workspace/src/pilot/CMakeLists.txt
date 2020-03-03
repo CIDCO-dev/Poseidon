@@ -9,8 +9,11 @@ project(pilot)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  message_generation
+  #message_generation
   std_msgs
+  catarob_control
+  goal_planner
+  state_controller
 )
 
 ## System dependencies are found with CMake's conventions
@@ -53,10 +56,10 @@ find_package(catkin REQUIRED COMPONENTS
 #   Message2.msg
 # )
 
-add_message_files(
-   FILES
-   Junk.msg
-)
+#add_message_files(
+#   FILES
+#   Junk.msg
+#)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -78,10 +81,10 @@ add_message_files(
 #   std_msgs
 #)
 
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs
+#)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -115,7 +118,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pilot
-  CATKIN_DEPENDS roscpp std_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs #message_runtime
 #  DEPENDS system_lib
 )
 
@@ -217,11 +220,13 @@ include_directories(
 
 add_executable(pilot src/main.cpp)
 
-add_dependencies( pilot pilot_generate_messages_cpp )
+#add_dependencies( pilot pilot_generate_messages_cpp )
 
 add_dependencies( pilot catarob_control_generate_messages_cpp )
 add_dependencies( pilot goal_planner_generate_messages_cpp )
 add_dependencies( pilot state_controller_generate_messages_cpp )
+
+add_dependencies( pilot ${catkin_EXPORTED_TARGETS} )
 
 target_link_libraries( pilot ${catkin_LIBRARIES} )
 

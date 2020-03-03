@@ -75,10 +75,14 @@ class Pilot{
 		// Callback for waypoint
 		void waypointCallback( const goal_planner::Waypoint& waypoint ) {
 
+            std::cout << "Pilot::waypointCallback\n"
+                << "  waypoint.latitude: " << waypoint.latitude << "\n"
+                << "  waypoint.longitude: " << waypoint.longitude << std::endl;             
+
 		}
 
 		void run(){
-			ros::Rate loop_rate( 0.01 );
+			ros::Rate loop_rate( 100 );
 
 			while ( ros::ok() ){
 

@@ -68,9 +68,25 @@ class GoalPlanner{
 
 		void run(){
 
-			ros::Rate loop_rate( 0.1 );
+			ros::Rate loop_rate( 10 );
+
+
+            goal_planner::Waypoint waypoint;
+
+
+            int count = 0;
 
 			while ( ros::ok() ){
+
+
+                std::cout << "GoalPlanner::run(), count: " << count << std::endl;
+
+                waypoint.latitude = count;
+                waypoint.longitude = -count;
+
+                waypointTopic.publish( waypoint );
+
+                count++;
 
 
 				// Check state's raspberrypi_vitals?

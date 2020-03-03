@@ -27,9 +27,8 @@
 <node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket"/>
 
 
-<node pkg="pilot" name="pilot" type="pilot" output="screen"/>
-
-<node pkg="goal_planner" name="goal_planner" type="goal_planner" output="screen"/>
+<!-- <node pkg="pilot" name="pilot" type="pilot" output="screen"/> -->
+<!-- <node pkg="goal_planner" name="goal_planner" type="goal_planner" output="screen"/> -->
 
 
 </launch>

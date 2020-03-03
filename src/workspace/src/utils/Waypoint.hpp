@@ -30,7 +30,7 @@ public:
 private:
 
     const double latitude;
-    const double longitude
+    const double longitude;
 
 
 };

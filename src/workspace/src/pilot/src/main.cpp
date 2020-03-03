@@ -1,7 +1,7 @@
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
-
+#include <iostream>
 
 #include "ros/ros.h"
 
@@ -11,11 +11,15 @@
 
 #include "goal_planner/Waypoint.h"
 
-#include "../../utils/Structs.hpp"
+// #include "../../utils/Structs.hpp"
+
+#include "../../utils/Waypoint.hpp"
+
+#include "../../utils/BoolWithMutex.hpp"
+
 
 
 // #include "raspberrypi_vitals/sysinfo.h"
-// #include <iostream>
 // #include <fstream>
 // #include <string>
 // #include "sys/statvfs.h"
@@ -39,13 +43,29 @@ class Pilot{
 
 
 
-		Position currentWaypoint;
-		Position currentPosition;
+		//Waypoint currentWaypoint;
+		//Waypoint currentPosition;
+
+
+		double waypointLatitude;
+        double waypointLongitude;
+
+		double currentPositionLatitude;
+        double currentPositionLongitude;
+
+        BoolWithMutex accessingWaypoint;
+        BoolWithMutex accessingCurrentPosition;
+    
+
+
 
 
 
 	public:
-		Pilot(){
+		Pilot()
+         :  accessingWaypoint( false ),
+            accessingCurrentPosition( false )
+{
 
 
 
@@ -71,9 +91,22 @@ class Pilot{
 		// Callback for waypoint
 		void waypointCallback( const goal_planner::Waypoint& waypoint ) {
 
+           // std::cout << "Pilot::waypointCallback\n"
+           //    << "  waypoint.latitude: " << waypoint.latitude << "\n"
+           //     << "  waypoint.longitude: " << waypoint.longitude << std::endl; 
+
+
+            //accessingWaypoint.setValue( true );
+
+		    waypointLatitude = waypoint.latitude;
+            waypointLongitude = waypoint.longitude;
+
+            //mutexaccessingWaypoint.setValue( false );
+
+
             std::cout << "Pilot::waypointCallback\n"
-                << "  waypoint.latitude: " << waypoint.latitude << "\n"
-                << "  waypoint.longitude: " << waypoint.longitude << std::endl;             
+                << "  waypointLatitude: " << waypointLatitude << "\n"
+                << "  waypointLongitude: " << waypointLongitude << std::endl;          
 
 		}
 

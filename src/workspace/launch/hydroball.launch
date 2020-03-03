@@ -6,7 +6,7 @@
 <arg name="gpsip" value="_host:=127.0.0.1"/>
 <arg name="gpsport" value="_port:=2947"/>
 
-<!--
+
 <node pkg="logger_binary" name="logger_binary" type="logger_binary" output="screen" args="$(arg loggerPath)"/>
 
 <node pkg="logger_text" name="logger_text" type="logger_text" output="screen" args="$(arg loggerPath)"/>
@@ -26,12 +26,10 @@
 
 <node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket"/>
 
--->
 
 <node pkg="pilot" name="pilot" type="pilot" output="screen"/>
 
 <node pkg="goal_planner" name="goal_planner" type="goal_planner" output="screen"/>
-
 
 
 </launch>

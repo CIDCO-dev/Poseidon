@@ -11,11 +11,7 @@
 
 #include "goal_planner/Waypoint.h"
 
-// #include "pilot/Junk.h"
-
 #include "../../utils/Structs.hpp"
-
-
 
 
 // #include "raspberrypi_vitals/sysinfo.h"

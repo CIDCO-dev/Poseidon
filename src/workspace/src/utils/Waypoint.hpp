@@ -1,27 +1,36 @@
 #include "Goal.hpp"
 
-#include "Structs.hpp"
-
 
 class Waypoint : Goal 
 {
 
 public:
 
-    Waypoint( Position & position )
-        : waypoint( position )
+    Waypoint( const double latitude, const double longitude )
+        : latitude( latitude ), longitude( longitude )
     {        
     }
 
 
+/*
     Position getGoal() const override {
         return waypoint;
+    }
+*/
+
+    double getLatitude() const {
+        return latitude;
+    }
+
+    double getlongitude() const {
+        return longitude;
     }
 
 
 private:
 
-    Position waypoint;
+    const double latitude;
+    const double longitude
 
 
 };

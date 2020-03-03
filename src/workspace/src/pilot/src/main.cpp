@@ -96,12 +96,12 @@ class Pilot{
            //     << "  waypoint.longitude: " << waypoint.longitude << std::endl; 
 
 
-            //accessingWaypoint.setValue( true );
+            accessingWaypoint.setValue( true );
 
 		    waypointLatitude = waypoint.latitude;
             waypointLongitude = waypoint.longitude;
 
-            //mutexaccessingWaypoint.setValue( false );
+            accessingWaypoint.setValue( false );
 
 
             std::cout << "Pilot::waypointCallback\n"

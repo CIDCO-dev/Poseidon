@@ -49,10 +49,8 @@ FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
 ## Generate messages in the 'msg' folder
  add_message_files(
    FILES
-   motorL.msg
-   motorR.msg
-   stateL.msg
-   stateR.msg
+   motor.msg
+   state.msg
  )
 
 ## Generate services in the 'srv' folder

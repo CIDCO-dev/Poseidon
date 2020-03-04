@@ -103,7 +103,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES gnss_zed-f9p
-#  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp
 #  DEPENDS system_lib
 )
 
@@ -203,4 +203,6 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 add_executable(gnss_zed-f9p src/main.cpp)
+target_link_libraries(gnss_zed-f9p ${catkin_LIBRARIES})
+
 

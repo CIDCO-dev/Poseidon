@@ -3,7 +3,7 @@
 // #include "Structs.hpp"
 
 
-class SVPprovile : Goal 
+class SVPprovile : public Goal 
 {
 
 public:

@@ -3,26 +3,26 @@
 */
 
 
-#ifndef BOOLWITHMUTEX_H
-#define BOOLWITHMUTEX_H
+#ifndef DOUBLEWITHMUTEX_H
+#define DOUBLEWITHMUTEX_H
 
 #include <mutex>
 
 
-class BoolWithMutex
+class DoubleWithMutex
 {
 public:
-    BoolWithMutex( const bool valueIn )
+    DoubleWithMutex( const double valueIn )
     : value( valueIn )
     {
     }
 
-    bool getValue() {
+    double getValue() {
         std::lock_guard<std::mutex> lock ( mutex );
         return value;
     }
 
-    bool setValue( const bool valueIn ) {
+    double setValue( const double valueIn ) {
         std::lock_guard<std::mutex> lock ( mutex );
         value = valueIn;
         return value;
@@ -30,7 +30,7 @@ public:
 
 private:
     std::mutex mutex;
-    bool value;
+    double value;
 };
 
-#endif // BOOLWITHMUTEX_H
+#endif // DOUBLEWITHMUTEX_H

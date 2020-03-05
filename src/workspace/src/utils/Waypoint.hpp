@@ -1,7 +1,7 @@
 #include "Goal.hpp"
 
 
-class Waypoint : Goal 
+class Waypoint : public Goal 
 {
 
 public:

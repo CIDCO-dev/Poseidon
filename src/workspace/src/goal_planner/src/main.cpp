@@ -41,6 +41,8 @@ class GoalPlanner{
 
 		std::list<Goal *> goals;
 
+        // Do I need a variable for the current goal
+
 
 		// Position currentPosition;
 
@@ -96,8 +98,18 @@ class GoalPlanner{
 				// If there is a current goal:
 				// {
 
+
+
+
+
+
 						// If goal is a waypoint
 						// {
+
+
+                                // What if the current position is too old?
+
+
 								// If currentPosition from the state_contoller 
 								// is close enough to the currentWaypoint (MBES-lib: src/math/Distance.hpp, function haversine)
 								// {

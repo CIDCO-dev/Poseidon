@@ -15,9 +15,8 @@
 
 //#include "../../utils/Waypoint.hpp"
 
-//#include "../../utils/TwoDoublesWithMutex.hpp"
-#include "../../utils/TwoDoublesRosTimeWithMutex.hpp"
 
+#include "../../utils/TwoDoublesRosTimeWithMutex.hpp"
 
 #include "../../utils/BoolWithMutex.hpp"
 
@@ -45,44 +44,20 @@ class Pilot{
 		ros::Publisher motor_L;
 		ros::Publisher motor_R;
 
-
-
-		//Waypoint currentWaypoint;
-		//Waypoint currentPosition;
-
-
-		//DoubleWithMutex waypointLatitude;
-        //DoubleWithMutex waypointLongitude;
-
-		//DoubleWithMutex currentPositionLatitude;
-        //DoubleWithMutex currentPositionLongitude;
-
-        //ros::Time waypointReceivedTime;
-        //TwoDoublesWithMutex waypointLatitudeLongitude;
-
-        //ros::Time currentPositionTime;
-        //TwoDoublesWithMutex currentPositionLatitudeLongitude;
-
-
         TwoDoublesRosTimeWithMutex waypointLatitudeLongitude;
         TwoDoublesRosTimeWithMutex currentPositionLatitudeLongitude;
 
-
         BoolWithMutex pilotActive;
     
+        // Max speed?
+        // max motor drive?
+
+        uint32_t secMaxFromNowToCurrentPosition = 20;
 
 
 	public:
 		Pilot()
          :  
-            //waypointReceivedTime.sec( 0 ),
-            //waypointReceivedTime.nsec( 0 ),
-            //waypointLatitudeLongitude( 0, 0 ),
-
-            //currentPositionTime.sec( 0 ),
-            //currentPositionTime.nsec( 0 ),
-            //currentPositionLatitudeLongitude( 0, 0 ),
-
             waypointLatitudeLongitude( 0, 0, ros::Time( 0, 0 ) ),
             currentPositionLatitudeLongitude( 0, 0, ros::Time( 0, 0 ) ),
 
@@ -97,6 +72,12 @@ class Pilot{
 
 			// Subscribe to topics: waypoint (from GoalPlanner)
 			waypointTopic = node.subscribe("waypoint", 1000, &Pilot::waypointCallback, this);	
+
+
+            std::cout << "\n\nwaypointLatitudeLongitude.isTimeZero(): " 
+                << std::boolalpha << waypointLatitudeLongitude.isTimeZero()
+                << std::noboolalpha << "\n" << std::endl;
+
 		}
 
 
@@ -111,21 +92,11 @@ class Pilot{
             // state.position.header.stamp
 
 
-            // the time of the current position in the message must also be kept
-
             // Set current position from positon in the message
-
-            //currentPositionLatitudeLongitude.setValues( 
-            //       state.position.latitude, state.position.longitude );
-
-            // currentPositionTime = state.position.header.stamp
-
 
             currentPositionLatitudeLongitude.setValues( 
                    state.position.latitude, state.position.longitude,
                    state.position.header.stamp );
-
-
 
 		}
 
@@ -136,17 +107,19 @@ class Pilot{
            //    << "  waypoint.latitude: " << waypoint.latitude << "\n"
            //     << "  waypoint.longitude: " << waypoint.longitude << std::endl; 
 
-            
-            
-            // waypointLatitudeLongitude.setValues( 
-            //    waypointIn.latitude, waypointIn.longitude );
+            if ( waypointIn.pilotActive != 0 ) {
 
-            // waypointReceivedTime = ros::Time::now();
+                waypointLatitudeLongitude.setValues( 
+                    waypointIn.latitude, waypointIn.longitude,
+                    ros::Time::now() );
 
+                pilotActive.setValue( true );
 
-            waypointLatitudeLongitude.setValues( 
-                waypointIn.latitude, waypointIn.longitude,
-                ros::Time::now() );
+            } else {
+                pilotActive.setValue( false );
+
+                waypointLatitudeLongitude.setValues( 0, 0, ros::Time( 0, 0 ) );
+            }
 
 
             // For display
@@ -161,36 +134,47 @@ class Pilot{
                 << "  timeToDisplay sec.nsec: " << timeToDisplay.sec << "."
                 << timeToDisplay.nsec << "\n"
                 << "  latitude: " << latitude << "\n"
-                << "  longitude: " << longitude << std::endl;     
+                << "  longitude: " << longitude  << "\n"
+                << "  pilotActive.getValue(): " 
+                << std::boolalpha << pilotActive.getValue() << std::noboolalpha 
+                << "\n" << std::endl;     
 
 		}
+
+        
 
 		void run(){
 			ros::Rate loop_rate( 100 );
 
-			while ( ros::ok() ){
+            ros::Time currentPositionTime;
+            double currentPositionlatitude;
+            double currentPositionlongitude;
+
+			while ( ros::ok() ) {
+
+				// If there is a currentWaypoint
+                if ( pilotActive.getValue() ) { 
+
+                    currentPositionLatitudeLongitude.getValues(
+                            currentPositionlatitude, 
+                            currentPositionlongitude, 
+                            currentPositionTime );
+
+                    // If the currentPosition is recent enough
+                    if ( ros::Time::now().sec - currentPositionTime.sec 
+                        <= secMaxFromNowToCurrentPosition ) {
+
+					    // Based on the currentPosition, 
+                        // control the motors to get to the currentWaypoint
+
+                    } else {     // currentPosition is too old
+                        // What to do?
+
+                    }
 
 
-				// If there is a currentWaypoint 
-				//{ 
+				}
 
-                        // If the currentPosition is recent enough
-                        // {
-
-						    // Based on the currentPosition, control the motors to get to the currentWaypoint
-
-                        // }
-                        // else     // currentPosition is too old
-                        // {
-                                // What to do?
-
-                        // }
-
-
-				// }
-
-
-                // What to do if the currentPosition is too old?
 
 				ros::spinOnce();
 				loop_rate.sleep();

@@ -67,6 +67,10 @@ public:
         time = timeIn;
     }
 
+    bool isTimeZero() {
+        std::lock_guard<std::mutex> lock ( mutex );
+        return time.sec == 0 && time.nsec == 0;
+    }
 
 private:
     std::mutex mutex;

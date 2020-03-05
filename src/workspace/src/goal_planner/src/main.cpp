@@ -85,7 +85,8 @@ class GoalPlanner{
 
                 waypoint.latitude = count;
                 waypoint.longitude = -count;
-
+                waypoint.pilotActive = 1;
+                               
                 waypointTopic.publish( waypoint );
 
                 count++;

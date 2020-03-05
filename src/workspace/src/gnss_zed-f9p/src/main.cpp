@@ -45,6 +45,9 @@ class ZEDF9P{
 		ser.setPort(serialport);
         	ser.setBaudrate(115200);
 		ser.open();
+		//écrit la configuration du module gps
+
+
 		while(ros::ok()){
 			//lis le temps si la seconde change on change le nom du fichier
 			fnameout = outputFolder + datetime() +".ubx";
@@ -71,14 +74,22 @@ class ZEDF9P{
 int main(int argc,char** argv){
   	
 	ros::init(argc, argv, "zedf9p");
+	std::string addr (argv[1]);
+	std::string port (argv[2]);
 
-	if(argc < 2){
-    		std::cout << "nlogger_text, Missing output folder path" << std::endl;
+
+	if (addr.length()<2){
+		std::cout << "nlogger_text, Missing output folder path" << std::endl;
     		return 1;
-  	}
-	//std::string outputFolder( argv[1],argv[2] );
-	
-	//récupération du path
+	}
+
+	if (port.length()<2){
+		std::cout << "nlogger_text, Missing serial port" << std::endl;
+    		return 1;
+
+	}
+
+
 	//création du path du log si non présent
 	
 	//initialiser le module zed-f9p

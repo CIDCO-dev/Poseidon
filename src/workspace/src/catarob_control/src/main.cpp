@@ -24,7 +24,6 @@ int fdL,fdR;
 unsigned short pt_cei012c_tab_ech[30] = {96,124,157,196,241,290,343,398,455,512,567,619,668,712,753,788,820,847,871,892,910,925,938,949,959,967,974,981,986,990};
 uint16_t ADCTempVal = 0;
 std::mutex mtx;
-typedef unsigned char BYTE;
 
 
 
@@ -48,9 +47,9 @@ class MOTOR{
 		}
 
 	void i2ctransmit(char id,char pwm,char imaxl,char imaxh,char relay){
-		BYTE *WRbuffer;
+		unsigned char *WRbuffer;
 		//Allocation des buffer de ecriture
-    		WRbuffer=(BYTE*)malloc(15*sizeof(BYTE));
+    		WRbuffer=(unsigned char*)malloc(15*sizeof(unsigned char));
     		WRbuffer[0]= 0;
     		WRbuffer[1]= pwm;		//pwm low
     		WRbuffer[2]= 0x00;		//pwm high
@@ -66,14 +65,14 @@ class MOTOR{
     		WRbuffer[12]=0x00;		//relais3 hi
     		WRbuffer[13]=51;		//utilisation i2c
 
-  		//crï¿½ation du checksum
+  		//création du checksum
     		unsigned char checksum=99;
     		for(int i=1;i<=13;i++){
     			checksum = checksum xor WRbuffer[i];
     			}
     		WRbuffer[14] = checksum;
 
-    		//ï¿½criture des valeur sur le port i2c
+    		//écriture des valeur sur le port i2c
     		mtx.lock();
     		wiringPiI2CWriteReg8 (id, 0x00, WRbuffer[1]);
     		wiringPiI2CWriteReg8 (id, 0x01, WRbuffer[2]);

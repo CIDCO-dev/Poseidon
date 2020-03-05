@@ -9,6 +9,8 @@ project(gnss_zed-f9p)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  serial
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,7 +105,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES gnss_zed-f9p
-  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp serial std_msgs
 #  DEPENDS system_lib
 )
 

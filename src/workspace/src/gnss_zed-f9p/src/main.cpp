@@ -8,18 +8,25 @@
 #include <chrono>
 #include <ctime> 
 #include <string>
+#include <serial/serial.h>
+#include <std_msgs/String.h>
 
 using namespace std;
 
 string fnameout="123";
 string path="123";
 
-class MOTOR{
+
+class ZEDF9P{
 	private:
-	
+	std::string outputFolder;
+	std::string serialport;
+	serial::Serial ser;
+	std_msgs::String result;
+
 	public:
 
-	MOTOR(){
+	ZEDF9P(char * outputFolder,  char * serialport): outputFolder(outputFolder), serialport(serialport){
 		}
 	std::string datetime(){
     		time_t rawtime;
@@ -31,51 +38,53 @@ class MOTOR{
 
     		strftime(buffer,80,"%Y%m%d%H%M%S",timeinfo);
     		return std::string(buffer);
-}
-
+		}
+	
 
 	void run(){
+		ser.setPort(serialport);
+        	ser.setBaudrate(115200);
+		ser.open();
 		while(ros::ok()){
-		//lis le temps si la seconde change on change le nom du fichier
-		path = "/home/ubuntu/ubx/";
-
-		fnameout = path + datetime() +".ubx";
-		//resoit les donnée du port série /dev/ttyACM0
+			//lis le temps si la seconde change on change le nom du fichier
+			fnameout = outputFolder + datetime() +".ubx";
 		
+			//resoit les donnée du port série /dev/ttyACM0
+			result.data = ser.read(ser.available());
 
-		//ouvre le fichier
-		ofstream file;
-		file.open(fnameout); // File output stream, the file that we'll write to it
-		if(!file) { // if can't open file
+			//ouvre le fichier
+			ofstream file;
+			file.open(fnameout,ios::app); // File output stream, the file that we'll write to it
+			if(!file) { // if can't open file
+			}
+			//écrit les donée recu du port série dans le fichier
+			file << result.data;
+			//ferme le fichier
+			file.close();
+		
 		}
-		//écrit les donée recu du port série dans le fichier
-		file << 1 << endl;
-		//ferme le fichier
-		file.close();
-	
-		}
+		ser.close();
 	}
 
 
 };
 int main(int argc,char** argv){
-  	if(argc < 2){
+  	
+	ros::init(argc, argv, "zedf9p");
+
+	if(argc < 2){
     		std::cout << "nlogger_text, Missing output folder path" << std::endl;
     		return 1;
   	}
-	std::string outputFolder( argv[1] );
+	//std::string outputFolder( argv[1],argv[2] );
 	
-	outputFolder = "/home/ubuntu/ubx/";
-
-	ros::init(argc, argv, "motor");
-
 	//récupération du path
 	//création du path du log si non présent
-	;
+	
 	//initialiser le module zed-f9p
 
-	MOTOR motor;
-	motor.run();
-	ros::spin();
+	ZEDF9P zedf9p(argv[1] ,argv[2]);
+	zedf9p.run();
+	
 }
 #endif

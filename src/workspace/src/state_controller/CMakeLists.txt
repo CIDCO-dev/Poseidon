@@ -211,5 +211,8 @@ include_directories(
 # catkin_add_nosetests(test)
 
 add_executable(state_controller src/main.cpp)
+
+add_dependencies( state_controller state_controller_generate_messages_cpp )
+
 target_link_libraries(state_controller ${catkin_LIBRARIES})
 

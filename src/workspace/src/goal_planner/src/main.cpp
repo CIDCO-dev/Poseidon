@@ -119,6 +119,39 @@ class GoalPlanner{
 
 
 
+            currentGoal = goals.front();
+
+            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
+
+            if ( currentGoal == nullptr )
+                std::cout << "currentGoal == nullptr" << std::endl;
+            else
+                std::cout << "currentGoal != nullptr" << std::endl;
+
+
+            goals.pop_front();
+
+            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
+
+            if ( currentGoal == nullptr )
+                std::cout << "currentGoal == nullptr" << std::endl;
+            else
+                std::cout << "currentGoal != nullptr" << std::endl;
+
+
+
+            currentGoal.reset();
+
+            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
+
+            if ( currentGoal == nullptr )
+                std::cout << "currentGoal == nullptr" << std::endl;
+            else
+                std::cout << "currentGoal != nullptr" << std::endl;
+
+
+
+
             for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
             
                 // Waypoint * ptr = dynamic_cast< Waypoint * >( *iter );
@@ -203,7 +236,7 @@ class GoalPlanner{
 				// }
 
 
-/*				// If no current goal
+				// If no current goal
                 if ( currentGoal == nullptr )
 				{
 						// If there is a goal in the list
@@ -223,7 +256,7 @@ class GoalPlanner{
 
 							// Publish this goal
 						}
-				}	*/		
+				}			
 
 				ros::spinOnce();
 				loop_rate.sleep();

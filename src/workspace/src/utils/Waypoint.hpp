@@ -1,3 +1,9 @@
+
+#ifndef WAYPOINT_HPP
+#define WAYPOINT_HPP
+
+
+
 #include "Goal.hpp"
 
 
@@ -13,7 +19,8 @@ public:
 
 
 /*
-    Position getGoal() const override {
+    Waypoint getGoal() const override {
+        Waypoint waypoint( latitude, longitude );
         return waypoint;
     }
 */
@@ -28,9 +35,12 @@ public:
 
 
 private:
+    virtual void junkFunctionForPureVirtual() override {} 
 
     const double latitude;
     const double longitude;
 
 
 };
+
+#endif

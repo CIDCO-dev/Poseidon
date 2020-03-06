@@ -45,6 +45,8 @@ class Pilot{
 		ros::Publisher motor_R;
 
         TwoDoublesRosTimeWithMutex waypointLatitudeLongitude;
+
+        // Add heading to currentPosition
         TwoDoublesRosTimeWithMutex currentPositionLatitudeLongitude;
 
         BoolWithMutex pilotActive;

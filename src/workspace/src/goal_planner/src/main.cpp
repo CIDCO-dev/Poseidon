@@ -11,6 +11,7 @@
 #include "goal_planner/Waypoint.h"
 
 #include "../../utils/Goal.hpp"
+#include "../../utils/Waypoint.hpp"
 
 
 // #include "raspberrypi_vitals/sysinfo.h"
@@ -42,6 +43,7 @@ class GoalPlanner{
 		std::list<Goal *> goals;
 
         // Do I need a variable for the current goal
+        Goal * currentGoal;
 
 
 		// Position currentPosition;
@@ -68,12 +70,36 @@ class GoalPlanner{
 		}
 
 
+        
+
+
+
+
 		void run(){
 
 			ros::Rate loop_rate( 10 );
 
 
-            goal_planner::Waypoint waypoint;
+            currentGoal = nullptr;
+
+            //Waypoint * ptr1 = new Waypoint( 12345.0, -12345.0 );
+
+            goals.push_back( new Waypoint( 12345, -12345 ) );
+            goals.push_back( new Waypoint( 123456789, -123456789 ) );
+
+
+            for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
+            
+                Waypoint * ptr = dynamic_cast< Waypoint * >( *iter );
+
+                if ( ptr )
+                    std::cout << ptr-> getLatitude() << ", " 
+                        << ptr-> getlongitude() << std::endl;
+            }
+
+
+            // Waypoint message
+            goal_planner::Waypoint waypointMessage;
 
 
             int count = 0;
@@ -83,11 +109,11 @@ class GoalPlanner{
 
                 std::cout << "GoalPlanner::run(), count: " << count << std::endl;
 
-                waypoint.latitude = count;
-                waypoint.longitude = -count;
-                waypoint.pilotActive = 1;
+                waypointMessage.latitude = count;
+                waypointMessage.longitude = -count;
+                waypointMessage.pilotActive = 1;
                                
-                waypointTopic.publish( waypoint );
+                waypointTopic.publish( waypointMessage );
 
                 count++;
 
@@ -143,14 +169,26 @@ class GoalPlanner{
 
 
 				// If no current goal
-				// {
+                if ( currentGoal == nullptr )
+				{
 						// If there is a goal in the list
-						// {
-							// Set this as the current goal, 
+                        if ( goals.size() != 0 )
+						{
+							// Set this as the current goal,
+                            currentGoal = goals.front();
+
+
 							// Remove this goal from the list
+                            goals.pop_front();
+                            
+
+
+
+
+
 							// Publish this goal
-						// }
-				// }			
+						}
+				}			
 
 				ros::spinOnce();
 				loop_rate.sleep();

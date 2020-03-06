@@ -47,11 +47,10 @@ class GoalPlanner{
 		ros::Publisher waypointTopic;
 
 
-//		std::list<Goal *> goals;
 		std::list< std::shared_ptr< Goal > > goals;
 
 
-        // Do I need a variable for the current goal
+        // TODO: use mutex?
         std::shared_ptr< Goal > currentGoal;
 
 
@@ -65,6 +64,10 @@ class GoalPlanner{
 
 			// Subscribe to topics: state (from state_controller)
 			stateTopic = node.subscribe("state", 1000, &GoalPlanner::stateCallback, this);
+
+
+            // Reset currentGoal so it does not point to anything
+            currentGoal.reset();
 
 		}
 
@@ -81,75 +84,14 @@ class GoalPlanner{
 
         
 
-
-
-
 		void run(){
 
 			ros::Rate loop_rate( 10 );
 
-
-            //currentGoal = nullptr;
-
-            currentGoal.reset();
-
-            //Waypoint * ptr1 = new Waypoint( 12345.0, -12345.0 );
-
+            // Populate the list for test purposes
             goals.push_back( std::make_shared< Waypoint > ( 12345, -12345 ) );
-
             goals.push_back( std::make_shared< SVPprofile > () );
-
             goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789 ) );
-
-
-
-            // goals.push_back( std::make_shared< Waypoint > ( 12345, -12345 ) );
-
-            // The following works
-            //std::shared_ptr< Goal > test ( new Waypoint( 12345, -12345 ) );
-            //std::shared_ptr< Goal > test2 = std::make_shared< Waypoint > ( 12345, -12345 );
-
-
-            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
-
-            if ( currentGoal == nullptr )
-                std::cout << "currentGoal == nullptr" << std::endl;
-            else
-                std::cout << "currentGoal != nullptr" << std::endl;
-
-
-
-            currentGoal = goals.front();
-
-            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
-
-            if ( currentGoal == nullptr )
-                std::cout << "currentGoal == nullptr" << std::endl;
-            else
-                std::cout << "currentGoal != nullptr" << std::endl;
-
-
-            goals.pop_front();
-
-            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
-
-            if ( currentGoal == nullptr )
-                std::cout << "currentGoal == nullptr" << std::endl;
-            else
-                std::cout << "currentGoal != nullptr" << std::endl;
-
-
-
-            currentGoal.reset();
-
-            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
-
-            if ( currentGoal == nullptr )
-                std::cout << "currentGoal == nullptr" << std::endl;
-            else
-                std::cout << "currentGoal != nullptr" << std::endl;
-
-
 
 
             for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
@@ -174,7 +116,7 @@ class GoalPlanner{
 
 			while ( ros::ok() ){
 
-
+                // Create a waypoint message for test purposes
                 std::cout << "GoalPlanner::run(), count: " << count << std::endl;
 
                 waypointMessage.latitude = count;
@@ -189,74 +131,73 @@ class GoalPlanner{
 				// Check state's raspberrypi_vitals?
 
 
-
-				// If there is a current goal:
-				// {
-
-
-
-
-
-
-						// If goal is a waypoint
-						// {
-
-
-                                // What if the current position is too old?
-
-
-								// If currentPosition from the state_contoller 
-								// is close enough to the currentWaypoint (MBES-lib: src/math/Distance.hpp, function haversine)
-								// {
-
-										// The destination goal is reached
-
-										// If the next goal in the list is a waypoint
-										// {
-												// Set this as the current goal, 
-												// Remove this goal from the list
-												// Publish this new waypoint
-										// }
-										// else 
-										// {
-												// Publish a waypoint that will tell the motors to stop (or maintain the position?)
-										// }
-
-
-								// }
-
-						// }
-						// else 
-						// {
-								// Deal with other goal types
-						// }
-
-
-
-				// }
-
-
 				// If no current goal
                 if ( currentGoal == nullptr )
 				{
-						// If there is a goal in the list
-                        if ( goals.size() != 0 )
-						{
-							// Set this as the current goal,
-                            currentGoal = goals.front();
+					// If there is a goal in the list
+                    if ( goals.size() != 0 )
+					{
+						// Set this as the current goal,
+                        currentGoal = goals.front();
+
+						// Remove this goal from the list
+                        goals.pop_front();
+                        
+						// Publish this goal
+					}
+				}	
 
 
-							// Remove this goal from the list
-                            goals.pop_front();
-                            
+
+				// If there is a current goal:
+                if ( currentGoal != nullptr )
+				{
+
+                    std::shared_ptr< Waypoint > ptr = std::dynamic_pointer_cast<Waypoint>( currentGoal );
+
+					// If goal is a waypoint
+                    if ( ptr )
+					{
+
+
+                        // What if the current position is too old?
+
+
+						// If currentPosition from the state_contoller 
+						// is close enough to the currentWaypoint (MBES-lib: src/math/Distance.hpp, function haversine)
+						// {
+
+								// The destination goal is reached
+
+								// If the next goal in the list is a waypoint
+								// {
+										// Set this as the current goal, 
+										// Remove this goal from the list
+										// Publish this new waypoint
+								// }
+								// else 
+								// {
+										// Publish a waypoint that will tell the motors to stop (or maintain the position?)
+                                        
+                                        // Remove the waypoint from the current goal
+                                        // currentGoal.reset();
+								// }
+
+
+						// }
+
+					}
+					else 
+					{
+								// Deal with other goal types
+					}
 
 
 
+				}
 
 
-							// Publish this goal
-						}
-				}			
+		
 
 				ros::spinOnce();
 				loop_rate.sleep();

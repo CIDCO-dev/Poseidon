@@ -17,6 +17,7 @@ public:
     {        
     }
 
+    virtual ~Waypoint() {}
 
 /*
     Waypoint getGoal() const override {

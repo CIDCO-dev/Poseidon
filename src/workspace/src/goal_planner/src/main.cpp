@@ -1,6 +1,10 @@
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
+
+#include <memory>
+
+
 #include <list>
 
 
@@ -12,6 +16,9 @@
 
 #include "../../utils/Goal.hpp"
 #include "../../utils/Waypoint.hpp"
+#include "../../utils/SVPprofile.hpp"
+
+
 
 
 // #include "raspberrypi_vitals/sysinfo.h"
@@ -40,10 +47,12 @@ class GoalPlanner{
 		ros::Publisher waypointTopic;
 
 
-		std::list<Goal *> goals;
+//		std::list<Goal *> goals;
+		std::list< std::shared_ptr< Goal > > goals;
+
 
         // Do I need a variable for the current goal
-        Goal * currentGoal;
+        std::shared_ptr< Goal > currentGoal;
 
 
 		// Position currentPosition;
@@ -80,21 +89,47 @@ class GoalPlanner{
 			ros::Rate loop_rate( 10 );
 
 
-            currentGoal = nullptr;
+            //currentGoal = nullptr;
+
+            currentGoal.reset();
 
             //Waypoint * ptr1 = new Waypoint( 12345.0, -12345.0 );
 
-            goals.push_back( new Waypoint( 12345, -12345 ) );
-            goals.push_back( new Waypoint( 123456789, -123456789 ) );
+            goals.push_back( std::make_shared< Waypoint > ( 12345, -12345 ) );
+
+            goals.push_back( std::make_shared< SVPprofile > () );
+
+            goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789 ) );
+
+
+
+            // goals.push_back( std::make_shared< Waypoint > ( 12345, -12345 ) );
+
+            // The following works
+            //std::shared_ptr< Goal > test ( new Waypoint( 12345, -12345 ) );
+            //std::shared_ptr< Goal > test2 = std::make_shared< Waypoint > ( 12345, -12345 );
+
+
+            std::cout << "currentGoal.use_count(): " << currentGoal.use_count() << std::endl;
+
+            if ( currentGoal == nullptr )
+                std::cout << "currentGoal == nullptr" << std::endl;
+            else
+                std::cout << "currentGoal != nullptr" << std::endl;
+
 
 
             for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
             
-                Waypoint * ptr = dynamic_cast< Waypoint * >( *iter );
+                // Waypoint * ptr = dynamic_cast< Waypoint * >( *iter );
+
+                std::shared_ptr< Waypoint > ptr = std::dynamic_pointer_cast<Waypoint>( *iter );
 
                 if ( ptr )
                     std::cout << ptr-> getLatitude() << ", " 
                         << ptr-> getlongitude() << std::endl;
+                else
+                    std::cout << "Not a Waypoint" << std::endl;
             }
 
 
@@ -168,7 +203,7 @@ class GoalPlanner{
 				// }
 
 
-				// If no current goal
+/*				// If no current goal
                 if ( currentGoal == nullptr )
 				{
 						// If there is a goal in the list
@@ -188,7 +223,7 @@ class GoalPlanner{
 
 							// Publish this goal
 						}
-				}			
+				}	*/		
 
 				ros::spinOnce();
 				loop_rate.sleep();

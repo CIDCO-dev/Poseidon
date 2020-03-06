@@ -5,6 +5,9 @@
 <arg name="sonarport" value="5000"/>
 <arg name="gpsip" value="_host:=127.0.0.1"/>
 <arg name="gpsport" value="_port:=2947"/>
+<arg name="loggerPath1" value="/home/ubuntu/ubx/"/>
+<arg name="portPath1" value="/dev/ttyACM0"/>
+
 
 <!-- 
 
@@ -14,7 +17,6 @@
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsip) $(arg gpsport)"/> 
 
-<node pkg="sonar_nmea_0183_tcp_client" name="Sonar" type="sonar_nmea_0183_tcp_client" output="screen" args="$(arg sonarip) $(arg sonarport)"/>
 
 <node pkg="imu_dummy" name="IMU" type="imu_dummy" output="screen"/>
 
@@ -30,6 +32,7 @@
 
 <node pkg="pilot" name="pilot" type="pilot" output="screen"/>
 <node pkg="goal_planner" name="goal_planner" type="goal_planner" output="screen"/>
+
 
 
 </launch>

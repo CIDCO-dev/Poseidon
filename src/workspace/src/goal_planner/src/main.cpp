@@ -4,6 +4,9 @@
 
 #include <memory>
 
+#include <iostream>
+#include <iomanip>
+
 
 #include <list>
 
@@ -18,7 +21,9 @@
 #include "../../utils/Waypoint.hpp"
 #include "../../utils/SVPprofile.hpp"
 
+#include "../../utils/TwoDoublesRosTimeWithMutex.hpp"
 
+#include "../../utils/haversine.hpp"
 
 
 // #include "raspberrypi_vitals/sysinfo.h"
@@ -46,18 +51,24 @@ class GoalPlanner{
 		// Output topics
 		ros::Publisher waypointTopic;
 
-
+        // TODO: use mutex?
 		std::list< std::shared_ptr< Goal > > goals;
 
 
-        // TODO: use mutex?
+        // TODO: use mutex? (currentGoal would never be set from a callback)
         std::shared_ptr< Goal > currentGoal;
+
+
+        // Add heading to currentPosition
+        TwoDoublesRosTimeWithMutex currentPositionLatitudeLongitude;
 
 
 		// Position currentPosition;
 
 	public:
-		GoalPlanner(){
+		GoalPlanner() 
+            : currentPositionLatitudeLongitude( 0, 0, ros::Time( 0, 0 ) )    
+        {
 
 			// Advertise to topics: destination (to pilot)
 			waypointTopic = node.advertise<goal_planner::Waypoint>("waypoint", 1000);
@@ -69,6 +80,21 @@ class GoalPlanner{
             // Reset currentGoal so it does not point to anything
             currentGoal.reset();
 
+
+            // test haversine
+            double latitude1 = 90;
+            double longitude1 = 10;
+
+            double latitude2 = 0;   
+            double longitude2 = 10;
+
+            std::cout << std::setprecision( 20 ) << std::fixed;
+            std::cout << "Great-circle distance: " 
+                << haversine( longitude1, latitude1,  longitude2, latitude2 )
+                << std::endl;
+
+
+
 		}
 
 
@@ -76,6 +102,18 @@ class GoalPlanner{
 		void stateCallback( const state_controller::State& state ) {
 
 			// Extract current position
+
+            // Verify that this message is an update of the position,
+            // not a message for the IMU, etc...
+
+            // ? Validate state position's time vs ros::Time::now(); ?
+            // state.position.header.stamp
+
+            // Set current position from positon in the message
+            currentPositionLatitudeLongitude.setValues( 
+                   state.position.latitude, state.position.longitude,
+                   state.position.header.stamp );
+
 
 			// Extract other information, e.g. raspberrypi_vitals?
 
@@ -88,10 +126,12 @@ class GoalPlanner{
 
 			ros::Rate loop_rate( 10 );
 
+            double distanceForWaypointReached = 10;
+
             // Populate the list for test purposes
-            goals.push_back( std::make_shared< Waypoint > ( 12345, -12345 ) );
+            goals.push_back( std::make_shared< Waypoint > ( 12345, -12345, distanceForWaypointReached ) );
             goals.push_back( std::make_shared< SVPprofile > () );
-            goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789 ) );
+            goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached ) );
 
 
             for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
@@ -113,6 +153,14 @@ class GoalPlanner{
 
 
             int count = 0;
+
+
+            double currentPositionlatitude;
+            double currentPositionlongitude;
+            ros::Time currentPositionTime;
+
+
+
 
 			while ( ros::ok() ){
 
@@ -145,26 +193,53 @@ class GoalPlanner{
                         
 						// Publish this goal
 					}
-				}	
+				}
 
 
-
+/*
 				// If there is a current goal:
                 if ( currentGoal != nullptr )
 				{
 
-                    std::shared_ptr< Waypoint > ptr = std::dynamic_pointer_cast<Waypoint>( currentGoal );
+                    // What if the current position is too old?
+
+                    currentPositionLatitudeLongitude.getValues(
+                                                currentPositionlatitude, 
+                                                currentPositionlongitude, 
+                                                currentPositionTime );
+
+                    // If goal is reached
+                    if ( currentGoal.execute( currentPositionlatitude, 
+                                            currentPositionTime ) )
+                    {
+                        currentGoal = nullptr;
+
+					// Publish a waypoint that will tell the motors to stop 
+                    // (or maintain the position?)
+
+
+                    }
+
+
+
+
 
 					// If goal is a waypoint
                     if ( ptr )
 					{
 
 
+                        currentPositionLatitudeLongitude.getValues(
+                                                    currentPositionlatitude, 
+                                                    currentPositionlongitude, 
+                                                    currentPositionTime );
+
                         // What if the current position is too old?
 
 
 						// If currentPosition from the state_contoller 
-						// is close enough to the currentWaypoint (MBES-lib: src/math/Distance.hpp, function haversine)
+						// is close enough to the currentWaypoint 
+                        // (MBES-lib: src/math/Distance.hpp, function haversine)
 						// {
 
 								// The destination goal is reached
@@ -177,7 +252,8 @@ class GoalPlanner{
 								// }
 								// else 
 								// {
-										// Publish a waypoint that will tell the motors to stop (or maintain the position?)
+										// Publish a waypoint that will tell the motors to stop 
+                                        // (or maintain the position?)
                                         
                                         // Remove the waypoint from the current goal
                                         // currentGoal.reset();
@@ -189,7 +265,7 @@ class GoalPlanner{
 					}
 					else 
 					{
-								// Deal with other goal types
+					    // Deal with other goal types
 					}
 
 
@@ -197,7 +273,7 @@ class GoalPlanner{
 				}
 
 
-		
+		*/
 
 				ros::spinOnce();
 				loop_rate.sleep();

@@ -7,13 +7,18 @@
 #include "Goal.hpp"
 
 
+#include "haversine.hpp"
+
+
 class Waypoint : public Goal 
 {
 
 public:
 
-    Waypoint( const double latitude, const double longitude )
-        : latitude( latitude ), longitude( longitude )
+    Waypoint( const double latitude, const double longitude, 
+                const double distanceForWaypointReached )
+        : latitude( latitude ), longitude( longitude ),
+            distanceForWaypointReached( distanceForWaypointReached )
     {        
     }
 
@@ -25,6 +30,23 @@ public:
         return waypoint;
     }
 */
+
+
+    bool execute( const double currentLatitude, 
+                    const double currentLongitude ) {
+
+		// If currentPosition from the state_contoller 
+		// is close enough to the currentWaypoint 
+        // (MBES-lib: src/math/Distance.hpp, function haversine)
+		if ( haversine( longitude, latitude, 
+                        currentLongitude, currentLatitude ) 
+                <= distanceForWaypointReached )
+        {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     double getLatitude() const {
         return latitude;
@@ -40,6 +62,8 @@ private:
 
     const double latitude;
     const double longitude;
+
+    const double distanceForWaypointReached;
 
 
 };

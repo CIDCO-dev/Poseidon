@@ -1,8 +1,17 @@
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
+#include <math.h>  // for M_PI
+
+//#include <iostream>
+//#include <iomanip>
+
+
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
+
+#define PI M_PI
+#define R2D ((double)180/(double)PI)
 
 class GNSS{
 	private:
@@ -21,7 +30,14 @@ class GNSS{
 		}
 
 		void run(){
-			ros::Rate loop_rate(10);
+
+            double rosRate = 1; //10.0;
+
+			ros::Rate loop_rate( rosRate );
+
+            double earthRadius = 6371000;
+
+            double vesselSpeed = 2.0; // m/s, 2 m/s is about 4 knots
 
 		        while(ros::ok()){
 
@@ -29,10 +45,35 @@ class GNSS{
 
 				msg.header.seq=++sequenceNumber;
 				msg.header.stamp=ros::Time::now();
+
+/*
 				msg.header.stamp.nsec=0;
 
 				longitude += 0.0000001 * (rand() % 10 - 5);
 				latitude  += 0.0000001 * (rand() % 10 - 5);
+*/
+
+/*
+                latitude  = 48.632697 
+                            + 0.0002 * cos( 6.28 * sequenceNumber / 100 )
+                            + ( rand()/static_cast<double>(RAND_MAX) - 0.5 ) * 0.00001; 
+
+				longitude = -68.642391 + 0.1 * sin ( 6.28 * sequenceNumber / 100 )
+                            + ( rand()/static_cast<double>(RAND_MAX) - 0.5 ) * 0.005; 
+*/
+
+                // Straight path with a constant longitude
+                longitude = -68;
+
+                double distanceCovered = sequenceNumber / rosRate * vesselSpeed;
+
+                latitude  = 48.632697 + distanceCovered / earthRadius * R2D;
+
+/*                std::cout << std::setprecision(10) << std::fixed
+                    << "sequenceNumber: " << sequenceNumber
+                    << ", distanceCovered: " << distanceCovered 
+                    << ", latitude: " << latitude << std::endl;
+*/
 
 				double ellipsoidalHeight    = sin(sequenceNumber*42+100)*10;
 

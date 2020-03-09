@@ -23,8 +23,6 @@
 
 #include "../../utils/TwoDoublesRosTimeWithMutex.hpp"
 
-#include "../../utils/haversine.hpp"
-
 
 // #include "raspberrypi_vitals/sysinfo.h"
 
@@ -79,21 +77,6 @@ class GoalPlanner{
 
             // Reset currentGoal so it does not point to anything
             currentGoal.reset();
-
-
-            // test haversine
-            double latitude1 = 90;
-            double longitude1 = 10;
-
-            double latitude2 = 0;   
-            double longitude2 = 10;
-
-            std::cout << std::setprecision( 20 ) << std::fixed;
-            std::cout << "Great-circle distance: " 
-                << haversine( longitude1, latitude1,  longitude2, latitude2 )
-                << std::endl;
-
-
 
 		}
 
@@ -164,6 +147,7 @@ class GoalPlanner{
 
 			while ( ros::ok() ){
 
+/*
                 // Create a waypoint message for test purposes
                 std::cout << "GoalPlanner::run(), count: " << count << std::endl;
 
@@ -174,7 +158,7 @@ class GoalPlanner{
                 waypointTopic.publish( waypointMessage );
 
                 count++;
-
+*/
 
 				// Check state's raspberrypi_vitals?
 

@@ -8,6 +8,8 @@
 #include <chrono>
 #include <ctime> 
 #include <string>
+#include <chrono>
+#include <thread>
 #include <serial/serial.h>
 #include <std_msgs/String.h>
 
@@ -39,50 +41,49 @@ class ZEDF9P{
     		strftime(buffer,80,"%Y%m%d%H%M%S",timeinfo);
     		return std::string(buffer);
 		}
-	void ubx_cfg(unsigned int ubx_add, char ubx_val){
-		char ubx_header1 = 0xb5;
-		char ubx_header2 = 0x06;
-		char ubx_class = 0x06;
-		char ubx_id = 0x8A;
-		char ubx_chksum_A = 0x00;
-		char ubx_chksum_B = 0x00;
-		char ubx_version = 1;
-		char ubx_layer = 7;
-		char ubx_reserved = 0;
-		char ubx_payload[7];
-		char ubx_buffer[11];
+	void ubx_cfg(unsigned long ubx_add, char ubx_val){
+		unsigned char ubx_header1 = 181;
+		unsigned char ubx_header2 = 98;
+		unsigned char ubx_class = 6;
+		unsigned char ubx_id = 0x8A;
+		unsigned int ubx_chksum_A = 0x00;
+		unsigned int ubx_chksum_B = 0x00;
+		unsigned char ubx_version = 0x01;
+		unsigned char ubx_layer = 0x01;
+		unsigned char ubx_reserved = 0x00;
 		
-		char ubx_msg[15];
+		unsigned char ubx_buffer[13];
+		
+		char ubx_msg[17];
 
-		ubx_payload[0] = ubx_version;
-		ubx_payload[1] = ubx_layer;
-		ubx_payload[2] = ubx_val;
-		ubx_payload[3] = ubx_reserved;
-		ubx_payload[4] = ubx_add / 16777216;
-		ubx_payload[5] = (ubx_add - (ubx_payload[4]*16777216))/ 65536;
-		ubx_payload[6] = (ubx_add - (ubx_payload[4]*16777216) - (ubx_payload[5]*65536))/256;
-		ubx_payload[7] = ubx_add - (ubx_payload[4]*16777216) - (ubx_payload[5]*65536) - (ubx_payload[6]*256) ;
-		char ubx_lenght = 4 + 8;
+	
+		unsigned char ubx_lenght = 0x09;
 
 		ubx_buffer[0] = ubx_class;
 		ubx_buffer[1] = ubx_id;
-		ubx_buffer[2] = 0;
-		ubx_buffer[3] = ubx_lenght;
-		ubx_buffer[4] = ubx_payload[0];
-		ubx_buffer[5] = ubx_payload[1];
-		ubx_buffer[6] = ubx_payload[2];
-		ubx_buffer[7] = ubx_payload[3];
-		ubx_buffer[8] = ubx_payload[4];
-		ubx_buffer[9] = ubx_payload[5];
-		ubx_buffer[10] = ubx_payload[6];
-		ubx_buffer[11] = ubx_payload[7];
+		ubx_buffer[2] = ubx_lenght;
+		ubx_buffer[3] = 0x00;
+		ubx_buffer[4] = 0x00;
+		ubx_buffer[5] = ubx_layer;
+		ubx_buffer[6] = 0x00;
+		ubx_buffer[7] = 0x00;
+		ubx_buffer[8] = (ubx_add & 0x000000FF) ;
+		ubx_buffer[9] = ((ubx_add & 0x0000FF00) >> 8);
+		ubx_buffer[10] = ((ubx_add & 0x00FF0000) >> 16);
+		ubx_buffer[11] = ((ubx_add & 0xFF000000) >> 24);
+		ubx_buffer[12] = ubx_val;
 
-		char ubx_buffer_lenght = 12;
 
-		for( int I=0 ; I<ubx_buffer_lenght; I++){
-			ubx_chksum_A = ubx_chksum_A + ubx_buffer[I];
-			ubx_chksum_B = ubx_chksum_B + ubx_chksum_A;
+
+		unsigned char ubx_buffer_lenght = 13;
+
+		for(unsigned char I=0 ; I<ubx_buffer_lenght; I++){
+			ubx_chksum_A = (ubx_chksum_A + ubx_buffer[I]) & 0xFF;
+			ubx_chksum_B = (ubx_chksum_B + ubx_chksum_A) & 0xFF;
 		}
+		//ubx_chksum_A = ubx_chksum_A & 0xFF;
+		//ubx_chksum_B = ubx_chksum_B & 0xFF;
+
 		ubx_msg[0] = ubx_header1;
 		ubx_msg[1] = ubx_header2;
 		ubx_msg[2] = ubx_buffer[0];
@@ -97,11 +98,30 @@ class ZEDF9P{
 		ubx_msg[11] = ubx_buffer[9];
 		ubx_msg[12] = ubx_buffer[10];
 		ubx_msg[13] = ubx_buffer[11];
-		ubx_msg[14] = ubx_chksum_A;
-		ubx_msg[15] = ubx_chksum_B;
+		ubx_msg[14] = ubx_buffer[12];
+		ubx_msg[15] = ubx_chksum_A;
+		ubx_msg[16] = ubx_chksum_B;
+		cout << hex << (0xff & (unsigned int)ubx_msg[0]) << ',' << (0xff & (unsigned int)ubx_msg[1]) << ',' << (0xff & (unsigned int)ubx_msg[2]) << ',' << (0xff & (unsigned int)ubx_msg[3]) << ',' << (0xff & (unsigned int)ubx_msg[4]) << ',' << (0xff & (unsigned int)ubx_msg[5]) << ',' << (0xff & (unsigned int)ubx_msg[6]) << ',' << (0xff & (unsigned int)ubx_msg[7]) << ',' << (0xff & (unsigned int)ubx_msg[8]) << ',' << (0xff & (unsigned int)ubx_msg[9]) << ',' << (0xff & (unsigned int)ubx_msg[10]) << ',' << (0xff & (unsigned int)ubx_msg[11]) << ',' << (0xff & (unsigned int)ubx_msg[12]) << ',' << (0xff & (unsigned int)ubx_msg[13]) << ',' << (0xff & (unsigned int)ubx_msg[14]) << ',' << (0xff & (unsigned int)ubx_msg[15]) << ',' << (0xff & (unsigned int)ubx_msg[16]) << ',' << endl;
+		
 
 		ser.write(ubx_msg);
+		usleep(100000);
 
+		ubx_msg[7] = ubx_msg[7]+1;
+		ubx_msg[15] = ubx_msg[15]+1;
+		ubx_msg[16] = ubx_msg[16]+8;
+
+		cout << hex << (0xff & (unsigned int)ubx_msg[0]) << ',' << (0xff & (unsigned int)ubx_msg[1]) << ',' << (0xff & (unsigned int)ubx_msg[2]) << ',' << (0xff & (unsigned int)ubx_msg[3]) << ',' << (0xff & (unsigned int)ubx_msg[4]) << ',' << (0xff & (unsigned int)ubx_msg[5]) << ',' << (0xff & (unsigned int)ubx_msg[6]) << ',' << (0xff & (unsigned int)ubx_msg[7]) << ',' << (0xff & (unsigned int)ubx_msg[8]) << ',' << (0xff & (unsigned int)ubx_msg[9]) << ',' << (0xff & (unsigned int)ubx_msg[10]) << ',' << (0xff & (unsigned int)ubx_msg[11]) << ',' << (0xff & (unsigned int)ubx_msg[12]) << ',' << (0xff & (unsigned int)ubx_msg[13]) << ',' << (0xff & (unsigned int)ubx_msg[14]) << ',' << (0xff & (unsigned int)ubx_msg[15]) << ',' << (0xff & (unsigned int)ubx_msg[16]) << ',' << endl;
+		ser.write(ubx_msg);
+		usleep(100000);
+
+		ubx_msg[7] = ubx_msg[7]+2;
+		ubx_msg[15] = ubx_msg[15]+2;
+		ubx_msg[16] = ubx_msg[16]+16;
+
+		cout << hex << (0xff & (unsigned int)ubx_msg[0]) << ',' << (0xff & (unsigned int)ubx_msg[1]) << ',' << (0xff & (unsigned int)ubx_msg[2]) << ',' << (0xff & (unsigned int)ubx_msg[3]) << ',' << (0xff & (unsigned int)ubx_msg[4]) << ',' << (0xff & (unsigned int)ubx_msg[5]) << ',' << (0xff & (unsigned int)ubx_msg[6]) << ',' << (0xff & (unsigned int)ubx_msg[7]) << ',' << (0xff & (unsigned int)ubx_msg[8]) << ',' << (0xff & (unsigned int)ubx_msg[9]) << ',' << (0xff & (unsigned int)ubx_msg[10]) << ',' << (0xff & (unsigned int)ubx_msg[11]) << ',' << (0xff & (unsigned int)ubx_msg[12]) << ',' << (0xff & (unsigned int)ubx_msg[13]) << ',' << (0xff & (unsigned int)ubx_msg[14]) << ',' << (0xff & (unsigned int)ubx_msg[15]) << ',' << (0xff & (unsigned int)ubx_msg[16]) << ',' << endl;
+		ser.write(ubx_msg);
+		usleep(100000);
 		}
 
 	void run(){
@@ -189,7 +209,7 @@ class ZEDF9P{
 		ubx_cfg(0x209100cA, 1); //CFG-MSGOUT-NMEA_ID_GLL
 		ubx_cfg(0x209100b6, 0); //CFG-MSGOUT-NMEA_ID_GNS
 		ubx_cfg(0x209100CF, 0); //CFG-MSGOUT-NMEA_ID_GRS
-		ubx_cfg(0x209100C0, 4); //CFG-MSGOUT-NMEA_ID_GSA
+		ubx_cfg(0x209100C0, 1); //CFG-MSGOUT-NMEA_ID_GSA
 		ubx_cfg(0x209100d4, 0); //CFG-MSGOUT-NMEA_ID_GST
 		ubx_cfg(0x209100C5, 1); //CFG-MSGOUT-NMEA_ID_GSV
 		ubx_cfg(0x209100aC, 1); //CFG-MSGOUT-NMEA_ID_RMC
@@ -255,9 +275,11 @@ class ZEDF9P{
 		ubx_cfg(0x2091017E, 0); //CFG-MSGOUT-UBX_TIM_TP
 		ubx_cfg(0x20910093, 0); //CFG-MSGOUT-UBX_TIM_VRFY
 
+		//lis le temps si la seconde change on change le nom du fichier
+		fnameout = outputFolder + datetime() +".ubx";
 		while(ros::ok()){
-			//lis le temps si la seconde change on change le nom du fichier
-			fnameout = outputFolder + datetime() +".ubx";
+			
+			
 		
 			//resoit les donnée du port série /dev/ttyACM0
 			result.data = ser.read(ser.available());

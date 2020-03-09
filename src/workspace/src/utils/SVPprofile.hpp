@@ -19,6 +19,9 @@ public:
 
     virtual ~SVPprofile() {}
 
+    virtual void start() override {
+    }
+
 private:
 
     virtual void junkFunctionForPureVirtual() override {} 

@@ -103,7 +103,6 @@ class GoalPlanner{
 		}
 
 
-        
 
 		void run(){
 
@@ -112,9 +111,9 @@ class GoalPlanner{
             double distanceForWaypointReached = 10;
 
             // Populate the list for test purposes
-            goals.push_back( std::make_shared< Waypoint > ( 12345, -12345, distanceForWaypointReached ) );
+            goals.push_back( std::make_shared< Waypoint > ( 12345, -12345, distanceForWaypointReached, waypointTopic ) );
             goals.push_back( std::make_shared< SVPprofile > () );
-            goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached ) );
+            goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached, waypointTopic ) );
 
 
             for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
@@ -124,8 +123,8 @@ class GoalPlanner{
                 std::shared_ptr< Waypoint > ptr = std::dynamic_pointer_cast<Waypoint>( *iter );
 
                 if ( ptr )
-                    std::cout << ptr-> getLatitude() << ", " 
-                        << ptr-> getlongitude() << std::endl;
+                    std::cout << ptr->getLatitude() << ", " 
+                        << ptr->getlongitude() << std::endl;
                 else
                     std::cout << "Not a Waypoint" << std::endl;
             }
@@ -176,8 +175,11 @@ class GoalPlanner{
                         goals.pop_front();
                         
 						// Publish this goal
+                        // currentGoal->start();
+
 					}
 				}
+
 
 
 /*

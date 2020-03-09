@@ -10,6 +10,7 @@ public:
 
     virtual ~Goal() {};
 
+    virtual void start() = 0;
 /*
     // Return type will depend on the derived class
     virtual void getGoal() const = 0;   //Pure virtual

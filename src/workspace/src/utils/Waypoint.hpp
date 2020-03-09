@@ -2,6 +2,8 @@
 #ifndef WAYPOINT_HPP
 #define WAYPOINT_HPP
 
+#include "ros/ros.h"
+
 
 
 #include "Goal.hpp"
@@ -16,13 +18,32 @@ class Waypoint : public Goal
 public:
 
     Waypoint( const double latitude, const double longitude, 
-                const double distanceForWaypointReached )
+                const double distanceForWaypointReached, 
+                ros::Publisher & waypointTopic )
         : latitude( latitude ), longitude( longitude ),
-            distanceForWaypointReached( distanceForWaypointReached )
+            distanceForWaypointReached( distanceForWaypointReached ),
+            waypointTopic( waypointTopic )
     {        
     }
 
     virtual ~Waypoint() {}
+
+
+    virtual void start() override {
+/*
+        goal_planner::Waypoint waypointMessage;
+
+        waypointMessage.latitude = latitude;
+        waypointMessage.longitude = longitude;
+        waypointMessage.pilotActive = 1;
+                       
+        waypointTopic.publish( waypointMessage );
+
+        std::cout << "Waypoint::start(), after publish\n" << std::endl;  
+*/
+    }
+
+
 
 /*
     Waypoint getGoal() const override {
@@ -64,6 +85,8 @@ private:
     const double longitude;
 
     const double distanceForWaypointReached;
+
+    ros::Publisher & waypointTopic;
 
 
 };

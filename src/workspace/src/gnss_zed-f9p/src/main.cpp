@@ -3,15 +3,17 @@
 
 #include "ros/ros.h"
 
-#include <fstream>
-#include <iostream>
+#include <stdio.h>
 #include <chrono>
 #include <ctime> 
 #include <string>
 #include <chrono>
 #include <thread>
-#include <serial/serial.h>
 #include <std_msgs/String.h>
+#include <fcntl.h> // Contains file controls like O_RDWR
+#include <errno.h> // Error integer and strerror() function
+#include <termios.h> // Contains POSIX terminal control definitions
+#include <unistd.h> // write(), read(), close()
 
 using namespace std;
 
@@ -23,9 +25,11 @@ class ZEDF9P{
 	private:
 	std::string outputFolder;
 	std::string serialport;
-	serial::Serial ser;
 	std_msgs::String result;
-
+	std_msgs::String ubx_msg_str;
+	//uint8_t *buffer;
+	std_msgs::String ubx_read;
+	
 	public:
 
 	ZEDF9P(char * outputFolder,  char * serialport): outputFolder(outputFolder), serialport(serialport){
@@ -53,8 +57,9 @@ class ZEDF9P{
 		unsigned char ubx_reserved = 0x00;
 		
 		unsigned char ubx_buffer[13];
-		
 		char ubx_msg[17];
+		
+		
 
 	
 		unsigned char ubx_lenght = 0x09;
@@ -101,33 +106,29 @@ class ZEDF9P{
 		ubx_msg[14] = ubx_buffer[12];
 		ubx_msg[15] = ubx_chksum_A;
 		ubx_msg[16] = ubx_chksum_B;
-		cout << hex << (0xff & (unsigned int)ubx_msg[0]) << ',' << (0xff & (unsigned int)ubx_msg[1]) << ',' << (0xff & (unsigned int)ubx_msg[2]) << ',' << (0xff & (unsigned int)ubx_msg[3]) << ',' << (0xff & (unsigned int)ubx_msg[4]) << ',' << (0xff & (unsigned int)ubx_msg[5]) << ',' << (0xff & (unsigned int)ubx_msg[6]) << ',' << (0xff & (unsigned int)ubx_msg[7]) << ',' << (0xff & (unsigned int)ubx_msg[8]) << ',' << (0xff & (unsigned int)ubx_msg[9]) << ',' << (0xff & (unsigned int)ubx_msg[10]) << ',' << (0xff & (unsigned int)ubx_msg[11]) << ',' << (0xff & (unsigned int)ubx_msg[12]) << ',' << (0xff & (unsigned int)ubx_msg[13]) << ',' << (0xff & (unsigned int)ubx_msg[14]) << ',' << (0xff & (unsigned int)ubx_msg[15]) << ',' << (0xff & (unsigned int)ubx_msg[16]) << ',' << endl;
+		int serial_port = open(serialport.c:str(), O_RDWR);
+
+		write(serial_port, ubx_msg, 17);
 		
-
-		ser.write(ubx_msg);
-		usleep(100000);
-
+		
 		ubx_msg[7] = ubx_msg[7]+1;
 		ubx_msg[15] = ubx_msg[15]+1;
 		ubx_msg[16] = ubx_msg[16]+8;
 
-		cout << hex << (0xff & (unsigned int)ubx_msg[0]) << ',' << (0xff & (unsigned int)ubx_msg[1]) << ',' << (0xff & (unsigned int)ubx_msg[2]) << ',' << (0xff & (unsigned int)ubx_msg[3]) << ',' << (0xff & (unsigned int)ubx_msg[4]) << ',' << (0xff & (unsigned int)ubx_msg[5]) << ',' << (0xff & (unsigned int)ubx_msg[6]) << ',' << (0xff & (unsigned int)ubx_msg[7]) << ',' << (0xff & (unsigned int)ubx_msg[8]) << ',' << (0xff & (unsigned int)ubx_msg[9]) << ',' << (0xff & (unsigned int)ubx_msg[10]) << ',' << (0xff & (unsigned int)ubx_msg[11]) << ',' << (0xff & (unsigned int)ubx_msg[12]) << ',' << (0xff & (unsigned int)ubx_msg[13]) << ',' << (0xff & (unsigned int)ubx_msg[14]) << ',' << (0xff & (unsigned int)ubx_msg[15]) << ',' << (0xff & (unsigned int)ubx_msg[16]) << ',' << endl;
-		ser.write(ubx_msg);
-		usleep(100000);
-
+		write(serial_port, ubx_msg, 17);
+		
 		ubx_msg[7] = ubx_msg[7]+2;
 		ubx_msg[15] = ubx_msg[15]+2;
 		ubx_msg[16] = ubx_msg[16]+16;
 
-		cout << hex << (0xff & (unsigned int)ubx_msg[0]) << ',' << (0xff & (unsigned int)ubx_msg[1]) << ',' << (0xff & (unsigned int)ubx_msg[2]) << ',' << (0xff & (unsigned int)ubx_msg[3]) << ',' << (0xff & (unsigned int)ubx_msg[4]) << ',' << (0xff & (unsigned int)ubx_msg[5]) << ',' << (0xff & (unsigned int)ubx_msg[6]) << ',' << (0xff & (unsigned int)ubx_msg[7]) << ',' << (0xff & (unsigned int)ubx_msg[8]) << ',' << (0xff & (unsigned int)ubx_msg[9]) << ',' << (0xff & (unsigned int)ubx_msg[10]) << ',' << (0xff & (unsigned int)ubx_msg[11]) << ',' << (0xff & (unsigned int)ubx_msg[12]) << ',' << (0xff & (unsigned int)ubx_msg[13]) << ',' << (0xff & (unsigned int)ubx_msg[14]) << ',' << (0xff & (unsigned int)ubx_msg[15]) << ',' << (0xff & (unsigned int)ubx_msg[16]) << ',' << endl;
-		ser.write(ubx_msg);
-		usleep(100000);
+		write(serial_port, ubx_msg, 17);
+		
+		close(serial_port);
+
 		}
 
 	void run(){
-		ser.setPort(serialport);
-        	ser.setBaudrate(115200);
-		ser.open();
+		cout << "gps config" << endl;
 		//écrit la configuration du module gps pour le port usb
 		ubx_cfg(0x209100a9, 0); //CFG-MSGOUT-NMEA_ID_DTM
 		ubx_cfg(0x209100e0, 0); //CFG-MSGOUT-NMEA_ID_GBS
@@ -177,7 +178,7 @@ class ZEDF9P{
 		ubx_cfg(0x20910081, 0); //CFG-MSGOUT-UBX_NAV_ODO
 		ubx_cfg(0x20910013, 0); //CFG-MSGOUT-UBX_NAV_ORB
 		ubx_cfg(0x20910027, 0); //CFG-MSGOUT-UBX_NAV_POSECEF
-		ubx_cfg(0x2091002c, 1); //CFG-MSGOUT-UBX_NAV_POSLLH
+		ubx_cfg(0x2091002c, 1); //CFG-MSGOUT-UBX_NAV_POSLLH  <---
 		ubx_cfg(0x20910009, 0); //CFG-MSGOUT-UBX_NAV_PVT
 		ubx_cfg(0x20910090, 0); //CFG-MSGOUT-UBX_NAV_RELPOSNED
 		ubx_cfg(0x20910018, 0); //CFG-MSGOUT-UBX_NAV_SAT
@@ -193,17 +194,17 @@ class ZEDF9P{
 		ubx_cfg(0x20910040, 0); //CFG-MSGOUT-UBX_NAV_VELECEF
 		ubx_cfg(0x20910045, 0); //CFG-MSGOUT-UBX_NAV_VELNED
 		ubx_cfg(0x20910207, 0); //CFG-MSGOUT-UBX_RXM_MEASX
-		ubx_cfg(0x209102A7, 1); //CFG-MSGOUT-UBX_RXM_RAWX
+		ubx_cfg(0x209102A7, 1); //CFG-MSGOUT-UBX_RXM_RAWX  <---
 		ubx_cfg(0x20910261, 0); //CFG-MSGOUT-UBX_RXM_RLM
 		ubx_cfg(0x2091026b, 0); //CFG-MSGOUT-UBX_RXM_RTMC
-		ubx_cfg(0x20910234, 1); //CFG-MSGOUT-UBX_RXM_SFRBX
+		ubx_cfg(0x20910234, 1); //CFG-MSGOUT-UBX_RXM_SFRBX  <---
 		ubx_cfg(0x2091017b, 0); //CFG-MSGOUT-UBX_TIM_TM2
 		ubx_cfg(0x20910180, 0); //CFG-MSGOUT-UBX_TIM_TP
 		ubx_cfg(0x20910095, 0); //CFG-MSGOUT-UBX_TIM_VRFY
 
 
 		//écrit la configuration du module gps pour le port UART1
-		ubx_cfg(0x209100a7, 1); //CFG-MSGOUT-NMEA_ID_DTM
+		ubx_cfg(0x209100a7, 0); //CFG-MSGOUT-NMEA_ID_DTM
 		ubx_cfg(0x209100DE, 0); //CFG-MSGOUT-NMEA_ID_GBS
 		ubx_cfg(0x209100bB, 1); //CFG-MSGOUT-NMEA_ID_GGA
 		ubx_cfg(0x209100cA, 1); //CFG-MSGOUT-NMEA_ID_GLL
@@ -275,27 +276,27 @@ class ZEDF9P{
 		ubx_cfg(0x2091017E, 0); //CFG-MSGOUT-UBX_TIM_TP
 		ubx_cfg(0x20910093, 0); //CFG-MSGOUT-UBX_TIM_VRFY
 
+		cout << "gps loging" << endl;
+
+
 		//lis le temps si la seconde change on change le nom du fichier
 		fnameout = outputFolder + datetime() +".ubx";
+		
+		char read_buf [1];
+		memset(&read_buf, '\0', sizeof(read_buf));
+		int serial_port1 = open(serialport.c:str(), O_RDWR);
+		int file = open(fnameout.c_str(), O_RDWR | O_CREAT | O_APPEND);
 		while(ros::ok()){
 			
 			
-		
-			//resoit les donnée du port série /dev/ttyACM0
-			result.data = ser.read(ser.available());
+			int n = read(serial_port1, &read_buf, sizeof(read_buf));
+			write(file, &read_buf, sizeof(read_buf));
 
-			//ouvre le fichier
-			ofstream file;
-			file.open(fnameout,ios::app); // File output stream, the file that we'll write to it
-			if(!file) { // if can't open file
-			}
-			//écrit les donée recu du port série dans le fichier
-			file << result.data;
-			//ferme le fichier
-			file.close();
+			
 		
 		}
-		ser.close();
+		close(serial_port1);
+		close(file);
 	}
 
 

@@ -7,8 +7,6 @@
 
 #include "Goal.hpp"
 
-// #include "Structs.hpp"
-
 
 class SVPprofile : public Goal 
 {
@@ -22,9 +20,12 @@ public:
     virtual void start() override {
     }
 
+    virtual bool execute( const double currentLatitude, 
+                    const double currentLongitude ) override {
+    }
+
 private:
 
-    virtual void junkFunctionForPureVirtual() override {} 
 
 };
 

@@ -39,12 +39,14 @@ class GNSS{
 
             double vesselSpeed = 2.0; // m/s, 2 m/s is about 4 knots
 
-		        while(ros::ok()){
+		    while(ros::ok()){
 
-                		sensor_msgs::NavSatFix msg;
+                sensor_msgs::NavSatFix msg;
 
 				msg.header.seq=++sequenceNumber;
 				msg.header.stamp=ros::Time::now();
+
+                msg.status.service = 1;
 
 /*
 				msg.header.stamp.nsec=0;
@@ -69,11 +71,11 @@ class GNSS{
 
                 latitude  = 48.632697 + distanceCovered / earthRadius * R2D;
 
-/*                std::cout << std::setprecision(10) << std::fixed
-                    << "sequenceNumber: " << sequenceNumber
+                std::cout << std::setprecision(10) << std::fixed
+                    << "gnss_dummy(), sequenceNumber: " << sequenceNumber
                     << ", distanceCovered: " << distanceCovered 
                     << ", latitude: " << latitude << std::endl;
-*/
+
 
 				double ellipsoidalHeight    = sin(sequenceNumber*42+100)*10;
 

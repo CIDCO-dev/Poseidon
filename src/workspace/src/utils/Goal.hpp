@@ -11,13 +11,13 @@ public:
     virtual ~Goal() {};
 
     virtual void start() = 0;
-/*
-    // Return type will depend on the derived class
-    virtual void getGoal() const = 0;   //Pure virtual
-*/
+
+
+    virtual bool execute( const double currentLatitude, 
+                    const double currentLongitude ) = 0; //Pure virtual
 
 private:
-    virtual void junkFunctionForPureVirtual() = 0; //Pure virtual
+
 
 
 };

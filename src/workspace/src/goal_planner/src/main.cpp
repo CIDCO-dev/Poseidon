@@ -7,6 +7,10 @@
 #include <iostream>
 #include <iomanip>
 
+#include <math.h>  // for M_PI
+#define PI M_PI
+#define R2D ((double)180/(double)PI)
+
 
 #include <list>
 
@@ -110,11 +114,13 @@ class GoalPlanner{
 
             double distanceForWaypointReached = 10;
 
-
+/*
             // Populate the list for test purposes
             goals.push_back( std::make_shared< Waypoint > ( 12345, -12345, distanceForWaypointReached, waypointTopic ) );
             goals.push_back( std::make_shared< SVPprofile > () );
             goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached, waypointTopic ) );
+
+*/
 
 /*
             // Populate the list for test purposes
@@ -123,14 +129,40 @@ class GoalPlanner{
             goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached, node ) );
 
 */
+
+
+
+            // Populate the list for test purposes with positions
+            // based on gnss_dummy's path
+
+            double earthRadius = 6371000;
+
+            double longitude = -68;
+
+            int nbWaypoints = 10;
+
+            double distanceBetweenWaypoints = 20;
+
+            for ( int countCreation = 1; countCreation <= nbWaypoints; countCreation++ ) {
+
+                double distance = countCreation * distanceBetweenWaypoints;
+
+                double latitude  = 48.632697 + distance / earthRadius * R2D;
+
+                goals.push_back( std::make_shared< Waypoint > ( latitude, longitude, distanceForWaypointReached, waypointTopic ) );
+
+            }
+
+
+
+            // Display the list of waypoints
             for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
             
-                // Waypoint * ptr = dynamic_cast< Waypoint * >( *iter );
-
                 std::shared_ptr< Waypoint > ptr = std::dynamic_pointer_cast<Waypoint>( *iter );
 
                 if ( ptr )
-                    std::cout << ptr->getLatitude() << ", " 
+                    std::cout << std::setprecision(10) << std::fixed
+                        << ptr->getLatitude() << ", " 
                         << ptr->getlongitude() << std::endl;
                 else
                     std::cout << "Not a Waypoint" << std::endl;
@@ -191,7 +223,7 @@ class GoalPlanner{
 
 
 
-/*
+
 				// If there is a current goal:
                 if ( currentGoal != nullptr )
 				{
@@ -204,71 +236,18 @@ class GoalPlanner{
                                                 currentPositionTime );
 
                     // If goal is reached
-                    if ( currentGoal.execute( currentPositionlatitude, 
-                                            currentPositionTime ) )
+                    if ( currentGoal->execute( currentPositionlatitude, 
+                                            currentPositionlongitude ) )
                     {
                         currentGoal = nullptr;
 
-					// Publish a waypoint that will tell the motors to stop 
-                    // (or maintain the position?)
-
-
                     }
 
+                }
 
 
 
 
-					// If goal is a waypoint
-                    if ( ptr )
-					{
-
-
-                        currentPositionLatitudeLongitude.getValues(
-                                                    currentPositionlatitude, 
-                                                    currentPositionlongitude, 
-                                                    currentPositionTime );
-
-                        // What if the current position is too old?
-
-
-						// If currentPosition from the state_contoller 
-						// is close enough to the currentWaypoint 
-                        // (MBES-lib: src/math/Distance.hpp, function haversine)
-						// {
-
-								// The destination goal is reached
-
-								// If the next goal in the list is a waypoint
-								// {
-										// Set this as the current goal, 
-										// Remove this goal from the list
-										// Publish this new waypoint
-								// }
-								// else 
-								// {
-										// Publish a waypoint that will tell the motors to stop 
-                                        // (or maintain the position?)
-                                        
-                                        // Remove the waypoint from the current goal
-                                        // currentGoal.reset();
-								// }
-
-
-						// }
-
-					}
-					else 
-					{
-					    // Deal with other goal types
-					}
-
-
-
-				}
-
-
-		*/
 
 				ros::spinOnce();
 				loop_rate.sleep();

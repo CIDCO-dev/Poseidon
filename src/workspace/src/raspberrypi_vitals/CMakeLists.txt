@@ -207,5 +207,8 @@ include_directories(
 
 
 add_executable(raspberrypi_vitals src/main.cpp)
+
+add_dependencies( raspberrypi_vitals raspberrypi_vitals_generate_messages_cpp )
+
 target_link_libraries(raspberrypi_vitals ${catkin_LIBRARIES})
 

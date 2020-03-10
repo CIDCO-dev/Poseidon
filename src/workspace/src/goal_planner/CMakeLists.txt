@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(catarob_control)
+project(goal_planner)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,14 +8,14 @@ project(catarob_control)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  message_generation
   roscpp
+  message_generation
   std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -47,11 +47,10 @@ FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
- add_message_files(
+add_message_files(
    FILES
-   motor.msg
-   state.msg
- )
+   Waypoint.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -68,10 +67,10 @@ FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
- )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -104,7 +103,7 @@ FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES catarob_control
+#  LIBRARIES goal_planner
   CATKIN_DEPENDS roscpp std_msgs message_runtime 
 #  DEPENDS system_lib
 )
@@ -122,7 +121,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/catarob_control.cpp
+#   src/${PROJECT_NAME}/goal_planner.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -133,7 +132,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/catarob_control_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/goal_planner_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -197,7 +196,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_catarob_control.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_goal_planner.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
@@ -205,9 +204,10 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(catarob_control src/main.cpp)
+add_executable(goal_planner src/main.cpp)
 
-add_dependencies( catarob_control catarob_control_generate_messages_cpp )
+add_dependencies( goal_planner catarob_control_generate_messages_cpp )
+add_dependencies( goal_planner goal_planner_generate_messages_cpp )
+add_dependencies( goal_planner state_controller_generate_messages_cpp )
 
-target_link_libraries(catarob_control ${catkin_LIBRARIES} -lwiringPi -lrt)
-
+target_link_libraries( goal_planner ${catkin_LIBRARIES} )

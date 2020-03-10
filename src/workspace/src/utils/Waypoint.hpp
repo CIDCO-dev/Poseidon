@@ -19,10 +19,15 @@ public:
 
     Waypoint( const double latitude, const double longitude, 
                 const double distanceForWaypointReached, 
-                ros::Publisher & waypointTopic )
+                ros::Publisher & waypointTopic ) 
+ /*   Waypoint( const double latitude, const double longitude, 
+                const double distanceForWaypointReached, 
+                ros::NodeHandle & node )*/
+
         : latitude( latitude ), longitude( longitude ),
             distanceForWaypointReached( distanceForWaypointReached ),
             waypointTopic( waypointTopic )
+            // node( node )
     {        
     }
 
@@ -30,7 +35,7 @@ public:
 
 
     virtual void start() override {
-/*
+
         goal_planner::Waypoint waypointMessage;
 
         waypointMessage.latitude = latitude;
@@ -39,7 +44,22 @@ public:
                        
         waypointTopic.publish( waypointMessage );
 
-        std::cout << "Waypoint::start(), after publish\n" << std::endl;  
+        std::cout << "\nWaypoint::start(), after publish\n" << std::endl;  
+
+/*
+        // ros::Publisher 
+        waypointTopic = node.advertise<goal_planner::Waypoint>("waypoint", 1000);
+
+        goal_planner::Waypoint waypointMessage;
+
+        waypointMessage.latitude = latitude;
+        waypointMessage.longitude = longitude;
+        waypointMessage.pilotActive = 1;
+                       
+        waypointTopic.publish( waypointMessage );
+
+        std::cout << "\nWaypoint::start(), after publish\n" << std::endl;  
+
 */
     }
 
@@ -87,6 +107,10 @@ private:
     const double distanceForWaypointReached;
 
     ros::Publisher & waypointTopic;
+
+    //ros::NodeHandle & node;
+
+    //ros::Publisher waypointTopic;
 
 
 };

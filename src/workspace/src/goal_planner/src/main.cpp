@@ -110,12 +110,19 @@ class GoalPlanner{
 
             double distanceForWaypointReached = 10;
 
+
             // Populate the list for test purposes
             goals.push_back( std::make_shared< Waypoint > ( 12345, -12345, distanceForWaypointReached, waypointTopic ) );
             goals.push_back( std::make_shared< SVPprofile > () );
             goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached, waypointTopic ) );
 
+/*
+            // Populate the list for test purposes
+            goals.push_back( std::make_shared< Waypoint > ( 12345, -12345, distanceForWaypointReached, node ) );
+            goals.push_back( std::make_shared< SVPprofile > () );
+            goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached, node ) );
 
+*/
             for ( auto iter = goals.begin(); iter != goals.end(); ++iter ) {
             
                 // Waypoint * ptr = dynamic_cast< Waypoint * >( *iter );
@@ -159,11 +166,13 @@ class GoalPlanner{
                 count++;
 */
 
+                count++;
+
 				// Check state's raspberrypi_vitals?
 
 
 				// If no current goal
-                if ( currentGoal == nullptr )
+                if ( count > 10 && currentGoal == nullptr )
 				{
 					// If there is a goal in the list
                     if ( goals.size() != 0 )
@@ -175,7 +184,7 @@ class GoalPlanner{
                         goals.pop_front();
                         
 						// Publish this goal
-                        // currentGoal->start();
+                        currentGoal->start();
 
 					}
 				}

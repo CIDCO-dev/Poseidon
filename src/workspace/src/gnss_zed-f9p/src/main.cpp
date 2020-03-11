@@ -106,7 +106,7 @@ class ZEDF9P{
 		ubx_msg[14] = ubx_buffer[12];
 		ubx_msg[15] = ubx_chksum_A;
 		ubx_msg[16] = ubx_chksum_B;
-		int serial_port = open(serialport.c:str(), O_RDWR);
+		int serial_port = open(serialport.c_str(), O_RDWR);
 
 		write(serial_port, ubx_msg, 17);
 		
@@ -282,9 +282,9 @@ class ZEDF9P{
 		//lis le temps si la seconde change on change le nom du fichier
 		fnameout = outputFolder + datetime() +".ubx";
 		
-		char read_buf [1];
+		char read_buf [256];
 		memset(&read_buf, '\0', sizeof(read_buf));
-		int serial_port1 = open(serialport.c:str(), O_RDWR);
+		int serial_port1 = open(serialport.c_str(), O_RDWR);
 		int file = open(fnameout.c_str(), O_RDWR | O_CREAT | O_APPEND);
 		while(ros::ok()){
 			

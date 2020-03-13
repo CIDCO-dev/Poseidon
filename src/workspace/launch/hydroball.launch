@@ -9,7 +9,6 @@
 <arg name="portPath1" value="/dev/ttyACM0"/>
 
 
-<!-- 
 
 <node pkg="logger_binary" name="logger_binary" type="logger_binary" output="screen" args="$(arg loggerPath)"/>
 
@@ -28,11 +27,6 @@
 
 
 <node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket"/>
--->
-
-<node pkg="pilot" name="pilot" type="pilot" output="screen"/>
-<node pkg="goal_planner" name="goal_planner" type="goal_planner" output="screen"/>
-
 
 
 </launch>

@@ -41,6 +41,13 @@ public:
         timeOut = time;
     }
 
+/*    void getDoubles( double & firstOut, double & secondOut) {
+        std::lock_guard<std::mutex> lock ( mutex );
+        firstOut = first;
+        secondOut = second;
+    }
+*/
+
     double setFirst( const double valueIn ) {
         std::lock_guard<std::mutex> lock ( mutex );
         first = valueIn;

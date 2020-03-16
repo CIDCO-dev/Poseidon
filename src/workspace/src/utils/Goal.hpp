@@ -1,11 +1,25 @@
+#ifndef GOAL_HPP
+#define GOAL_HPP
+
 class Goal
 {
 
 public:
 
-    // Return type will depend on the derived class
-    virtual void getGoal() const = 0;   //Pure virtual
+    Goal() {}
+
+    virtual ~Goal() {};
+
+    virtual void start() = 0;
+
+
+    virtual bool execute( const double currentLatitude, 
+                    const double currentLongitude ) = 0; //Pure virtual
+
+private:
 
 
 
 };
+
+#endif

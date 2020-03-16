@@ -45,6 +45,8 @@ class Pilot{
 		ros::Publisher motor_R;
 
         TwoDoublesRosTimeWithMutex waypointLatitudeLongitude;
+
+        // Add heading to currentPosition
         TwoDoublesRosTimeWithMutex currentPositionLatitudeLongitude;
 
         BoolWithMutex pilotActive;
@@ -119,6 +121,8 @@ class Pilot{
                 pilotActive.setValue( false );
 
                 waypointLatitudeLongitude.setValues( 0, 0, ros::Time( 0, 0 ) );
+
+                // ? Message for motors to stop
             }
 
 
@@ -130,7 +134,8 @@ class Pilot{
 
             waypointLatitudeLongitude.getValues( latitude, longitude, timeToDisplay );
 
-            std::cout << "Pilot::waypointCallback\n"
+            std::cout << std::setprecision(10) << std::fixed
+                << "Pilot::waypointCallback\n"
                 << "  timeToDisplay sec.nsec: " << timeToDisplay.sec << "."
                 << timeToDisplay.nsec << "\n"
                 << "  latitude: " << latitude << "\n"

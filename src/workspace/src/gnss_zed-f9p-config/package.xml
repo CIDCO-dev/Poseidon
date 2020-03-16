@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>gnss_zed-f9p</name>
+  <name>gnss_zed-f9p-config</name>
   <version>0.0.0</version>
-  <description>The gnss_zed-f9p package</description>
+  <description>The gnss_zed-f9p-config package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

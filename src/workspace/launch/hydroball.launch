@@ -28,5 +28,8 @@
 
 <node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket"/>
 
+<node pkg="gnss_zed-f9p" name="gnss_zed_f9p" type="gnss_zed-f9p" output="screen" args="$(arg loggerPath1) $(arg portPath1)"/>
+
+
 
 </launch>

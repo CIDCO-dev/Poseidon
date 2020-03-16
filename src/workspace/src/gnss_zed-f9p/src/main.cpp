@@ -3,7 +3,10 @@
 
 #include "ros/ros.h"
 
-#include <stdio.h>
+
+#include <fstream>
+#include <iostream>
+#include <cstdio>
 #include <chrono>
 #include <ctime> 
 #include <string>
@@ -20,20 +23,71 @@ using namespace std;
 string fnameout="123";
 string path="123";
 
+#pragma pack(1)
+typedef struct {
+	char     magic[2];
+	uint8_t  msgClass;
+	uint8_t  id;
+	uint16_t length; //little endian
+
+	uint8_t  classId;
+	uint8_t  messageId;
+
+	uint8_t  ck_a;
+	uint8_t  ck_b;
+} ubx_ack;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct{
+	char     magic[2];
+	uint8_t  msgClass;
+	uint8_t  id;
+	uint16_t length; //little-endian
+
+	uint8_t  version;
+	uint8_t  layers;
+	uint8_t  reserved[2];
+	uint32_t key; //little-endian
+	uint8_t  value;
+
+        uint8_t  ck_a;
+        uint8_t  ck_b;
+} ubx_config;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct {
+        char     magic[2];
+        uint8_t  msgClass;
+        uint8_t  id;
+        uint16_t length; //little endian
+
+        uint16_t navBbrMask; //little endian
+        uint8_t  resetMode;
+	uint8_t  reserved;
+
+        uint8_t  ck_a;
+        uint8_t  ck_b;
+} ubx_rst;
+#pragma pack()
+
 
 class ZEDF9P{
 	private:
-	std::string outputFolder;
+ 	std::string outputFolder;
 	std::string serialport;
+
 	std_msgs::String result;
 	std_msgs::String ubx_msg_str;
-	//uint8_t *buffer;
 	std_msgs::String ubx_read;
-	
+
 	public:
 
-	ZEDF9P(char * outputFolder,  char * serialport): outputFolder(outputFolder), serialport(serialport){
-		}
+	ZEDF9P(std::string & outputFolder, std::string & serialport): outputFolder(outputFolder), serialport(serialport){
+
+	}
+
 	std::string datetime(){
     		time_t rawtime;
     		struct tm * timeinfo;
@@ -44,288 +98,105 @@ class ZEDF9P{
 
     		strftime(buffer,80,"%Y%m%d%H%M%S",timeinfo);
     		return std::string(buffer);
-		}
-	void ubx_cfg(unsigned long ubx_add, char ubx_val){
-		unsigned char ubx_header1 = 181;
-		unsigned char ubx_header2 = 98;
-		unsigned char ubx_class = 6;
-		unsigned char ubx_id = 0x8A;
-		unsigned int ubx_chksum_A = 0x00;
-		unsigned int ubx_chksum_B = 0x00;
-		unsigned char ubx_version = 0x01;
-		unsigned char ubx_layer = 0x01;
-		unsigned char ubx_reserved = 0x00;
-		
-		unsigned char ubx_buffer[13];
-		char ubx_msg[17];
-		
-		
+	}
 
 	
-		unsigned char ubx_lenght = 0x09;
-
-		ubx_buffer[0] = ubx_class;
-		ubx_buffer[1] = ubx_id;
-		ubx_buffer[2] = ubx_lenght;
-		ubx_buffer[3] = 0x00;
-		ubx_buffer[4] = 0x00;
-		ubx_buffer[5] = ubx_layer;
-		ubx_buffer[6] = 0x00;
-		ubx_buffer[7] = 0x00;
-		ubx_buffer[8] = (ubx_add & 0x000000FF) ;
-		ubx_buffer[9] = ((ubx_add & 0x0000FF00) >> 8);
-		ubx_buffer[10] = ((ubx_add & 0x00FF0000) >> 16);
-		ubx_buffer[11] = ((ubx_add & 0xFF000000) >> 24);
-		ubx_buffer[12] = ubx_val;
-
-
-
-		unsigned char ubx_buffer_lenght = 13;
-
-		for(unsigned char I=0 ; I<ubx_buffer_lenght; I++){
-			ubx_chksum_A = (ubx_chksum_A + ubx_buffer[I]) & 0xFF;
-			ubx_chksum_B = (ubx_chksum_B + ubx_chksum_A) & 0xFF;
-		}
-		//ubx_chksum_A = ubx_chksum_A & 0xFF;
-		//ubx_chksum_B = ubx_chksum_B & 0xFF;
-
-		ubx_msg[0] = ubx_header1;
-		ubx_msg[1] = ubx_header2;
-		ubx_msg[2] = ubx_buffer[0];
-		ubx_msg[3] = ubx_buffer[1];
-		ubx_msg[4] = ubx_buffer[2];
-		ubx_msg[5] = ubx_buffer[3];
-		ubx_msg[6] = ubx_buffer[4];
-		ubx_msg[7] = ubx_buffer[5];
-		ubx_msg[8] = ubx_buffer[6];
-		ubx_msg[9] = ubx_buffer[7];
-		ubx_msg[10] = ubx_buffer[8];
-		ubx_msg[11] = ubx_buffer[9];
-		ubx_msg[12] = ubx_buffer[10];
-		ubx_msg[13] = ubx_buffer[11];
-		ubx_msg[14] = ubx_buffer[12];
-		ubx_msg[15] = ubx_chksum_A;
-		ubx_msg[16] = ubx_chksum_B;
-		int serial_port = open(serialport.c:str(), O_RDWR);
-
-		write(serial_port, ubx_msg, 17);
-		
-		
-		ubx_msg[7] = ubx_msg[7]+1;
-		ubx_msg[15] = ubx_msg[15]+1;
-		ubx_msg[16] = ubx_msg[16]+8;
-
-		write(serial_port, ubx_msg, 17);
-		
-		ubx_msg[7] = ubx_msg[7]+2;
-		ubx_msg[15] = ubx_msg[15]+2;
-		ubx_msg[16] = ubx_msg[16]+16;
-
-		write(serial_port, ubx_msg, 17);
-		
-		close(serial_port);
-
-		}
 
 	void run(){
-		cout << "gps config" << endl;
-		//écrit la configuration du module gps pour le port usb
-		ubx_cfg(0x209100a9, 0); //CFG-MSGOUT-NMEA_ID_DTM
-		ubx_cfg(0x209100e0, 0); //CFG-MSGOUT-NMEA_ID_GBS
-		ubx_cfg(0x209100bd, 0); //CFG-MSGOUT-NMEA_ID_GGA
-		ubx_cfg(0x209100cc, 0); //CFG-MSGOUT-NMEA_ID_GLL
-		ubx_cfg(0x209100b8, 0); //CFG-MSGOUT-NMEA_ID_GNS
-		ubx_cfg(0x209100d1, 0); //CFG-MSGOUT-NMEA_ID_GRS
-		ubx_cfg(0x209100C2, 0); //CFG-MSGOUT-NMEA_ID_GSA
-		ubx_cfg(0x209100d6, 0); //CFG-MSGOUT-NMEA_ID_GST
-		ubx_cfg(0x209100C7, 0); //CFG-MSGOUT-NMEA_ID_GSV
-		ubx_cfg(0x209100ae, 0); //CFG-MSGOUT-NMEA_ID_RMC
-		ubx_cfg(0x209100eA, 0); //CFG-MSGOUT-NMEA_ID_VLW
-		ubx_cfg(0x209100b3, 0); //CFG-MSGOUT-NMEA_ID_VTG
-		ubx_cfg(0x209100db, 0); //CFG-MSGOUT-NMEA_ID_ZDA
-		ubx_cfg(0x209100ef, 0); //CFG-MSGOUT-PUBX_ID_POLYP
-		ubx_cfg(0x209100f4, 0); //CFG-MSGOUT-PUBX_ID_POLYS
-		ubx_cfg(0x209100f9, 0); //CFG-MSGOUT-PUBX_ID_POLYT
-		ubx_cfg(0x209102c0, 0); //CFG-MSGOUT-RTCM_3X_TYPE1005
-		ubx_cfg(0x20910361, 0); //CFG-MSGOUT-RTCM_3X_TYPE1074
-		ubx_cfg(0x209102cf, 0); //CFG-MSGOUT-RTCM_3X_TYPE1077
-		ubx_cfg(0x20910366, 0); //CFG-MSGOUT-RTCM_3X_TYPE1084
-		ubx_cfg(0x209102d4, 0); //CFG-MSGOUT-RTCM_3X_TYPE1087
-		ubx_cfg(0x2091036b, 0); //CFG-MSGOUT-RTCM_3X_TYPE1094
-		ubx_cfg(0x2091031b, 0); //CFG-MSGOUT-RTCM_3X_TYPE1097
-		ubx_cfg(0x20910370, 0); //CFG-MSGOUT-RTCM_3X_TYPE1124
-		ubx_cfg(0x209102d9, 0); //CFG-MSGOUT-RTCM_3X_TYPE1127
-		ubx_cfg(0x20910306, 0); //CFG-MSGOUT-RTCM_3X_TYPE1130
-		ubx_cfg(0x20910301, 0); //CFG-MSGOUT-RTCM_3X_TYPE4072_0
-		ubx_cfg(0x20910384, 0); //CFG-MSGOUT-RTCM_3X_TYPE4072_1
-		ubx_cfg(0x2091025c, 0); //CFG-MSGOUT-UBX_LOG_INFO
-		ubx_cfg(0x20910352, 0); //CFG-MSGOUT-UBX_MON_COMMS
-		ubx_cfg(0x209101bc, 0); //CFG-MSGOUT-UBX_MON_HW2
-		ubx_cfg(0x20910357, 0); //CFG-MSGOUT-UBX_MON_HW3
-		ubx_cfg(0x209101b7, 0); //CFG-MSGOUT-UBX_MON_HW
-		ubx_cfg(0x209101a8, 0); //CFG-MSGOUT-UBX_MON_IO
-		ubx_cfg(0x20910199, 0); //CFG-MSGOUT-UBX_MON_MSGPP
-		ubx_cfg(0x2091035c, 0); //CFG-MSGOUT-UBX_MON_RF
-		ubx_cfg(0x209101a3, 0); //CFG-MSGOUT-UBX_MON_RXBUF
-		ubx_cfg(0x2091018a, 0); //CFG-MSGOUT-UBX_MON_RXR
-		ubx_cfg(0x2091019e, 0); //CFG-MSGOUT-UBX_MON_TXBUF
-		ubx_cfg(0x20910068, 0); //CFG-MSGOUT-UBX_NAV_CLOCK
-		ubx_cfg(0x2091003b, 0); //CFG-MSGOUT-UBX_NAV_DOP
-		ubx_cfg(0x20910162, 0); //CFG-MSGOUT-UBX_NAV_EOE
-		ubx_cfg(0x209100a4, 0); //CFG-MSGOUT-UBX_NAV_GEOFENCE
-		ubx_cfg(0x20910031, 0); //CFG-MSGOUT-UBX_NAV_HPPOSECEF
-		ubx_cfg(0x20910036, 0); //CFG-MSGOUT-UBX_NAV_HPPOSLLH
-		ubx_cfg(0x20910081, 0); //CFG-MSGOUT-UBX_NAV_ODO
-		ubx_cfg(0x20910013, 0); //CFG-MSGOUT-UBX_NAV_ORB
-		ubx_cfg(0x20910027, 0); //CFG-MSGOUT-UBX_NAV_POSECEF
-		ubx_cfg(0x2091002c, 1); //CFG-MSGOUT-UBX_NAV_POSLLH  <---
-		ubx_cfg(0x20910009, 0); //CFG-MSGOUT-UBX_NAV_PVT
-		ubx_cfg(0x20910090, 0); //CFG-MSGOUT-UBX_NAV_RELPOSNED
-		ubx_cfg(0x20910018, 0); //CFG-MSGOUT-UBX_NAV_SAT
-		ubx_cfg(0x20910348, 0); //CFG-MSGOUT-UBX_NAV_SIG
-		ubx_cfg(0x2091001d, 0); //CFG-MSGOUT-UBX_NAV_STATUS
-		ubx_cfg(0x2091008b, 0); //CFG-MSGOUT-UBX_NAV_SVIN
-		ubx_cfg(0x20910054, 0); //CFG-MSGOUT-UBX_NAV_TIMEBDS
-		ubx_cfg(0x20910059, 0); //CFG-MSGOUT-UBX_NAV_TIMEGAL
-		ubx_cfg(0x2091004f, 0); //CFG-MSGOUT-UBX_NAV_TIMEGLO
-		ubx_cfg(0x2091004a, 0); //CFG-MSGOUT-UBX_NAV_TIMEGPS
-		ubx_cfg(0x20910063, 0); //CFG-MSGOUT-UBX_NAV_TIMELS
-		ubx_cfg(0x2091005e, 0); //CFG-MSGOUT-UBX_NAV_TIMEUTC
-		ubx_cfg(0x20910040, 0); //CFG-MSGOUT-UBX_NAV_VELECEF
-		ubx_cfg(0x20910045, 0); //CFG-MSGOUT-UBX_NAV_VELNED
-		ubx_cfg(0x20910207, 0); //CFG-MSGOUT-UBX_RXM_MEASX
-		ubx_cfg(0x209102A7, 1); //CFG-MSGOUT-UBX_RXM_RAWX  <---
-		ubx_cfg(0x20910261, 0); //CFG-MSGOUT-UBX_RXM_RLM
-		ubx_cfg(0x2091026b, 0); //CFG-MSGOUT-UBX_RXM_RTMC
-		ubx_cfg(0x20910234, 1); //CFG-MSGOUT-UBX_RXM_SFRBX  <---
-		ubx_cfg(0x2091017b, 0); //CFG-MSGOUT-UBX_TIM_TM2
-		ubx_cfg(0x20910180, 0); //CFG-MSGOUT-UBX_TIM_TP
-		ubx_cfg(0x20910095, 0); //CFG-MSGOUT-UBX_TIM_VRFY
-
-
-		//écrit la configuration du module gps pour le port UART1
-		ubx_cfg(0x209100a7, 0); //CFG-MSGOUT-NMEA_ID_DTM
-		ubx_cfg(0x209100DE, 0); //CFG-MSGOUT-NMEA_ID_GBS
-		ubx_cfg(0x209100bB, 1); //CFG-MSGOUT-NMEA_ID_GGA
-		ubx_cfg(0x209100cA, 1); //CFG-MSGOUT-NMEA_ID_GLL
-		ubx_cfg(0x209100b6, 0); //CFG-MSGOUT-NMEA_ID_GNS
-		ubx_cfg(0x209100CF, 0); //CFG-MSGOUT-NMEA_ID_GRS
-		ubx_cfg(0x209100C0, 1); //CFG-MSGOUT-NMEA_ID_GSA
-		ubx_cfg(0x209100d4, 0); //CFG-MSGOUT-NMEA_ID_GST
-		ubx_cfg(0x209100C5, 1); //CFG-MSGOUT-NMEA_ID_GSV
-		ubx_cfg(0x209100aC, 1); //CFG-MSGOUT-NMEA_ID_RMC
-		ubx_cfg(0x209100e8, 0); //CFG-MSGOUT-NMEA_ID_VLW
-		ubx_cfg(0x209100b1, 1); //CFG-MSGOUT-NMEA_ID_VTG
-		ubx_cfg(0x209100d9, 0); //CFG-MSGOUT-NMEA_ID_ZDA
-		ubx_cfg(0x209100eD, 0); //CFG-MSGOUT-PUBX_ID_POLYP
-		ubx_cfg(0x209100f2, 0); //CFG-MSGOUT-PUBX_ID_POLYS
-		ubx_cfg(0x209100f7, 0); //CFG-MSGOUT-PUBX_ID_POLYT
-		ubx_cfg(0x209102BE, 0); //CFG-MSGOUT-RTCM_3X_TYPE1005
-		ubx_cfg(0x2091035F, 0); //CFG-MSGOUT-RTCM_3X_TYPE1074
-		ubx_cfg(0x209102cD, 0); //CFG-MSGOUT-RTCM_3X_TYPE1077
-		ubx_cfg(0x20910364, 0); //CFG-MSGOUT-RTCM_3X_TYPE1084
-		ubx_cfg(0x209102d2, 0); //CFG-MSGOUT-RTCM_3X_TYPE1087
-		ubx_cfg(0x20910369, 0); //CFG-MSGOUT-RTCM_3X_TYPE1094
-		ubx_cfg(0x20910319, 0); //CFG-MSGOUT-RTCM_3X_TYPE1097
-		ubx_cfg(0x2091036E, 0); //CFG-MSGOUT-RTCM_3X_TYPE1124
-		ubx_cfg(0x209102d7, 0); //CFG-MSGOUT-RTCM_3X_TYPE1127
-		ubx_cfg(0x20910304, 0); //CFG-MSGOUT-RTCM_3X_TYPE1130
-		ubx_cfg(0x209102FF, 0); //CFG-MSGOUT-RTCM_3X_TYPE4072_0
-		ubx_cfg(0x20910382, 0); //CFG-MSGOUT-RTCM_3X_TYPE4072_1
-		ubx_cfg(0x2091025A, 0); //CFG-MSGOUT-UBX_LOG_INFO
-		ubx_cfg(0x20910350, 0); //CFG-MSGOUT-UBX_MON_COMMS
-		ubx_cfg(0x209101bA, 0); //CFG-MSGOUT-UBX_MON_HW2
-		ubx_cfg(0x20910355, 0); //CFG-MSGOUT-UBX_MON_HW3
-		ubx_cfg(0x209101b7, 0); //CFG-MSGOUT-UBX_MON_HW
-		ubx_cfg(0x209101a6, 0); //CFG-MSGOUT-UBX_MON_IO
-		ubx_cfg(0x20910197, 0); //CFG-MSGOUT-UBX_MON_MSGPP
-		ubx_cfg(0x2091035A, 0); //CFG-MSGOUT-UBX_MON_RF
-		ubx_cfg(0x209101a1, 0); //CFG-MSGOUT-UBX_MON_RXBUF
-		ubx_cfg(0x20910188, 0); //CFG-MSGOUT-UBX_MON_RXR
-		ubx_cfg(0x2091019C, 0); //CFG-MSGOUT-UBX_MON_TXBUF
-		ubx_cfg(0x20910066, 0); //CFG-MSGOUT-UBX_NAV_CLOCK
-		ubx_cfg(0x20910039, 0); //CFG-MSGOUT-UBX_NAV_DOP
-		ubx_cfg(0x20910160, 0); //CFG-MSGOUT-UBX_NAV_EOE
-		ubx_cfg(0x209100a2, 0); //CFG-MSGOUT-UBX_NAV_GEOFENCE
-		ubx_cfg(0x2091002F, 0); //CFG-MSGOUT-UBX_NAV_HPPOSECEF
-		ubx_cfg(0x20910034, 0); //CFG-MSGOUT-UBX_NAV_HPPOSLLH
-		ubx_cfg(0x2091007F, 0); //CFG-MSGOUT-UBX_NAV_ODO
-		ubx_cfg(0x20910011, 0); //CFG-MSGOUT-UBX_NAV_ORB
-		ubx_cfg(0x20910025, 0); //CFG-MSGOUT-UBX_NAV_POSECEF
-		ubx_cfg(0x2091002A, 0); //CFG-MSGOUT-UBX_NAV_POSLLH
-		ubx_cfg(0x20910007, 0); //CFG-MSGOUT-UBX_NAV_PVT
-		ubx_cfg(0x2091008E, 0); //CFG-MSGOUT-UBX_NAV_RELPOSNED
-		ubx_cfg(0x20910016, 0); //CFG-MSGOUT-UBX_NAV_SAT
-		ubx_cfg(0x20910346, 0); //CFG-MSGOUT-UBX_NAV_SIG
-		ubx_cfg(0x2091001B, 0); //CFG-MSGOUT-UBX_NAV_STATUS
-		ubx_cfg(0x20910089, 0); //CFG-MSGOUT-UBX_NAV_SVIN
-		ubx_cfg(0x20910052, 0); //CFG-MSGOUT-UBX_NAV_TIMEBDS
-		ubx_cfg(0x20910057, 0); //CFG-MSGOUT-UBX_NAV_TIMEGAL
-		ubx_cfg(0x2091004D, 0); //CFG-MSGOUT-UBX_NAV_TIMEGLO
-		ubx_cfg(0x20910048, 0); //CFG-MSGOUT-UBX_NAV_TIMEGPS
-		ubx_cfg(0x20910061, 0); //CFG-MSGOUT-UBX_NAV_TIMELS
-		ubx_cfg(0x2091005C, 0); //CFG-MSGOUT-UBX_NAV_TIMEUTC
-		ubx_cfg(0x2091003E, 0); //CFG-MSGOUT-UBX_NAV_VELECEF
-		ubx_cfg(0x20910043, 0); //CFG-MSGOUT-UBX_NAV_VELNED
-		ubx_cfg(0x20910205, 0); //CFG-MSGOUT-UBX_RXM_MEASX
-		ubx_cfg(0x209102A5, 0); //CFG-MSGOUT-UBX_RXM_RAWX
-		ubx_cfg(0x2091025F, 0); //CFG-MSGOUT-UBX_RXM_RLM
-		ubx_cfg(0x20910269, 0); //CFG-MSGOUT-UBX_RXM_RTMC
-		ubx_cfg(0x20910232, 0); //CFG-MSGOUT-UBX_RXM_SFRBX
-		ubx_cfg(0x20910179, 0); //CFG-MSGOUT-UBX_TIM_TM2
-		ubx_cfg(0x2091017E, 0); //CFG-MSGOUT-UBX_TIM_TP
-		ubx_cfg(0x20910093, 0); //CFG-MSGOUT-UBX_TIM_VRFY
-
-		cout << "gps loging" << endl;
-
-
-		//lis le temps si la seconde change on change le nom du fichier
-		fnameout = outputFolder + datetime() +".ubx";
-		
-		char read_buf [1];
-		memset(&read_buf, '\0', sizeof(read_buf));
-		int serial_port1 = open(serialport.c:str(), O_RDWR);
-		int file = open(fnameout.c_str(), O_RDWR | O_CREAT | O_APPEND);
-		while(ros::ok()){
-			
-			
-			int n = read(serial_port1, &read_buf, sizeof(read_buf));
-			write(file, &read_buf, sizeof(read_buf));
-
-			
-		
+		//serial port opening
+		int serial_port = open(serialport.c_str(), O_RDWR);// | O_NOCTTY);
+		struct termios tty;
+		memset(&tty, 0, sizeof tty);
+		//serialport config
+		if(tcgetattr(serial_port, &tty) != 0) {
+    			printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
 		}
-		close(serial_port1);
-		close(file);
+
+		tty.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
+		tty.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
+		tty.c_cflag |= CS8; // 8 bits per byte (most common)
+		tty.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
+		tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
+		
+		tty.c_lflag &= ~ICANON;
+		tty.c_lflag &= ~ECHO; // Disable echo
+		tty.c_lflag &= ~ECHOE; // Disable erasure
+		tty.c_lflag &= ~ECHONL; // Disable new-line echo
+		tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
+		tty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
+		tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
+		
+		tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
+		tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
+		// tty.c_oflag &= ~OXTABS; // Prevent conversion of tabs to spaces (NOT PRESENT ON LINUX)
+		// tty.c_oflag &= ~ONOEOT; // Prevent removal of C-d chars (0x004) in output (NOT PRESENT ON LINUX)
+
+		tty.c_cc[VTIME] = 10;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
+		tty.c_cc[VMIN] = 0;
+
+		// Set in/out baud rate to be 9600
+		cfsetispeed(&tty, B460800);
+		cfsetospeed(&tty, B460800);
+
+		if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
+			printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
+		}
+
+
+		//Init buffer
+		int size = 1;
+		char read_buf [size];
+
+
+		//create and open file
+		ofstream file;
+		fnameout = outputFolder + datetime() +".ubx";
+		file.open(fnameout,ios::app|ios::out|ios::binary);
+
+		if(file) {
+	                while(ros::ok()){ //read serial port and save in the file
+        	                int n = read(serial_port, &read_buf, size);
+				file.write(read_buf, size);
+	                }
+
+			//cleanup
+	                close(serial_port);
+	                file.close();
+		}
+		else{
+			ROS_INFO("Cannot open UBX file\n");
+			exit(1);
+		}
 	}
 
 
 };
+
+
 int main(int argc,char** argv){
-  	
+
 	ros::init(argc, argv, "zedf9p");
-	std::string addr (argv[1]);
-	std::string port (argv[2]);
+	std::string logPath (argv[1]);
+	std::string serialPortPath (argv[2]);
 
 
-	if (addr.length()<2){
-		std::cout << "nlogger_text, Missing output folder path" << std::endl;
+	if (logPath.length()<2){
+		ROS_INFO("Missing output log path\n");
     		return 1;
 	}
 
-	if (port.length()<2){
-		std::cout << "nlogger_text, Missing serial port" << std::endl;
-    		return 1;
+	ROS_INFO("Writing UBX log to %s",logPath.c_str());
 
+
+	if (serialPortPath.length()<2){
+		ROS_INFO("Missing serial port path\n");
+    		return 1;
 	}
 
+	ROS_INFO("Using serial port at %s",serialPortPath.c_str());
 
-	//création du path du log si non présent
-	
-	//initialiser le module zed-f9p
-
-	ZEDF9P zedf9p(argv[1] ,argv[2]);
+	ZEDF9P zedf9p(logPath , serialPortPath);
 	zedf9p.run();
-	
+
 }
 #endif

@@ -188,10 +188,10 @@
               <!-- Project Card Example -->
               <div class="card shadow mb-4">
                 <div class="card-header py-3" >
-                  <h6 class="m-0 font-weight-bold text-primary">Enclosure</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Map</h6>
                 </div>
 		<div class="card-body">
-		<div id="mapText" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
+		
                 <div  id="map" style="width: 100%; height: 400px;" class="card-body">
 
                 </div>
@@ -199,28 +199,7 @@
               </div>
             </div>
 
-            <!-- Content Column -->
-            <div class="col-lg-3 mb-6">
- 	      <!-- Project Card Example -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3" >
-                  <h6 class="m-0 font-weight-bold text-primary">memory detail</h6>
-                </div>
-                <div class="card-body">
-                  <div class="chart-area">
-		    <div id="dText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-		    <div id="dText2" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-		    <div id="dText3" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-		    <div id="dText4" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-		    <div id="dText5" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-		    <div id="dText6" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-		   
-
-                  </div>
-                </div>
-              </div>
-	   </div>
-            
+  
             <!-- Content Column -->
             <div class="col-lg-3 mb-6">
  	      <!-- Project Card Example -->
@@ -651,7 +630,7 @@ curentweight= (23-currentZoom)*6+23;
         //TODO: update rest
     }
       
-    var socket = new WebSocket("ws://192.168.0.183:9002");
+    var socket = new WebSocket("ws://192.168.1.16:9002");
 
     socket.onmessage = function (event) {
         console.log(event.data);

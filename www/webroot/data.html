@@ -16,7 +16,7 @@
 
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-  <script>
+<script>
     function processState(state){
       
 	// Update dashboard top marquees  
@@ -60,13 +60,14 @@
         //TODO: update rest
     }
       
-    var socket = new WebSocket("ws://192.168.0.183:9002");
+    var socket = new WebSocket("ws://192.168.1.16:9002");
 
     socket.onmessage = function (event) {
-        processState(event.data);
+        console.log(event.data);
+        var state = JSON.parse(event.data);
+        processState(state);
     }        
-
-Â  </script>
+</script>
 </head>
 
 <body id="page-top">

@@ -5,6 +5,8 @@
 #include <mutex>
 #include <set>
 #include <thread>
+#include <glob.h>
+
 
 #include "ros/ros.h"
 
@@ -14,6 +16,8 @@
 #include <websocketpp/server.hpp>
 
 typedef websocketpp::server<websocketpp::config::asio> server;
+
+
 
 using websocketpp::connection_hdl;
 
@@ -67,7 +71,7 @@ public:
     void stateChanged(const state_controller::State & state) {
         
         uint64_t timestamp = (state.attitude.header.stamp.sec * 1000000) + (state.attitude.header.stamp.nsec/1000);
-        
+        std::string str;
         if(
                 //TODO: maybe add our own header?
                 (timestamp - lastTimestamp > 200000)
@@ -113,11 +117,25 @@ public:
             }
             else{//state.position.longitude
                 
-              ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "]";
+              ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "],";
             }
            
- 	    ss << "}";
+ 	    
 
+	    //list files and send it over websocket
+	    ss << "\"fileslist\":[" ;
+
+glob_t glob_result;
+glob("/home/ubuntu/Poseidon/www/webroot/record/*",GLOB_TILDE,NULL,&glob_result);
+for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
+	    str = glob_result.gl_pathv[i];
+	    str.erase (0,34);
+	    if (i > 0) {ss << "," ;} 	
+            ss << "\"" << str << "\"" ;
+        }
+     
+            ss << "]";       
+            ss << "}";
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
                  srv.send(it,ss.str(),websocketpp::frame::opcode::text);

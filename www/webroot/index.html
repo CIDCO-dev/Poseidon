@@ -327,7 +327,7 @@
   <!-- Page level custom scripts -->
   <!-- <script src="js/demo/chart-area-demo.js"></script> -->
   <!-- <script src="js/demo/chart-pie-demo.js"></script> -->
-
+  <script src="js/poseidon.js"></script>
  
 </body>
 <script>
@@ -630,13 +630,13 @@ curentweight= (23-currentZoom)*6+23;
         //TODO: update rest
     }
       
-    var socket = new WebSocket("ws://192.168.1.16:9002");
+  var socket = new WebSocket("ws://192.168.1.16:9002");
 
     socket.onmessage = function (event) {
         console.log(event.data);
         var state = JSON.parse(event.data);
         processState(state);
-    }        
+    }    
 
   </script>
 

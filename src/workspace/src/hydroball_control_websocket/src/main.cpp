@@ -57,6 +57,11 @@ public:
         stateTopic = n.subscribe("state", 1000, &ControlServer::stateChanged,this);
     }
 
+    void on_message(connection_hdl hdl, server::message_ptr msg) {
+        //std::cout << msg->get_payload() << std::endl;
+	ROS_INFO("Writing UBX log to %s", msg);
+    }
+
     void on_open(connection_hdl hdl) {
         std::lock_guard<std::mutex> lock(mtx);
         connections.insert(hdl);
@@ -125,17 +130,20 @@ public:
 	    //list files and send it over websocket
 	    ss << "\"fileslist\":[" ;
 
-glob_t glob_result;	
-
-//ROS_INFO("Using log path at %s",logFolder.c_str());
-
-glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
-for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-	    str = glob_result.gl_pathv[i];
-	    str.erase (0,34);
-	    if (i > 0) {ss << "," ;} 	
-            ss << "\"" << str << "\"" ;
-        }
+	    glob_t glob_result;	
+	    glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
+	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
+	    	str = glob_result.gl_pathv[i];
+		if (i > 0) {ss << "," ;} 
+		ss << "[";
+		str.erase (0,(logFolder.length()-1));
+		ss << "\"" << str << "\"" ; //file name
+		str = glob_result.gl_pathv[i];
+	    	str.erase (0,(logFolder.length()-8));
+	    	ss << "," ; 	
+            	ss << "\"" << str << "\"" ;
+		ss << "]";
+        	}
      
             ss << "]";       
             ss << "}";
@@ -152,6 +160,7 @@ for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
     
     void receiveMessages(){
         ros::spin();
+	
     }
 
     void run(uint16_t port){
@@ -190,3 +199,4 @@ int main(int argc,char ** argv){
 }
 
 #endif
+

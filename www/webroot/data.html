@@ -9,7 +9,7 @@
   <meta name="description" content="Hydroball Control Panel">
   <meta name="author" content="CIDCO">
 
-  <title>Hydroball - Dashboard</title>
+  <title>Hydroball - Data</title>
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
@@ -26,50 +26,6 @@ var olddataln = 0;
 
     function processState(state){
       
-	// Update dashboard top marquees  
-        if(!state.position.length || !state.attitude.length || !state.depth.length){
-            $("#systemStatus").removeClass("d-none").addClass("d-block");
-            
-            $("#systemStatusText").text("Check connexion with sensors");
-        }
-        else{
-            $("#systemStatus").removeClass("d-block").addClass("d-none");
-            $("#systemStatusText").text();
-        }
-        
-        if(state.position.length){
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#gnssStatusText1").removeClass("bg-gradient-warning").text(state.position[0]);
-            $("#gnssStatusText2").removeClass("bg-gradient-warning").text(state.position[1]);
-        }
-        else{
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#gnssStatusText1").text("No Position Data");
-            $("#gnssStatusText2").text("No Position Data");
-        }
-        
-        if(state.attitude.length){
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#imuStatusText1").text(state.attitude[0]);
-            $("#imuStatusText2").text(state.attitude[1]);
-            $("#imuStatusText3").text(state.attitude[2]);
-        }
-        else{
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#imuStatusText1").text("No IMU Data");
-            $("#imuStatusText2").text("No IMU Data");
-            $("#imuStatusText3").text("No IMU Data");
-        }
-        
-        if(state.depth.length){
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#sonarStatusText1").text(state.depth[0]);
-        }
-        else{
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#sonarStatusText1").text("No Sonar Data");
-        }
-
 
 //******************************
 //population de la base de donée
@@ -97,19 +53,25 @@ if (dataln !== olddataln) {
 	table.innerHTML = tabledata;
 	}
 }
-
-//<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="defaultUnchecked"><label class="custom-control-label" for="'+fileslist[i][0]+'">Default unchecked</label></div>
 //******************************
 //procédure de supression des fichier sélectionner
 //******************************
-
-
 function sendDelete() {
-for (i = 0; i < dataln; i++) {
-	var checkBox = document.getElementById(fileslist[i][0]);
-	if (checkBox.checked == true) {socket.send("{\"delete\":["+ fileslist[i][0]+"]}"); }   
-	}
+	for (i = 0; i < dataln; i++) {
+		var checkBox = document.getElementById(fileslist[i][0]);
+		if (checkBox.checked == true) {socket.send("{\"delete\":["+ fileslist[i][0]+"]}"); }   
+		}
 }
+//******************************
+//procédure de selection des fichier 
+//******************************
+function selectall() {
+	for (i = 0; i < dataln; i++) {
+		document.getElementById(fileslist[i][0]).checked = ! document.getElementById(fileslist[i][0]).checked;
+		}
+}
+
+
 
 
 
@@ -203,7 +165,7 @@ for (i = 0; i < dataln; i++) {
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+            <h1 class="h3 mb-0 text-gray-800">Data</h1>
           </div>
 
 
@@ -211,7 +173,7 @@ for (i = 0; i < dataln; i++) {
           <div class="row">
 
 <!-- Modal for file delete -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="filedel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -234,85 +196,27 @@ for (i = 0; i < dataln; i++) {
 </div>
 
 
-                 <div class="col-xl-4 col-md-6 mb-4">
-                  <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      GNSS
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div id="gnssStatusText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-                            <div id="gnssStatusText2" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-                            <div id="gnssStatusText3" class="text-gray-200 h4 font-weight-bold"> </div>
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                 <div class="col-xl-4 col-md-6 mb-4">
-                  <div id="imuStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      IMU
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div id="imuStatusText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-                            <div id="imuStatusText2" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-                            <div id="imuStatusText3" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-ship fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                 <div class="col-xl-4 col-md-6 mb-4">
-                  <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      Depth (m)
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div id="sonarStatusText1" class="text-gray-200 h4 font-weight-bold">Waiting for data...</div>
-                            <div id="sonarStatusText2" class="text-gray-200 h4 font-weight-bold"> </div>
-                            <div id="sonarStatusText3" class="text-gray-200 h4 font-weight-bold"> </div>
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-rss fa-rotate-180 fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
           </div>
 
 	  <!-- Gauges row -->
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Data Logged</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th width="100px"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Delete</button></th>
-		      <th>Filename</th>
+                      <th width="100px"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filedel">Delete</button></th>
+		      <th><button type="button" class="btn btn-primary" onclick="selectall()" data-dismiss="modal">File Name</button></th>
                     </tr>
                   </thead>
                   <tfoot>
                     <tr>
-                      <th><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Delete</button></th>
-		      <th>Filename</th>
+                      <th><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filedel">Delete</button></th>
+		      <th><button type="button" class="btn btn-primary" onclick="selectall()" data-dismiss="modal">File Name</button></th>
                     </tr>
                   </tfoot>
 		  <tbody id='tableContents'>
@@ -324,6 +228,7 @@ for (i = 0; i < dataln; i++) {
 
         </div>
         <!-- /.container-fluid -->
+
 
 
 

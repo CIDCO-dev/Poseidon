@@ -48,12 +48,12 @@ void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,d
 
 class ControlServer {
 public:
-    ControlServer() {
+    ControlServer(std::string & logFolder): logFolder(logFolder) {
         srv.init_asio();
         srv.set_reuse_addr(true);
         srv.set_open_handler(bind(&ControlServer::on_open,this,std::placeholders::_1));
         srv.set_close_handler(bind(&ControlServer::on_close,this,std::placeholders::_1));
-        
+        logfolder = logFolder;
         stateTopic = n.subscribe("state", 1000, &ControlServer::stateChanged,this);
     }
 
@@ -125,8 +125,11 @@ public:
 	    //list files and send it over websocket
 	    ss << "\"fileslist\":[" ;
 
-glob_t glob_result;
-glob("/home/ubuntu/Poseidon/www/webroot/record/*",GLOB_TILDE,NULL,&glob_result);
+glob_t glob_result;	
+
+//ROS_INFO("Using log path at %s",logFolder.c_str());
+
+glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
 for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
 	    str = glob_result.gl_pathv[i];
 	    str.erase (0,34);
@@ -166,13 +169,22 @@ private:
     
     ros::NodeHandle n;    
     ros::Subscriber stateTopic;
-    
+    std::string logfolder;
+    std::string logFolder;
     uint64_t lastTimestamp;
 };
 
 int main(int argc,char ** argv){
     ros::init(argc,argv,"hydroball_websocket_controller");
-    ControlServer server;
+    std::string logPath (argv[1]);
+    if (logPath.length()<2){
+		ROS_INFO("Missing output log path\n");
+    		return 1;
+	}
+    logPath = logPath + "*";
+    
+    //ROS_INFO("Using log path at %s",logPath.c_str());
+    ControlServer server(logPath);
     std::thread t(std::bind(&ControlServer::receiveMessages,&server));
     server.run(9002);
 }

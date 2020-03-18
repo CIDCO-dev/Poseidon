@@ -6,10 +6,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Hydroball Control Panel">
+  <meta name="description" content="Hydroball Goal Planner">
   <meta name="author" content="CIDCO">
 
-  <title>Hydroball - Data</title>
+  <title>Hydroball - Goal Planner</title>
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
@@ -19,8 +19,7 @@
 <script>
 var i;
 var dataln;
-var fileslist = Array();
-var linklist = Array();
+var goallist = Array();
 var olddataln = 0;
 
 
@@ -30,14 +29,8 @@ var olddataln = 0;
 //******************************
 //population de la base de donée
 //******************************
-dataln = state.fileslist.length;
-fileslist = state.fileslist;
-//******************************
-//création des lien pour l'affichage sur le site web
-//******************************
-for (i = 0; i < dataln; i++) {
-	linklist[i] = "<a href=\"" + fileslist[i][1] + "\">" + fileslist[i][0] + "</a>";   
-}
+dataln = state.goal_planner.length;
+goallist = state.goal_planner;
 //******************************
 //création de la structure de donnée pour l'affichage
 //******************************
@@ -46,31 +39,50 @@ if (dataln !== olddataln) {
 	var table = document.getElementById('tableContents');
 	var tabledata = " ";
 	for (i = 0; i < dataln; i++) {
-		if (tabledata.length<2) {tabledata = '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+fileslist[i][0]+'"><label class="custom-control-label" for="'+fileslist[i][0]+'"></label></div></td><td>'+linklist[i]+'</td></tr>';}
-		else {tabledata = tabledata + '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+fileslist[i][0]+'"><label class="custom-control-label" for="'+fileslist[i][0]+'"></label></div></td><td>'+linklist[i]+'</td></tr>';}
+		if (tabledata.length<2) {tabledata = '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+i+'"><label class="custom-control-label" for="'+i+'"></label></div></td><td>'+ goallist[i][0] +'</td><td>'+ goallist[i][1] +'</td></tr>';}
+		else {tabledata = tabledata + '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+i+'"><label class="custom-control-label" for="'+i+'"></label></div></td><td>'+ goallist[i][0] +'</td><td>'+ goallist[i][1] +'</td></tr>';}
 		}
 
 	table.innerHTML = tabledata;
 	}
 }
 //******************************
-//procédure de supression des fichier sélectionner
+//procédure ajout de goal
+//******************************
+function goaladd() {
+	var latitude = validationCustom01.value;
+	var longitude = validationCustom01.value;
+	if ((latitude.length > 2) & (longitude.length > 2)){
+		//validate data
+		socket.send("{\"go_add\":["+validationCustom01.value+","+validationCustom01.value+"]}"); 
+	}else{
+	//$('#modalgoaladd').modal('toggle');
+	}
+}
+//******************************
+//procédure edition du goal sélectionner
+//******************************
+function goaledit() {
+	
+		
+}
+//******************************
+//procédure de supression des goal sélectionner
 //******************************
 function sendDelete() {
 	for (i = 0; i < dataln; i++) {
-		var checkBox = document.getElementById(fileslist[i][0]);
-		if (checkBox.checked == true) {socket.send("{\"delete\":["+ fileslist[i][0]+"]}"); }   
+		var checkBox = document.getElementById(i);
+		if (checkBox.checked == true) {socket.send("{\"go_del\":["+  i +"]}"); }   
 		}
 }
 //******************************
-//procédure de selection des fichier 
+//procédure de selection des goal 
 //******************************
 function selectall() {
 	for (i = 0; i < dataln; i++) {
-		document.getElementById(fileslist[i][0]).checked = ! document.getElementById(fileslist[i][0]).checked;
+		document.getElementById(i).checked = ! document.getElementById(i).checked;
 		}
 }
-
 
 
 
@@ -118,12 +130,12 @@ function selectall() {
           <i class="fas fa-fw fa-globe-americas"></i>
           <span>Live Data</span></a>
       </li>
-      <li class="nav-item active">
+      <li class="nav-item inactive">
         <a class="nav-link" href="data.html">
           <i class="fas fa-fw fa-database"></i>
           <span>Download Data</span></a>
       </li>
-      <li class="nav-item inactive">
+      <li class="nav-item active">
         <a class="nav-link" href="goal.html">
           <i class="fas fa-fw fa-bullseye"></i>
           <span>Goal Planner</span></a>
@@ -171,27 +183,24 @@ function selectall() {
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Data</h1>
+            <h1 class="h3 mb-0 text-gray-800">Goal Planner</h1>
           </div>
 
 
-          <!-- Status Row -->
-          <div class="row">
-
-<!-- Modal for file delete -->
-<div class="modal fade" id="filedel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal for goal delete -->
+<div class="modal fade" id="modalgoaldel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">File deletion</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Goal deletion</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <h1>File deletion</h1>
+        <h1>Goal deletion</h1>
 	<div class="data-file"></div>	
-      <p>Are you sure you want to delete the files?</p>
+      <p>Are you sure you want to delete the goal?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">No Cancel</button>
@@ -201,6 +210,50 @@ function selectall() {
   </div>
 </div>
 
+<!-- Modal for goal add -->
+<div class="modal fade" id="modalgoaladd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Goal addition</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h1>Goal addition</h1>
+	<div class="data-file"></div>
+<form class="needs-validation" novalidate>	
+     <div class="col-md-4 mb-3">
+      <label for="validationCustom01">Latitude</label>
+      <input type="text" class="form-control" id="validationCustom01" placeholder="Latitude" value=""
+        required>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <label for="validationCustom02">Longitude</label>
+      <input type="text" class="form-control" id="validationCustom02" placeholder="Longitude" value=""
+        required>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No Cancel</button>
+        <button type="button" class="btn btn-primary" type="submit" onclick="goaladd()" data-dismiss="modal">Yes Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+          <!-- Status Row -->
+          <div class="row">
 
           </div>
 
@@ -208,21 +261,30 @@ function selectall() {
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Data Logged</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Goal List</h6>
             </div>
             <div class="card-body">
+	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectall" onclick="selectall()">Select all / none</button>
+	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoaldel">Delete</button>
+	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoaladd">Add</button>
+	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoaledit" disabled>Edit</button>
+	   
+
+
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th width="100px"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filedel">Delete</button></th>
-		      <th><button type="button" class="btn btn-primary" onclick="selectall()" data-dismiss="modal">File Name</button></th>
+                      <th width="100px"></th>
+		      <th>Latitude</th>
+		      <th>Longitude</th>
                     </tr>
                   </thead>
                   <tfoot>
                     <tr>
-                      <th><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filedel">Delete</button></th>
-		      <th><button type="button" class="btn btn-primary" onclick="selectall()" data-dismiss="modal">File Name</button></th>
+                      <th></th>
+		      <th>Latitude</th>
+		      <th>Longitude</th>
                     </tr>
                   </tfoot>
 		  <tbody id='tableContents'>

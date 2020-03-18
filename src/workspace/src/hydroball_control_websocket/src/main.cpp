@@ -164,7 +164,16 @@ public:
 		ss << "]";
         	}
      
-            ss << "]";       
+            ss << "],";  
+
+	    //goalplanner value
+	    ss << "\"goal_planner\":[" ;
+	    ss << "[-68.504926667, 48.437141667],";
+	    ss << "[-68.504926666, 48.437141667],";
+	    ss << "[-68.504926665, 48.437141667]";
+	    ss << "]";     
+
+
             ss << "}";
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
@@ -201,6 +210,9 @@ private:
     std::string logFolder;
     uint64_t lastTimestamp;
     std::string data_recived;
+    float goal_planner_lat[];
+    float goal_planner_lon[];
+
 };
 
 int main(int argc,char ** argv){

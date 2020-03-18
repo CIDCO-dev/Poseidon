@@ -53,14 +53,32 @@ public:
         srv.set_reuse_addr(true);
         srv.set_open_handler(bind(&ControlServer::on_open,this,std::placeholders::_1));
         srv.set_close_handler(bind(&ControlServer::on_close,this,std::placeholders::_1));
+	srv.set_message_handler(bind(&ControlServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
         logfolder = logFolder;
         stateTopic = n.subscribe("state", 1000, &ControlServer::stateChanged,this);
     }
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
-        //std::cout << msg->get_payload() << std::endl;
-	ROS_INFO("Writing UBX log to %s", msg);
-    }
+	std::string str;
+	std::string str1;
+	data_recived = msg->get_payload();
+	str = data_recived;
+        str.erase (0,2);
+	str.erase (6,(str.length()));
+        if (str == "delete") {
+		str = data_recived;
+        	str.erase (0,11);
+		str.erase ((str.length()-2),(str.length()));
+		str1 = logFolder;
+		str1.erase ((str1.length()-1));
+		str = str1 + str;
+		if( remove(str.c_str()) != 0 ){
+    			ROS_INFO( "Error deleting file" );}
+  		else{
+    			ROS_INFO( "File successfully deleted" );}
+			ROS_INFO(str.c_str());
+		}
+	}
 
     void on_open(connection_hdl hdl) {
         std::lock_guard<std::mutex> lock(mtx);
@@ -72,7 +90,8 @@ public:
         connections.erase(hdl);
     }
     
-    
+ 
+
     void stateChanged(const state_controller::State & state) {
         
         uint64_t timestamp = (state.attitude.header.stamp.sec * 1000000) + (state.attitude.header.stamp.nsec/1000);
@@ -181,6 +200,7 @@ private:
     std::string logfolder;
     std::string logFolder;
     uint64_t lastTimestamp;
+    std::string data_recived;
 };
 
 int main(int argc,char ** argv){

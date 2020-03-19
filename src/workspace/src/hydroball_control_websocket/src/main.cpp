@@ -53,9 +53,32 @@ public:
         srv.set_reuse_addr(true);
         srv.set_open_handler(bind(&ControlServer::on_open,this,std::placeholders::_1));
         srv.set_close_handler(bind(&ControlServer::on_close,this,std::placeholders::_1));
+	srv.set_message_handler(bind(&ControlServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
         logfolder = logFolder;
         stateTopic = n.subscribe("state", 1000, &ControlServer::stateChanged,this);
     }
+
+    void on_message(connection_hdl hdl, server::message_ptr msg) {
+	std::string str;
+	std::string str1;
+	data_recived = msg->get_payload();
+	str = data_recived;
+        str.erase (0,2);
+	str.erase (6,(str.length()));
+        if (str == "delete") {
+		str = data_recived;
+        	str.erase (0,11);
+		str.erase ((str.length()-2),(str.length()));
+		str1 = logFolder;
+		str1.erase ((str1.length()-1));
+		str = str1 + str;
+		if( remove(str.c_str()) != 0 ){
+    			ROS_INFO( "Error deleting file" );}
+  		else{
+    			ROS_INFO( "File successfully deleted" );}
+			ROS_INFO(str.c_str());
+		}
+	}
 
     void on_open(connection_hdl hdl) {
         std::lock_guard<std::mutex> lock(mtx);
@@ -67,7 +90,8 @@ public:
         connections.erase(hdl);
     }
     
-    
+ 
+
     void stateChanged(const state_controller::State & state) {
         
         uint64_t timestamp = (state.attitude.header.stamp.sec * 1000000) + (state.attitude.header.stamp.nsec/1000);
@@ -125,19 +149,31 @@ public:
 	    //list files and send it over websocket
 	    ss << "\"fileslist\":[" ;
 
-glob_t glob_result;	
-
-//ROS_INFO("Using log path at %s",logFolder.c_str());
-
-glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
-for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-	    str = glob_result.gl_pathv[i];
-	    str.erase (0,34);
-	    if (i > 0) {ss << "," ;} 	
-            ss << "\"" << str << "\"" ;
-        }
+	    glob_t glob_result;	
+	    glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
+	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
+	    	str = glob_result.gl_pathv[i];
+		if (i > 0) {ss << "," ;} 
+		ss << "[";
+		str.erase (0,(logFolder.length()-1));
+		ss << "\"" << str << "\"" ; //file name
+		str = glob_result.gl_pathv[i];
+	    	str.erase (0,(logFolder.length()-8));
+	    	ss << "," ; 	
+            	ss << "\"" << str << "\"" ;
+		ss << "]";
+        	}
      
-            ss << "]";       
+            ss << "],";  
+
+	    //goalplanner value
+	    ss << "\"goal_planner\":[" ;
+	    ss << "[-68.504926667, 48.437141667],";
+	    ss << "[-68.504926666, 48.437141667],";
+	    ss << "[-68.504926665, 48.437141667]";
+	    ss << "]";     
+
+
             ss << "}";
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
@@ -152,6 +188,7 @@ for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
     
     void receiveMessages(){
         ros::spin();
+	
     }
 
     void run(uint16_t port){
@@ -172,6 +209,10 @@ private:
     std::string logfolder;
     std::string logFolder;
     uint64_t lastTimestamp;
+    std::string data_recived;
+    float goal_planner_lat[];
+    float goal_planner_lon[];
+
 };
 
 int main(int argc,char ** argv){
@@ -190,3 +231,4 @@ int main(int argc,char ** argv){
 }
 
 #endif
+

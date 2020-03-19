@@ -6,7 +6,11 @@
 #include <set>
 #include <thread>
 #include <glob.h>
-
+#include <iostream>
+#include <vector>
+#include <string.h>
+#include <boost/lexical_cast.hpp>
+#include <mutex>
 
 #include "ros/ros.h"
 
@@ -16,9 +20,7 @@
 #include <websocketpp/server.hpp>
 
 typedef websocketpp::server<websocketpp::config::asio> server;
-
-
-
+std::mutex mtx;
 using websocketpp::connection_hdl;
 
 //TODO: move this to a util class
@@ -76,7 +78,19 @@ public:
     			ROS_INFO( "Error deleting file" );}
   		else{
     			ROS_INFO( "File successfully deleted" );}
-			ROS_INFO(str.c_str());
+		//ROS_INFO(str.c_str());
+		}
+	if (str == "go_del") {
+		mtx.lock();
+		str = data_recived;
+        	str.erase (0,11);
+		str.erase ((str.length()-2),(str.length()));
+		int x = std::stoi(str);
+		goal_planner_lat.erase(goal_planner_lat.begin()+x);
+    		goal_planner_long.erase(goal_planner_long.begin()+x);
+    		mtx.unlock();
+
+		ROS_WARN(str.c_str());
 		}
 	}
 
@@ -168,9 +182,23 @@ public:
 
 	    //goalplanner value
 	    ss << "\"goal_planner\":[" ;
-	    ss << "[-68.504926667, 48.437141667],";
-	    ss << "[-68.504926666, 48.437141667],";
-	    ss << "[-68.504926665, 48.437141667]";
+	    for(unsigned int i=0; i<goal_planner_lat.size(); ++i){
+		if (i > 0) {ss << "," ;} 
+		ss << "[";
+		std::string strObj5 = "0.0";
+		try
+		{
+			strObj5 = boost::lexical_cast<std::string>(goal_planner_lat.at(i));
+		}
+		catch (boost::bad_lexical_cast const& e)
+		{
+			std::cout << "Error: " << e.what() << "\n";
+		}
+		ss << strObj5;
+		ss << ",";
+		ss << std::to_string(goal_planner_long.at(i));
+                ss << "]";
+		}
 	    ss << "]";     
 
 
@@ -210,8 +238,9 @@ private:
     std::string logFolder;
     uint64_t lastTimestamp;
     std::string data_recived;
-    float goal_planner_lat[];
-    float goal_planner_lon[];
+    std::vector<double> goal_planner_lat = {-68.504926667,-68.504926666,-68.504926665,-68.504926664};
+    std::vector<double> goal_planner_long = {48.437141667,48.437141667,48.437141667,48.437141667};
+    
 
 };
 

@@ -63,11 +63,14 @@ public:
     void on_message(connection_hdl hdl, server::message_ptr msg) {
 	std::string str;
 	std::string str1;
+	std::string add_lat;
+	std::string add_long;
+	std::string insert_add;
 	data_recived = msg->get_payload();
 	str = data_recived;
         str.erase (0,2);
 	str.erase (6,(str.length()));
-        if (str == "delete") {
+        if (str == "delete") {//supression de fichier log
 		str = data_recived;
         	str.erase (0,11);
 		str.erase ((str.length()-2),(str.length()));
@@ -80,7 +83,7 @@ public:
     			ROS_INFO( "File successfully deleted" );}
 		//ROS_INFO(str.c_str());
 		}
-	if (str == "go_del") {
+	if (str == "go_del") {//supression de goal pour le goalplaner
 		mtx.lock();
 		str = data_recived;
         	str.erase (0,11);
@@ -90,8 +93,62 @@ public:
     		goal_planner_long.erase(goal_planner_long.begin()+x);
     		mtx.unlock();
 
+		//ROS_WARN(str.c_str());
+		}
+	if (str == "go_add") {//ajout de goal pour le goalplaner
+		mtx.lock();
+		str = data_recived;
+        	str.erase (0,11);
+		str.erase ((str.length()-2),(str.length()));
+		add_lat = str;
+		add_long = str;
+		std::size_t found = str.find(',');
+		add_lat.erase (found, str.length());
+		add_long.erase(0, (found + 1));
+		goal_planner_lat.push_back(std::stod(add_lat));
+    		goal_planner_long.push_back(std::stod(add_long));
+    		mtx.unlock();
+		//ROS_WARN(str.c_str());
+		//ROS_WARN(add_lat.c_str());
+		//ROS_WARN(add_long.c_str());
+		}
+	if (str == "go_edi") {
+		mtx.lock();
+		str = data_recived;
+        	//str.erase (0,11);
+		//str.erase ((str.length()-2),(str.length()));
+		//int x = std::stoi(str);
+		//goal_planner_lat.erase(goal_planner_lat.begin()+x);
+    		//goal_planner_long.erase(goal_planner_long.begin()+x);
+    		mtx.unlock();
+
 		ROS_WARN(str.c_str());
 		}
+	if (str == "go_ins") {//insertion d'une valeur dans le goalplanner
+		mtx.lock();
+		str = data_recived;
+        	str.erase (0,11);
+		str.erase ((str.length()-2),(str.length()));
+		insert_add = str;
+		std::size_t found1 = str.find(',');
+		insert_add.erase (found1, str.length());
+		str.erase(0, (found1 + 1));
+		add_lat = str;
+		add_long = str;
+		std::size_t found2 = str.find(',');
+		add_lat.erase (found2, str.length());
+		add_long.erase(0, (found2 + 1));
+		int x = std::stoi(insert_add);
+		goal_planner_lat.insert (goal_planner_lat.begin()+x,std::stod(add_lat));
+    		goal_planner_long.insert(goal_planner_long.begin()+x,std::stod(add_long));
+    		mtx.unlock();
+		ROS_WARN(str.c_str());
+		ROS_WARN(insert_add.c_str());
+		ROS_WARN(add_lat.c_str());
+		ROS_WARN(add_long.c_str());
+		}
+
+
 	}
 
     void on_open(connection_hdl hdl) {

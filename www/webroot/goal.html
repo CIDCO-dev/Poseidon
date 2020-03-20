@@ -47,18 +47,41 @@ if (dataln !== olddataln) {
 	}
 }
 //******************************
-//procédure ajout de goal
+//procédure ajout de goal a la fin de la liste
 //******************************
 function goaladd() {
 	var latitude = validationCustom01.value;
-	var longitude = validationCustom01.value;
-	if ((latitude.length > 2) & (longitude.length > 2)){
+	var longitude = validationCustom02.value;
+	if ((latitude.length > 1) & (longitude.length > 1)){
 		//validate data
-		socket.send("{\"go_add\":["+validationCustom01.value+","+validationCustom01.value+"]}"); 
+		socket.send("{\"go_add\":["+validationCustom01.value+","+validationCustom02.value+"]}"); 
 	}else{
 	//$('#modalgoaladd').modal('toggle');
 	}
 }
+//******************************
+//procédure ajout de goal dans la liste
+//******************************
+function goalins() {
+	var latitude = validationCustom03.value;
+	var longitude = validationCustom04.value;
+	if ((latitude.length > 1) & (longitude.length > 1)){
+		//validate data
+		for (i = 0; i < dataln; i++) {
+			var checkBox = document.getElementById(i);
+			if (checkBox.checked == true) {
+				socket.send("{\"go_ins\":["+i+","+validationCustom03.value+","+validationCustom04.value+"]}");   
+				break; 
+			}
+		}
+
+		 
+	}else{
+	//$('#modalgoaladd').modal('toggle');
+	}
+}
+
+
 //******************************
 //procédure edition du goal sélectionner
 //******************************
@@ -215,13 +238,13 @@ function selectall() {
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Goal addition</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Goal addition at end of the list</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <h1>Goal addition</h1>
+        <h1>Goal addition at end</h1>
 	<div class="data-file"></div>
 <form class="needs-validation" novalidate>	
      <div class="col-md-4 mb-3">
@@ -240,11 +263,50 @@ function selectall() {
         Looks good!
       </div>
     </div>
-  
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">No Cancel</button>
         <button type="button" class="btn btn-primary" type="submit" onclick="goaladd()" data-dismiss="modal">Yes Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal for goal insert -->
+<div class="modal fade" id="modalgoalinsert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Goal addition at selected line</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h1>Goal addition at line</h1>
+	<div class="data-file"></div>
+<form class="needs-validation" novalidate>	
+     <div class="col-md-4 mb-3">
+      <label for="validationCustom01">Latitude</label>
+      <input type="text" class="form-control" id="validationCustom03" placeholder="Latitude" value=""
+        required>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <label for="validationCustom02">Longitude</label>
+      <input type="text" class="form-control" id="validationCustom04" placeholder="Longitude" value=""
+        required>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No Cancel</button>
+        <button type="button" class="btn btn-primary" type="submit" onclick="goalins()" data-dismiss="modal">Yes Add</button>
       </div>
     </div>
   </div>
@@ -266,7 +328,8 @@ function selectall() {
             <div class="card-body">
 	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectall" onclick="selectall()">Select all / none</button>
 	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoaldel">Delete</button>
-	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoaladd">Add</button>
+	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoaladd">Add @ end</button>
+	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoalinsert">Add @ line</button>
 	    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalgoaledit" disabled>Edit</button>
 	   
 

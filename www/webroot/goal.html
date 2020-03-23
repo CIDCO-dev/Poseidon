@@ -24,8 +24,7 @@ var olddataln = 0;
 
 
     function processState(state){
-      
-
+	
 //******************************
 //population de la base de donée
 //******************************
@@ -53,8 +52,10 @@ function goaladd() {
 	var latitude = validationCustom01.value;
 	var longitude = validationCustom02.value;
 	if ((latitude.length > 1) & (longitude.length > 1)){
-		//validate data
-		socket.send("{\"go_add\":["+validationCustom01.value+","+validationCustom02.value+"]}"); 
+		if ((!isNaN(latitude))&(!isNaN(longitude))){//validate data
+			socket.send("{\"go_add\":["+validationCustom01.value+","+validationCustom02.value+"]}"); 
+		}else{//data not valide
+		}
 	}else{
 	//$('#modalgoaladd').modal('toggle');
 	}
@@ -67,13 +68,17 @@ function goalins() {
 	var longitude = validationCustom04.value;
 	if ((latitude.length > 1) & (longitude.length > 1)){
 		//validate data
-		for (i = 0; i < dataln; i++) {
-			var checkBox = document.getElementById(i);
-			if (checkBox.checked == true) {
-				socket.send("{\"go_ins\":["+i+","+validationCustom03.value+","+validationCustom04.value+"]}");   
-				break; 
+		if ((!isNaN(latitude))&(!isNaN(longitude))){//validate data
+			for (i = 0; i < dataln; i++) {
+				var checkBox = document.getElementById(i);
+				if (checkBox.checked == true) {
+					socket.send("{\"go_ins\":["+i+","+validationCustom03.value+","+validationCustom04.value+"]}");   
+					break; 
+				}
 			}
+		}else{//data not valide
 		}
+		
 
 		 
 	}else{
@@ -114,7 +119,7 @@ function selectall() {
 //Ouverture du websocket
 //******************************
       
-    var socket = new WebSocket("ws://192.168.1.16:9002");
+    var socket = new WebSocket("ws://192.168.1.16:9003");
         socket.onmessage = function (event) {
         console.log(event.data);
         var state = JSON.parse(event.data);

@@ -177,67 +177,31 @@ public:
             std::stringstream ss;
             ss << "{";
 
-            if( !state.position.header.seq  &&  state.position.status.status < 0){
-                //No fix
-                ss << "\"position\":[],";
-            }
-            else{
-                ss << "\"position\":[" << std::setprecision(12) << state.position.longitude << "," <<  state.position.latitude  << "],";
-            }
-
-            if(!state.attitude.header.seq){
-                ss << "\"attitude\":[],";
-            }
-            else{
-                double heading = 0;
-                double pitch = 0;
-                double roll = 0;
-
-                convertToEulerAngles(state.attitude.orientation,heading,pitch,roll);
-
-                ss << "\"attitude\":[" << std::setprecision(5)  << D2R(heading) << "," << D2R(pitch) << "," << D2R(roll)  << "],";
-            }
-
-            if(!state.depth.header.seq){
-                ss << "\"depth\":[],";
-            }
-            else{
-                ss << "\"depth\":[" << std::setprecision(6) << state.depth.point.z  << "],";
-            }
-
             
+       
+      
 
-	    if(!state.vitals.header){
-                ss << "\"vitals\":[],";
-            }
-            else{//state.position.longitude
-                
-              ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "],";
-            }
-           
- 	    
-
-	    //list files and send it over websocket
-	    ss << "\"fileslist\":[" ;
-
-	    glob_t glob_result;	
-	    glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
-	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-	    	str = glob_result.gl_pathv[i];
+	    //goalplanner value
+	    ss << "\"goal_planner\":[" ;
+	    for(unsigned int i=0; i<goal_planner_lat.size(); ++i){
 		if (i > 0) {ss << "," ;} 
 		ss << "[";
-		str.erase (0,(logFolder.length()-1));
-		ss << "\"" << str << "\"" ; //file name
-		str = glob_result.gl_pathv[i];
-	    	str.erase (0,(logFolder.length()-8));
-	    	ss << "," ; 	
-            	ss << "\"" << str << "\"" ;
-		ss << "]";
-        	}
-     
-            ss << "]";  
+		std::string strObj5 = "0.0";
+		try
+		{
+			strObj5 = boost::lexical_cast<std::string>(goal_planner_lat.at(i));
+		}
+		catch (boost::bad_lexical_cast const& e)
+		{
+			std::cout << "Error: " << e.what() << "\n";
+		}
+		ss << strObj5;
+		ss << ",";
+		ss << std::to_string(goal_planner_long.at(i));
+                ss << "]";
+		}
+	    ss << "]";     
 
-	
 
             ss << "}";
             std::lock_guard<std::mutex> lock(mtx);
@@ -293,7 +257,7 @@ int main(int argc,char ** argv){
     //ROS_INFO("Using log path at %s",logPath.c_str());
     ControlServer server(logPath);
     std::thread t(std::bind(&ControlServer::receiveMessages,&server));
-    server.run(9002);
+    server.run(9003);
 }
 
 #endif

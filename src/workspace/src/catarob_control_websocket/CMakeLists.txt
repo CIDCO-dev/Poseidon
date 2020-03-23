@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(hydroball_goal_websocket)
+project(catarob_control_websocket)
 
 #set(CXX_STANDARD 17)
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -209,6 +209,6 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(hydroball_goal_websocket src/main.cpp)
-target_link_libraries(hydroball_goal_websocket ${catkin_LIBRARIES})
+add_executable(catarob_control_websocket src/main.cpp)
+target_link_libraries(catarob_control_websocket ${catkin_LIBRARIES})
 

@@ -24,10 +24,10 @@
 
 <!--<node pkg="catarob_control" name="catarob_control" type="catarob_control" output="screen"/>-->
 
-<node pkg="hydroball_goal_websocket" name="hydroball_goal_websocket" type="hydroball_goal_websocket" args="$(arg loggerPath)"/>
+<node pkg="catarob_control_websocket" name="catarob_control_websocket" type="catarob_control_websocket" args="$(arg loggerPath)"/>
 
 
-<node pkg="hydroball_control_websocket" name="hydroball_control_websocket" type="hydroball_control_websocket" args="$(arg loggerPath)"/>
+<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket" args="$(arg loggerPath)"/>
 
 <!--<node pkg="gnss_zed-f9p" name="gnss_zed_f9p" type="gnss_zed-f9p" output="screen" args="$(arg loggerPath1) $(arg portPath1)"/>-->
 

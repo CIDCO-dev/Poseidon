@@ -13,19 +13,9 @@
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
-  <link rel="stylesheet" href="/leaflet/leaflet.css" />
-	<!--[if lte IE 8]>
-			<link rel="stylesheet" href="/leaflet/leaflet.ie.css" />
-		<![endif]-->
-  <link rel="stylesheet" href="/leaflet/gh-pages.css" />
 
-
+  <link href="js/Chart.min.css" rel="stylesheet">
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
-  <script src="/leaflet/leaflet.js"></script>
-  <script src="/leaflet/catiline.js"></script>
-  <script src="/leaflet/leaflet.shpfile.js"></script>
-  <script src="/leaflet/leaflet-heat.js"></script>
-  <script src="/leaflet/leaflet.hotline.js"></script>
 
 </head>
 
@@ -64,13 +54,7 @@
           <i class="fas fa-fw fa-database"></i>
           <span>Download Data</span></a>
       </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="goal.html">
-          <i class="fas fa-fw  fa-bullseye"></i>
-          <span>Goal Planner</span></a>
-      </li>
-
-      <li class="nav-item inactive">
+    <li class="nav-item inactive">
         <a class="nav-link" href="config.html">
           <i class="fas fa-fw fa-cogs"></i>
           <span>System Config</span></a>
@@ -193,7 +177,7 @@
 
   
             <!-- Content Column -->
-            <div class="col-lg-3 mb-6">
+            <div class="col-lg-4 mb-4">
  	      <!-- Project Card Example -->
               <div class="card shadow mb-4">
                 <div class="card-header py-3" >
@@ -212,7 +196,7 @@
 	   </div>
 
  	    <!-- Content Column -->
-            <div class="col-lg-3 mb-6">
+            <div class="col-lg-4 mb-4">
  	      <!-- Project Card Example -->
               <div class="card shadow mb-4">
                 <div class="card-header py-3" >
@@ -231,7 +215,7 @@
  
 
             <!-- Content Column -->
-            <div class="col-lg-3 mb-6">
+            <div class="col-lg-4 mb-4">
 
               <!-- Project Card Example -->
               <div class="card shadow mb-4">
@@ -323,6 +307,8 @@
  
 </body>
 <script>
+	
+
 	var depth = 0.0;
 	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -330,7 +316,14 @@
         //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
         //Chart.defaults.global.defaultFontColor = '#858796'
 		
-	
+	var ctxL = document.getElementById("lineChart").getContext('2d');
+		var myLineChart = new Chart(ctxL, {
+		type: 'line',
+		data: {
+		labels: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+		datasets: [{label: "Pitch", backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
+		           {label: "Roll", backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
+		options: {tooltips: {enabled: false}, hover: {mode: null}, responsive: true, animation: false, elements: {point:{radius: 0}}} });
 
 	var gauge = new RadialGauge({
 	    renderTo: 'imuz',
@@ -434,15 +427,20 @@
 		imu_x .shift();
 		imu_y .push(state.attitude[1]);
 		imu_y .shift();
-		var ctxL = document.getElementById("lineChart").getContext('2d');
-		var myLineChart = new Chart(ctxL, {
+		
+	
+		myLineChart.destroy();
+
+		myLineChart = new Chart(ctxL, {
 		type: 'line',
 		data: {
 		labels: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
-		datasets: [{label: "Pitch", data: imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
-		           {label: "Roll", data: imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
-		options: {responsive: true, animation: false, elements: {point:{radius: 0}}} });
- 
+		datasets: [{label: "Pitch", data: imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2,}, 
+		           {label: "Roll", data: imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2, }, ] },
+		options: {tooltip: {enabled: 'false'}, responsive: true, animation: false, elements: {point:{radius: 0}}} });
+ 		
+		//myLineChart.update();
+
 		gauge.value = (state.attitude[2]+180);
 		
 
@@ -456,7 +454,13 @@
 	var heureup = Math.floor((timeup-(jourup *86400))/3600);
 	var minuteup  = Math.floor((timeup-(jourup*86400+heureup*3600))/60);
 	var secondeup = Math.floor(timeup-((jourup * 86400) + (heureup * 3600) + (minuteup * 60)));
-	var uptime    = jourup + " " + heureup + ":" + minuteup + ":" + secondeup;
+	var uptime    = jourup + " ";
+	if (heureup<10){uptime = uptime + "0" }
+	uptime    = uptime + heureup + ":";
+	if (minuteup<10){uptime = uptime + "0" }
+	uptime    = uptime + minuteup + ":";
+	if (secondeup<10){uptime = uptime + "0" }
+	uptime    = uptime + secondeup;
 	$("#uptimeText").text(uptime);
 
  
@@ -517,13 +521,16 @@
 
         //TODO: update rest
     }
-      
+  var mutexrx = 0;    
   var socket = new WebSocket("ws://192.168.1.16:9002");
-
-    socket.onmessage = function (event) {
-        console.log(event.data);
-        var state = JSON.parse(event.data);
-        processState(state);
+    if (mutexrx==0){	
+    	socket.onmessage = function (event) {
+        	console.log(event.data);
+		mutexrx = 1;
+	        var state = JSON.parse(event.data);
+	        processState(state);
+		mutexrx = 0;
+	}
     }    
 
   </script>

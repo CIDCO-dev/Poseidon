@@ -79,12 +79,17 @@ function selectall() {
 //Ouverture du websocket
 //******************************
       
-    var socket = new WebSocket("ws://192.168.1.16:9002");
-        socket.onmessage = function (event) {
-        console.log(event.data);
-        var state = JSON.parse(event.data);
-        processState(state);
-    }        
+  var mutexrx = 0;    
+  var socket = new WebSocket("ws://192.168.1.16:9002");
+    if (mutexrx==0){	
+    	socket.onmessage = function (event) {
+        	console.log(event.data);
+		mutexrx = 1;
+	        var state = JSON.parse(event.data);
+	        processState(state);
+		mutexrx = 0;
+	}
+    }         
 </script>
 </head>
 
@@ -123,6 +128,12 @@ function selectall() {
           <i class="fas fa-fw fa-database"></i>
           <span>Download Data</span></a>
       </li>
+      <li class="nav-item inactive">
+        <a class="nav-link" href="goal.html">
+          <i class="fas fa-fw fa-bullseye"></i>
+          <span>Goal Planner</span></a>
+      </li>
+
  <li class="nav-item inactive">
         <a class="nav-link" href="config.html">
           <i class="fas fa-fw fa-cogs"></i>

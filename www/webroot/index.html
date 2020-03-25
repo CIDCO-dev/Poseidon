@@ -54,6 +54,12 @@
           <i class="fas fa-fw fa-database"></i>
           <span>Download Data</span></a>
       </li>
+      <li class="nav-item inactive">
+        <a class="nav-link" href="goal.html">
+          <i class="fas fa-fw fa-bullseye"></i>
+          <span>Goal Planner</span></a>
+      </li>
+
     <li class="nav-item inactive">
         <a class="nav-link" href="config.html">
           <i class="fas fa-fw fa-cogs"></i>
@@ -320,10 +326,10 @@
 		var myLineChart = new Chart(ctxL, {
 		type: 'line',
 		data: {
-		labels: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+		labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
 		datasets: [{label: "Pitch", backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
 		           {label: "Roll", backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
-		options: {tooltips: {enabled: false}, hover: {mode: null}, responsive: true, animation: false, elements: {point:{radius: 0}}} });
+		options: { responsive: true, animation: false, elements: {point:{radius: 0}}} });
 
 	var gauge = new RadialGauge({
 	    renderTo: 'imuz',
@@ -382,7 +388,7 @@
         if(!state.position.length || !state.attitude.length || !state.depth.length){
             $("#systemStatus").removeClass("d-none").addClass("d-block");
             
-            $("#systemStatusText").text("Check connexion with sensors");
+            $("#systemStatusText").text("Check connexion with sensors and reload the page.");
         }
         else{
             $("#systemStatus").removeClass("d-block").addClass("d-none");
@@ -435,9 +441,9 @@
 		type: 'line',
 		data: {
 		labels: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
-		datasets: [{label: "Pitch", data: imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2,}, 
-		           {label: "Roll", data: imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2, }, ] },
-		options: {tooltip: {enabled: 'false'}, responsive: true, animation: false, elements: {point:{radius: 0}}} });
+		datasets: [{label: "Pitch", data: imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2}, 
+		           {label: "Roll", data: imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 }, ] },
+		options: {responsive: true, animation: false, elements: {point:{radius: 0}}} });
  		
 		//myLineChart.update();
 

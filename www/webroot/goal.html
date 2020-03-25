@@ -13,119 +13,16 @@
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
+  <link rel="stylesheet" href="/leaflet/leaflet.css" />
+	<!--[if lte IE 8]>
+			<link rel="stylesheet" href="/leaflet/leaflet.ie.css" />
+		<![endif]-->
+  <link rel="stylesheet" href="/leaflet/gh-pages.css" />
+  <script src="/leaflet/leaflet.js"></script>
+  <script src="/leaflet/catiline.js"></script>
+  <script src="/leaflet/leaflet.shpfile.js"></script>
 
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
-<script>
-var i;
-var dataln;
-var goallist = Array();
-var olddataln = 0;
-
-
-    function processState(state){
-	
-//******************************
-//population de la base de donée
-//******************************
-dataln = state.goal_planner.length;
-goallist = state.goal_planner;
-//******************************
-//création de la structure de donnée pour l'affichage
-//******************************
-if (dataln !== olddataln) {
-	olddataln = dataln;
-	var table = document.getElementById('tableContents');
-	var tabledata = " ";
-	for (i = 0; i < dataln; i++) {
-		if (tabledata.length<2) {tabledata = '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+i+'"><label class="custom-control-label" for="'+i+'"></label></div></td><td>'+ goallist[i][0] +'</td><td>'+ goallist[i][1] +'</td></tr>';}
-		else {tabledata = tabledata + '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+i+'"><label class="custom-control-label" for="'+i+'"></label></div></td><td>'+ goallist[i][0] +'</td><td>'+ goallist[i][1] +'</td></tr>';}
-		}
-
-	table.innerHTML = tabledata;
-	}
-}
-//******************************
-//procédure ajout de goal a la fin de la liste
-//******************************
-function goaladd() {
-	var latitude = validationCustom01.value;
-	var longitude = validationCustom02.value;
-	if ((latitude.length > 1) & (longitude.length > 1)){
-		if ((!isNaN(latitude))&(!isNaN(longitude))){//validate data
-			socket.send("{\"go_add\":["+validationCustom01.value+","+validationCustom02.value+"]}"); 
-		}else{//data not valide
-		}
-	}else{
-	//$('#modalgoaladd').modal('toggle');
-	}
-}
-//******************************
-//procédure ajout de goal dans la liste
-//******************************
-function goalins() {
-	var latitude = validationCustom03.value;
-	var longitude = validationCustom04.value;
-	if ((latitude.length > 1) & (longitude.length > 1)){
-		//validate data
-		if ((!isNaN(latitude))&(!isNaN(longitude))){//validate data
-			for (i = 0; i < dataln; i++) {
-				var checkBox = document.getElementById(i);
-				if (checkBox.checked == true) {
-					socket.send("{\"go_ins\":["+i+","+validationCustom03.value+","+validationCustom04.value+"]}");   
-					break; 
-				}
-			}
-		}else{//data not valide
-		}
-		
-
-		 
-	}else{
-	//$('#modalgoaladd').modal('toggle');
-	}
-}
-
-
-//******************************
-//procédure edition du goal sélectionner
-//******************************
-function goaledit() {
-	
-		
-}
-//******************************
-//procédure de supression des goal sélectionner
-//******************************
-function sendDelete() {
-	for (i = dataln-1; i >= 0; i--) {
-		var checkBox = document.getElementById(i);
-		if (checkBox.checked == true) {socket.send("{\"go_del\":["+  i +"]}"); }   
-		}
-}
-//******************************
-//procédure de selection des goal 
-//******************************
-function selectall() {
-	for (i = 0; i < dataln; i++) {
-		document.getElementById(i).checked = ! document.getElementById(i).checked;
-		}
-}
-
-
-
-
-//******************************
-//Ouverture du websocket
-//******************************
-      
-    var socket = new WebSocket("ws://192.168.1.16:9003");
-        socket.onmessage = function (event) {
-        console.log(event.data);
-        var state = JSON.parse(event.data);
-        processState(state);
-    }        
-</script>
 </head>
 
 <body id="page-top">
@@ -325,6 +222,23 @@ function selectall() {
           </div>
 
 	  <!-- Gauges row -->
+ <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Goal Map</h6>
+            </div>
+            <div class="card-body">
+
+              <div class="table-responsive">
+                <div  id="map" style="width: 100%; height: 400px;" class="card-body">
+
+              </div>
+            </div>
+          </div>
+
+        
+
+
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -405,5 +319,160 @@ function selectall() {
   <!-- <script src="js/demo/chart-pie-demo.js"></script> -->
 
 </body>
+
+<script>
+var i;
+var dataln;
+var goallist = Array();
+var olddataln = 0;
+var m = new L.map(map).setView([0, 0], 12);
+var polycolor = "";
+var currentpolyline = Array(10);
+currentpolyline = currentpolyline.filter(item => item);
+
+
+
+L.control.scale().addTo(m);
+
+	var polynew = new L.polyline([]).addTo(m);
+	var polyline = new L.polyline([]).addTo(m);
+        var polyLatLngs = [];
+
+	var curentweight = 23;
+	var smootf = 5;
+
+	var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
+		onEachFeature: function(feature, layer) {
+			if (feature.properties) {
+				layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+					return k + ": " + feature.properties[k];
+				}).join("<br />"), {
+					maxHeight: 200
+				});
+			}
+		}
+	});
+	shpfile.addTo(m);
+	shpfile.once("data:loaded", function() {
+	console.log("finished loaded shapefile");
+	});
+	var currentZoom = m.getZoom();
+
+
+
+    function processState(state){
+//******************************
+//population de la base de donée
+//******************************
+dataln = state.goal_planner.length;
+goallist = state.goal_planner;
+
+
+	
+//******************************
+//création de la structure de donnée pour l'affichage dans le tableau et la carte
+//******************************
+if (dataln !== olddataln) {
+	olddataln = dataln;
+	var table = document.getElementById('tableContents');
+	var tabledata = " ";
+	
+	currentpolyline = [];
+	
+	for (i = 0; i < dataln; i++) {
+		if (tabledata.length<2) {tabledata = '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+i+'"><label class="custom-control-label" for="'+i+'"></label></div></td><td>'+ goallist[i][0] +'</td><td>'+ goallist[i][1] +'</td></tr>';}
+		else {tabledata = tabledata + '<tr><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="'+i+'"><label class="custom-control-label" for="'+i+'"></label></div></td><td>'+ goallist[i][0] +'</td><td>'+ goallist[i][1] +'</td></tr>';}
+		latlon = [goallist[i][0], goallist[i][1]];
+		currentpolyline.push(latlon);
+		}
+	//positionne la carte sur la position gps
+	latlon = [goallist[dataln-1][0], goallist[dataln-1][1]];
+	m.panTo(latlon );
+	polyline.remove();
+	polyline = L.polyline([currentpolyline ],{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
+	table.innerHTML = tabledata;
+	}
+}
+//******************************
+//procédure ajout de goal a la fin de la liste
+//******************************
+function goaladd() {
+	var latitude = validationCustom01.value;
+	var longitude = validationCustom02.value;
+	if ((latitude.length > 1) & (longitude.length > 1)){
+		if ((!isNaN(latitude))&(!isNaN(longitude))){//validate data
+			socket.send("{\"go_add\":["+validationCustom01.value+","+validationCustom02.value+"]}");
+		}else{//data not valide
+		}
+	}else{
+	//$('#modalgoaladd').modal('toggle');
+	}
+}
+//******************************
+//procédure ajout de goal dans la liste
+//******************************
+function goalins() {
+	var latitude = validationCustom03.value;
+	var longitude = validationCustom04.value;
+	if ((latitude.length > 1) & (longitude.length > 1)){
+		//validate data
+		if ((!isNaN(latitude))&(!isNaN(longitude))){//validate data
+			for (i = 0; i < dataln; i++) {
+				var checkBox = document.getElementById(i);
+				if (checkBox.checked == true) {
+					socket.send("{\"go_ins\":["+i+","+validationCustom03.value+","+validationCustom04.value+"]}");   
+					break; 
+				}
+			}
+		}else{//data not valide
+		}
+		
+
+		 
+	}else{
+	//$('#modalgoaladd').modal('toggle');
+	}
+}
+
+
+//******************************
+//procédure edition du goal sélectionner
+//******************************
+function goaledit() {
+	
+		
+}
+//******************************
+//procédure de supression des goal sélectionner
+//******************************
+function sendDelete() {
+	for (i = dataln-1; i >= 0; i--) {
+		var checkBox = document.getElementById(i);
+		if (checkBox.checked == true) {socket.send("{\"go_del\":["+  i +"]}"); }   
+		}
+}
+//******************************
+//procédure de selection des goal 
+//******************************
+function selectall() {
+	for (i = 0; i < dataln; i++) {
+		document.getElementById(i).checked = ! document.getElementById(i).checked;
+		}
+}
+
+
+
+
+//******************************
+//Ouverture du websocket
+//******************************
+      
+    var socket = new WebSocket("ws://192.168.1.16:9003");
+        socket.onmessage = function (event) {
+        console.log(event.data);
+        var state = JSON.parse(event.data);
+        processState(state);
+    }        
+</script>
 
 </html>

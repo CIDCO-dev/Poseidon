@@ -70,7 +70,7 @@
           <span>Goal Planner</span></a>
       </li>
 
-      <li class="nav-item inactive">
+ <li class="nav-item inactive">
         <a class="nav-link" href="config.html">
           <i class="fas fa-fw fa-cogs"></i>
           <span>System Config</span></a>
@@ -339,7 +339,7 @@
         if(!state.position.length || !state.attitude.length || !state.depth.length){
             $("#systemStatus").removeClass("d-none").addClass("d-block");
             
-            $("#systemStatusText").text("Check connexion with sensors");
+            $("#systemStatusText").text("Check connexion with sensors and reload the page.");
         }
         else{
             $("#systemStatus").removeClass("d-block").addClass("d-none");
@@ -414,20 +414,6 @@ curentweight= (23-currentZoom)*6+23;
 		
 
 
-		
-		$("#mapText ").text(currentZoom);
-
-		$("#dText1 ").text(currentpolyline.length);
-		[polyLatLngs] = polyline.getLatLngs();
-		$("#dText2 ").text(polyLatLngs.length);
-		[polyLatLngs] = polyline1.getLatLngs();
-		$("#dText3 ").text(polyLatLngs.length);
-		//[polyLatLngs] = hotlineLayer.getLatLngs();
-		$("#dText4 ").text(polyLatLngs.length);
-		//[polyLatLngs] = hotlineLayer1.getLatLngs();
-		$("#dText5 ").text(polyLatLngs.length);
-		//polyLatLngs = polyline.getLatLngs();
-		$("#dText6 ").text(currentZoom);
 
 		
 		}
@@ -438,14 +424,17 @@ curentweight= (23-currentZoom)*6+23;
         //TODO: update rest
     }
       
+  var mutexrx = 0;    
   var socket = new WebSocket("ws://192.168.1.16:9002");
-
-    socket.onmessage = function (event) {
-        console.log(event.data);
-        var state = JSON.parse(event.data);
-        processState(state);
-    }    
-
+    if (mutexrx==0){	
+    	socket.onmessage = function (event) {
+        	console.log(event.data);
+		mutexrx = 1;
+	        var state = JSON.parse(event.data);
+	        processState(state);
+		mutexrx = 0;
+	}
+    }  
   </script>
 
 </html>

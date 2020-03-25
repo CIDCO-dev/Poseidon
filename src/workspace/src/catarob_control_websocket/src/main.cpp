@@ -7,6 +7,7 @@
 #include <thread>
 #include <glob.h>
 #include <iostream>
+#include <istream>
 #include <vector>
 #include <string.h>
 #include <boost/lexical_cast.hpp>
@@ -60,6 +61,19 @@ public:
         stateTopic = n.subscribe("state", 1000, &ControlServer::stateChanged,this);
     }
 
+    void number_err(){
+	//Build JSON object to send to web interface
+        std::stringstream ss;
+	ss << "{\"number_err\":[1]}" ;
+        std::lock_guard<std::mutex> lock(mtx);
+        for (auto it : connections) {
+        	srv.send(it,ss.str(),websocketpp::frame::opcode::text);
+		}
+
+
+
+    }
+
     void on_message(connection_hdl hdl, server::message_ptr msg) {
 	std::string str;
 	std::string str1;
@@ -70,20 +84,7 @@ public:
 	str = data_recived;
         str.erase (0,2);
 	str.erase (6,(str.length()));
-        if (str == "delete") {//supression de fichier log
-		str = data_recived;
-        	str.erase (0,11);
-		str.erase ((str.length()-2),(str.length()));
-		str1 = logFolder;
-		str1.erase ((str1.length()-1));
-		str = str1 + str;
-		if( remove(str.c_str()) != 0 ){
-    			ROS_INFO( "Error deleting file" );}
-  		else{
-    			ROS_INFO( "File successfully deleted" );}
-		//ROS_INFO(str.c_str());
-		}
-	if (str == "go_del") {//supression de goal pour le goalplaner
+       	if (str == "go_del") {//supression de goal pour le goalplaner
 		mtx.lock();
 		str = data_recived;
         	str.erase (0,11);
@@ -105,12 +106,26 @@ public:
 		std::size_t found = str.find(',');
 		add_lat.erase (found, str.length());
 		add_long.erase(0, (found + 1));
-		goal_planner_lat.push_back(std::stod(add_lat));
-    		goal_planner_long.push_back(std::stod(add_long));
-    		mtx.unlock();
+		val_lat = std::stod(add_lat);
+		val_long = std::stod(add_long);
 		//ROS_WARN(str.c_str());
 		//ROS_WARN(add_lat.c_str());
 		//ROS_WARN(add_long.c_str());
+		if( add_lat.find_first_not_of("1234567890.-") == std::string::npos )
+    		{
+		goal_planner_lat.push_back(val_lat);
+		}else{
+		number_err();
+		}
+		if( add_long.find_first_not_of("1234567890.-") == std::string::npos )
+    		{
+		goal_planner_long.push_back(val_long);
+		}else{
+		number_err();
+		}
+
+
+    		mtx.unlock();
 		}
 	if (str == "go_edi") {
 		mtx.lock();
@@ -139,13 +154,27 @@ public:
 		add_lat.erase (found2, str.length());
 		add_long.erase(0, (found2 + 1));
 		int x = std::stoi(insert_add);
+		val_lat = std::stod(add_lat);
+		val_long = std::stod(add_long);
+		//ROS_WARN(str.c_str());
+		//ROS_WARN(insert_add.c_str());
+		//ROS_WARN(add_lat.c_str());
+		//ROS_WARN(add_long.c_str());
+		if( add_lat.find_first_not_of("1234567890.-") == std::string::npos )
+    		{
 		goal_planner_lat.insert (goal_planner_lat.begin()+x,std::stod(add_lat));
-    		goal_planner_long.insert(goal_planner_long.begin()+x,std::stod(add_long));
+		}else{
+		number_err();
+		}
+		if( add_long.find_first_not_of("1234567890.-") == std::string::npos )
+    		{
+		goal_planner_long.insert(goal_planner_long.begin()+x,std::stod(add_long));
+		}else{
+		number_err();
+		}
+		    		
     		mtx.unlock();
-		ROS_WARN(str.c_str());
-		ROS_WARN(insert_add.c_str());
-		ROS_WARN(add_lat.c_str());
-		ROS_WARN(add_long.c_str());
+		
 		}
 
 
@@ -239,6 +268,8 @@ private:
     std::string logFolder;
     uint64_t lastTimestamp;
     std::string data_recived;
+    double val_lat;
+    double val_long;	
     std::vector<double> goal_planner_lat = {-68.504926667,-68.504926666,-68.504926665,-68.504926664};
     std::vector<double> goal_planner_long = {48.437141667,48.437141667,48.437141667,48.437141667};
     

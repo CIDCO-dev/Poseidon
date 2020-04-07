@@ -1,14 +1,4 @@
-#ifndef MAIN_CPP
-#define MAIN_CPP
-
-#include <math.h>  // for M_PI
-
-//#include <iostream>
-//#include <iomanip>
-
-
-#include "ros/ros.h"
-#include "sensor_msgs/NavSatFix.h"
+#include "gnss_dummy/main.h"
 
 #define PI M_PI
 #define R2D ((double)180/(double)PI)
@@ -88,14 +78,4 @@ class GNSS{
                 		loop_rate.sleep();
         		}
 		}
-};
-
-int main(int argc,char** argv){
-	ros::init(argc, argv, "gnss");
-
-	GNSS gnss;
-	gnss.run();
 }
-
-
-#endif

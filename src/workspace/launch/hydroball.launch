@@ -14,7 +14,7 @@
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsip) $(arg gpsport)"/> 
 
-<node pkg="sonar_nmea_0183_tcp_client" name="Sonar" type="sonar_nmea_0183_tcp_client" output="screen" args="$(arg sonarip) $(arg sonarport)"/>
+<node pkg="sonar_dummy" name="sonar" type="sonar_dummy" output="screen"/>
 
 <node pkg="imu_dummy" name="IMU" type="imu_dummy" output="screen"/>
 

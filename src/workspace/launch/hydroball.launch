@@ -8,15 +8,16 @@
 <arg name="portPath1" value="/dev/ttyACM0"/>
 
 
-<node pkg="logger_binary" name="logger_binary" type="logger_binary" output="screen" args="$(arg loggerPath)"/>
+<node pkg="logger_binary" name="logger_binary" type="logger_binary_node" output="screen" args="$(arg loggerPath)"/>
 
-<node pkg="logger_text" name="logger_text" type="logger_text" output="screen" args="$(arg loggerPath)"/>
+<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
 
-<node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsip) $(arg gpsport)"/> 
 
-<node pkg="sonar_nmea_0183_tcp_client" name="Sonar" type="sonar_nmea_0183_tcp_client" output="screen" args="$(arg sonarip) $(arg sonarport)"/>
+<node pkg="sonar_nmea_0183_tcp_client" name="Sonar" type="sonar_nmea_0183_tcp_client_node" output="screen" args="$(arg sonarip) $(arg sonarport)"/>
 
-<node pkg="imu_dummy" name="IMU" type="imu_dummy" output="screen"/>
+<node pkg="imu_dummy" name="IMU" type="imu_dummy_node" output="screen"/>
+
+<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen"/>
 
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals" output="screen"/>
   
@@ -24,10 +25,10 @@
 
 <!--<node pkg="catarob_control" name="catarob_control" type="catarob_control" output="screen"/>-->
 
-<node pkg="catarob_control_websocket" name="catarob_control_websocket" type="catarob_control_websocket" args="$(arg loggerPath)"/>
+<node pkg="catarob_control_websocket" name="catarob_control_websocket" type="catarob_control_websocket_node" args="$(arg loggerPath)"/>
 
 
-<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket" args="$(arg loggerPath)"/>
+<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)"/>
 
 <!--<node pkg="gnss_zed-f9p" name="gnss_zed_f9p" type="gnss_zed-f9p" output="screen" args="$(arg loggerPath1) $(arg portPath1)"/>-->
 

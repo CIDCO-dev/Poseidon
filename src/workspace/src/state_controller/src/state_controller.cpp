@@ -19,7 +19,7 @@
                     StateController::stateUpdated();
 		}
 
-		void StateController::vitalsCallback(const raspberrypi_vitals::sysinfo& vital){
+		void StateController::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vital){
                     memcpy(&state.vitals,&vital,sizeof(vital));
                     StateController::stateUpdated();
 		}

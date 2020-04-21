@@ -5,11 +5,11 @@
 
 #include "ros/ros.h"
 
-#include "state_controller/State.h"
+#include "state_controller_msg/State.h"
 
-#include "catarob_control/motor.h"
+#include "catarob_msg/motor.h"
 
-#include "goal_planner/Waypoint.h"
+#include "goal_planner_msg/Waypoint.h"
 
 // #include "../../utils/Structs.hpp"
 
@@ -22,7 +22,7 @@
 
 
 
-// #include "raspberrypi_vitals/sysinfo.h"
+// #include "catarob_msg/sysinfo.h"
 // #include <fstream>
 // #include <string>
 // #include "sys/statvfs.h"
@@ -66,13 +66,13 @@ class Pilot{
             pilotActive( false )
 {
 			// Advertise to topics: motor/left and motor/right
-			motor_L = node.advertise<catarob_control::motor>("motor/left", 1000);
-			motor_R = node.advertise<catarob_control::motor>("motor/right", 1000);
+			motor_L = node.advertise<catarob_msg::motor>("motor/left", 1000);
+			motor_R = node.advertise<catarob_msg::motor>("motor/right", 1000);
 
-			// Subscribe to topics: state (from state_controller), to know the current position
+			// Subscribe to topics: state (from state_controller_msg), to know the current position
 			stateTopic = node.subscribe("state", 1000, &Pilot::stateCallback, this);
 
-			// Subscribe to topics: waypoint (from GoalPlanner)
+			// Subscribe to topics: waypoint (from GoalPlanner_msg)
 			waypointTopic = node.subscribe("waypoint", 1000, &Pilot::waypointCallback, this);	
 
 
@@ -84,7 +84,7 @@ class Pilot{
 
 
 		// Callback for state from state_controller
-		void stateCallback( const state_controller::State& state ) {
+		void stateCallback( const state_controller_msg::State& state ) {
 
 
             // Verify that this message is an update of the position,
@@ -103,7 +103,7 @@ class Pilot{
 		}
 
 		// Callback for waypoint
-		void waypointCallback( const goal_planner::Waypoint& waypointIn ) {
+		void waypointCallback( const goal_planner_msg::Waypoint& waypointIn ) {
 
            // std::cout << "Pilot::waypointCallback\n"
            //    << "  waypoint.latitude: " << waypoint.latitude << "\n"

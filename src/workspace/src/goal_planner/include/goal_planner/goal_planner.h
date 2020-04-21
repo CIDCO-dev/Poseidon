@@ -16,9 +16,9 @@
 
 #include "ros/ros.h"
 
-#include "state_controller/State.h"
+#include "state_controller_msg/State.h"
 
-#include "goal_planner/Waypoint.h"
+#include "goal_planner_msg/Waypoint.h"
 
 #include "../../utils/Goal.hpp"
 #include "../../utils/Waypoint.hpp"
@@ -72,7 +72,7 @@ class GoalPlanner{
         {
 
 			// Advertise to topics: destination (to pilot)
-			waypointTopic = node.advertise<goal_planner::Waypoint>("waypoint", 1000);
+			waypointTopic = node.advertise<goal_planner_msg::Waypoint>("waypoint", 1000);
 
 			// Subscribe to topics: state (from state_controller)
 			stateTopic = node.subscribe("state", 1000, &GoalPlanner::stateCallback, this);
@@ -85,7 +85,7 @@ class GoalPlanner{
 
 
 		// Callback for state from state_controller
-		void stateCallback( const state_controller::State& state ) {
+		void stateCallback( const state_controller_msg::State& state ) {
 
 			// Extract current position
 
@@ -169,7 +169,7 @@ class GoalPlanner{
 
 
             // Waypoint message
-            goal_planner::Waypoint waypointMessage;
+            goal_planner_msg::Waypoint waypointMessage;
 
 
             int count = 0;

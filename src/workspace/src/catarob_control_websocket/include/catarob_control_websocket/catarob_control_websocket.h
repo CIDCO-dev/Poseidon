@@ -15,7 +15,7 @@
 
 #include "ros/ros.h"
 
-#include "state_controller/State.h"
+#include "state_controller_msg/State.h"
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -177,7 +177,7 @@ public:
 
 
 
-        void stateChanged(const state_controller::State & state) {
+        void stateChanged(const state_controller_msg::State & state) {
         
         uint64_t timestamp = (state.attitude.header.stamp.sec * 1000000) + (state.attitude.header.stamp.nsec/1000);
         std::string str;

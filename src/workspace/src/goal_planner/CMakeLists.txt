@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   message_generation
   std_msgs
+  goal_planner_msg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -49,10 +50,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-   FILES
-   Waypoint.msg
-)
+#add_message_files(
+#   FILES
+#   Waypoint.msg
+#)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +70,10 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs
+#)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,7 +107,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES goal_planner
-  CATKIN_DEPENDS roscpp std_msgs message_runtime 
+  CATKIN_DEPENDS roscpp std_msgs message_runtime goal_planner_msg
   DEPENDS system_lib
 )
 
@@ -213,8 +214,8 @@ endif()
 
 #add_executable(goal_planner src/main.cpp)
 
-add_dependencies( goal_planner catarob_control_generate_messages_cpp )
-add_dependencies( goal_planner goal_planner_generate_messages_cpp )
-add_dependencies( goal_planner state_controller_generate_messages_cpp )
+#add_dependencies( goal_planner catarob_control_generate_messages_cpp )
+#add_dependencies( goal_planner goal_planner_generate_messages_cpp )
+#add_dependencies( goal_planner state_controller_generate_messages_cpp )
 
-target_link_libraries( goal_planner ${catkin_LIBRARIES} )
+#target_link_libraries( goal_planner ${catkin_LIBRARIES} )

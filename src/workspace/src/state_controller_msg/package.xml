@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>state_controller</name>
+  <name>state_controller_msg</name>
   <version>0.0.1</version>
   <description>The internal state of the hydrographic vessel</description>
 
@@ -55,7 +55,9 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>raspberrypi_vitals_msg</build_depend>
-  <build_depend>state_controller_msg</build_depend>
+
+
+
 
 
   <build_export_depend>roscpp</build_export_depend>
@@ -63,8 +65,6 @@
   <build_export_depend>sensors_msgs</build_export_depend>
   <build_export_depend>geometry_msgs</build_export_depend>
   <build_export_depend>raspberrypi_vitals_msg</build_export_depend>
-  <build_export_depend>state_controller_msg</build_export_depend>
-
 
 
   <exec_depend>roscpp</exec_depend>
@@ -72,7 +72,6 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>raspberrypi_vitals_msg</exec_depend>
-  <exec_depend>state_controller_msg</exec_depend>
 
 
   <build_depend>message_generation</build_depend>

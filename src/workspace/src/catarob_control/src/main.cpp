@@ -1,6 +1,52 @@
-#include "catarob_control/catarob_control.h"
+#ifndef MAIN_CPP
+#define MAIN_CPP
 
-	void CATAROB::i2ctransmit(char id,char pwm,char imaxl,char imaxh,char relay){
+#include "ros/ros.h"
+#include "catarob_msg/motor.h"
+#include "catarob_msg/state.h"
+
+
+#include <wiringPiI2C.h>
+
+#include <iostream>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <mutex>
+
+using namespace std;
+
+int fdL,fdR;
+unsigned short pt_cei012c_tab_ech[30] = {96,124,157,196,241,290,343,398,455,512,567,619,668,712,753,788,820,847,871,892,910,925,938,949,959,967,974,981,986,990};
+uint16_t ADCTempVal = 0;
+std::mutex mtx;
+
+
+
+
+
+class MOTOR{
+	private:
+		ros::NodeHandle n;
+		ros::Publisher state_L;
+		ros::Publisher state_R;
+
+
+
+	public:
+
+	MOTOR(){
+		ros::Subscriber motor_L = n.subscribe("motor/left", 1000, &MOTOR::motorLcallback,this);
+		ros::Subscriber motor_R = n.subscribe("motor/right", 1000, &MOTOR::motorRcallback,this);
+		state_L= n.advertise<catarob_msg::state>("state/left", 1000);
+		state_R= n.advertise<catarob_msg::state>("state/right", 1000);
+		}
+
+	void i2ctransmit(char id,char pwm,char imaxl,char imaxh,char relay){
 		unsigned char *WRbuffer;
 		//Allocation des buffer de ecriture
     		WRbuffer=(unsigned char*)malloc(15*sizeof(unsigned char));
@@ -46,8 +92,8 @@
 		free(WRbuffer);
 		}
 
-	void CATAROB::i2crecive(char id){
-		catarob_control::state msg1;
+	void i2crecive(char id){
+		catarob_msg::state msg1;
     		mtx.lock();
 		msg1.status	= (unsigned short)wiringPiI2CReadReg8(id, 0x02)*256+wiringPiI2CReadReg8(id, 0x03);
 		ADCTempVal 	= wiringPiI2CReadReg8(id, 0x04)*256+wiringPiI2CReadReg8(id, 0x05);
@@ -91,12 +137,34 @@
 		if (id == fdR) state_R.publish(msg1);
 		}
 
-	void CATAROB::motorLcallback(const catarob_control::motor& motor_L)
+	void motorLcallback(const catarob_msg::motor& motor_L)
 		{
 		i2ctransmit(fdL,motor_L.pwm,motor_L.imaxl,motor_L.imaxh,motor_L.relay);
 		}
 
-	void CATAROB::motorRcallback(const catarob_control::motor& motor_R)
+	void motorRcallback(const catarob_msg::motor& motor_R)
 		{
 		i2ctransmit(fdR,motor_R.pwm,motor_R.imaxl,motor_R.imaxh,motor_R.relay);
 		}
+
+
+	void run(){
+		ros::Rate loop_rate(1);
+		while(ros::ok()){
+			i2crecive(fdL);
+			i2crecive(fdR);
+			loop_rate.sleep();
+		}
+	}
+
+
+};
+int main(int argc,char** argv){
+	ros::init(argc, argv, "motor");
+	fdL = wiringPiI2CSetup(0x18); //Adresse controleur gauche
+	fdR = wiringPiI2CSetup(0x10); //Asresse controleur droit
+	MOTOR motor;
+	motor.run();
+	ros::spin();
+}
+#endif

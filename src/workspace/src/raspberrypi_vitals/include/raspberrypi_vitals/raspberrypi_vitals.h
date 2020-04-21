@@ -3,7 +3,7 @@
 
 
 #include "ros/ros.h"
-#include "raspberrypi_vitals/sysinfo.h"
+#include "raspberrypi_vitals_msg/sysinfo.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -34,7 +34,7 @@ class HBV{
 
 	public:
 		HBV(){
-			HBVTopic = node.advertise<raspberrypi_vitals::sysinfo>("vitals", 1000);
+			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
 		}
 
 		void run(){
@@ -42,7 +42,7 @@ class HBV{
 
 		        while(ros::ok()){
 
-                		raspberrypi_vitals::sysinfo msg;
+                		raspberrypi_vitals_msg::sysinfo msg;
 
 				msg.header=++sequenceNumber;
 

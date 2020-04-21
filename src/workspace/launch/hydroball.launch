@@ -19,16 +19,16 @@
 
 <node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen"/>
 
-<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals" output="screen"/>
+
   
-<node pkg="state_controller" name="state_controller" type="state_controller" output="screen"/>
+
 
 <!--<node pkg="catarob_control" name="catarob_control" type="catarob_control" output="screen"/>-->
 
 <node pkg="catarob_control_websocket" name="catarob_control_websocket" type="catarob_control_websocket_node" args="$(arg loggerPath)"/>
 
 
-<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)"/>
+<!--<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)"/>-->
 
 <!--<node pkg="gnss_zed-f9p" name="gnss_zed_f9p" type="gnss_zed-f9p" output="screen" args="$(arg loggerPath1) $(arg portPath1)"/>-->
 

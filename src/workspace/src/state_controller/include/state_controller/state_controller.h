@@ -5,9 +5,9 @@
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/Imu.h"
 #include "geometry_msgs/PointStamped.h"
-#include "state_controller/State.h"
+#include "state_controller_msg/State.h"
 #include "std_msgs/String.h"
-#include "raspberrypi_vitals/sysinfo.h"
+#include "raspberrypi_vitals_msg/sysinfo.h"
 
 #include <ctime>
 #include <iostream>
@@ -24,7 +24,7 @@ int old_fix_seq;
 
 class StateController{
 	public:
-		state_controller::State state;
+		state_controller_msg::State state;
 		StateController(){
 			positionTopic = n.subscribe("fix", 1000, &StateController::gnssCallback,this);
 			attitudeTopic = n.subscribe("pose", 1000, &StateController::imuCallback,this);
@@ -32,7 +32,7 @@ class StateController{
                         vitalsTopic   = n.subscribe("vitals", 1000, &StateController::vitalsCallback,this);
                         
 
-                        stateTopic    = n.advertise<state_controller::State>("state", 1000);
+                        stateTopic    = n.advertise<state_controller_msg::State>("state", 1000);
                         
                         state.position.status.status = -1;
 		}
@@ -41,7 +41,7 @@ class StateController{
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss);
 		void imuCallback(const sensor_msgs::Imu& imu);
 		void sonarCallback(const geometry_msgs::PointStamped& sonar);
-		void vitalsCallback(const raspberrypi_vitals::sysinfo& vital);
+		void vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vital);
 		void stateUpdated();
 		uint64_t buildTimeStamp(int sec, int nsec);
 

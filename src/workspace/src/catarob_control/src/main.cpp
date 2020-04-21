@@ -2,8 +2,8 @@
 #define MAIN_CPP
 
 #include "ros/ros.h"
-#include "catarob_control/motor.h"
-#include "catarob_control/state.h"
+#include "catarob_msg/motor.h"
+#include "catarob_msg/state.h"
 
 
 #include <wiringPiI2C.h>
@@ -42,8 +42,8 @@ class MOTOR{
 	MOTOR(){
 		ros::Subscriber motor_L = n.subscribe("motor/left", 1000, &MOTOR::motorLcallback,this);
 		ros::Subscriber motor_R = n.subscribe("motor/right", 1000, &MOTOR::motorRcallback,this);
-		state_L= n.advertise<catarob_control::state>("state/left", 1000);
-		state_R= n.advertise<catarob_control::state>("state/right", 1000);
+		state_L= n.advertise<catarob_msg::state>("state/left", 1000);
+		state_R= n.advertise<catarob_msg::state>("state/right", 1000);
 		}
 
 	void i2ctransmit(char id,char pwm,char imaxl,char imaxh,char relay){
@@ -93,7 +93,7 @@ class MOTOR{
 		}
 
 	void i2crecive(char id){
-		catarob_control::state msg1;
+		catarob_msg::state msg1;
     		mtx.lock();
 		msg1.status	= (unsigned short)wiringPiI2CReadReg8(id, 0x02)*256+wiringPiI2CReadReg8(id, 0x03);
 		ADCTempVal 	= wiringPiI2CReadReg8(id, 0x04)*256+wiringPiI2CReadReg8(id, 0x05);
@@ -137,12 +137,12 @@ class MOTOR{
 		if (id == fdR) state_R.publish(msg1);
 		}
 
-	void motorLcallback(const catarob_control::motor& motor_L)
+	void motorLcallback(const catarob_msg::motor& motor_L)
 		{
 		i2ctransmit(fdL,motor_L.pwm,motor_L.imaxl,motor_L.imaxh,motor_L.relay);
 		}
 
-	void motorRcallback(const catarob_control::motor& motor_R)
+	void motorRcallback(const catarob_msg::motor& motor_R)
 		{
 		i2ctransmit(fdR,motor_R.pwm,motor_R.imaxl,motor_R.imaxh,motor_R.relay);
 		}

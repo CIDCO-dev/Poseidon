@@ -31,7 +31,7 @@ public:
 
     virtual void start() override {
 
-        goal_planner::Waypoint waypointMessage;
+        goal_planner_msg::Waypoint waypointMessage;
 
         waypointMessage.latitude = latitude;
         waypointMessage.longitude = longitude;
@@ -67,7 +67,7 @@ public:
 		if ( distance <= distanceForWaypointReached )
         {
             
-            goal_planner::Waypoint waypointMessage;
+            goal_planner_msg::Waypoint waypointMessage;
 
             waypointMessage.latitude = latitude;
             waypointMessage.longitude = longitude;

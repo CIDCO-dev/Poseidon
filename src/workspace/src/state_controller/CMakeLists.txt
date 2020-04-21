@@ -3,6 +3,7 @@ project(state_controller)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+add_definitions(-std=c++11 -Wall -g)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,7 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
   message_generation
-  raspberrypi_vitals
+  raspberrypi_vitals_msg
+  state_controller_msg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -50,10 +52,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-   FILES
-   State.msg
- )
+#add_message_files(
+#   FILES
+#   State.msg
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -70,13 +72,13 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
-   sensor_msgs
-   geometry_msgs
-   raspberrypi_vitals
- )
+# generate_messages(
+#   DEPENDENCIES
+#   std_msgs
+#   sensor_msgs
+#   geometry_msgs
+#   raspberrypi_vitals_msg
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -108,10 +110,10 @@ add_message_files(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES state_controller
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_runtime raspberrypi_vitals
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES state_controller
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_runtime raspberrypi_vitals_msg state_controller_msg
+  DEPENDS system_lib
 )
 
 ###########
@@ -121,14 +123,14 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+ include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/state_controller.cpp
-# )
+ add_library(${PROJECT_NAME}
+   src/state_controller.cpp
+ )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -138,7 +140,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/state_controller_node.cpp)
+ add_executable(${PROJECT_NAME}_node nodes/state_controller_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,9 +153,12 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+ target_link_libraries(${PROJECT_NAME}_node
+   ${catkin_LIBRARIES} ${PROJECT_NAME}
+ )
+ target_link_libraries(${PROJECT_NAME}
+   ${catkin_LIBRARIES}
+ )
 
 #############
 ## Install ##
@@ -177,18 +182,18 @@ include_directories(
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-# )
+ install(TARGETS ${PROJECT_NAME}
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.h"
+   PATTERN ".svn" EXCLUDE
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -202,17 +207,19 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_state_controller.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+if(CATKIN_ENABLE_TESTING)
+catkin_add_gtest(test_state_controller tests/test_state_controller.cpp)
+target_link_libraries(test_state_controller state_controller  ${state_controller_LIBRARIES})
+add_dependencies(test_state_controller ${catkin_EXPORTED_TARGETS})
+
+endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(state_controller src/main.cpp)
+#add_executable(state_controller src/main.cpp)
 
-add_dependencies( state_controller state_controller_generate_messages_cpp )
+#add_dependencies( state_controller state_controller_generate_messages_cpp )
 
-target_link_libraries(state_controller ${catkin_LIBRARIES})
+#target_link_libraries(state_controller ${catkin_LIBRARIES})
 

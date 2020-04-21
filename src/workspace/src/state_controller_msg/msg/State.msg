@@ -1,0 +1,4 @@
+sensor_msgs/NavSatFix position
+sensor_msgs/Imu attitude
+geometry_msgs/PointStamped depth
+raspberrypi_vitals_msg/sysinfo vitals

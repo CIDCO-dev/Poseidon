@@ -1,79 +1,56 @@
 #!/bin/bash
 
-#update the apps
-echo --------------------
-echo Updating Deb.
-echo --------------------
-sudo apt update >> log.txt 2> /dev/null
+echo "[+] Updating repositories"
+sudo apt update | tee log.txt
 
-#upgrade the dist
-echo --------------------
-echo Updating Dist.
-echo --------------------
-sudo apt dist-upgrade -y >> log.txt 2> /dev/null
+echo "[+] Updating base system"
+sudo apt dist-upgrade -y | tee -a log.txt
 
-#upgrade the apps
-echo --------------------
-echo Updating Apps.
-echo --------------------
-sudo apt upgrade -y >> log.txt 2> /dev/null
+echo "[+] Updating applications"
+sudo apt upgrade -y | tee -a log.txt
 
-# Install utilities with the YES answer to apt prompt
-echo --------------------
-echo Installing Utilities.
-echo --------------------
-sudo apt install gcc python3-dev python3-pip python3-setuptools git curl -y >> log.txt 2> /dev/null
+echo "[+] Installing toolchain"
+sudo apt install gcc python3-dev python3-pip python3-setuptools git curl -y | tee -a log.txt
 
-# Install RPi.GPIO
-pip3 install RPi.GPIO >> log.txt 2> /dev/null
-# Now ROS Installation
-echo --------------------
-echo Installing ROS.
-echo --------------------
+echo "[+] Installing RPi.GPIO"
+pip3 install RPi.GPIO | tee -a log.txt
+
+echo "[+] Installing ROS"
+
 # Setup sources.list
-sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' >> log.txt 2> /dev/null
-# Setup keys
-sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 >> log.txt 2> /dev/null
-curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | sudo apt-key add - >> log.txt 2> /dev/null
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' | tee -a log.txt
 
-# Actual Installation
-sudo apt-get update >> log.txt 2> /dev/null
+# Setup keys
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 | tee -a log.txt
+curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | sudo apt-key add - | tee -a log.txt
+
+# Refresh repos with new ROS repos
+sudo apt-get update | tee -a log.txt
 
 #sudo apt install ros-kinetic-ros-base g++ -y >> log.txt
-sudo apt install ros-melodic-ros-base g++ -y >> log.txt 2> /dev/null
+sudo apt install ros-melodic-ros-base g++ -y | tee -a log.txt
 
-# Initialize rosdep
-echo --------------------
-echo Initialize ROSdep
-echo --------------------
-rosdep init >> log.txt 2> /dev/null
-echo --------------------
-echo Updating ROSdep
-echo --------------------
-rosdep update >> log.txt 2> /dev/null
+echo "[+] Initializing ROS dependencies"
+rosdep init | tee -a log.txt
+rosdep update | tee -a log.txt
 
-echo --------------------
-echo Installing Tools
-echo --------------------
-sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y >> log.txt 2> /dev/null
+echo "Installing ROS tools"
+sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y | tee -a log.txt
 
-echo --------------------
-echo Installing Network-Manager
-echo --------------------
+
+echo "Configuring network"
+# install network-manager and install as service
 sudo apt-get install network-manager -y >> log.txt 2> /dev/null
-echo --------------------
-echo Installing Network Service
-echo --------------------
 sudo systemctl start NetworkManager.service >> log.txt 2> /dev/null
 sudo systemctl enable NetworkManager.service >> log.txt 2> /dev/null
-echo --------------------
-echo Creating Wifi HotSpot
-echo --------------------
+
+echo "Creating WiFi hotspot"
 sudo nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" >> log.txt 2> /dev/null
 sudo nmcli con modify Hotspot autoconnect yes
 sudo nmcli con modify Hotspot ipv4.addresses 192.168.1.1/24,192.168.1.1
 sudo nmcli con reload
 sudo service network-manager restart
+
 echo --------------------
 echo Configuring network interface
 echo --------------------

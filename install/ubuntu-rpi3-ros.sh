@@ -1,106 +1,13 @@
 #!/bin/bash
 
-echo "[+] Updating repositories"
-sudo apt update | tee log.txt
-
-echo "[+] Updating base system"
-sudo apt dist-upgrade -y | tee -a log.txt
-
-echo "[+] Updating applications"
-sudo apt upgrade -y | tee -a log.txt
-
-echo "[+] Installing toolchain"
-sudo apt install gcc python3-dev python3-pip python3-setuptools git curl -y | tee -a log.txt
-
-echo "[+] Installing RPi.GPIO"
-pip3 install RPi.GPIO | tee -a log.txt
-
-echo "[+] Installing ROS"
-
-# Setup sources.list
-sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' | tee -a log.txt
-
-# Setup keys
-sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 | tee -a log.txt
-curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | sudo apt-key add - | tee -a log.txt
-
-# Refresh repos with new ROS repos
-sudo apt-get update | tee -a log.txt
-
-#sudo apt install ros-kinetic-ros-base g++ -y >> log.txt
-sudo apt install ros-melodic-ros-base g++ -y | tee -a log.txt
-
-echo "[+] Initializing ROS dependencies"
-rosdep init | tee -a log.txt
-rosdep update | tee -a log.txt
-
-echo "Installing ROS tools"
-sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential -y | tee -a log.txt
-
-
-echo "Configuring network"
-# install network-manager and install as service
-sudo apt-get install network-manager -y >> log.txt 2> /dev/null
-sudo systemctl start NetworkManager.service >> log.txt 2> /dev/null
-sudo systemctl enable NetworkManager.service >> log.txt 2> /dev/null
-
-echo "Creating WiFi hotspot"
-sudo nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" >> log.txt 2> /dev/null
-sudo nmcli con modify Hotspot autoconnect yes
-sudo nmcli con modify Hotspot ipv4.addresses 192.168.1.1/24,192.168.1.1
-sudo nmcli con reload
-sudo service network-manager restart
-
-echo --------------------
-echo Configuring network interface
-echo --------------------
-
-
-sudo bash -c 'cat << EOF2 > /etc/netplan/50-cloud-init.yaml
-# This file is generated from information provided by
-# the datasource.  Changes to it will not persist across an instance.
-# To disable cloud-init s network configuration capabilities, write a file
-# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
-# network: {config: disabled}
-network:
-    version: 2
-    ethernets:
-        eth0:
-            dhcp4: true
-            match:
-                macaddress: b8:27:eb:47:75:13
-            set-name: eth0
-            addresses:
-              - 192.168.2.101/24
-EOF2'
-
-sudo netplan apply
-
-echo --------------------
-echo Installing web server
-echo --------------------
-sudo apt install lighttpd -y >> log.txt 2> /dev/null
-echo --------------------
-echo Installing web service
-echo --------------------
-sudo systemctl start lighttpd.service >> log.txt 2> /dev/null
-sudo systemctl enable lighttpd.service >> log.txt 2> /dev/null
-echo --------------------
-echo Installing web socket
-echo --------------------
-sudo apt install libwebsocketpp-dev
-
-
-#installer un captive portal
-echo --------------------
-echo Installing web site
-echo --------------------
+echo "[+] Installing web UI"
 cd /var/
 sudo chmod +644 www
 cd www/ 
-git clone https://github.com/Ddoiron-cidco/Poseidon_web.git >> log.txt 2> /dev/null
-sudo rm -r -d html  >> log.txt 2> /dev/null
-mv Poseidon_web html 
+git clone https://github.com/Ddoiron-cidco/Poseidon_web.git | tee -a log.txt
+sudo rm -r -d html  | tee -a log.txt
+mv Poseidon_web html
+
 echo --------------------
 echo Downloading WiringPi
 echo --------------------

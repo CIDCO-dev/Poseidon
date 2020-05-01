@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>gnss_zed-f9p</name>
+  <name>gnss_zed_f9p</name>
   <version>0.0.0</version>
   <description>The gnss_zed-f9p package</description>
 

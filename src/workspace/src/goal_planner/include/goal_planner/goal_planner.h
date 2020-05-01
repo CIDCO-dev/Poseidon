@@ -43,17 +43,17 @@ class GoalPlanner{
 
 	private:
 		
-		// ROS handle
-		ros::NodeHandle node;
+	// ROS handle
+	ros::NodeHandle node;
 
-		// Input topics
-		ros::Subscriber stateTopic;
+	// Input topics
+	ros::Subscriber stateTopic;
 
-		// Output topics
-		ros::Publisher waypointTopic;
+	// Output topics
+	ros::Publisher waypointTopic;
 
         // TODO: use mutex?
-		std::list< std::shared_ptr< Goal > > goals;
+	std::list< std::shared_ptr< Goal > > goals;
 
 
         // TODO: use mutex? (currentGoal would never be set from a callback)
@@ -64,52 +64,48 @@ class GoalPlanner{
         TwoDoublesRosTimeWithMutex currentPositionLatitudeLongitude;
 
 
-		// Position currentPosition;
+	// Position currentPosition;
 
 	public:
-		GoalPlanner() 
-            : currentPositionLatitudeLongitude( 0, 0, ros::Time( 0, 0 ) )    
-        {
+	GoalPlanner() 
+          : currentPositionLatitudeLongitude( 0, 0, ros::Time( 0, 0 ) )    
+          {
 
-			// Advertise to topics: destination (to pilot)
-			waypointTopic = node.advertise<goal_planner_msg::Waypoint>("waypoint", 1000);
+	  // Advertise to topics: destination (to pilot)
+	  waypointTopic = node.advertise<goal_planner_msg::Waypoint>("waypoint", 1000);
 
-			// Subscribe to topics: state (from state_controller)
-			stateTopic = node.subscribe("state", 1000, &GoalPlanner::stateCallback, this);
+	  // Subscribe to topics: state (from state_controller)
+	  stateTopic = node.subscribe("state", 1000, &GoalPlanner::stateCallback, this);
 
+          // Reset currentGoal so it does not point to anything
+          currentGoal.reset();
 
-            // Reset currentGoal so it does not point to anything
-            currentGoal.reset();
-
-		}
-
-
-		// Callback for state from state_controller
-		void stateCallback( const state_controller_msg::State& state ) {
-
-			// Extract current position
-
-            // Verify that this message is an update of the position,
-            // not a message for the IMU, etc...
-
-            // ? Validate state position's time vs ros::Time::now(); ?
-            // state.position.header.stamp
-
-            // Set current position from positon in the message
-            currentPositionLatitudeLongitude.setValues( 
-                   state.position.latitude, state.position.longitude,
-                   state.position.header.stamp );
+	  }
 
 
-			// Extract other information, e.g. raspberrypi_vitals?
+	// Callback for state from state_controller
+	void stateCallback( const state_controller_msg::State& state ) {
 
-		}
+	// Extract current position
+
+        // Verify that this message is an update of the position,
+        // not a message for the IMU, etc...
+
+        // ? Validate state position's time vs ros::Time::now(); ?
+        // state.position.header.stamp
+
+        // Set current position from positon in the message
+        currentPositionLatitudeLongitude.setValues( 
+          state.position.latitude, state.position.longitude,
+          state.position.header.stamp );
+
+	// Extract other information, e.g. raspberrypi_vitals?
+	}
 
 
 
-		void run(){
-
-			ros::Rate loop_rate( 10 );
+	void run(){
+	    ros::Rate loop_rate( 10 );
 
             double distanceForWaypointReached = 10;
 
@@ -128,8 +124,6 @@ class GoalPlanner{
             goals.push_back( std::make_shared< Waypoint > ( 123456789, -123456789, distanceForWaypointReached, node ) );
 
 */
-
-
 
             // Populate the list for test purposes with positions
             // based on gnss_dummy's path
@@ -167,22 +161,16 @@ class GoalPlanner{
                     std::cout << "Not a Waypoint" << std::endl;
             }
 
-
             // Waypoint message
             goal_planner_msg::Waypoint waypointMessage;
 
-
             int count = 0;
-
 
             double currentPositionlatitude;
             double currentPositionlongitude;
             ros::Time currentPositionTime;
 
-
-
-
-			while ( ros::ok() ){
+	    while ( ros::ok() ){
 
 /*
                 // Create a waypoint message for test purposes
@@ -199,33 +187,29 @@ class GoalPlanner{
 
                 count++;
 
-				// Check state's raspberrypi_vitals?
+		// Check state's raspberrypi_vitals?
 
-
-				// If no current goal
+		// If no current goal
                 if ( count > 10 && currentGoal == nullptr )
-				{
-					// If there is a goal in the list
+		    {
+		    // If there is a goal in the list
                     if ( goals.size() != 0 )
-					{
-						// Set this as the current goal,
+			{
+			// Set this as the current goal,
                         currentGoal = goals.front();
 
-						// Remove this goal from the list
+			// Remove this goal from the list
                         goals.pop_front();
                         
-						// Publish this goal
+			// Publish this goal
                         currentGoal->start();
 
-					}
-				}
+			}
+		    }
 
-
-
-
-				// If there is a current goal:
+		// If there is a current goal:
                 if ( currentGoal != nullptr )
-				{
+		    {
 
                     // What if the current position is too old?
 
@@ -237,23 +221,21 @@ class GoalPlanner{
                     // If goal is reached
                     if ( currentGoal->execute( currentPositionlatitude, 
                                             currentPositionlongitude ) )
-                    {
+                        {
                         currentGoal = nullptr;
+                        }
 
                     }
 
-                }
 
 
 
 
+		ros::spinOnce();
+		loop_rate.sleep();
+ 		}
 
-				ros::spinOnce();
-				loop_rate.sleep();
-
-			}
-
-		}
+	}
 };
 
 

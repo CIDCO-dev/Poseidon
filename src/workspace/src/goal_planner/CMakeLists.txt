@@ -202,20 +202,6 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_goal_planner tests/test_goal_planner.cpp)
-target_link_libraries(test_goal_planner goal_planner  ${goal_planner_LIBRARIES})
-add_dependencies(test_goal_planner ${catkin_EXPORTED_TARGETS})
-
-endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-#add_executable(goal_planner src/main.cpp)
-
-#add_dependencies( goal_planner catarob_control_generate_messages_cpp )
-#add_dependencies( goal_planner goal_planner_generate_messages_cpp )
-#add_dependencies( goal_planner state_controller_generate_messages_cpp )
-
-#target_link_libraries( goal_planner ${catkin_LIBRARIES} )

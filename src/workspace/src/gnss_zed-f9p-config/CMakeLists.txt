@@ -200,12 +200,6 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_gnss_zed-f9p-config tests/test_gnss_zed-f9p-config.cpp)
-target_link_libraries(test_gnss_zed-f9p-config gnss_zed-f9p-config  ${gnss_zed-f9p-config_LIBRARIES})
-add_dependencies(test_gnss_zed-f9p-config ${catkin_EXPORTED_TARGETS})
-
-endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

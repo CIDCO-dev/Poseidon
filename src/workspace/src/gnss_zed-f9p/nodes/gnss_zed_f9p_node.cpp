@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "gnss_zed-f9p/gnss_zed-f9p.h"
+#include "gnss_zed_f9p/gnss_zed_f9p.h"
 
 
 int main(int argc,char** argv){

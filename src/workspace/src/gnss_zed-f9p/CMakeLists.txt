@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(gnss_zed-f9p)
+project(gnss_zed_f9p)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -104,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES gnss_zed-f9p
+  LIBRARIES gnss_zed_f9p
   CATKIN_DEPENDS roscpp std_msgs
   DEPENDS system_lib
 )
@@ -133,7 +133,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(${PROJECT_NAME}_node nodes/gnss_zed-f9p_node.cpp)
+ add_executable(${PROJECT_NAME}_node nodes/gnss_zed_f9p_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -200,12 +200,6 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_gnss_zed-f9p tests/test_gnss_zed-f9p.cpp)
-target_link_libraries(test_gnss_zed-f9p gnss_zed-f9p  ${gnss_zed-f9p_LIBRARIES})
-add_dependencies(test_gnss_zed-f9p ${catkin_EXPORTED_TARGETS})
-
-endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

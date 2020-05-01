@@ -1,5 +1,5 @@
-#ifndef gnss_zed-f9p
-#define gnss_zed-f9p
+#ifndef gnss_zed_f9p
+#define gnss_zed_f9p
 
 #include "ros/ros.h"
 

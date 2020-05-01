@@ -1,12 +1,12 @@
-#ifndef MAIN_CPP
-#define MAIN_CPP
+#ifndef catarob_control
+#define catarob_control
 
 #include "ros/ros.h"
 #include "catarob_msg/motor.h"
 #include "catarob_msg/state.h"
 
 
-#include <wiringPiI2C.h>
+#include </home/ubuntu/WiringPi/wiringPi/wiringPiI2C.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -25,11 +25,7 @@ unsigned short pt_cei012c_tab_ech[30] = {96,124,157,196,241,290,343,398,455,512,
 uint16_t ADCTempVal = 0;
 std::mutex mtx;
 
-
-
-
-
-class MOTOR{
+class CATAROB{
 	private:
 		ros::NodeHandle n;
 		ros::Publisher state_L;
@@ -39,9 +35,9 @@ class MOTOR{
 
 	public:
 
-	MOTOR(){
-		ros::Subscriber motor_L = n.subscribe("motor/left", 1000, &MOTOR::motorLcallback,this);
-		ros::Subscriber motor_R = n.subscribe("motor/right", 1000, &MOTOR::motorRcallback,this);
+	CATAROB(){
+		ros::Subscriber motor_L = n.subscribe("motor/left", 1000, &CATAROB::motorLcallback,this);
+		ros::Subscriber motor_R = n.subscribe("motor/right", 1000, &CATAROB::motorRcallback,this);
 		state_L= n.advertise<catarob_msg::state>("state/left", 1000);
 		state_R= n.advertise<catarob_msg::state>("state/right", 1000);
 		}
@@ -149,6 +145,8 @@ class MOTOR{
 
 
 	void run(){
+		fdL = wiringPiI2CSetup(0x18); //Adresse controleur gauche
+		fdR = wiringPiI2CSetup(0x10); //Asresse controleur droit
 		ros::Rate loop_rate(1);
 		while(ros::ok()){
 			i2crecive(fdL);
@@ -159,12 +157,6 @@ class MOTOR{
 
 
 };
-int main(int argc,char** argv){
-	ros::init(argc, argv, "motor");
-	fdL = wiringPiI2CSetup(0x18); //Adresse controleur gauche
-	fdR = wiringPiI2CSetup(0x10); //Asresse controleur droit
-	MOTOR motor;
-	motor.run();
-	ros::spin();
-}
+
+
 #endif

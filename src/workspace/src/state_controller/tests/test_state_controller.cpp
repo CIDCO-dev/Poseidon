@@ -1,4 +1,4 @@
-#include <gnss_dummy/gnss_dummy.h>
+#include <state_controller/state_controller.h>
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
@@ -74,86 +74,84 @@ class MyTestSuite : public ::testing::Test {
     ~MyTestSuite() {}
 };
 
-TEST_F(MyTestSuite, ellipsoidalHeight_low) {  
-  GNSS gnss;
-  int initial_value = 1;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be it's initial value plus 5";
-}
-
-TEST_F(MyTestSuite, ellipsoidalHeight_high) {
-  GNSS gnss;
-  int initial_value = 49;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be 0";
-}
 
 
+void stateCallbackvalue1(const state_controller_msg::State& state)
+{
+   //EXPECT_EQ(state.position.header.seq, 22);
+   //ASSERT_EQ(state.position.header.stamp, time);
+   //EXPECT_EQ(state.position.status.service, 1);
+   //EXPECT_EQ(state.position.header.stamp.nsec, 0);
+   //EXPECT_EQ(state.position.longitude, 66);
+   //EXPECT_EQ(state.position.latitude, 99);
+   //EXPECT_EQ(state.position.altitude, 123);
+  EXPECT_EQ(state.vitals.header, 22);
+  EXPECT_EQ(state.vitals.cputemp, 11);
+  EXPECT_EQ(state.vitals.cpuload, 33);
+  EXPECT_EQ(state.vitals.freeram, 55);
+  EXPECT_EQ(state.vitals.freehdd, 44);
+  EXPECT_EQ(state.vitals.uptime, 123456);
+  EXPECT_EQ(state.vitals.vbat, 12.2);
+  EXPECT_EQ(state.vitals.rh, 25);
+  EXPECT_EQ(state.vitals.temp, 12);
+  EXPECT_EQ(state.vitals.psi, 64);
 
-
-void gnssCallbacklatmin(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_GE(gnss.latitude, -90);
-}
-void gnssCallbacklongmin(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_GE(gnss.longitude, -180);
-}
-void gnssCallbacklatmax(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_LE(gnss.latitude, 90);
-}
-void gnssCallbacklongmax(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_LE(gnss.longitude, 180);
-}
-
-
-TEST_F(MyTestSuite, pub_lat_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmin);
-  }
-TEST_F(MyTestSuite, pub_long_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmin);
-  }
-
-TEST_F(MyTestSuite, pub_lat_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmax);
-  }
-TEST_F(MyTestSuite, pub_long_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmax);
-  }
-
-void gnssCallbackvalue1(const sensor_msgs::NavSatFix& gnss)
-{
-   ASSERT_EQ(gnss.header.seq, 12);
-   ASSERT_EQ(gnss.longitude, 49.00);
-   ASSERT_EQ(gnss.latitude, 60.00);
 
 }
 
 
 TEST_F(MyTestSuite, pub_value1) {
-  GNSS gnss;
+  StateController stateControl;
   ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbackvalue1);
-  int sequenceNumber= 12;
-  double longitude = 49.00;
-  double latitude = 60.00;
-  gnss.message(sequenceNumber, longitude, latitude);
+//  AnyHelper h;
+  ros::Time time=ros::Time::now();
   
+  ros::Publisher pub1 = nh.advertise<sensor_msgs::NavSatFix>("fix", 1);
+  ros::Publisher pub2 = nh.advertise<sensor_msgs::Imu>("pose", 1);
+  ros::Publisher pub3 = nh.advertise<geometry_msgs::PointStamped>("depth", 1);
+  ros::Publisher pub4 = nh.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1);
+
+  raspberrypi_vitals_msg::sysinfo msg4;
+  geometry_msgs::PointStamped msg3;
+  sensor_msgs::Imu msg2;
+  sensor_msgs::NavSatFix msg1;
+
+  msg1.header.seq=22;
+  msg1.header.stamp=time;
+  msg1.status.service = 1;
+  msg1.header.stamp.nsec=0;
+  msg1.longitude=66;
+  msg1.latitude=99;
+  msg1.altitude=123;
+  pub1.publish(msg1);
+
+
+  msg2.header.seq=22;
+  msg2.header.stamp=time;
+  msg2.orientation.w = 22;
+  msg2.orientation.x = 33;
+  msg2.orientation.y = 44;
+  msg2.orientation.z = 55;
+//  pub2.publish(msg2);
+
+  msg3.header.seq=22;
+  msg3.header.stamp=time;
+  msg3.point.z = 3.2;
+//  pub3.publish(msg3);
+
+  msg4.header=22;
+  msg4.cputemp=11;
+  msg4.cpuload=33;
+  msg4.freeram=55;
+  msg4.freehdd=44;
+  msg4.uptime=123456;
+  msg4.vbat=12.2;
+  msg4.rh=25;
+  msg4.temp=12;
+  msg4.psi=64;
+  pub4.publish(msg4);
+
+  ros::Subscriber sub1 = nh.subscribe("state", 1000, stateCallbackvalue1);
 }
 
 

@@ -24,8 +24,8 @@ network:
     ethernets:
         eth0:
             dhcp4: true
-            match:
-                macaddress: b8:27:eb:47:75:13
+#            match:
+#                macaddress: b8:27:eb:47:75:13
             set-name: eth0
             addresses:
               - 192.168.2.101/24
@@ -43,10 +43,10 @@ echo "[+] Installing websocket library"
 sudo apt install libwebsocketpp-dev
 
 echo "[+] Installing web UI"
-cd /var/
-sudo chmod +644 www
-cd www/ 
-git clone https://github.com/Ddoiron-cidco/Poseidon_web.git | tee -a log.txt
+sudo mkdir -p /var/www
+sudo chmod +644 /var/www
+cd /var/www/
+git clone https://github.com/Ddoiron-cidco/Poseidon_web.git
 sudo rm -r -d html  | tee -a log.txt
 mv Poseidon_web html
 

@@ -1,41 +1,22 @@
 #!/bin/bash
 
-echo "[+] Installing web UI"
-cd /var/
-sudo chmod +644 www
-cd www/ 
-git clone https://github.com/Ddoiron-cidco/Poseidon_web.git | tee -a log.txt
-sudo rm -r -d html  | tee -a log.txt
-mv Poseidon_web html
-
-echo --------------------
-echo Downloading WiringPi
-echo --------------------
-cd ~/
-git clone https://github.com/Ddoiron-cidco/WiringPi.git  >> log.txt 2> /dev/null
+echo "[+] Downloading WiringPi"
+cd ~/ git clone https://github.com/Ddoiron-cidco/WiringPi.git | tee -a log.txt
 cd WiringPi/
-./build  >> log.txt 2> /dev/null
+./build | tee -a log.txt
 
-echo --------------------
-echo Connfiguring time system
-echo --------------------
+echo "[+] Configuring time system"
 cd ~/
-git clone https://github.com/Ddoiron-cidco/RaspberryPi.git  >> log.txt 2> /dev/null
+git clone https://github.com/Ddoiron-cidco/RaspberryPi.git | tee -a log.txt
 
-echo --------------------
-echo Connfiguring uart
-echo --------------------
+echo "[+] Configuring UART"
+sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt' | tee -a log.txt
+sudo systemctl mask serial-getty@ttyAMA0.service | tee -a log.txt
 
-sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt'  >> log.txt 2> /dev/null
-sudo systemctl mask serial-getty@ttyAMA0.service  >> log.txt 2> /dev/null
-
-
-echo --------------------
-echo Install GPSD
-echo --------------------
-
-sudo apt-get install gpsd gpsd-clients -y  >> log.txt 2> /dev/null
+echo "[+] Install GPSD"
+sudo apt-get install gpsd gpsd-clients -y | tee -a log.txt
 sudo cp /etc/default/gpsd "/etc/default/gpsd.bak$(date +"%Y%m%d_%H%M%S")"
+
 sudo bash -c 'cat << EOF2 > /etc/default/gpsd
 # Default settings for the gpsd init script and the hotplug wrapper.
 # Start the gpsd daemon automatically at boot time
@@ -52,16 +33,13 @@ EOF2'
 
 sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.target.wants/
 
-echo --------------------
-echo Install PPS Suport tools
-echo --------------------
+echo "[+] Install PPS"
 
 sudo apt-get install pps-tools -y  >> log.txt 2> /dev/null
 sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
-sudo bash -c 'echo "pps-ldisc" >> /etc/modules'  
-echo --------------------
-echo Install Chrony
-echo --------------------
+sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
+
+echo "[+] Install Chrony"
 
 sudo apt-get install chrony -y  >> log.txt 2> /dev/null
 
@@ -120,16 +98,8 @@ rtcsync
 makestep 1 3
 EOF2'
 
-echo --------------------
-echo Spi Rule
-echo --------------------
-
+echo "[+] Enabling SPI"
 sudo bash -c 'cat << EOF2 > /etc/udev/rules.d/50-spi.rules
 KERNEL=="spidev*", GROUP="dialout", MODE="0664"
 EOF2'
 
-echo --------------------
-echo End of script 
-echo --------------------
-
-reboot

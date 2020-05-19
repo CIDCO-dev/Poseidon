@@ -248,4 +248,4 @@ echo --------------------
 echo End of script 
 echo --------------------
 
-reboot
+sudo reboot

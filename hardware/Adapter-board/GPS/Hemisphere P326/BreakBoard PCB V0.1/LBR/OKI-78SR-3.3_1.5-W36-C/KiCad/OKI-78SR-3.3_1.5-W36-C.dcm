@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP OKI-78SR-3.3_1.5-W36-C
+D Murata Power Solutions Switching Regulator, 3.3V dc Output, 1.5A
+K
+F https://power.murata.com/data/power/oki-78sr.pdf
+$ENDCMP
+#
+#End Doc Library

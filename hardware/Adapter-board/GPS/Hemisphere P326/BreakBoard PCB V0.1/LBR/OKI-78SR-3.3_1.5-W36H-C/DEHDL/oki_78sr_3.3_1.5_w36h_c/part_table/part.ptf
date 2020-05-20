@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'OKI_78SR_3.3_1.5_W36H_C'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "RS_PART_NUMBER", "RS_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Murata Electronics", "OKI-78SR-3.3/1.5-W36H-C" (!) = "", "OKI78SR3315W36HC", "Other", "580-OKI78SR3.31.5WHC", "https://www.mouser.co.uk/ProductDetail/Murata-Power-Solutions/OKI-78SR-33-15-W36H-C?qs=2QmwSASSNhasLT4%252BJlpIag%3D%3D", "1737061P", "http://uk.rs-online.com/web/p/products/1737061P", "Murata Power Solutions Non-Isolated DC-DC Converter, 12V dc Input, 3.3V dc Output, 1.5A", "https://power.murata.com/pub/data/power/oki-78sr.pdf", "9.5 mm"
+END_PART
+
+END.

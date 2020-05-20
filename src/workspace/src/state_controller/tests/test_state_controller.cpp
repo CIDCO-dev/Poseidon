@@ -74,9 +74,14 @@ class MyTestSuite : public ::testing::Test {
     ~MyTestSuite() {}
 };
 
+void stateCallbackvalue3(const state_controller_msg::State& state)
+{
 
 
-void stateCallbackvalue1(const state_controller_msg::State& state)
+}
+
+
+void stateCallbackvalue4(const state_controller_msg::State& state)
 {
    //EXPECT_EQ(state.position.header.seq, 22);
    //ASSERT_EQ(state.position.header.stamp, time);
@@ -107,25 +112,18 @@ TEST_F(MyTestSuite, pub_value1) {
   ros::Time time=ros::Time::now();
   
   ros::Publisher pub1 = nh.advertise<sensor_msgs::NavSatFix>("fix", 1);
-  ros::Publisher pub2 = nh.advertise<sensor_msgs::Imu>("pose", 1);
-  ros::Publisher pub3 = nh.advertise<geometry_msgs::PointStamped>("depth", 1);
-  ros::Publisher pub4 = nh.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1);
-
-  raspberrypi_vitals_msg::sysinfo msg4;
-  geometry_msgs::PointStamped msg3;
-  sensor_msgs::Imu msg2;
   sensor_msgs::NavSatFix msg1;
-
   msg1.header.seq=22;
   msg1.header.stamp=time;
   msg1.status.service = 1;
   msg1.header.stamp.nsec=0;
-  msg1.longitude=66;
-  msg1.latitude=99;
-  msg1.altitude=123;
-  pub1.publish(msg1);
-
-
+  msg1.longitude=66.66;
+  msg1.latitude=99.66;
+  msg1.altitude=123.66;
+//  pub1.publish(msg1);
+  
+  ros::Publisher pub2 = nh.advertise<sensor_msgs::Imu>("pose", 1);
+  sensor_msgs::Imu msg2;
   msg2.header.seq=22;
   msg2.header.stamp=time;
   msg2.orientation.w = 22;
@@ -134,11 +132,21 @@ TEST_F(MyTestSuite, pub_value1) {
   msg2.orientation.z = 55;
 //  pub2.publish(msg2);
 
-  msg3.header.seq=22;
-  msg3.header.stamp=time;
-  msg3.point.z = 3.2;
-//  pub3.publish(msg3);
 
+  ros::Publisher pub3 = nh.advertise<geometry_msgs::PointStamped>("depth", 1);
+  geometry_msgs::PointStamped msg;
+  msg.header.seq=22;
+  msg.header.stamp=time;
+  msg.point.x = 3.2;
+  msg.point.y = 3.2;
+  msg.point.z = 3.2;
+//  pub3.publish(msg);
+
+  ros::Subscriber sub3 = nh.subscribe("state", 1000, stateCallbackvalue3);
+
+
+  ros::Publisher pub4 = nh.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1);
+  raspberrypi_vitals_msg::sysinfo msg4;
   msg4.header=22;
   msg4.cputemp=11;
   msg4.cpuload=33;
@@ -151,7 +159,7 @@ TEST_F(MyTestSuite, pub_value1) {
   msg4.psi=64;
   pub4.publish(msg4);
 
-  ros::Subscriber sub1 = nh.subscribe("state", 1000, stateCallbackvalue1);
+  ros::Subscriber sub4 = nh.subscribe("state", 1000, stateCallbackvalue4);
 }
 
 

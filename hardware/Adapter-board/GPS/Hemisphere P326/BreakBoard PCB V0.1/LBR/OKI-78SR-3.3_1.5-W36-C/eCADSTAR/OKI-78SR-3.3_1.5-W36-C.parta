@@ -1,0 +1,72 @@
+(Japanese_coding: sjis)
+(function "ECS_800730"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2018-04-21-11:42:15)
+    (utime 2018-08-15-15:32:37)
+    (interface
+        (port "1" (symbPinId 1) (portType INOUT))
+        (port "2" (symbPinId 2) (portType INOUT))
+        (port "3" (symbPinId 3) (portType INOUT))
+    )
+    (property "symbolName" "OKI-78SR-3_3_1_5-W36-C")
+)
+
+
+(pinAssign "ECS_800730"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2018-04-21-11:42:15)
+    (utime 2018-08-15-15:32:37)
+    (interface
+        (port "1" (symbPinId 1) (portName "POSITIVE_INPUT") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "COMMON_(GROUND)") (portType INOUT))
+        (port "3" (symbPinId 3) (portName "POSITIVE_OUTPUT") (portType INOUT))
+    )
+    (internal
+        (funcInst (functionRef "ECS_800730")
+                (port "1" (match "1"))
+                (port "2" (match "2"))
+                (port "3" (match "3"))
+        )
+    )
+    (property "usePowerBox" "No")
+    (property "symbolName" "OKI-78SR-3_3_1_5-W36-C")
+)
+
+
+(part "OKI-78SR-3_3_1_5-W36-C"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2018-04-21-11:42:15)
+    (utime 2018-08-15-15:32:37)
+    (packageRef "OKI-78SR-3_3_1_5-W36-C")
+    (pinAssignRef "ECS_800730")
+    (interface
+        (port "1" (symbPinId 1) (portName "POSITIVE_INPUT") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "COMMON_(GROUND)") (portType INOUT))
+        (port "3" (symbPinId 3) (portName "POSITIVE_OUTPUT") (portType INOUT))
+    )
+    (partClass UNDEF)
+    (useInSchema Y)
+    (useInLayout Y)
+    (inPartsList Y)
+    (partType NORMAL)
+    (placeRestriction FREE)
+    (property "enetNonSeries" "YES")
+    (property "refDesPrefix" "IC")
+    (property "description" "Murata Power Solutions Switching Regulator, 3.3V dc Output, 1.5A")
+    (property "Manufacturer_Name" "Murata Electronics")
+    (property "Manufacturer_Part_Number" "OKI-78SR-3.3/1.5-W36-C")
+    (property "Mouser_Part_Number" "580-OKI78SR3.31.536C")
+    (property "Mouser_Price/Stock" "https://www.mouser.co.uk/ProductDetail/Murata-Power-Solutions/OKI-78SR-33-15-W36-C?qs=uJpRT2lXVNX73zEQlCgxZA%3D%3D")
+    (property "RS_Part_Number" "7962141P")
+    (property "RS_Price/Stock" "http://uk.rs-online.com/web/p/products/7962141P")
+    (property "Datasheet_Link" "https://power.murata.com/data/power/oki-78sr.pdf")
+    (property "compAreaTopHeight" 16)
+)
+
+

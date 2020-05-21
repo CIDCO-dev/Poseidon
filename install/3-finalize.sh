@@ -1,7 +1,8 @@
 #!/bin/bash
 
 echo "[+] Downloading WiringPi"
-cd ~/ git clone https://github.com/Ddoiron-cidco/WiringPi.git | tee -a log.txt
+cd ~/ 
+git clone https://github.com/Ddoiron-cidco/WiringPi.git | tee -a log.txt
 cd WiringPi/
 ./build | tee -a log.txt
 

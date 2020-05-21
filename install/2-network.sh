@@ -24,8 +24,8 @@ network:
     ethernets:
         eth0:
             dhcp4: true
-#            match:
-#                macaddress: b8:27:eb:47:75:13
+            match:
+                name: eth0
             set-name: eth0
             addresses:
               - 192.168.2.101/24
@@ -72,4 +72,4 @@ compress.filetype           = ( "application/javascript", "text/css", "text/html
 include_shell "/usr/share/lighttpd/create-mime.assign.pl"
 include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 EOF2'
-sudo systemctl reload lighttpd.service
+sudo systemctl restart lighttpd.service

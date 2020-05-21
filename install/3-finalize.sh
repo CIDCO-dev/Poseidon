@@ -2,13 +2,13 @@
 
 echo "[+] Downloading WiringPi"
 cd ~/ 
-git clone https://github.com/Ddoiron-cidco/WiringPi.git | tee -a log.txt
+git clone https://github.com/CIDCO-dev/WiringPi-Python.git | tee -a log.txt
 cd WiringPi/
 ./build | tee -a log.txt
 
 echo "[+] Configuring time system"
 cd ~/
-git clone https://github.com/Ddoiron-cidco/RaspberryPi.git | tee -a log.txt
+git clone https://github.com/CIDCO-dev/RaspberryPi.git | tee -a log.txt
 
 echo "[+] Configuring UART"
 sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt' | tee -a log.txt

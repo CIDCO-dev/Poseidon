@@ -6,9 +6,11 @@ git clone https://github.com/CIDCO-dev/WiringPi-Python.git | tee -a log.txt
 cd WiringPi/
 ./build | tee -a log.txt
 
-echo "[+] Configuring time system"
-cd ~/
-git clone https://github.com/CIDCO-dev/RaspberryPi.git | tee -a log.txt
+echo "[+] Configuring Inertial Sense SDK"
+cd ~/Poseidon/src/workspace/src/inertial_sense_ros/
+mkdir lib
+cd lib
+git clone https://github.com/inertialsense/InertialSenseSDK | tee -a log.txt
 
 echo "[+] Configuring UART"
 sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt' | tee -a log.txt

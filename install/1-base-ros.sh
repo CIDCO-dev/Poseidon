@@ -28,7 +28,7 @@ curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE
 sudo apt-get update | tee -a log.txt
 
 #sudo apt install ros-kinetic-ros-base g++ -y >> log.txt
-sudo apt install ros-melodic-ros-base libgps-dev ros-melodic-rosbridge-server g++ -y | tee -a log.txt
+sudo apt install ros-melodic-ros-base g++ -y | tee -a log.txt
 
 echo "[+] Initializing ROS dependencies"
 rosdep init | tee -a log.txt

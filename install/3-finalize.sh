@@ -14,7 +14,7 @@ sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt' | t
 sudo systemctl mask serial-getty@ttyAMA0.service | tee -a log.txt
 
 echo "[+] Install GPSD"
-sudo apt-get install gpsd gpsd-clients -y | tee -a log.txt
+sudo apt-get install gpsd gpsd-clients libgps-dev -y | tee -a log.txt
 sudo cp /etc/default/gpsd "/etc/default/gpsd.bak$(date +"%Y%m%d_%H%M%S")"
 
 sudo bash -c 'cat << EOF2 > /etc/default/gpsd

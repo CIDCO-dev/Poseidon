@@ -1,0 +1,98 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "OKI-78SR-5_1.5-W36-C"
+   (description "Non-Isolated DC/DC Converters 7.5W 24Vin 5Vout1 1.5A SIP Non-Iso")
+   (family "ANA")
+   (package "OKI-78SR")
+   (attribute "Datasheet Link" "http://docs-emea.rs-online.com/webdocs/13d7/0900766b813d7b66.pdf")
+   (attribute "Manufacturer_Name" "Murata Electronics")
+   (attribute "Manufacturer_Part_Number" "OKI-78SR-5/1.5-W36-C")
+   (attribute "Mouser Part Number" "580-OKI78SR5/1.5W36C")
+   (attribute "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Murata-Power-Solutions/OKI-78SR-5-15-W36-C?qs=uJpRT2lXVNXJP%252Bo08dQqJQ%3D%3D")
+   (attribute "RS Part Number" "7962132P")
+   (attribute "RS Price/Stock" "http://uk.rs-online.com/web/p/products/7962132P")
+   (gate
+    (symbol "OKI-78SR-5_1.5-W36-C")
+    (pin "POSITIVE_INPUT" 1 PS)
+    (pin "COMMON(GROUND)" 2 PS)
+    (pin "POSITIVE_OUTPUT" 3 PS)
+   )
+  )
+  (symbol "OKI-78SR-5_1.5-W36-C"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 100) (pt 1300 100) (pt 1300 -300) (pt 200 -300) (pt 200 100) (closed))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -100) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -200) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "OKI-78SR"
+   (units MM)
+   (layer TASM
+    (graphic
+     (stroke 0.10008)
+     (path
+      (closed true)
+      (pt -2.667 2.794)
+      (pt 7.747 2.794)
+      (pt 7.747 -4.826)
+      (pt 0.48006 -4.826)
+      (arc (pt 0.48006 -2.65709) (pt -0.33604 -3.06502) (pt 0.48006 -2.24892) (start 180.0) (sweep .0))
+      (pt -0.33604 -2.65709)
+      (pt -0.33604 -4.826)
+      (pt -2.667 -4.826)
+      (pt -2.667 2.794))))
+   (layer TSLK
+    (graphic
+     (stroke 0.10008)
+     (path
+      (closed true)
+      (pt -2.667 2.794)
+      (pt 7.747 2.794)
+      (pt 7.747 -4.826)
+      (pt 0.48006 -4.826)
+      (arc (pt 0.48006 -2.65709) (pt -0.33605 -3.06328) (pt 0.48006 -2.24717) (start 180.5) (sweep 359.7))
+      (pt -0.33604 -2.65709)
+      (pt -0.33604 -4.826)
+      (pt -2.667 -4.826)
+      (pt -2.667 2.794))))
+   (leg 1 (pt 0 0) (padstack 0))
+   (leg 2 (pt 2.54 0) (padstack 0))
+   (leg 3 (pt 5.08 0) (padstack 0))
+   (padstack 0
+    (hole 0.95987)
+    (plated true)
+    (pad (layer TCOP) (round 1.45999))
+    (pad (layer INNER) (round 1.45999))
+    (pad (layer BCOP) (round 1.45999))
+   )
+  )
+ )
+)

@@ -1,0 +1,115 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "OKI-78SR-3.3_1.5-W36H-C"
+   (description "Murata Power Solutions Non-Isolated DC-DC Converter, 12V dc Input, 3.3V dc Output, 1.5A")
+   (family "ANA")
+   (package "OKI78SR3315W36HC")
+   (attribute "Datasheet Link" "https://power.murata.com/pub/data/power/oki-78sr.pdf")
+   (attribute "Geometry.Height" "9.5mm")
+   (attribute "Manufacturer_Name" "Murata Electronics")
+   (attribute "Manufacturer_Part_Number" "OKI-78SR-3.3/1.5-W36H-C")
+   (attribute "Mouser Part Number" "580-OKI78SR3.31.5WHC")
+   (attribute "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Murata-Power-Solutions/OKI-78SR-33-15-W36H-C?qs=2QmwSASSNhasLT4%252BJlpIag%3D%3D")
+   (attribute "RS Part Number" "1737061P")
+   (attribute "RS Price/Stock" "http://uk.rs-online.com/web/p/products/1737061P")
+   (gate
+    (symbol "OKI-78SR-3.3_1.5-W36H-C")
+    (pin "POSITIVE_INPUT" 1 PS)
+    (pin "COMMON_(GND)" 2 PS)
+    (pin "POSITIVE_OUTPUT" 3 PS)
+   )
+  )
+  (symbol "OKI-78SR-3.3_1.5-W36H-C"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 100) (pt 1300 100) (pt 1300 -300) (pt 200 -300) (pt 200 100) (closed))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 -200) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -100) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "OKI78SR3315W36HC"
+   (units MM)
+   (layer TASM
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed true)
+      (pt 3.41 16.2)
+      (pt -8.49 16.2)
+      (pt -8.49 -2.2)
+      (pt 3.41 -2.2)
+      (pt 3.41 16.2))))
+   (layer TSLK
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt 3.41 16.2)
+      (pt -8.49 16.2)
+      (pt -8.49 -2.2)
+      (pt 3.41 -2.2)
+      (pt 3.41 16.2))))
+   (layer OCCA
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt 5.16 17.2)
+      (pt -9.49 17.2)
+      (pt -9.49 -3.2)
+      (pt 5.16 -3.2)
+      (pt 5.16 17.2))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed true)
+      (pt 4.06 0.1)
+      (arc (pt 4.060 0.100) (pt 4.160 -0.100) (pt 3.960 0.100) (start 180.0) (sweep 90.0))
+      (pt 4.06 -0.1)
+      (arc (pt 4.060 -0.100) (pt 4.160 -0.100) (pt 3.960 0.100) (start 180.0) (sweep -90.0))
+      (pt 4.06 0.1))))
+   (leg 1 (pt 0.000 0.000) (padstack 0))
+   (leg 2 (pt -2.540 0.000) (padstack 0))
+   (leg 3 (pt -5.080 0.000) (padstack 0))
+   (padstack 0
+    (hole 1.0668)
+    (plated true)
+    (pad (layer TCOP) (round 1.600))
+    (pad (layer INNER) (round 1.600))
+    (pad (layer BCOP) (round 1.600))
+   )
+   (model "OKI-78SR-3.3_1.5-W36H-C.stp"
+    (euler 0 0 0)
+    (offset 0 0 0)
+   )
+  )
+ )
+)

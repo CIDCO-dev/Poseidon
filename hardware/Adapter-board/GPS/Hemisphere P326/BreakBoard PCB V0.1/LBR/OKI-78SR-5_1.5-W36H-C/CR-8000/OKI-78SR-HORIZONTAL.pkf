@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "OKI-78SR-HORIZONTAL"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "OKI-78SR-HORIZONTAL")
+        (spec "default")
+    )
+)

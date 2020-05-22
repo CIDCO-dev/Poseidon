@@ -1,0 +1,9 @@
+Manufacturer=SAMTEC
+PartNumber=TSW-117-07-L-D
+PartCategory=Connector
+PackageCategory=Header, Vertical
+PinCount=34
+Version=2.1
+Released=2019-06-12 08:49:39
+Downloaded=2020-05-05 21:45:32
+3D=Y

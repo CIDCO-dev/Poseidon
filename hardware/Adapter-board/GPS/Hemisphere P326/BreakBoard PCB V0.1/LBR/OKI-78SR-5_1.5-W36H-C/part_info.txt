@@ -1,0 +1,9 @@
+Manufacturer=Murata Electronics
+PartNumber=OKI-78SR-5/1.5-W36H-C
+PartCategory=Integrated Circuit
+PackageCategory=Other
+PinCount=3
+Version=1.2
+Released=2016-01-04 10:58:08
+Downloaded=2020-05-06 13:14:31
+3D=N

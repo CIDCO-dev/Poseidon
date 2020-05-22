@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "SFMC11701LDK"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "SFMC11701LDK")
+        (spec "default")
+    )
+)

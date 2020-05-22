@@ -1,4 +1,4 @@
-#include <gnss_dummy/gnss_dummy.h>
+#include <raspberrypi_vitals/raspberrypi_vitals.h>
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
@@ -74,89 +74,58 @@ class MyTestSuite : public ::testing::Test {
     ~MyTestSuite() {}
 };
 
-TEST_F(MyTestSuite, ellipsoidalHeight_low) {  
-  GNSS gnss;
-  int initial_value = 1;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be it's initial value plus 5";
-}
-
-TEST_F(MyTestSuite, ellipsoidalHeight_high) {
-  GNSS gnss;
-  int initial_value = 49;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be 0";
-}
-
-
-
-
-void gnssCallbacklatmin(const sensor_msgs::NavSatFix& gnss)
+void cputemp(const raspberrypi_vitals_msg::sysinfo& msg)
 {
-  EXPECT_GE(gnss.latitude, -90);
-}
-void gnssCallbacklongmin(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_GE(gnss.longitude, -180);
-}
-void gnssCallbacklatmax(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_LE(gnss.latitude, 90);
-}
-void gnssCallbacklongmax(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_LE(gnss.longitude, 180);
+  EXPECT_GE(msg.cputemp, 0);
+  EXPECT_LE(msg.cputemp, 60);
 }
 
-
-TEST_F(MyTestSuite, pub_lat_min)
+TEST_F(MyTestSuite, CPU_temp)
 {
   ros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmin);
-  }
-TEST_F(MyTestSuite, pub_long_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmin);
+  ros::Subscriber sub2 = nh.subscribe("vitals", 1000, cputemp);
   }
 
-TEST_F(MyTestSuite, pub_lat_max)
+void cpuload(const raspberrypi_vitals_msg::sysinfo& msg)
 {
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmax);
-  }
-TEST_F(MyTestSuite, pub_long_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmax);
-  }
-
-void gnssCallbackvalue1(const sensor_msgs::NavSatFix& gnss)
-{
-   ASSERT_EQ(gnss.header.seq, 12);
-   ASSERT_EQ(gnss.longitude, 49.00);
-   ASSERT_EQ(gnss.latitude, 60.00);
-
+  EXPECT_GE(msg.cpuload, 0);
+  EXPECT_LE(msg.cpuload, 60);
 }
 
-
-TEST_F(MyTestSuite, pub_value1) {
-  GNSS gnss;
+TEST_F(MyTestSuite, CPU_load)
+{
   ros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbackvalue1);
-  int sequenceNumber= 12;
-  double longitude = 49.00;
-  double latitude = 60.00;
-  gnss.message(sequenceNumber, longitude, latitude);
-  
+  ros::Subscriber sub2 = nh.subscribe("vitals", 1000, cpuload);
+  }
+
+void freeram(const raspberrypi_vitals_msg::sysinfo& msg)
+{
+  EXPECT_GE(msg.freeram, 0);
+  EXPECT_LE(msg.freeram, 100);
 }
 
+TEST_F(MyTestSuite, FREE_ram)
+{
+  ros::NodeHandle nh;
+  AnyHelper h;
+  ros::Subscriber sub2 = nh.subscribe("vitals", 1000, freeram);
+  }
 
+
+void freehdd(const raspberrypi_vitals_msg::sysinfo& msg)
+{
+  EXPECT_GE(msg.freehdd, 0);
+  EXPECT_LE(msg.freehdd, 100);
+}
+
+TEST_F(MyTestSuite, FREE_hdd)
+{
+  ros::NodeHandle nh;
+  AnyHelper h;
+  ros::Subscriber sub2 = nh.subscribe("vitals", 1000, freehdd);
+  }
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "TestNode");

@@ -1,0 +1,68 @@
+(Japanese_coding: sjis)
+(function "ECS_841727"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2019-02-03-12:50:29)
+    (utime 2019-05-31-14:15:27)
+    (interface
+        (port "1" (symbPinId 1) (portType INOUT))
+        (port "2" (symbPinId 2) (portType INOUT))
+    )
+    (property "symbolName" "DB-5R5D105T")
+)
+
+
+(pinAssign "ECS_841727"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2019-02-03-12:50:29)
+    (utime 2019-05-31-14:15:27)
+    (interface
+        (port "1" (symbPinId 1) (portName "+") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "-") (portType INOUT))
+    )
+    (internal
+        (funcInst (functionRef "ECS_841727")
+                (port "1" (match "1"))
+                (port "2" (match "2"))
+        )
+    )
+    (property "usePowerBox" "No")
+    (property "symbolName" "DB-5R5D105T")
+)
+
+
+(part "DB-5R5D105T"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2019-02-03-12:50:29)
+    (utime 2019-05-31-14:15:27)
+    (packageRef "DB-5R5D105T")
+    (pinAssignRef "ECS_841727")
+    (interface
+        (port "1" (symbPinId 1) (portName "+") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "-") (portType INOUT))
+    )
+    (partClass UNDEF)
+    (useInSchema Y)
+    (useInLayout Y)
+    (inPartsList Y)
+    (partType NORMAL)
+    (placeRestriction FREE)
+    (property "enetNonSeries" "NO")
+    (property "refDesPrefix" "C")
+    (property "description" "Supercapacitors / Ultracapacitors MEM CAP 5.5V 1.0F")
+    (property "Manufacturer_Name" "Elna")
+    (property "Manufacturer_Part_Number" "DB-5R5D105T")
+    (property "Mouser_Part_Number" "555-DB-5R5D105T")
+    (property "Mouser_Price/Stock" "https://www.mouser.co.uk/ProductDetail/Elna/DB-5R5D105T?qs=r8OyiFxb6Rcu1BWmqcONIQ%3D%3D")
+    (property "RS_Part_Number" "")
+    (property "RS_Price/Stock" "")
+    (property "Datasheet_Link" "http://www.mouser.com/datasheet/2/129/DB_DBNe-3084.pdf")
+    (property "compAreaTopHeight" 8)
+)
+
+

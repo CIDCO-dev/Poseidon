@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "TSW-117-07-L-D"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2019-10-21-13:13:33)
+    (mountForm default
+        (footprintRef "HDRV34W64P254_2X17_4318X495X838P")
+        (spec "System")
+    )
+)

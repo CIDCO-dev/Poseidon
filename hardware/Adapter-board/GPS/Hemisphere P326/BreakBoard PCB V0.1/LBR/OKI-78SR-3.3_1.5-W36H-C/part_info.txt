@@ -1,0 +1,9 @@
+Manufacturer=Murata Electronics
+PartNumber=OKI-78SR-3.3/1.5-W36H-C
+PartCategory=Power Supply
+PackageCategory=Other
+PinCount=3
+Version=1.1
+Released=2019-07-17 13:24:52
+Downloaded=2020-05-06 13:14:48
+3D=Y

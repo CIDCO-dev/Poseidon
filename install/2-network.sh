@@ -24,6 +24,7 @@ network:
     ethernets:
         eth0:
             dhcp4: true
+            optional: true
             match:
                 name: eth0
             set-name: eth0

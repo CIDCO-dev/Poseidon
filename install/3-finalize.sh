@@ -38,13 +38,13 @@ sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.targe
 
 echo "[+] Install PPS"
 
-sudo apt-get install pps-tools -y  >> log.txt 2> /dev/null
+sudo apt-get install pps-tools -y | tee -a log.txt
 sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
 sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
 
 echo "[+] Install Chrony"
 
-sudo apt-get install chrony -y  >> log.txt 2> /dev/null
+sudo apt-get install chrony -y | tee -a log.txt
 
 sudo bash -c 'cat << EOF2 > /etc/chrony/chrony.conf
 # PPS: /dev/pps0: Kernel-mode PPS ref-clock for the precise seconds

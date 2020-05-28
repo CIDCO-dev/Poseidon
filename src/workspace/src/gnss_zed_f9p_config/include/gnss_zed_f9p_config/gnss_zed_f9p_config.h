@@ -292,7 +292,7 @@ class ZEDF9P{
 			ubx_cfg(serial_port, 0x209100aC, 1, layer); //CFG-MSGOUT-NMEA_ID_RMC
 			ubx_cfg(serial_port, 0x209100e8, 0, layer); //CFG-MSGOUT-NMEA_ID_VLW
 			ubx_cfg(serial_port, 0x209100b1, 1, layer); //CFG-MSGOUT-NMEA_ID_VTG
-			ubx_cfg(serial_port, 0x209100d9, 0, layer); //CFG-MSGOUT-NMEA_ID_ZDA
+			ubx_cfg(serial_port, 0x209100d9, 1, layer); //CFG-MSGOUT-NMEA_ID_ZDA
 			ubx_cfg(serial_port, 0x209100eD, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYP
 			ubx_cfg(serial_port, 0x209100f2, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYS
 			ubx_cfg(serial_port, 0x209100f7, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYT
@@ -365,7 +365,7 @@ class ZEDF9P{
 			ubx_cfg(serial_port, 0x209100aD, 1, layer); //CFG-MSGOUT-NMEA_ID_RMC
 			ubx_cfg(serial_port, 0x209100e9, 0, layer); //CFG-MSGOUT-NMEA_ID_VLW
 			ubx_cfg(serial_port, 0x209100b2, 1, layer); //CFG-MSGOUT-NMEA_ID_VTG
-			ubx_cfg(serial_port, 0x209100dA, 0, layer); //CFG-MSGOUT-NMEA_ID_ZDA
+			ubx_cfg(serial_port, 0x209100dA, 1, layer); //CFG-MSGOUT-NMEA_ID_ZDA
 			ubx_cfg(serial_port, 0x209100eE, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYP
 			ubx_cfg(serial_port, 0x209100f3, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYS
 			ubx_cfg(serial_port, 0x209100f8, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYT

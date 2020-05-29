@@ -16,11 +16,11 @@ int main(int argc, char **argv)
   std::string outputFolder( argv[1] );
 
   std::string outputGnssFile = outputFolder + "/" 
-                                + getStringDate() + "_gnss.txt";
+                                + getStringDate() + "_gnss.bin";
   std::string outputImuFile = outputFolder + + "/" 
-                                + getStringDate() + "_imu.txt";
+                                + getStringDate() + "_imu.bin";
   std::string outputSonarFile = outputFolder + "/" 
-                                + getStringDate() + "_sonar.txt";
+                                + getStringDate() + "_sonar.bin";
 
   writer = new Writer(outputGnssFile, outputImuFile, outputSonarFile, false);
 

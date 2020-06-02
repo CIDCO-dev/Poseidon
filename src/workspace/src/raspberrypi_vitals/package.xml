@@ -55,11 +55,11 @@
  <build_export_depend>roscpp</build_export_depend>
 
  <exec_depend>roscpp</exec_depend>
- <build_depend>catarob_msg</build_depend>
+ <build_depend>raspberrypi_vitals_msg</build_depend>
 
- <build_export_depend>catarob_msg</build_export_depend>
+ <build_export_depend>raspberrypi_vitals_msg</build_export_depend>
 
- <exec_depend>catarob_msg</exec_depend>
+ <exec_depend>raspberrypi_vitals_msg</exec_depend>
 
 
 

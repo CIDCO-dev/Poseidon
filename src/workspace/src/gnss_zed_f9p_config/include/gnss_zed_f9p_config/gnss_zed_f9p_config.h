@@ -292,7 +292,7 @@ class ZEDF9P{
 			ubx_cfg(serial_port, 0x209100aC, 1, layer); //CFG-MSGOUT-NMEA_ID_RMC
 			ubx_cfg(serial_port, 0x209100e8, 0, layer); //CFG-MSGOUT-NMEA_ID_VLW
 			ubx_cfg(serial_port, 0x209100b1, 1, layer); //CFG-MSGOUT-NMEA_ID_VTG
-			ubx_cfg(serial_port, 0x209100d9, 0, layer); //CFG-MSGOUT-NMEA_ID_ZDA
+			ubx_cfg(serial_port, 0x209100d9, 1, layer); //CFG-MSGOUT-NMEA_ID_ZDA
 			ubx_cfg(serial_port, 0x209100eD, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYP
 			ubx_cfg(serial_port, 0x209100f2, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYS
 			ubx_cfg(serial_port, 0x209100f7, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYT
@@ -352,7 +352,79 @@ class ZEDF9P{
 			ubx_cfg(serial_port, 0x2091017E, 0, layer); //CFG-MSGOUT-UBX_TIM_TP
 			ubx_cfg(serial_port, 0x20910093, 0, layer); //CFG-MSGOUT-UBX_TIM_VRFY
 			
-
+			//Init UART2 as NMEA 0183
+			ubx_cfg(serial_port, 0x209100a8, 0, layer); //CFG-MSGOUT-NMEA_ID_DTM
+			ubx_cfg(serial_port, 0x209100DF, 0, layer); //CFG-MSGOUT-NMEA_ID_GBS
+			ubx_cfg(serial_port, 0x209100bC, 1, layer); //CFG-MSGOUT-NMEA_ID_GGA
+			ubx_cfg(serial_port, 0x209100cB, 1, layer); //CFG-MSGOUT-NMEA_ID_GLL
+			ubx_cfg(serial_port, 0x209100b7, 0, layer); //CFG-MSGOUT-NMEA_ID_GNS
+			ubx_cfg(serial_port, 0x209100D0, 0, layer); //CFG-MSGOUT-NMEA_ID_GRS
+			ubx_cfg(serial_port, 0x209100C1, 1, layer); //CFG-MSGOUT-NMEA_ID_GSA
+			ubx_cfg(serial_port, 0x209100d5, 0, layer); //CFG-MSGOUT-NMEA_ID_GST
+			ubx_cfg(serial_port, 0x209100C6, 1, layer); //CFG-MSGOUT-NMEA_ID_GSV
+			ubx_cfg(serial_port, 0x209100aD, 1, layer); //CFG-MSGOUT-NMEA_ID_RMC
+			ubx_cfg(serial_port, 0x209100e9, 0, layer); //CFG-MSGOUT-NMEA_ID_VLW
+			ubx_cfg(serial_port, 0x209100b2, 1, layer); //CFG-MSGOUT-NMEA_ID_VTG
+			ubx_cfg(serial_port, 0x209100dA, 1, layer); //CFG-MSGOUT-NMEA_ID_ZDA
+			ubx_cfg(serial_port, 0x209100eE, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYP
+			ubx_cfg(serial_port, 0x209100f3, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYS
+			ubx_cfg(serial_port, 0x209100f8, 0, layer); //CFG-MSGOUT-PUBX_ID_POLYT
+			ubx_cfg(serial_port, 0x209102BF, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1005
+			ubx_cfg(serial_port, 0x20910360, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1074
+			ubx_cfg(serial_port, 0x209102cE, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1077
+			ubx_cfg(serial_port, 0x20910365, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1084
+			ubx_cfg(serial_port, 0x209102d3, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1087
+			ubx_cfg(serial_port, 0x2091036A, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1094
+			ubx_cfg(serial_port, 0x2091031A, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1097
+			ubx_cfg(serial_port, 0x2091036F, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1124
+			ubx_cfg(serial_port, 0x209102d8, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1127
+			ubx_cfg(serial_port, 0x20910305, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE1130
+			ubx_cfg(serial_port, 0x20910300, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE4072_0
+			ubx_cfg(serial_port, 0x20910383, 0, layer); //CFG-MSGOUT-RTCM_3X_TYPE4072_1
+			ubx_cfg(serial_port, 0x2091025B, 0, layer); //CFG-MSGOUT-UBX_LOG_INFO
+			ubx_cfg(serial_port, 0x20910351, 0, layer); //CFG-MSGOUT-UBX_MON_COMMS
+			ubx_cfg(serial_port, 0x209101bB, 0, layer); //CFG-MSGOUT-UBX_MON_HW2
+			ubx_cfg(serial_port, 0x20910356, 0, layer); //CFG-MSGOUT-UBX_MON_HW3
+			ubx_cfg(serial_port, 0x209101b8, 0, layer); //CFG-MSGOUT-UBX_MON_HW
+			ubx_cfg(serial_port, 0x209101a7, 0, layer); //CFG-MSGOUT-UBX_MON_IO
+			ubx_cfg(serial_port, 0x20910198, 0, layer); //CFG-MSGOUT-UBX_MON_MSGPP
+			ubx_cfg(serial_port, 0x2091035B, 0, layer); //CFG-MSGOUT-UBX_MON_RF
+			ubx_cfg(serial_port, 0x209101a2, 0, layer); //CFG-MSGOUT-UBX_MON_RXBUF
+			ubx_cfg(serial_port, 0x20910189, 0, layer); //CFG-MSGOUT-UBX_MON_RXR
+			ubx_cfg(serial_port, 0x2091019D, 0, layer); //CFG-MSGOUT-UBX_MON_TXBUF
+			ubx_cfg(serial_port, 0x20910067, 0, layer); //CFG-MSGOUT-UBX_NAV_CLOCK
+			ubx_cfg(serial_port, 0x2091003A, 0, layer); //CFG-MSGOUT-UBX_NAV_DOP
+			ubx_cfg(serial_port, 0x20910161, 0, layer); //CFG-MSGOUT-UBX_NAV_EOE
+			ubx_cfg(serial_port, 0x209100a3, 0, layer); //CFG-MSGOUT-UBX_NAV_GEOFENCE
+			ubx_cfg(serial_port, 0x20910030, 0, layer); //CFG-MSGOUT-UBX_NAV_HPPOSECEF
+			ubx_cfg(serial_port, 0x20910035, 0, layer); //CFG-MSGOUT-UBX_NAV_HPPOSLLH
+			ubx_cfg(serial_port, 0x20910080, 0, layer); //CFG-MSGOUT-UBX_NAV_ODO
+			ubx_cfg(serial_port, 0x20910012, 0, layer); //CFG-MSGOUT-UBX_NAV_ORB
+			ubx_cfg(serial_port, 0x20910026, 0, layer); //CFG-MSGOUT-UBX_NAV_POSECEF
+			ubx_cfg(serial_port, 0x2091002B, 0, layer); //CFG-MSGOUT-UBX_NAV_POSLLH
+			ubx_cfg(serial_port, 0x20910008, 0, layer); //CFG-MSGOUT-UBX_NAV_PVT
+			ubx_cfg(serial_port, 0x2091008F, 0, layer); //CFG-MSGOUT-UBX_NAV_RELPOSNED
+			ubx_cfg(serial_port, 0x20910017, 0, layer); //CFG-MSGOUT-UBX_NAV_SAT
+			ubx_cfg(serial_port, 0x20910347, 0, layer); //CFG-MSGOUT-UBX_NAV_SIG
+			ubx_cfg(serial_port, 0x2091001C, 0, layer); //CFG-MSGOUT-UBX_NAV_STATUS
+			ubx_cfg(serial_port, 0x2091008A, 0, layer); //CFG-MSGOUT-UBX_NAV_SVIN
+			ubx_cfg(serial_port, 0x20910053, 0, layer); //CFG-MSGOUT-UBX_NAV_TIMEBDS
+			ubx_cfg(serial_port, 0x20910058, 0, layer); //CFG-MSGOUT-UBX_NAV_TIMEGAL
+			ubx_cfg(serial_port, 0x2091004E, 0, layer); //CFG-MSGOUT-UBX_NAV_TIMEGLO
+			ubx_cfg(serial_port, 0x20910049, 0, layer); //CFG-MSGOUT-UBX_NAV_TIMEGPS
+			ubx_cfg(serial_port, 0x20910062, 0, layer); //CFG-MSGOUT-UBX_NAV_TIMELS
+			ubx_cfg(serial_port, 0x2091005D, 0, layer); //CFG-MSGOUT-UBX_NAV_TIMEUTC
+			ubx_cfg(serial_port, 0x2091003F, 0, layer); //CFG-MSGOUT-UBX_NAV_VELECEF
+			ubx_cfg(serial_port, 0x20910044, 0, layer); //CFG-MSGOUT-UBX_NAV_VELNED
+			ubx_cfg(serial_port, 0x20910206, 0, layer); //CFG-MSGOUT-UBX_RXM_MEASX
+			ubx_cfg(serial_port, 0x209102A6, 0, layer); //CFG-MSGOUT-UBX_RXM_RAWX
+			ubx_cfg(serial_port, 0x20910260, 0, layer); //CFG-MSGOUT-UBX_RXM_RLM
+			ubx_cfg(serial_port, 0x2091026A, 0, layer); //CFG-MSGOUT-UBX_RXM_RTMC
+			ubx_cfg(serial_port, 0x20910233, 0, layer); //CFG-MSGOUT-UBX_RXM_SFRBX
+			ubx_cfg(serial_port, 0x2091017A, 0, layer); //CFG-MSGOUT-UBX_TIM_TM2
+			ubx_cfg(serial_port, 0x2091017F, 0, layer); //CFG-MSGOUT-UBX_TIM_TP
+			ubx_cfg(serial_port, 0x20910094, 0, layer); //CFG-MSGOUT-UBX_TIM_VRFY
+			
 			//usleep(2000000);
 		}
 		close(serial_port);

@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
   geometry_msgs
+  nav_msgs
   message_generation
   raspberrypi_vitals_msg
 )
@@ -75,6 +76,7 @@ add_message_files(
    std_msgs
    sensor_msgs
    geometry_msgs
+   nav_msgs
    raspberrypi_vitals_msg
  )
 
@@ -110,7 +112,7 @@ add_message_files(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES state_controller
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_runtime raspberrypi_vitals_msg
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs nav_msgs message_runtime raspberrypi_vitals_msg
 #  DEPENDS system_lib
 )
 

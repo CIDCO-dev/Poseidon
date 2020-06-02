@@ -16,6 +16,7 @@ int main(int argc,char** argv){
     		return 1;
 	}
 	ROS_INFO("Using serial port at %s",serialPortPath.c_str());
+
 	ZEDF9P zedf9p(logPath , serialPortPath);
 	zedf9p.run();
 

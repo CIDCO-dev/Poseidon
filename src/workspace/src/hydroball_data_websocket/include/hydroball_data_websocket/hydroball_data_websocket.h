@@ -21,7 +21,7 @@
 #include <websocketpp/server.hpp>
 
 typedef websocketpp::server<websocketpp::config::asio> server;
-std::mutex mtx;
+//std::mutex mtx;
 using websocketpp::connection_hdl;
 
 //TODO: move this to a util class
@@ -54,7 +54,8 @@ public:
 	str = data_recived;
         str.erase (0,2);
 	str.erase (6,(str.length()));
-        if (str == "delete") {//supression de fichier log
+
+      if (str == "delete") {//supression de fichier log
 		str = data_recived;
         	str.erase (0,11);
 		str.erase ((str.length()-2),(str.length()));
@@ -67,8 +68,6 @@ public:
     			ROS_INFO( "File successfully deleted" );}
 		//ROS_INFO(str.c_str());
 		}
-	
-	
 	}
 
     void on_open(connection_hdl hdl) {
@@ -81,11 +80,9 @@ public:
         connections.erase(hdl);
     }
 
-
-
     void stateChanged(const state_controller_msg::State & state) {
-        
-        uint64_t timestamp = (state.attitude.header.stamp.sec * 1000000) + (state.attitude.header.stamp.nsec/1000);
+
+        uint64_t timestamp = (state.odom.header.stamp.sec * 1000000) + (state.odom.header.stamp.nsec/1000);
         std::string str;
         if(
                 //TODO: maybe add our own header?
@@ -105,7 +102,7 @@ public:
                 ss << "\"position\":[" << std::setprecision(12) << state.position.longitude << "," <<  state.position.latitude  << "],";
             }
 
-            if(!state.attitude.header.seq){
+            if(!state.odom.header.seq){
                 ss << "\"attitude\":[],";
             }
             else{
@@ -113,7 +110,7 @@ public:
                 double pitch = 0;
                 double roll = 0;
 
-                convertToEulerAngles(state.attitude.orientation,heading,pitch,roll);
+                convertToEulerAngles(state.odom.pose.pose.orientation,heading,pitch,roll);
 
                 ss << "\"attitude\":[" << std::setprecision(5)  << D2R(heading) << "," << D2R(pitch) << "," << D2R(roll)  << "],";
             }
@@ -125,7 +122,7 @@ public:
                 ss << "\"depth\":[" << std::setprecision(6) << state.depth.point.z  << "],";
             }
 
-            
+          
 
 	    if(!state.vitals.header){
                 ss << "\"vitals\":[],";
@@ -197,7 +194,8 @@ private:
     uint64_t lastTimestamp;
     std::string data_recived;
     double val_lat;
-    double val_long;	
+    double val_long;
+
     std::vector<double> goal_planner_lat = {-68.504926667,-68.504926666,-68.504926665,-68.504926664};
     std::vector<double> goal_planner_long = {48.437141667,48.437141667,48.437141667,48.437141667};
     

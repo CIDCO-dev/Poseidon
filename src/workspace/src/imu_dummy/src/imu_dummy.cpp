@@ -1,7 +1,7 @@
 #include "imu_dummy/imu_dummy.h"
 
 
-void IMU::convertToQuaternion(double yaw, double pitch, double roll,sensor_msgs::Imu& pose){
+void IMU::convertToQuaternion(double yaw, double pitch, double roll,nav_msgs::Odometry& odom){
 			// Abbreviations for the various angular functions
 			double cy = cos(yaw * 0.5);
 			double sy = sin(yaw * 0.5);
@@ -10,10 +10,10 @@ void IMU::convertToQuaternion(double yaw, double pitch, double roll,sensor_msgs:
 			double cr = cos(roll * 0.5);
 			double sr = sin(roll * 0.5);
 
-			pose.orientation.w = cy * cp * cr + sy * sp * sr;
-			pose.orientation.x = cy * cp * sr - sy * sp * cr;
-			pose.orientation.y = sy * cp * sr + cy * sp * cr;
-			pose.orientation.z = sy * cp * cr - cy * sp * sr;
+			odom.pose.pose.orientation.w = cy * cp * cr + sy * sp * sr;
+			odom.pose.pose.orientation.x = cy * cp * sr - sy * sp * cr;
+			odom.pose.pose.orientation.y = sy * cp * sr + cy * sp * cr;
+			odom.pose.pose.orientation.z = sy * cp * cr - cy * sp * sr;
 		}
 
 		void IMU::run(){
@@ -23,7 +23,7 @@ void IMU::convertToQuaternion(double yaw, double pitch, double roll,sensor_msgs:
 
 		        
 
-                		sensor_msgs::Imu msg;
+                		nav_msgs::Odometry msg;
 
 				msg.header.seq=++sequenceNumber;
 				msg.header.stamp=ros::Time::now();

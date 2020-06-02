@@ -189,6 +189,7 @@ public:
   		}
  		ifs.close();
 
+		return true;
 	}
 
 	bool readImu(){
@@ -207,7 +208,9 @@ public:
   		}
   		ifs.close();
 
+		return true;
 	}
+
 	bool readSonar(){
                 Sonar sonar;
 
@@ -224,6 +227,7 @@ public:
                 }
                 ifs.close();
 
+		return true;
         }
 
 private:

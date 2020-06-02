@@ -1,33 +1,47 @@
 <launch>
 
-<arg name="sonarip" value="192.168.0.88"/>
-<arg name="sonarport" value="5000"/>
-<arg name="gpsip" value="_host:=127.0.0.1"/>
-<arg name="gpsport" value="_port:=2947"/>
 <arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
-<arg name="portPath1" value="/dev/ttyACM0"/>
-
+<arg name="gnssPortPath" value="/dev/ttyACM0"/>
+<arg name="gpsdIp" value="localhost"/>
+<arg name="gpsdPort" value="2947"/>
 
 <!-- <node pkg="logger_binary" name="logger_binary" type="logger_binary_node" output="screen" args="$(arg loggerPath)"/> -->
 
 <node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
 
 
-<!-- <node pkg="sonar_nmea_0183_tcp_client" name="Sonar" type="sonar_nmea_0183_tcp_client_node" output="screen" args="$(arg sonarip) $(arg sonarport)"/> -->
+<rosparam subst_value="True">
 
-<node pkg="imu_dummy" name="IMU" type="imu_dummy_node" output="screen"/>
+    inertial_sense_node: { port: "/dev/ttyUSB0",
+                           baud: 921600,
+                           navigation_dt_ms: 10,
+                           stream_INS: true,
+                           stream_IMU: false,
+                           stream_GPS: false,
+                           stream_GPS_info: false,
+                           stream_baro: false,
+                           stream_mag: false,
+                           stream_preint_IMU: false
+                         }
+</rosparam>
 
-<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen"/>
+<node pkg="inertial_sense" name="IMU" type="inertial_sense_node" output="screen">
+  <remap from="ins" to="pose"/>
+</node>
+
+<node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsdIp) $(arg gpsdPort)"/>
+<node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+
 
 
   
 
+<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen"/>
 
-
+<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)"/>
 
-<!--<node pkg="gnss_zed-f9p" name="gnss_zed_f9p" type="gnss_zed-f9p" output="screen" args="$(arg loggerPath1) $(arg portPath1)"/>-->
 
 
 </launch>

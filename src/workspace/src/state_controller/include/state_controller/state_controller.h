@@ -5,6 +5,7 @@
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/Imu.h"
 #include "geometry_msgs/PointStamped.h"
+#include "nav_msgs/Odometry.h"
 #include "state_controller_msg/State.h"
 #include "std_msgs/String.h"
 #include "raspberrypi_vitals_msg/sysinfo.h"
@@ -39,7 +40,7 @@ class StateController{
 
 
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss);
-		void imuCallback(const sensor_msgs::Imu& imu);
+		void imuCallback(const nav_msgs::Odometry& odom);
 		void sonarCallback(const geometry_msgs::PointStamped& sonar);
 		void vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vital);
 		void stateUpdated();

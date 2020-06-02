@@ -425,7 +425,7 @@ curentweight= (23-currentZoom)*6+23;
     }
       
   var mutexrx = 0;    
-  var socket = new WebSocket("ws://192.168.1.16:9002");
+  var socket = new WebSocket("ws://" + window.location.hostname +":9002");
     if (mutexrx==0){	
     	socket.onmessage = function (event) {
         	console.log(event.data);

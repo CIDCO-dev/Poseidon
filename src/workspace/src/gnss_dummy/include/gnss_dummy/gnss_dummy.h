@@ -15,17 +15,14 @@ class GNSS{
 		ros::NodeHandle node;
 		ros::Publisher gnssTopic;
 
-		uint32_t sequenceNumber;
+		uint32_t sequenceNumber = 0;
 
 		double longitude;
 		double latitude;
-		
+
 	public:
-		GNSS(void){
-			gnssTopic = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
-		}
-		
-		
+		GNSS();
+
 		void talk();
 		double ellipsoidalHeight(int sequenceNumber);
                	void message(int sequenceNumber,double longitude,double latitude);

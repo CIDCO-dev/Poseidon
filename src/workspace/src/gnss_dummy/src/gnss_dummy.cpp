@@ -1,5 +1,10 @@
 #include "gnss_dummy/gnss_dummy.h"
 
+GNSS::GNSS():sequenceNumber(0){
+	gnssTopic = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
+}
+
+
 double GNSS::ellipsoidalHeight(int sequenceNumber){
 	return sin(sequenceNumber*42+100)*10;
 
@@ -22,7 +27,7 @@ void GNSS::message(int sequenceNumber,double longitude,double latitude){
 void GNSS::talk(){
 	double earthRadius = 6371000;
 	double vesselSpeed = 2.0; // m/s, 2 m/s is about 4 knots
-	sequenceNumber=++sequenceNumber;
+	sequenceNumber++;
 
 	longitude += 0.0000001 * (rand() % 10 - 5);
 	latitude  += 0.0000001 * (rand() % 10 - 5);

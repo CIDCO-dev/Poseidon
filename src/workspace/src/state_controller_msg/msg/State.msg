@@ -1,4 +1,4 @@
 sensor_msgs/NavSatFix position
-sensor_msgs/Imu attitude
+nav_msgs/Odometry odom
 geometry_msgs/PointStamped depth
 raspberrypi_vitals_msg/sysinfo vitals

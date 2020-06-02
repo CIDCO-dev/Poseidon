@@ -9,8 +9,8 @@
 			}
 		}
 
-		void StateController::imuCallback(const sensor_msgs::Imu& imu){
-                    memcpy(&state.attitude,&imu,sizeof(imu));
+		void StateController::imuCallback(const nav_msgs::Odometry& odom){
+                    memcpy(&state.odom,&odom,sizeof(odom));
                     StateController::stateUpdated();
 		}
 

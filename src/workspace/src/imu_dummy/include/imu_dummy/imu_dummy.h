@@ -4,7 +4,7 @@
 
 
 #include "ros/ros.h"
-#include "sensor_msgs/Imu.h"
+#include "nav_msgs/Odometry.h"
 
 class IMU{
 	private:
@@ -15,12 +15,12 @@ class IMU{
 		
 	public:
 		IMU(){
-			imuTopic = node.advertise<sensor_msgs::Imu>("pose", 1000);
+			imuTopic = node.advertise<nav_msgs::Odometry>("pose", 1000);
 		}
 		
 		
 		void run();
-		void convertToQuaternion(double yaw, double pitch, double roll,sensor_msgs::Imu& pose);
+		void convertToQuaternion(double yaw, double pitch, double roll,nav_msgs::Odometry& pose);
 };
 
 #endif

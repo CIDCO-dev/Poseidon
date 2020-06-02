@@ -36,6 +36,10 @@ EOF2'
 
 sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.target.wants/
 
+sudo bash -c 'cat << EOF3 > /etc/cron.d/uart
+@reboot stty -F /dev/ttyAMA0 ispeed 38400
+EOF3'
+
 echo "[+] Install PPS"
 
 sudo apt-get install pps-tools -y | tee -a log.txt

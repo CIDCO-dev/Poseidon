@@ -10,7 +10,6 @@ add_definitions(-std=c++11 -Wall -g)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  catarob_msg
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -104,7 +103,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES raspberrypi_vitals
-  CATKIN_DEPENDS roscpp catarob_msg
+  CATKIN_DEPENDS roscpp
   DEPENDS system_lib
 )
 

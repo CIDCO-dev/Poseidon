@@ -153,3 +153,10 @@ dtoverlay=pi3-miniuart-bt
 dtoverlay=pps-gpio,gpiopin=4
 EOF2'
 
+echo "[+] Downloading Rtklib"
+cd ~/ 
+git clone https://github.com/CIDCO-dev/RTKLIB.git | tee -a log.txt
+cd RTKLIB/app
+sudo chmod +x makeall.sh
+./makeall.sh | tee -a log.txt
+

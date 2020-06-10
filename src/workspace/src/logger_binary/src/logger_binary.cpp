@@ -26,17 +26,17 @@ void gnssCallback(const sensor_msgs::NavSatFix& gnss)
   writer->writeBinGnss(pos);
 }
 
-void imuCallback(const sensor_msgs::Imu& imuMsgs)
+void imuCallback(const nav_msgs::Odometry& odom)
 {
-  Imu imu;
+	Imu imu;
 
-  imu.timeStamp = buildTimeStamp(imuMsgs.header.stamp.sec, imuMsgs.header.stamp.nsec);
-  imu.w = imuMsgs.orientation.w;
-  imu.x = imuMsgs.orientation.x;
-  imu.y = imuMsgs.orientation.y;
-  imu.z = imuMsgs.orientation.z;
+	imu.timeStamp = buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec);
+	imu.x = odom.pose.pose.orientation.x;
+	imu.y = odom.pose.pose.orientation.y;
+	imu.z = odom.pose.pose.orientation.z;
+	imu.w = odom.pose.pose.orientation.w;
 
-  writer->writeBinImu(imu);
+	writer->writeImu(imu);
 }
 
 void sonarCallback(const geometry_msgs::PointStamped& sonarMsgs)

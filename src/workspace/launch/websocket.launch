@@ -3,7 +3,7 @@
 <arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
 
 
-
+<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)"/>
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)"/>
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen"/>

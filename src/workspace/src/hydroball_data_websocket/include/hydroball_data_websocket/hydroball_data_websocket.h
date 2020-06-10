@@ -54,22 +54,8 @@ public:
 	str = data_recived;
         str.erase (0,2);
 	str.erase (6,(str.length()));
-
-      if (str == "delete") {//supression de fichier log
-		str = data_recived;
-        	str.erase (0,11);
-		str.erase ((str.length()-2),(str.length()));
-		str1 = logFolder;
-		str1.erase ((str1.length()-1));
-		str = str1 + str;
-		if( remove(str.c_str()) != 0 ){
-    			ROS_INFO( "Error deleting file" );}
-  		else{
-    			ROS_INFO( "File successfully deleted" );}
-		//ROS_INFO(str.c_str());
-		}
-	}
-
+}
+  
     void on_open(connection_hdl hdl) {
         std::lock_guard<std::mutex> lock(mtx);
         connections.insert(hdl);
@@ -129,30 +115,11 @@ public:
             }
             else{//state.position.longitude
                 
-              ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "],";
+              ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "]";
             }
            
  	    
 
-	    //list files and send it over websocket
-	    ss << "\"fileslist\":[" ;
-
-	    glob_t glob_result;	
-	    glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
-	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-	    	str = glob_result.gl_pathv[i];
-		if (i > 0) {ss << "," ;} 
-		ss << "[";
-		str.erase (0,(logFolder.length()-1));
-		ss << "\"" << str << "\"" ; //file name
-		str = glob_result.gl_pathv[i];
-	    	str.erase (0,(logFolder.length()-8));
-	    	ss << "," ; 	
-            	ss << "\"" << str << "\"" ;
-		ss << "]";
-        	}
-     
-            ss << "]";  
 
 	
 

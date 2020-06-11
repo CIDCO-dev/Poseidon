@@ -72,15 +72,21 @@ function selectall() {
 }
 
 
+//******************************
+//Fonction pour appeler la liste de fichier
+//******************************
+time=setInterval(function(){
+socket.send("{\"f-list\":[fileslist]}");
+	setTimeout(fileslist, 1000);	
 
-
+},1000);
 
 //******************************
 //Ouverture du websocket
 //******************************
       
   var mutexrx = 0;    
-  var socket = new WebSocket("ws://192.168.1.1:9002");
+  var socket = new WebSocket("ws://" + window.location.hostname +":9003");
     if (mutexrx==0){	
     	socket.onmessage = function (event) {
         	console.log(event.data);
@@ -89,7 +95,8 @@ function selectall() {
 	        processState(state);
 		mutexrx = 0;
 	}
-    }         
+    }  
+     
 </script>
 </head>
 
@@ -127,11 +134,6 @@ function selectall() {
         <a class="nav-link" href="data.html">
           <i class="fas fa-fw fa-database"></i>
           <span>Download Data</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="goal.html">
-          <i class="fas fa-fw fa-bullseye"></i>
-          <span>Goal Planner</span></a>
       </li>
 
  <li class="nav-item inactive">

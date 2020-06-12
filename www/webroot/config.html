@@ -9,64 +9,93 @@
   <meta name="description" content="Hydroball Control Panel">
   <meta name="author" content="CIDCO">
 
-  <title>Hydroball - Dashboard</title>
+  <title>Hydroball - Data</title>
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
 
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-  <script>
+<script>
+var i;
+var newcfglist;
+var dataln;
+var configlist = Array();
+var configvaluelist = Array();
+var olddataln = 0;
+
+
     function processState(state){
       
-	// Update dashboard top marquees  
-        if(!state.position.length || !state.attitude.length || !state.depth.length){
-            $("#systemStatus").removeClass("bg-success").addClass("bg-danger");
-            $("#systemStatusText").text("Check sensors");
-        }
-        else{
-            $("#systemStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#systemStatusText").text("OK");
-        }
-        
-        if(state.position.length){
-            $("#gnssStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#gnssStatusText").text(state.position[0] + "," + state.position[1]);
-        }
-        else{
-            $("#gnssStatus").removeClass("bg-success").addClass("bg-danger");
-            $("#gnssStatusText").text("No Position Data");
-        }
-        
-        if(state.attitude.length){
-            $("#imuStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#imuStatusText").text();
-        }
-        else{
-            $("#imuStatus").removeClass("bg-success").addClass("bg-danger");
-            $("#imuStatusText").text("No IMU Data");
-        }
-        
-        if(state.depth.length){
-            $("#sonarStatus").removeClass("bg-danger").addClass("bg-success");
-            $("#sonarStatusText").text();
-        }
-        else{
-            $("#sonarStatus").removeClass("bg-success").addClass("bg-danger");
-            $("#sonarStatusText").text("No Sonar Data");
-        }
+
+//******************************
+//population de la base de donée
+//******************************
+dataln = state.configlist.length;
+configlist= state.configlist;
+//******************************
+//création de la structure de donnée pour l'affichage
+//******************************
+if (dataln !== olddataln) {
+	olddataln = dataln;
+	var table = document.getElementById('tableContents');
+	var tabledata = " ";
+	for (i = 0; i < dataln; i++) {
+		if (tabledata.length<2) {tabledata = '<tr><td>'+configlist [i][0]+'</td><td><input type="text" size="50" id="'+configlist [i][0]+'" name="'+configlist [i][0]+'" value="'+configlist [i][1]+'"></td></tr>';}
+		else {tabledata = tabledata + '<tr><td>'+configlist [i][0]+'</td><td><input type="text" size="50" id="'+configlist [i][0]+'" name="'+configlist [i][0]+'" value="'+configlist [i][1]+'"></td></tr>';}
+		}
+
+	table.innerHTML = tabledata;
+	}
+}
+//******************************
+//Fonction pour aenvoyer la nouvelle config
+//******************************
+function sendnewcfg() {
+	newcfglist = "{\"newcfg\": [";
+	for (i = 0; i < dataln; i++) {
+		var x = document.getElementById(configlist [i][0]).value;
+
+		if (i > 0) newcfglist = newcfglist + ",";  
+		newcfglist = newcfglist + "[\"";
+		newcfglist = newcfglist + configlist [i][0];
+		newcfglist = newcfglist +"\",\"";
+		newcfglist = newcfglist + x;
+		newcfglist = newcfglist +"\"]";
+		}
+	newcfglist = newcfglist + "]}";
+        socket.send(newcfglist);  
+}
 
 
-        //TODO: update rest
-    }
+
+
+//******************************
+//Fonction pour appeler la config
+//******************************
+time=setInterval(function(list){
+socket.send("{\"config\":[\"config\"]}");
+	setTimeout(list, 5000);	
+
+},5000);
+
+//******************************
+//Ouverture du websocket
+//******************************
       
-    var socket = new WebSocket("ws://" + window.location.hostname +":9002");
-
-    socket.onmessage = function (event) {
-        processState(event.data);
-    }        
-
-Ã‚Â  </script>
+  var mutexrx = 0;    
+  var socket = new WebSocket("ws://" + window.location.hostname +":9004");
+    if (mutexrx==0){	
+    	socket.onmessage = function (event) {
+        	console.log(event.data);
+		mutexrx = 1;
+	        var state = JSON.parse(event.data);
+	        processState(state);
+		mutexrx = 0;
+	}
+    }  
+     
+</script>
 </head>
 
 <body id="page-top">
@@ -103,11 +132,6 @@
         <a class="nav-link" href="data.html">
           <i class="fas fa-fw fa-database"></i>
           <span>Download Data</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="goal.html">
-          <i class="fas fa-fw fa-bullseye"></i>
-          <span>Goal Planner</span></a>
       </li>
 
  <li class="nav-item active">
@@ -152,119 +176,72 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+            <h1 class="h3 mb-0 text-gray-800">Config</h1>
           </div>
 
 
           <!-- Status Row -->
           <div class="row">
-		<div class="col-xl-3 col-md-6 mb-4">
-                  <div id="systemStatus" class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                      System Status
-                      <div id="systemStatusText" class="text-white-50 small">Waiting for data...</div>
-                    </div>
-                  </div>
-                </div>
 
-                 <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="gnssStatus" class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                      GNSS
-                      <div id="gnssStatusText" class="text-white-50 small">Waiting for data...</div>
-                    </div>
-                  </div>
-                </div>
+<!-- Modal for file delete -->
+<div class="modal fade" id="sendcfg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Send New Config</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h1>Send New Config</h1>
+	<div class="data-file"></div>	
+      <p>Are you sure you want to send the new config?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" onclick="sendnewcfg()" data-dismiss="modal">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-                 <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="imuStatus" class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                      IMU
-                      <div id="imuStatusText" class="text-white-50 small">Waiting for data...</div>
-                    </div>
-                  </div>
-                </div>
 
-                 <div class="col-xl-3 col-md-6 mb-4">
-                  <div id="sonarStatus" class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                      Sonar
-                      <div id="sonarStatusText" class="text-white-50 small">Waiting for data...</div>
-                    </div>
-                  </div>
-                </div>
           </div>
 
 	  <!-- Gauges row -->
-          <div class="row">
-
-            <!-- Content Column -->
-            <div class="col-lg-6 mb-4">
-
-              <!-- Project Card Example -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Enclosure</h6>
-                </div>
-                <div class="card-body">
-
-                  <h4 class="small font-weight-bold">Battery Level <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-                  <h4 class="small font-weight-bold">Internal Moisture <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-                  <h4 class="small font-weight-bold">Internal Temperature <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-
-                </div>
-              </div>
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">System Config</h6>
             </div>
-            
-            <!-- Content Column -->
-            <div class="col-lg-6 mb-4">
-
-              <!-- Project Card Example -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">System</h6>
-                </div>
-                <div class="card-body">
-
-                  <h4 class="small font-weight-bold">CPU Load <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-                  <h4 class="small font-weight-bold">CPU Temperature <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-                  <h4 class="small font-weight-bold">Memory Usage <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-                  <h4 class="small font-weight-bold">Disk Space <span class="float-right">40%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-
-                </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th width="100px">Config</th>
+		      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th width="100px">Config</th>
+		      <th>Value</th>
+                    </tr>
+                  </tfoot>
+		  <tbody id='tableContents'>
+                  </tbody>
+                </table>
               </div>
+	      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendcfg">Send New Config</button>
 
-            </div>            
-            
+            </div>
+
           </div>
 
+        </div>
+        <!-- /.container-fluid -->
 
 
 
@@ -274,17 +251,7 @@
       </div>
       <!-- End of Main Content -->
 
-      <!-- Footer -->
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; CIDCO</span>
-          </div>
-        </div>
-      </footer>
-      <!-- End of Footer -->
-
-    </div>
+       </div>
     <!-- End of Content Wrapper -->
 
   </div>
@@ -295,24 +262,7 @@
     <i class="fas fa-angle-up"></i>
   </a>
 
-  <!-- Logout Modal-->
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">Ãƒâ€”</span>
-          </button>
-        </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
-        </div>
-      </div>
-    </div>
-  </div>
+ 
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>

@@ -75,11 +75,11 @@ function selectall() {
 //******************************
 //Fonction pour appeler la liste de fichier
 //******************************
-time=setInterval(function(){
+time=setInterval(function(list){
 socket.send("{\"f-list\":[fileslist]}");
-	setTimeout(fileslist, 1000);	
+	setTimeout(list, 500);	
 
-},1000);
+},500);
 
 //******************************
 //Ouverture du websocket

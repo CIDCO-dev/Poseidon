@@ -25,7 +25,7 @@ var configvaluelist = Array();
 var olddataln = 0;
 
 
-    function processState(state){
+function processState(state){
       
 
 //******************************
@@ -65,6 +65,7 @@ function sendnewcfg() {
 		}
 	newcfglist = newcfglist + "]}";
         socket.send(newcfglist);  
+	location.reload();
 }
 
 
@@ -75,9 +76,9 @@ function sendnewcfg() {
 //******************************
 time=setInterval(function(list){
 socket.send("{\"config\":[\"config\"]}");
-	setTimeout(list, 5000);	
+	setTimeout(list, 500);	
 
-},5000);
+},500);
 
 //******************************
 //Ouverture du websocket

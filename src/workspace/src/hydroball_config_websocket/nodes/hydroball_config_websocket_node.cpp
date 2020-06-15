@@ -9,7 +9,7 @@ int main(int argc,char ** argv){
 		ROS_INFO("Missing output log path\n");
     		return 1;
 	}
-    logPath = logPath + "*";
+    //logPath = logPath + "*";
     
     //ROS_INFO("Using log path at %s",logPath.c_str());
     ControlConfig server(logPath);

@@ -5,13 +5,15 @@
 #include <mutex>
 #include <set>
 #include <thread>
-#include <glob.h>
+#include <map>
 #include <iostream>
+#include <fstream>
 #include <istream>
 #include <vector>
 #include <string.h>
 #include <boost/lexical_cast.hpp>
 #include <mutex>
+#include <string>
 
 #include "ros/ros.h"
 
@@ -51,54 +53,93 @@ public:
         str.erase (0,2);
 	str.erase (6,(str.length()));
 
-      if (str == "delete") {//supression de fichier log
-		str = data_recived;
-        	str.erase (0,11);
-		str.erase ((str.length()-2),(str.length()));
-		str1 = logFolder;
-		str1.erase ((str1.length()-1));
-		str = str1 + str;
-		if( remove(str.c_str()) != 0 ){
-    			ROS_INFO( "Error deleting file" );}
-  		else{
-    			ROS_INFO( "File successfully deleted" );}
-		//ROS_INFO(str.c_str());
-		
+  
+
+	if (str == "newcfg") {//modification de la configuration
+	    //ROS_WARN("New Config Reviced");
+	    //ROS_WARN(data_recived.c_str());	
+	    //structure des donnée recu pour générer une string pour fichier txt
+            str = data_recived;
+	    str.erase (0,10);
+	    std::ofstream mycfg ;
+	    mycfg.open(logFolder.c_str()); 
+	    while (str.find('[')){
+		val1start = str.find('"');
+		str.replace(val1start, 1, "+");
+		val1stop  = str.find('"');
+		str.replace(val1stop, 1,  "+");
+		val2start = str.find('"');
+		str.replace(val2start, 1,  "+");
+		val2stop  = str.find('"');
+		str.replace(val2stop, 1,  "+");
+		stra = str;
+		strb = str;
+		stra.erase (val1stop,(stra.length()));
+		strb.erase (val2stop,(strb.length()));
+		stra.erase (0,val1start+1);
+		strb.erase (0,val2start+1);
+		str.erase (0,val2stop);
+		//ROS_WARN(str.c_str());
+		//ROS_WARN(stra.c_str());
+		//ROS_WARN(strb.c_str());
+		strout = stra + "=" + strb;
+		//ROS_WARN(strout.c_str());
+		mycfg << strout;
+		mycfg << "\n";
+		if (str.length() < 10) {break;} 
+		}
+	    mycfg.close();
+
+
+	    //écriture du fichier txt
 	}
+
 	
-	if (str == "config") {//création de la liste de fichier
-		 //Build JSON object to send to web interface
+	if (str == "config") {//création de la liste de configuration
+	    //ouverture du fichier config.txt
+	    std::ifstream mycfg ;
+	    mycfg.open(logFolder.c_str()); 
+	    std::string line;
+
+	    //décodage du fichier config.txt
+	    if (mycfg.is_open()){
+	
+		mapline=0;
+		while (std::getline(mycfg, line)){
+		    mapline++;
+		    stra = line;
+		    strb = line;
+		    stra.erase ((line.find('=')),(line.length()));
+		    strb.erase (0 ,(line.find('=')+1));
+		    name_map[mapline] = stra;
+		    config_map[mapline] = strb;
+    		    }
+	    	mycfg.close();
+	    }
+    
+	    //préparation de la string de transmission
             std::stringstream ss;
             ss << "{";
 
-	    //list files and send it over websocket
+	    //list config and send it over websocket
 	    ss << "\"configlist\":[" ;
-
-	    glob_t glob_result;	
-	    glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
-	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-	    	str = glob_result.gl_pathv[i];
-		if (i > 0) {ss << "," ;} 
+	    for(int i=1; i<mapline+1; ++i){
+	    	str =  name_map[i];
+		if (i > 1) {ss << "," ;} 
 		ss << "[";
-		str.erase (0,(logFolder.length()-1));
 		ss << "\"" << str << "\"" ; //file name
-		str = glob_result.gl_pathv[i];
-	    	str.erase (0,(logFolder.length()-8));
+		str = config_map[i];
 	    	ss << "," ; 	
             	ss << "\"" << str << "\"" ;
 		ss << "]";
         	}
-     
             ss << "]";  
-
-	
-
             ss << "}";
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
                  srv.send(it,ss.str(),websocketpp::frame::opcode::text);
             }
-		ROS_INFO(str.c_str());
+		//ROS_INFO(str.c_str());
 		}
 	}
 
@@ -140,8 +181,19 @@ private:
     std::string data_recived;
     double val_lat;
     double val_long;
-  
+    std::map<int, std::string> name_map;
+    std::map<int, std::string> config_map;
+    std::map<int, std::string> new_name_map;
+    std::map<int, std::string> new_config_map;
 
+    int mapline;
+    std::string stra;
+    std::string strb;
+    std::string strout;
+    std::size_t val1start;
+    std::size_t val1stop;
+    std::size_t val2start;
+    std::size_t val2stop;
 };
 
 

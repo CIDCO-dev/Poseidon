@@ -9,6 +9,7 @@ cd WiringPi/
 echo "[+] Configuring UART"
 sudo bash -c 'echo "dtoverlay=pi3-miniuart-bt" >> /boot/firmware/config.txt' | tee -a log.txt
 sudo systemctl mask serial-getty@ttyAMA0.service | tee -a log.txt
+usrmod -G dialout ubuntu
 
 echo "[+] Install GPSD"
 sudo apt-get install gpsd gpsd-clients libgps-dev -y | tee -a log.txt
@@ -36,7 +37,8 @@ EOF3'
 
 echo "[+] Install PPS"
 
-sudo apt-get install pps-tools -y | tee -a log.txt
+sudo anet.ifnames=0 dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
+pt-get install pps-tools -y | tee -a log.txt
 sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
 sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
 
@@ -60,6 +62,7 @@ max_framebuffers=2
 
 pi2
 kernel=uboot_rpi_2.bin
+net.ifnames=0 dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
 
 pi3
 kernel=uboot_rpi_3.bin

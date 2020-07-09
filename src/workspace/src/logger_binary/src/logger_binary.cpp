@@ -2,15 +2,9 @@
 Writer *writer;
 
 uint64_t buildTimeStamp(int sec, int nsec){
-  std::ostringstream os;
-  os << sec;
-  os << nsec;
-  std::string ntime = os.str();
-
   uint64_t timestamp;
-  std::istringstream iss(ntime.c_str());
-  iss >> timestamp;
-
+  timestamp = sec;
+  timestamp = (timestamp * 1000000000)+nsec;
   return timestamp;
 }
 

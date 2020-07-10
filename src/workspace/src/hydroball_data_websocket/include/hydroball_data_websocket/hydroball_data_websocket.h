@@ -115,7 +115,13 @@ public:
             }
             else{//state.position.longitude
                 
-              ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "]";
+              ss << "\"vitals\":[" << std::setprecision(5);
+  	      if (isnan(state.vitals.cputemp))	{
+		ss << nan("") ;
+		}else{
+		ss << state.vitals.cputemp;
+		}
+	      ss << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "]";
             }
            
  	    

@@ -1,1 +1,1 @@
-#include "catarob_control/catarob_control.h"
+#include "catarob_control_ethernet/catarob_control_ethernet.h"

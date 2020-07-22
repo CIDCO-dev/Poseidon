@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(catarob_control_ethernet)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
- add_compile_options(-std=c++11 -lwiringPi -lrt)
-add_definitions(-std=c++11 -Wall -g -lwiringPi -lrt)
+ add_compile_options(-std=c++11 -lrt)
+add_definitions(-std=c++11 -Wall -g -lrt)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
+##FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -103,7 +103,6 @@ FIND_LIBRARY(WIRINGPI_LIBRARY wiringPi /home/ubuntu/WiringPi/wiringPi)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include /home/ubuntu/WiringPi/wiringPi
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp catarob_msg 
   DEPENDS system_lib
@@ -148,10 +147,10 @@ include_directories(
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES} ${PROJECT_NAME} -lwiringPi -lrt
+   ${catkin_LIBRARIES} ${PROJECT_NAME} -lrt
  )
  target_link_libraries(${PROJECT_NAME}
-   ${catkin_LIBRARIES} -lwiringPi -lrt
+   ${catkin_LIBRARIES} -lrt
  )
 
 #############

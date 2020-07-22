@@ -179,7 +179,7 @@ public:
 
         void stateChanged(const state_controller_msg::State & state) {
         
-        uint64_t timestamp = (state.attitude.header.stamp.sec * 1000000) + (state.attitude.header.stamp.nsec/1000);
+        uint64_t timestamp = (state.odom.header.stamp.sec * 1000000) + (state.odom.header.stamp.nsec/1000);
         std::string str;
         if(
                 //TODO: maybe add our own header?

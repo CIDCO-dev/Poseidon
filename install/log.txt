@@ -1,26 +1,286 @@
 Hit:1 http://ca.archive.ubuntu.com/ubuntu bionic InRelease
-Hit:2 http://ca.archive.ubuntu.com/ubuntu bionic-updates InRelease
-Hit:3 http://ca.archive.ubuntu.com/ubuntu bionic-backports InRelease
-Hit:4 http://ca.archive.ubuntu.com/ubuntu bionic-security InRelease
+Get:2 http://ca.archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:3 http://ca.archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Get:4 http://ca.archive.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Fetched 252 kB in 2s (103 kB/s)
 Reading package lists...
 Building dependency tree...
 Reading state information...
-All packages are up to date.
-Reading package lists...
-Building dependency tree...
-Reading state information...
-Calculating upgrade...
-The following package was automatically installed and is no longer required:
-  libdumbnet1
-Use 'sudo apt autoremove' to remove it.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+52 packages can be upgraded. Run 'apt list --upgradable' to see them.
 Reading package lists...
 Building dependency tree...
 Reading state information...
 Calculating upgrade...
-The following package was automatically installed and is no longer required:
-  libdumbnet1
-Use 'sudo apt autoremove' to remove it.
+The following NEW packages will be installed:
+  libnetplan0
+The following packages will be upgraded:
+  apport bsdutils cloud-init distro-info-data dmeventd dmidecode dmsetup fdisk
+  kmod landscape-common libblkid1 libdevmapper-event1.02.1 libdevmapper1.02.1
+  libdrm-common libdrm2 libfdisk1 libgnutls30 libkmod2 libldap-2.4-2
+  libldap-common liblvm2app2.2 liblvm2cmd2.02 libmount1 libnss-systemd
+  libpam-systemd libsmartcols1 libsystemd0 libudev1 libuuid1 libxau6 lvm2
+  lxcfs mount netplan.io nplan open-iscsi open-vm-tools python-apt-common
+  python3-apport python3-apt python3-problem-report
+  python3-software-properties python3-update-manager
+  software-properties-common sosreport systemd systemd-sysv udev
+  unattended-upgrades update-manager-core util-linux uuid-runtime
+52 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 11.6 MB of archives.
+After this operation, 490 kB of additional disk space will be used.
+Get:1 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 bsdutils amd64 1:2.31.1-0.4ubuntu3.6 [60.3 kB]
+Get:2 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libuuid1 amd64 2.31.1-0.4ubuntu3.6 [20.1 kB]
+Get:3 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libblkid1 amd64 2.31.1-0.4ubuntu3.6 [124 kB]
+Get:4 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libfdisk1 amd64 2.31.1-0.4ubuntu3.6 [164 kB]
+Get:5 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libmount1 amd64 2.31.1-0.4ubuntu3.6 [136 kB]
+Get:6 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsmartcols1 amd64 2.31.1-0.4ubuntu3.6 [83.7 kB]
+Get:7 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 fdisk amd64 2.31.1-0.4ubuntu3.6 [108 kB]
+Get:8 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 util-linux amd64 2.31.1-0.4ubuntu3.6 [903 kB]
+Get:9 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libnss-systemd amd64 237-3ubuntu10.41 [105 kB]
+Get:10 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsystemd0 amd64 237-3ubuntu10.41 [207 kB]
+Get:11 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpam-systemd amd64 237-3ubuntu10.41 [107 kB]
+Get:12 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 systemd amd64 237-3ubuntu10.41 [2914 kB]
+Get:13 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 udev amd64 237-3ubuntu10.41 [1101 kB]
+Get:14 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libudev1 amd64 237-3ubuntu10.41 [56.8 kB]
+Get:15 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 kmod amd64 24-1ubuntu3.4 [88.7 kB]
+Get:16 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libkmod2 amd64 24-1ubuntu3.4 [40.1 kB]
+Get:17 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 systemd-sysv amd64 237-3ubuntu10.41 [14.7 kB]
+Get:18 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 mount amd64 2.31.1-0.4ubuntu3.6 [107 kB]
+Get:19 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 uuid-runtime amd64 2.31.1-0.4ubuntu3.6 [34.8 kB]
+Get:20 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 open-iscsi amd64 2.0.874-5ubuntu2.10 [280 kB]
+Get:21 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgnutls30 amd64 3.5.18-1ubuntu1.4 [645 kB]
+Get:22 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 distro-info-data all 0.37ubuntu0.7 [4676 B]
+Get:23 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdevmapper1.02.1 amd64 2:1.02.145-4.1ubuntu3.18.04.3 [127 kB]
+Get:24 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 dmsetup amd64 2:1.02.145-4.1ubuntu3.18.04.3 [74.4 kB]
+Get:25 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libnetplan0 amd64 0.99-0ubuntu3~18.04.3 [22.6 kB]
+Get:26 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 netplan.io amd64 0.99-0ubuntu3~18.04.3 [70.7 kB]
+Get:27 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 nplan all 0.99-0ubuntu3~18.04.3 [1800 B]
+Get:28 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 dmidecode amd64 3.1-1ubuntu0.1 [50.9 kB]
+Get:29 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-common all 2.4.101-2~18.04.1 [5560 B]
+Get:30 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm2 amd64 2.4.101-2~18.04.1 [32.3 kB]
+Get:31 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxau6 amd64 1:1.0.8-1ubuntu1 [7556 B]
+Get:32 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-apt-common all 1.6.5ubuntu0.3 [16.8 kB]
+Get:33 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-apt amd64 1.6.5ubuntu0.3 [149 kB]
+Get:34 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-update-manager all 1:18.04.11.13 [35.0 kB]
+Get:35 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 update-manager-core all 1:18.04.11.13 [8500 B]
+Get:36 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-problem-report all 2.20.9-0ubuntu7.15 [10.6 kB]
+Get:37 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-apport all 2.20.9-0ubuntu7.15 [82.2 kB]
+Get:38 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 apport all 2.20.9-0ubuntu7.15 [124 kB]
+Get:39 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdevmapper-event1.02.1 amd64 2:1.02.145-4.1ubuntu3.18.04.3 [10.9 kB]
+Get:40 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 liblvm2cmd2.02 amd64 2.02.176-4.1ubuntu3.18.04.3 [584 kB]
+Get:41 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 dmeventd amd64 2:1.02.145-4.1ubuntu3.18.04.3 [30.4 kB]
+Get:42 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 landscape-common amd64 18.01-0ubuntu3.5 [85.5 kB]
+Get:43 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libldap-common all 2.4.45+dfsg-1ubuntu1.6 [17.0 kB]
+Get:44 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libldap-2.4-2 amd64 2.4.45+dfsg-1ubuntu1.6 [155 kB]
+Get:45 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 liblvm2app2.2 amd64 2.02.176-4.1ubuntu3.18.04.3 [432 kB]
+Get:46 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 lvm2 amd64 2.02.176-4.1ubuntu3.18.04.3 [929 kB]
+Get:47 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 lxcfs amd64 3.0.3-0ubuntu1~18.04.2 [39.0 kB]
+Get:48 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 software-properties-common all 0.96.24.32.13 [10.0 kB]
+Get:49 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-software-properties all 0.96.24.32.13 [23.8 kB]
+Get:50 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 sosreport amd64 3.9.1-1ubuntu0.18.04.2 [168 kB]
+Get:51 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 unattended-upgrades all 1.1ubuntu1.18.04.14 [41.7 kB]
+Get:52 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 cloud-init all 20.2-45-g5f7825e2-0ubuntu1~18.04.1 [422 kB]
+Get:53 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 open-vm-tools amd64 2:11.0.5-4ubuntu0.18.04.1 [543 kB]
+Preconfiguring packages ...
+Fetched 11.6 MB in 8s (1532 kB/s)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../bsdutils_1%3a2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking bsdutils (1:2.31.1-0.4ubuntu3.6) over (1:2.31.1-0.4ubuntu3.5) ...
+Setting up bsdutils (1:2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../libuuid1_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking libuuid1:amd64 (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Setting up libuuid1:amd64 (2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../libblkid1_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking libblkid1:amd64 (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Setting up libblkid1:amd64 (2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../libfdisk1_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking libfdisk1:amd64 (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Setting up libfdisk1:amd64 (2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../libmount1_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking libmount1:amd64 (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Setting up libmount1:amd64 (2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../libsmartcols1_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking libsmartcols1:amd64 (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Setting up libsmartcols1:amd64 (2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../fdisk_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking fdisk (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Setting up fdisk (2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../util-linux_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking util-linux (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Setting up util-linux (2.31.1-0.4ubuntu3.6) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../libnss-systemd_237-3ubuntu10.41_amd64.deb ...
+Unpacking libnss-systemd:amd64 (237-3ubuntu10.41) over (237-3ubuntu10.38) ...
+Preparing to unpack .../libsystemd0_237-3ubuntu10.41_amd64.deb ...
+Unpacking libsystemd0:amd64 (237-3ubuntu10.41) over (237-3ubuntu10.38) ...
+Setting up libsystemd0:amd64 (237-3ubuntu10.41) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../libpam-systemd_237-3ubuntu10.41_amd64.deb ...
+Unpacking libpam-systemd:amd64 (237-3ubuntu10.41) over (237-3ubuntu10.38) ...
+Preparing to unpack .../systemd_237-3ubuntu10.41_amd64.deb ...
+Unpacking systemd (237-3ubuntu10.41) over (237-3ubuntu10.38) ...
+Preparing to unpack .../udev_237-3ubuntu10.41_amd64.deb ...
+Unpacking udev (237-3ubuntu10.41) over (237-3ubuntu10.38) ...
+Preparing to unpack .../libudev1_237-3ubuntu10.41_amd64.deb ...
+Unpacking libudev1:amd64 (237-3ubuntu10.41) over (237-3ubuntu10.38) ...
+Setting up libudev1:amd64 (237-3ubuntu10.41) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../kmod_24-1ubuntu3.4_amd64.deb ...
+Unpacking kmod (24-1ubuntu3.4) over (24-1ubuntu3.2) ...
+Preparing to unpack .../libkmod2_24-1ubuntu3.4_amd64.deb ...
+Unpacking libkmod2:amd64 (24-1ubuntu3.4) over (24-1ubuntu3.2) ...
+Setting up libkmod2:amd64 (24-1ubuntu3.4) ...
+Setting up systemd (237-3ubuntu10.41) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67017 files and directories currently installed.)
+Preparing to unpack .../systemd-sysv_237-3ubuntu10.41_amd64.deb ...
+Unpacking systemd-sysv (237-3ubuntu10.41) over (237-3ubuntu10.38) ...
+Preparing to unpack .../mount_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking mount (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Preparing to unpack .../uuid-runtime_2.31.1-0.4ubuntu3.6_amd64.deb ...
+Unpacking uuid-runtime (2.31.1-0.4ubuntu3.6) over (2.31.1-0.4ubuntu3.5) ...
+Preparing to unpack .../open-iscsi_2.0.874-5ubuntu2.10_amd64.deb ...
+Unpacking open-iscsi (2.0.874-5ubuntu2.10) over (2.0.874-5ubuntu2.7) ...
+Preparing to unpack .../libgnutls30_3.5.18-1ubuntu1.4_amd64.deb ...
+Unpacking libgnutls30:amd64 (3.5.18-1ubuntu1.4) over (3.5.18-1ubuntu1.3) ...
+Setting up libgnutls30:amd64 (3.5.18-1ubuntu1.4) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67019 files and directories currently installed.)
+Preparing to unpack .../00-distro-info-data_0.37ubuntu0.7_all.deb ...
+Unpacking distro-info-data (0.37ubuntu0.7) over (0.37ubuntu0.6) ...
+Preparing to unpack .../01-libdevmapper1.02.1_2%3a1.02.145-4.1ubuntu3.18.04.3_amd64.deb ...
+Unpacking libdevmapper1.02.1:amd64 (2:1.02.145-4.1ubuntu3.18.04.3) over (2:1.02.145-4.1ubuntu3.18.04.2) ...
+Preparing to unpack .../02-dmsetup_2%3a1.02.145-4.1ubuntu3.18.04.3_amd64.deb ...
+Unpacking dmsetup (2:1.02.145-4.1ubuntu3.18.04.3) over (2:1.02.145-4.1ubuntu3.18.04.2) ...
+Selecting previously unselected package libnetplan0:amd64.
+Preparing to unpack .../03-libnetplan0_0.99-0ubuntu3~18.04.3_amd64.deb ...
+Unpacking libnetplan0:amd64 (0.99-0ubuntu3~18.04.3) ...
+Preparing to unpack .../04-netplan.io_0.99-0ubuntu3~18.04.3_amd64.deb ...
+Unpacking netplan.io (0.99-0ubuntu3~18.04.3) over (0.98-0ubuntu1~18.04.1) ...
+Preparing to unpack .../05-nplan_0.99-0ubuntu3~18.04.3_all.deb ...
+Unpacking nplan (0.99-0ubuntu3~18.04.3) over (0.98-0ubuntu1~18.04.1) ...
+Preparing to unpack .../06-dmidecode_3.1-1ubuntu0.1_amd64.deb ...
+Unpacking dmidecode (3.1-1ubuntu0.1) over (3.1-1) ...
+Preparing to unpack .../07-libdrm-common_2.4.101-2~18.04.1_all.deb ...
+Unpacking libdrm-common (2.4.101-2~18.04.1) over (2.4.99-1ubuntu1~18.04.2) ...
+Preparing to unpack .../08-libdrm2_2.4.101-2~18.04.1_amd64.deb ...
+Unpacking libdrm2:amd64 (2.4.101-2~18.04.1) over (2.4.99-1ubuntu1~18.04.2) ...
+Preparing to unpack .../09-libxau6_1%3a1.0.8-1ubuntu1_amd64.deb ...
+Unpacking libxau6:amd64 (1:1.0.8-1ubuntu1) over (1:1.0.8-1) ...
+Preparing to unpack .../10-python-apt-common_1.6.5ubuntu0.3_all.deb ...
+Unpacking python-apt-common (1.6.5ubuntu0.3) over (1.6.5ubuntu0.2) ...
+Preparing to unpack .../11-python3-apt_1.6.5ubuntu0.3_amd64.deb ...
+Unpacking python3-apt (1.6.5ubuntu0.3) over (1.6.5ubuntu0.2) ...
+Preparing to unpack .../12-python3-update-manager_1%3a18.04.11.13_all.deb ...
+Unpacking python3-update-manager (1:18.04.11.13) over (1:18.04.11.10) ...
+Preparing to unpack .../13-update-manager-core_1%3a18.04.11.13_all.deb ...
+Unpacking update-manager-core (1:18.04.11.13) over (1:18.04.11.10) ...
+Preparing to unpack .../14-python3-problem-report_2.20.9-0ubuntu7.15_all.deb ...
+Unpacking python3-problem-report (2.20.9-0ubuntu7.15) over (2.20.9-0ubuntu7.14) ...
+Preparing to unpack .../15-python3-apport_2.20.9-0ubuntu7.15_all.deb ...
+Unpacking python3-apport (2.20.9-0ubuntu7.15) over (2.20.9-0ubuntu7.14) ...
+Preparing to unpack .../16-apport_2.20.9-0ubuntu7.15_all.deb ...
+Unpacking apport (2.20.9-0ubuntu7.15) over (2.20.9-0ubuntu7.14) ...
+Preparing to unpack .../17-libdevmapper-event1.02.1_2%3a1.02.145-4.1ubuntu3.18.04.3_amd64.deb ...
+Unpacking libdevmapper-event1.02.1:amd64 (2:1.02.145-4.1ubuntu3.18.04.3) over (2:1.02.145-4.1ubuntu3.18.04.2) ...
+Preparing to unpack .../18-liblvm2cmd2.02_2.02.176-4.1ubuntu3.18.04.3_amd64.deb ...
+Unpacking liblvm2cmd2.02:amd64 (2.02.176-4.1ubuntu3.18.04.3) over (2.02.176-4.1ubuntu3.18.04.2) ...
+Preparing to unpack .../19-dmeventd_2%3a1.02.145-4.1ubuntu3.18.04.3_amd64.deb ...
+Unpacking dmeventd (2:1.02.145-4.1ubuntu3.18.04.3) over (2:1.02.145-4.1ubuntu3.18.04.2) ...
+Preparing to unpack .../20-landscape-common_18.01-0ubuntu3.5_amd64.deb ...
+Unpacking landscape-common (18.01-0ubuntu3.5) over (18.01-0ubuntu3.4) ...
+Preparing to unpack .../21-libldap-common_2.4.45+dfsg-1ubuntu1.6_all.deb ...
+Unpacking libldap-common (2.4.45+dfsg-1ubuntu1.6) over (2.4.45+dfsg-1ubuntu1.5) ...
+Preparing to unpack .../22-libldap-2.4-2_2.4.45+dfsg-1ubuntu1.6_amd64.deb ...
+Unpacking libldap-2.4-2:amd64 (2.4.45+dfsg-1ubuntu1.6) over (2.4.45+dfsg-1ubuntu1.5) ...
+Preparing to unpack .../23-liblvm2app2.2_2.02.176-4.1ubuntu3.18.04.3_amd64.deb ...
+Unpacking liblvm2app2.2:amd64 (2.02.176-4.1ubuntu3.18.04.3) over (2.02.176-4.1ubuntu3.18.04.2) ...
+Preparing to unpack .../24-lvm2_2.02.176-4.1ubuntu3.18.04.3_amd64.deb ...
+Unpacking lvm2 (2.02.176-4.1ubuntu3.18.04.3) over (2.02.176-4.1ubuntu3.18.04.2) ...
+Preparing to unpack .../25-lxcfs_3.0.3-0ubuntu1~18.04.2_amd64.deb ...
+Unpacking lxcfs (3.0.3-0ubuntu1~18.04.2) over (3.0.3-0ubuntu1~18.04.1) ...
+Preparing to unpack .../26-software-properties-common_0.96.24.32.13_all.deb ...
+Unpacking software-properties-common (0.96.24.32.13) over (0.96.24.32.12) ...
+Preparing to unpack .../27-python3-software-properties_0.96.24.32.13_all.deb ...
+Unpacking python3-software-properties (0.96.24.32.13) over (0.96.24.32.12) ...
+Preparing to unpack .../28-sosreport_3.9.1-1ubuntu0.18.04.2_amd64.deb ...
+Unpacking sosreport (3.9.1-1ubuntu0.18.04.2) over (3.6-1ubuntu0.18.04.4) ...
+Preparing to unpack .../29-unattended-upgrades_1.1ubuntu1.18.04.14_all.deb ...
+Unpacking unattended-upgrades (1.1ubuntu1.18.04.14) over (1.1ubuntu1.18.04.13) ...
+Preparing to unpack .../30-cloud-init_20.2-45-g5f7825e2-0ubuntu1~18.04.1_all.deb ...
+Unpacking cloud-init (20.2-45-g5f7825e2-0ubuntu1~18.04.1) over (19.4-33-gbb4131a2-0ubuntu1~18.04.1) ...
+Preparing to unpack .../31-open-vm-tools_2%3a11.0.5-4ubuntu0.18.04.1_amd64.deb ...
+Unpacking open-vm-tools (2:11.0.5-4ubuntu0.18.04.1) over (2:11.0.1-2ubuntu0.18.04.2) ...
+Setting up python-apt-common (1.6.5ubuntu0.3) ...
+Setting up libnss-systemd:amd64 (237-3ubuntu10.41) ...
+Setting up kmod (24-1ubuntu3.4) ...
+Installing new version of config file /etc/modprobe.d/blacklist-framebuffer.conf ...
+Setting up python3-apt (1.6.5ubuntu0.3) ...
+Setting up landscape-common (18.01-0ubuntu3.5) ...
+Setting up dmidecode (3.1-1ubuntu0.1) ...
+Setting up libldap-common (2.4.45+dfsg-1ubuntu1.6) ...
+Setting up systemd-sysv (237-3ubuntu10.41) ...
+Setting up python3-update-manager (1:18.04.11.13) ...
+Setting up mount (2.31.1-0.4ubuntu3.6) ...
+Setting up distro-info-data (0.37ubuntu0.7) ...
+Setting up libdevmapper1.02.1:amd64 (2:1.02.145-4.1ubuntu3.18.04.3) ...
+Setting up uuid-runtime (2.31.1-0.4ubuntu3.6) ...
+Setting up libdrm-common (2.4.101-2~18.04.1) ...
+Setting up libdevmapper-event1.02.1:amd64 (2:1.02.145-4.1ubuntu3.18.04.3) ...
+Setting up python3-problem-report (2.20.9-0ubuntu7.15) ...
+Setting up udev (237-3ubuntu10.41) ...
+update-initramfs: deferring update (trigger activated)
+Setting up libldap-2.4-2:amd64 (2.4.45+dfsg-1ubuntu1.6) ...
+Setting up sosreport (3.9.1-1ubuntu0.18.04.2) ...
+Installing new version of config file /etc/sos.conf ...
+Setting up unattended-upgrades (1.1ubuntu1.18.04.14) ...
+Replacing config file /etc/apt/apt.conf.d/50unattended-upgrades with new version
+Setting up lxcfs (3.0.3-0ubuntu1~18.04.2) ...
+Setting up dmsetup (2:1.02.145-4.1ubuntu3.18.04.3) ...
+update-initramfs: deferring update (trigger activated)
+Setting up liblvm2app2.2:amd64 (2.02.176-4.1ubuntu3.18.04.3) ...
+Setting up python3-software-properties (0.96.24.32.13) ...
+Setting up libnetplan0:amd64 (0.99-0ubuntu3~18.04.3) ...
+Setting up libxau6:amd64 (1:1.0.8-1ubuntu1) ...
+Setting up software-properties-common (0.96.24.32.13) ...
+Setting up update-manager-core (1:18.04.11.13) ...
+Setting up libpam-systemd:amd64 (237-3ubuntu10.41) ...
+Setting up netplan.io (0.99-0ubuntu3~18.04.3) ...
+Setting up python3-apport (2.20.9-0ubuntu7.15) ...
+Setting up open-iscsi (2.0.874-5ubuntu2.10) ...
+Installing new version of config file /etc/iscsi/iscsid.conf ...
+Setting up libdrm2:amd64 (2.4.101-2~18.04.1) ...
+Setting up nplan (0.99-0ubuntu3~18.04.3) ...
+Setting up apport (2.20.9-0ubuntu7.15) ...
+apport-autoreport.service is a disabled or a static unit, not starting it.
+Setting up cloud-init (20.2-45-g5f7825e2-0ubuntu1~18.04.1) ...
+Installing new version of config file /etc/cloud/templates/chef_client.rb.tmpl ...
+Installing new version of config file /etc/cloud/templates/hosts.suse.tmpl ...
+Installing new version of config file /etc/cloud/templates/resolv.conf.tmpl ...
+Setting up open-vm-tools (2:11.0.5-4ubuntu0.18.04.1) ...
+Installing new version of config file /etc/vmware-tools/tools.conf.example ...
+Setting up liblvm2cmd2.02:amd64 (2.02.176-4.1ubuntu3.18.04.3) ...
+Setting up dmeventd (2:1.02.145-4.1ubuntu3.18.04.3) ...
+dm-event.service is a disabled or a static unit not running, not starting it.
+Setting up lvm2 (2.02.176-4.1ubuntu3.18.04.3) ...
+update-initramfs: deferring update (trigger activated)
+Processing triggers for initramfs-tools (0.130ubuntu3.9) ...
+update-initramfs: Generating /boot/initrd.img-4.15.0-112-generic
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
+Processing triggers for systemd (237-3ubuntu10.41) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for dbus (1.12.2-1ubuntu1.2) ...
+Processing triggers for rsyslog (8.32.0-1ubuntu4) ...
+Processing triggers for mime-support (3.60ubuntu1) ...
+Processing triggers for ureadahead (0.100.0-21) ...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
 Reading package lists...
 Building dependency tree...
@@ -29,9 +289,6 @@ curl is already the newest version (7.58.0-2ubuntu3.9).
 curl set to manually installed.
 git is already the newest version (1:2.17.1-1ubuntu0.7).
 git set to manually installed.
-The following package was automatically installed and is no longer required:
-  libdumbnet1
-Use 'sudo apt autoremove' to remove it.
 The following additional packages will be installed:
   binutils binutils-common binutils-x86-64-linux-gnu build-essential cpp cpp-7
   dh-python dpkg-dev fakeroot g++ g++-7 gcc-7 gcc-7-base
@@ -70,9 +327,9 @@ Get:1 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 binutils-com
 Get:2 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libbinutils amd64 2.30-21ubuntu1~18.04.3 [488 kB]
 Get:3 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 binutils-x86-64-linux-gnu amd64 2.30-21ubuntu1~18.04.3 [1839 kB]
 Get:4 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 binutils amd64 2.30-21ubuntu1~18.04.3 [3388 B]
-Get:5 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libc-dev-bin amd64 2.27-3ubuntu1 [71.8 kB]
-Get:6 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 linux-libc-dev amd64 4.15.0-108.109 [991 kB]
-Get:7 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libc6-dev amd64 2.27-3ubuntu1 [2587 kB]
+Get:5 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libc-dev-bin amd64 2.27-3ubuntu1.2 [71.8 kB]
+Get:6 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 linux-libc-dev amd64 4.15.0-112.113 [982 kB]
+Get:7 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libc6-dev amd64 2.27-3ubuntu1.2 [2585 kB]
 Get:8 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gcc-7-base amd64 7.5.0-3ubuntu1~18.04 [18.3 kB]
 Get:9 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libisl19 amd64 0.19-1 [551 kB]
 Get:10 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libmpc3 amd64 1.1.0-1 [40.8 kB]
@@ -123,9 +380,9 @@ Get:54 http://ca.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 python3
 Get:55 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python3-setuptools all 39.0.1-2 [248 kB]
 Get:56 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python3-wheel all 0.30.0-0.2 [36.5 kB]
 Get:57 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python3-xdg all 0.25-4ubuntu1 [31.4 kB]
-Fetched 91.2 MB in 9s (10.6 MB/s)
+Fetched 91.2 MB in 1min 8s (1344 kB/s)
 Selecting previously unselected package binutils-common:amd64.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67041 files and directories currently installed.)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 67087 files and directories currently installed.)
 Preparing to unpack .../00-binutils-common_2.30-21ubuntu1~18.04.3_amd64.deb ...
 Unpacking binutils-common:amd64 (2.30-21ubuntu1~18.04.3) ...
 Selecting previously unselected package libbinutils:amd64.
@@ -138,14 +395,14 @@ Selecting previously unselected package binutils.
 Preparing to unpack .../03-binutils_2.30-21ubuntu1~18.04.3_amd64.deb ...
 Unpacking binutils (2.30-21ubuntu1~18.04.3) ...
 Selecting previously unselected package libc-dev-bin.
-Preparing to unpack .../04-libc-dev-bin_2.27-3ubuntu1_amd64.deb ...
-Unpacking libc-dev-bin (2.27-3ubuntu1) ...
+Preparing to unpack .../04-libc-dev-bin_2.27-3ubuntu1.2_amd64.deb ...
+Unpacking libc-dev-bin (2.27-3ubuntu1.2) ...
 Selecting previously unselected package linux-libc-dev:amd64.
-Preparing to unpack .../05-linux-libc-dev_4.15.0-108.109_amd64.deb ...
-Unpacking linux-libc-dev:amd64 (4.15.0-108.109) ...
+Preparing to unpack .../05-linux-libc-dev_4.15.0-112.113_amd64.deb ...
+Unpacking linux-libc-dev:amd64 (4.15.0-112.113) ...
 Selecting previously unselected package libc6-dev:amd64.
-Preparing to unpack .../06-libc6-dev_2.27-3ubuntu1_amd64.deb ...
-Unpacking libc6-dev:amd64 (2.27-3ubuntu1) ...
+Preparing to unpack .../06-libc6-dev_2.27-3ubuntu1.2_amd64.deb ...
+Unpacking libc6-dev:amd64 (2.27-3ubuntu1.2) ...
 Selecting previously unselected package gcc-7-base:amd64.
 Preparing to unpack .../07-gcc-7-base_7.5.0-3ubuntu1~18.04_amd64.deb ...
 Unpacking gcc-7-base:amd64 (7.5.0-3ubuntu1~18.04) ...
@@ -306,7 +563,7 @@ Setting up python3-crypto (2.6.1-8ubuntu2) ...
 Setting up libtsan0:amd64 (8.4.0-1ubuntu1~18.04) ...
 Setting up python3-xdg (0.25-4ubuntu1) ...
 Setting up python3-keyrings.alt (3.0-1) ...
-Setting up linux-libc-dev:amd64 (4.15.0-108.109) ...
+Setting up linux-libc-dev:amd64 (4.15.0-112.113) ...
 Setting up libdpkg-perl (1.19.0.5ubuntu2.3) ...
 Setting up python3-wheel (0.30.0-0.2) ...
 Setting up liblsan0:amd64 (8.4.0-1ubuntu1~18.04) ...
@@ -317,11 +574,11 @@ Setting up libmpx2:amd64 (8.4.0-1ubuntu1~18.04) ...
 Setting up libfakeroot:amd64 (1.22-2ubuntu1) ...
 Setting up libalgorithm-diff-perl (1.19.03-1) ...
 Setting up libmpc3:amd64 (1.1.0-1) ...
-Setting up libc-dev-bin (2.27-3ubuntu1) ...
+Setting up libc-dev-bin (2.27-3ubuntu1.2) ...
 Setting up python3-lib2to3 (3.6.9-1~18.04) ...
 Setting up python3-secretstorage (2.3.1-2) ...
 Setting up manpages-dev (4.15-1) ...
-Setting up libc6-dev:amd64 (2.27-3ubuntu1) ...
+Setting up libc6-dev:amd64 (2.27-3ubuntu1.2) ...
 Setting up python3-distutils (3.6.9-1~18.04) ...
 Setting up libitm1:amd64 (8.4.0-1ubuntu1~18.04) ...
 Setting up libisl19:amd64 (0.19-1) ...
@@ -356,34 +613,31 @@ Setting up g++ (4:7.4.0-1ubuntu2.3) ...
 update-alternatives: using /usr/bin/g++ to provide /usr/bin/c++ (c++) in auto mode
 Setting up build-essential (12.4ubuntu1) ...
 Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
-Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
 Collecting RPi.GPIO
   Downloading https://files.pythonhosted.org/packages/cb/88/d3817eb11fc77a8d9a63abeab8fe303266b1e3b85e2952238f0da43fed4e/RPi.GPIO-0.7.0.tar.gz
 Building wheels for collected packages: RPi.GPIO
   Running setup.py bdist_wheel for RPi.GPIO: started
   Running setup.py bdist_wheel for RPi.GPIO: finished with status 'done'
-  Stored in directory: /home/poseidon/.cache/pip/wheels/ec/11/7f/aa6fe56010104b49197ebbd697418affe12e05d42213f3e0ca
+  Stored in directory: /home/ubuntu/.cache/pip/wheels/ec/11/7f/aa6fe56010104b49197ebbd697418affe12e05d42213f3e0ca
 Successfully built RPi.GPIO
 Installing collected packages: RPi.GPIO
 Successfully installed RPi.GPIO-0.7.0
-Executing: /tmp/apt-key-gpghome.SX85YZgpbL/gpg.1.sh --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+Executing: /tmp/apt-key-gpghome.20KK9S6N55/gpg.1.sh --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 OK
 Hit:1 http://ca.archive.ubuntu.com/ubuntu bionic InRelease
 Hit:2 http://ca.archive.ubuntu.com/ubuntu bionic-updates InRelease
 Hit:3 http://ca.archive.ubuntu.com/ubuntu bionic-backports InRelease
-Hit:4 http://ca.archive.ubuntu.com/ubuntu bionic-security InRelease
-Get:5 http://packages.ros.org/ros/ubuntu bionic InRelease [4669 B]
-Get:6 http://packages.ros.org/ros/ubuntu bionic/main amd64 Packages [676 kB]
-Fetched 681 kB in 1s (580 kB/s)
+Get:4 http://packages.ros.org/ros/ubuntu bionic InRelease [4669 B]
+Hit:5 http://ca.archive.ubuntu.com/ubuntu bionic-security InRelease
+Get:6 http://packages.ros.org/ros/ubuntu bionic/main amd64 Packages [684 kB]
+Fetched 689 kB in 6s (119 kB/s)
 Reading package lists...
 Reading package lists...
 Building dependency tree...
 Reading state information...
 g++ is already the newest version (4:7.4.0-1ubuntu2.3).
 g++ set to manually installed.
-The following package was automatically installed and is no longer required:
-  libdumbnet1
-Use 'sudo apt autoremove' to remove it.
 The following additional packages will be installed:
   adwaita-icon-theme at-spi2-core autotools-dev binfmt-support bzip2-doc cmake
   cmake-data dconf-gsettings-backend dconf-service default-libmysqlclient-dev
@@ -440,7 +694,7 @@ The following additional packages will be installed:
   libhwloc-dev libhwloc-plugins libhwloc5 libibverbs-dev libibverbs1 libice6
   libicu-dev libicu-le-hb-dev libicu-le-hb0 libiculx60 libjbig0 libjpeg-turbo8
   libjpeg8 libjson-glib-1.0-0 libjson-glib-1.0-common libjsoncpp1 liblapack3
-  liblcms2-2 libldap2-dev libllvm9 liblog4cxx-dev liblog4cxx10v5 libltdl-dev
+  liblcms2-2 libldap2-dev libllvm10 liblog4cxx-dev liblog4cxx10v5 libltdl-dev
   libltdl7 liblz4-dev libmysqlclient-dev libmysqlclient20 libnl-route-3-200
   libnotify4 libnuma-dev libodbc1 libopenmpi-dev libopenmpi2 libpango-1.0-0
   libpangocairo-1.0-0 libpangoft2-1.0-0 libpaper-utils libpaper1 libpciaccess0
@@ -569,7 +823,7 @@ The following NEW packages will be installed:
   libhwloc-dev libhwloc-plugins libhwloc5 libibverbs-dev libibverbs1 libice6
   libicu-dev libicu-le-hb-dev libicu-le-hb0 libiculx60 libjbig0 libjpeg-turbo8
   libjpeg8 libjson-glib-1.0-0 libjson-glib-1.0-common libjsoncpp1 liblapack3
-  liblcms2-2 libldap2-dev libllvm9 liblog4cxx-dev liblog4cxx10v5 libltdl-dev
+  liblcms2-2 libldap2-dev libllvm10 liblog4cxx-dev liblog4cxx10v5 libltdl-dev
   libltdl7 liblz4-dev libmysqlclient-dev libmysqlclient20 libnl-route-3-200
   libnotify4 libnuma-dev libodbc1 libopenmpi-dev libopenmpi2 libpango-1.0-0
   libpangocairo-1.0-0 libpangoft2-1.0-0 libpaper-utils libpaper1 libpciaccess0
@@ -629,444 +883,444 @@ The following NEW packages will be installed:
   ros-melodic-xmlrpcpp sbcl sgml-base ubuntu-mono uuid-dev x11-common xml-core
   zlib1g-dev
 0 upgraded, 432 newly installed, 0 to remove and 0 not upgraded.
-Need to get 156 MB of archives.
-After this operation, 976 MB of additional disk space will be used.
-Get:1 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-catkin-pkg-modules all 0.4.22-1 [42.1 kB]
-Get:2 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 fonts-dejavu-core all 2.37-1 [1041 kB]
-Get:3 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-catkin-pkg all 0.4.22-100 [3516 B]
-Get:4 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rospkg-modules all 1.2.8-1 [23.8 kB]
-Get:5 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosdistro-modules all 0.8.2-1 [31.5 kB]
-Get:6 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosdistro all 0.8.2-100 [6244 B]
-Get:7 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rospkg all 1.2.8-100 [2066 B]
-Get:8 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosdep-modules all 0.19.0-1 [50.5 kB]
-Get:9 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-cpp-common amd64 0.6.13-1bionic.20200529.221200 [22.0 kB]
-Get:10 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-catkin amd64 0.7.26-1bionic.20200529.204155 [127 kB]
-Get:11 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-genmsg amd64 0.5.16-1bionic.20200529.214901 [35.6 kB]
-Get:12 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-genpy amd64 0.6.12-1bionic.20200529.220208 [51.0 kB]
-Get:13 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rostime amd64 0.6.13-1bionic.20200529.222355 [38.7 kB]
-Get:14 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp-traits amd64 0.6.13-1bionic.20200529.223651 [10.3 kB]
-Get:15 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp-serialization amd64 0.6.13-1bionic.20200529.224631 [13.0 kB]
-Get:16 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-message-runtime amd64 0.4.12-0bionic.20200529.225821 [4788 B]
-Get:17 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-std-msgs amd64 0.5.12-0bionic.20200529.231145 [56.2 kB]
-Get:18 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bond amd64 1.8.5-1bionic.20200529.232913 [18.2 kB]
-Get:19 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-gencpp amd64 0.6.5-1bionic.20200529.220139 [15.3 kB]
-Get:20 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-geneus amd64 2.2.6-0bionic.20200529.220145 [25.1 kB]
-Get:21 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-genlisp amd64 0.4.16-0bionic.20200529.220206 [21.8 kB]
-Get:22 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-gennodejs amd64 2.0.1-0bionic.20200529.220157 [21.8 kB]
-Get:23 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-message-generation amd64 0.4.1-1bionic.20200529.221414 [4764 B]
-Get:24 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbuild amd64 1.14.9-1bionic.20200529.231006 [27.9 kB]
-Get:25 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosconsole amd64 1.13.11-1bionic.20200529.232409 [86.8 kB]
-Get:26 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosgraph-msgs amd64 1.11.2-0bionic.20200530.012010 [25.2 kB]
-Get:27 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 fontconfig-config all 2.12.6-0ubuntu2 [55.8 kB]
-Get:28 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-xmlrpcpp amd64 1.14.6-1bionic.20200529.223643 [57.9 kB]
-Get:29 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp amd64 1.14.6-1bionic.20200530.013156 [491 kB]
-Get:30 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libfontconfig1 amd64 2.12.6-0ubuntu2 [137 kB]
-Get:31 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 fontconfig amd64 2.12.6-0ubuntu2 [169 kB]
-Get:32 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjpeg-turbo8 amd64 1.5.2-0ubuntu5.18.04.4 [110 kB]
-Get:33 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 x11-common all 1:7.7+19ubuntu7.1 [22.5 kB]
-Get:34 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libice6 amd64 2:1.0.9-2 [40.2 kB]
-Get:35 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsm6 amd64 2:1.2.2-1 [15.8 kB]
-Get:36 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxinerama1 amd64 2:1.1.3-1 [7908 B]
-Get:37 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxxf86vm1 amd64 1:1.1.4-1 [10.6 kB]
-Get:38 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7-minimal amd64 2.7.17-1~18.04ubuntu1 [335 kB]
-Get:39 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7-minimal amd64 2.7.17-1~18.04ubuntu1 [1294 kB]
-Get:40 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-minimal amd64 2.7.15~rc1-1 [28.1 kB]
-Get:41 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7-stdlib amd64 2.7.17-1~18.04ubuntu1 [1915 kB]
-Get:42 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-smclib amd64 1.8.5-1bionic.20200529.223535 [13.6 kB]
-Get:43 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bondcpp amd64 1.8.5-1bionic.20200530.014946 [57.7 kB]
-Get:44 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7 amd64 2.7.17-1~18.04ubuntu1 [248 kB]
-Get:45 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpython-stdlib amd64 2.7.15~rc1-1 [7620 B]
-Get:46 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python amd64 2.7.15~rc1-1 [140 kB]
-Get:47 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 sgml-base all 1.29 [12.3 kB]
-Get:48 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 hicolor-icon-theme all 0.17-2 [9976 B]
-Get:49 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libjpeg8 amd64 8c-2ubuntu8 [2194 B]
-Get:50 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libjbig0 amd64 2.1-3.1build1 [26.7 kB]
-Get:51 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libtiff5 amd64 4.0.9-5ubuntu0.3 [153 kB]
-Get:52 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgdk-pixbuf2.0-common all 2.36.11-2 [4536 B]
-Get:53 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgdk-pixbuf2.0-0 amd64 2.36.11-2 [165 kB]
-Get:54 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gtk-update-icon-cache amd64 3.22.30-1ubuntu4 [28.3 kB]
-Get:55 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpixman-1-0 amd64 0.34.0-2 [229 kB]
-Get:56 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-render0 amd64 1.13-2~ubuntu18.04 [14.7 kB]
-Get:57 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-shm0 amd64 1.13-2~ubuntu18.04 [5600 B]
-Get:58 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxrender1 amd64 1:0.9.10-1 [18.7 kB]
-Get:59 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcairo2 amd64 1.15.10-2ubuntu0.1 [580 kB]
-Get:60 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosgraph amd64 1.14.6-1bionic.20200529.222007 [47.4 kB]
-Get:61 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libcroco3 amd64 0.6.12-2 [81.3 kB]
-Get:62 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libthai-data all 0.1.27-2 [133 kB]
-Get:63 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libdatrie1 amd64 0.2.10-7 [17.8 kB]
-Get:64 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libthai0 amd64 0.1.27-2 [18.0 kB]
-Get:65 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpango-1.0-0 amd64 1.40.14-1ubuntu0.1 [153 kB]
-Get:66 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgraphite2-3 amd64 1.3.11-2 [78.7 kB]
-Get:67 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz0b amd64 1.7.2-1ubuntu1 [232 kB]
-Get:68 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpangoft2-1.0-0 amd64 1.40.14-1ubuntu0.1 [33.2 kB]
-Get:69 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpangocairo-1.0-0 amd64 1.40.14-1ubuntu0.1 [20.8 kB]
-Get:70 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librsvg2-2 amd64 2.40.20-2 [98.6 kB]
-Get:71 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librsvg2-common amd64 2.40.20-2 [5124 B]
-Get:72 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 humanity-icon-theme all 0.6.15 [1250 kB]
-Get:73 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-environment amd64 1.2.2-1bionic.20200529.220511 [5656 B]
-Get:74 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rospack amd64 2.5.6-1bionic.20200529.221741 [98.8 kB]
-Get:75 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 ubuntu-mono all 16.10+18.04.20181005-0ubuntu1 [149 kB]
-Get:76 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 adwaita-icon-theme all 3.28.0-1ubuntu1 [3306 kB]
-Get:77 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatspi2.0-0 amd64 2.28.0-1 [59.6 kB]
-Get:78 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxtst6 amd64 2:1.2.3-1 [12.8 kB]
-Get:79 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 at-spi2-core amd64 2.28.0-1 [47.9 kB]
-Get:80 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 autotools-dev all 20180224.1 [39.6 kB]
-Get:81 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 binfmt-support amd64 2.1.8-2 [51.6 kB]
-Get:82 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 bzip2-doc all 1.0.6-8.1ubuntu0.2 [294 kB]
-Get:83 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 cmake-data all 3.10.2-1ubuntu2.18.04.1 [1332 kB]
-Get:84 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslib amd64 1.14.9-1bionic.20200529.222958 [92.1 kB]
-Get:85 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libarchive13 amd64 3.2.2-3.1ubuntu0.6 [288 kB]
-Get:86 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libjsoncpp1 amd64 1.7.4-3 [73.6 kB]
-Get:87 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librhash0 amd64 1.3.6-2 [78.1 kB]
-Get:88 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 cmake amd64 3.10.2-1ubuntu2.18.04.1 [3152 kB]
-Get:89 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rospy amd64 1.14.6-1bionic.20200530.015841 [134 kB]
-Get:90 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libdconf1 amd64 0.26.0-2ubuntu3 [33.1 kB]
-Get:91 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 dconf-service amd64 0.26.0-2ubuntu3 [28.4 kB]
-Get:92 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 dconf-gsettings-backend amd64 0.26.0-2ubuntu3 [20.0 kB]
-Get:93 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 mysql-common all 5.8+1.0.4 [7308 B]
-Get:94 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libmysqlclient20 amd64 5.7.30-0ubuntu0.18.04.1 [690 kB]
-Get:95 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libssl-dev amd64 1.1.1-1ubuntu2.1~18.04.6 [1566 kB]
-Get:96 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 zlib1g-dev amd64 1:1.2.11.dfsg-0ubuntu2 [176 kB]
-Get:97 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libmysqlclient-dev amd64 5.7.30-0ubuntu0.18.04.1 [989 kB]
-Get:98 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 default-libmysqlclient-dev amd64 1.0.4 [3736 B]
-Get:99 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 xml-core all 0.18 [21.3 kB]
-Get:100 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 docutils-common all 0.14+dfsg-3 [156 kB]
-Get:101 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 docutils-doc all 0.14+dfsg-3 [913 kB]
-Get:102 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 gir1.2-harfbuzz-0.0 amd64 1.7.2-1ubuntu1 [18.6 kB]
-Get:103 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libproxy1v5 amd64 0.4.15-1 [49.5 kB]
-Get:104 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 glib-networking-common all 2.56.0-1ubuntu0.1 [3476 B]
-Get:105 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 glib-networking-services amd64 2.56.0-1ubuntu0.1 [8632 B]
-Get:106 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 gsettings-desktop-schemas all 3.28.0-1ubuntu1 [27.8 kB]
-Get:107 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 glib-networking amd64 2.56.0-1ubuntu0.1 [56.7 kB]
-Get:108 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 googletest amd64 1.8.0-6 [652 kB]
-Get:109 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 google-mock amd64 1.8.0-6 [2972 B]
-Get:110 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libnl-route-3-200 amd64 3.2.29-0ubuntu3 [146 kB]
-Get:111 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libibverbs1 amd64 17.1-1ubuntu0.2 [44.4 kB]
-Get:112 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 ibverbs-providers amd64 17.1-1ubuntu0.2 [160 kB]
-Get:113 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 icu-devtools amd64 60.2-3ubuntu3.1 [179 kB]
-Get:114 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libapr1 amd64 1.6.3-2 [90.9 kB]
-Get:115 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 uuid-dev amd64 2.31.1-0.4ubuntu3.6 [33.2 kB]
-Get:116 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsctp1 amd64 1.0.17+dfsg-2 [8008 B]
-Get:117 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsctp-dev amd64 1.0.17+dfsg-2 [61.9 kB]
-Get:118 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libapr1-dev amd64 1.6.3-2 [690 kB]
-Get:119 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libaprutil1 amd64 1.6.1-2 [84.4 kB]
-Get:120 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libldap2-dev amd64 2.4.45+dfsg-1ubuntu1.5 [261 kB]
-Get:121 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libaprutil1-dev amd64 1.6.1-2 [391 kB]
-Get:122 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libassuan-dev amd64 2.5.1-2 [92.1 kB]
-Get:123 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatk1.0-data all 2.28.1-1 [2992 B]
-Get:124 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatk1.0-0 amd64 2.28.1-1 [43.9 kB]
-Get:125 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatk-bridge2.0-0 amd64 2.26.2-1 [57.3 kB]
-Get:126 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-common-data amd64 0.7-3.1ubuntu1.2 [22.1 kB]
-Get:127 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-common3 amd64 0.7-3.1ubuntu1.2 [21.6 kB]
-Get:128 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-client3 amd64 0.7-3.1ubuntu1.2 [25.2 kB]
-Get:129 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libblas3 amd64 3.7.1-4ubuntu1 [140 kB]
-Get:130 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [7218 kB]
-Get:131 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bondpy amd64 1.8.5-1bionic.20200530.021055 [15.4 kB]
-Get:132 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bond-core amd64 1.8.5-1bionic.20200530.022416 [2600 B]
-Get:133 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-class-loader amd64 0.4.1-0bionic.20200529.221751 [61.4 kB]
-Get:134 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-pluginlib amd64 1.12.1-0bionic.20200529.235012 [20.7 kB]
-Get:135 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslz4 amd64 1.14.6-1bionic.20200529.225314 [16.2 kB]
-Get:136 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbag-storage amd64 1.14.6-1bionic.20200530.024308 [177 kB]
-Get:137 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-dev amd64 1.65.1.0ubuntu1 [3128 B]
-Get:138 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost1.65-tools-dev amd64 1.65.1+dfsg-0ubuntu5 [1222 kB]
-Get:139 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-tools-dev amd64 1.65.1.0ubuntu1 [3096 B]
-Get:140 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-atomic1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [7268 B]
-Get:141 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-atomic1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [5160 B]
-Get:142 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-atomic-dev amd64 1.65.1.0ubuntu1 [3224 B]
-Get:143 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-system1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [10.5 kB]
-Get:144 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-chrono1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [10.2 kB]
-Get:145 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-chrono1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [9804 B]
-Get:146 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-chrono-dev amd64 1.65.1.0ubuntu1 [3544 B]
-Get:147 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-container1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [43.4 kB]
-Get:148 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-container1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [41.7 kB]
-Get:149 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-container-dev amd64 1.65.1.0ubuntu1 [3400 B]
-Get:150 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-context1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [8336 B]
-Get:151 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-context1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [6364 B]
-Get:152 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-context-dev amd64 1.65.1.0ubuntu1 [3120 B]
-Get:153 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-thread1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [43.2 kB]
-Get:154 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-coroutine1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [22.6 kB]
-Get:155 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-coroutine1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [24.2 kB]
-Get:156 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-coroutine-dev amd64 1.65.1.0ubuntu1 [3196 B]
-Get:157 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-date-time1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [20.5 kB]
-Get:158 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-serialization1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [99.3 kB]
-Get:159 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-serialization1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [137 kB]
-Get:160 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-date-time1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [26.7 kB]
-Get:161 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-date-time-dev amd64 1.65.1.0ubuntu1 [2924 B]
-Get:162 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-exception1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [4580 B]
-Get:163 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-exception-dev amd64 1.65.1.0ubuntu1 [2916 B]
-Get:164 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-filesystem1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [40.3 kB]
-Get:165 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-fiber1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [108 kB]
-Get:166 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-fiber1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [121 kB]
-Get:167 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-fiber-dev amd64 1.65.1.0ubuntu1 [3348 B]
-Get:168 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-system1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [11.8 kB]
-Get:169 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-filesystem1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [52.1 kB]
-Get:170 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-std-srvs amd64 1.11.2-0bionic.20200529.231244 [18.4 kB]
-Get:171 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-filesystem-dev amd64 1.65.1.0ubuntu1 [2960 B]
-Get:172 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-regex1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [259 kB]
-Get:173 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [93.4 kB]
-Get:174 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-test1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [240 kB]
-Get:175 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-test1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [289 kB]
-Get:176 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [102 kB]
-Get:177 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-topic-tools amd64 1.14.6-1bionic.20200530.024331 [140 kB]
-Get:178 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-dev amd64 1.65.1.0ubuntu1 [3024 B]
-Get:179 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpsm-infinipath1 amd64 3.3+20.604758e7-5 [174 kB]
-Get:180 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 librdmacm1 amd64 17.1-1ubuntu0.2 [56.1 kB]
-Get:181 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libfabric1 amd64 1.5.3-1 [302 kB]
-Get:182 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libltdl7 amd64 2.4.6-2 [38.8 kB]
-Get:183 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libhwloc5 amd64 1.11.9-1 [105 kB]
-Get:184 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpciaccess0 amd64 0.14-1 [17.9 kB]
-Get:185 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 ocl-icd-libopencl1 amd64 2.2.11-1ubuntu1 [30.3 kB]
-Get:186 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libhwloc-plugins amd64 1.11.9-1 [12.5 kB]
-Get:187 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libopenmpi2 amd64 2.1.1-8 [2056 kB]
-Get:188 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [47.0 kB]
-Get:189 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-parallel1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [62.3 kB]
-Get:190 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-parallel1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [64.5 kB]
-Get:191 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-parallel-dev amd64 1.65.1.0ubuntu1 [3056 B]
-Get:192 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libicu-le-hb0 amd64 1.0.3+git161113-4 [14.3 kB]
-Get:193 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libiculx60 amd64 60.2-3ubuntu3.1 [19.0 kB]
-Get:194 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz-icu0 amd64 1.7.2-1ubuntu1 [5604 B]
-Get:195 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz-gobject0 amd64 1.7.2-1ubuntu1 [13.4 kB]
-Get:196 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-bin amd64 2.56.4-0ubuntu0.18.04.6 [68.8 kB]
-Get:197 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-dev-bin amd64 2.56.4-0ubuntu0.18.04.6 [102 kB]
-Get:198 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcre16-3 amd64 2:8.39-9 [147 kB]
-Get:199 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcre32-3 amd64 2:8.39-9 [138 kB]
-Get:200 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcrecpp0v5 amd64 2:8.39-9 [15.3 kB]
-Get:201 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcre3-dev amd64 2:8.39-9 [537 kB]
-Get:202 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 pkg-config amd64 0.29.1-0ubuntu2 [45.0 kB]
-Get:203 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-dev amd64 2.56.4-0ubuntu0.18.04.6 [1385 kB]
-Get:204 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgraphite2-dev amd64 1.3.11-2 [14.5 kB]
-Get:205 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz-dev amd64 1.7.2-1ubuntu1 [302 kB]
-Get:206 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libicu-le-hb-dev amd64 1.0.3+git161113-4 [29.5 kB]
-Get:207 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libicu-dev amd64 60.2-3ubuntu3.1 [8889 kB]
-Get:208 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbag amd64 1.14.6-1bionic.20200530.030003 [340 kB]
-Get:209 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-regex1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [312 kB]
-Get:210 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-iostreams1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [29.2 kB]
-Get:211 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-iostreams1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [37.0 kB]
-Get:212 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-iostreams-dev amd64 1.65.1.0ubuntu1 [2916 B]
-Get:213 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-locale1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [241 kB]
-Get:214 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-locale1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [329 kB]
-Get:215 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-locale-dev amd64 1.65.1.0ubuntu1 [3248 B]
-Get:216 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-log1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [384 kB]
-Get:217 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-thread1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [49.0 kB]
-Get:218 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-log1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [553 kB]
-Get:219 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-log-dev amd64 1.65.1.0ubuntu1 [3124 B]
-Get:220 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-math1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [311 kB]
-Get:221 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-math1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [560 kB]
-Get:222 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-math-dev amd64 1.65.1.0ubuntu1 [3112 B]
-Get:223 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 openmpi-common all 2.1.1-8 [140 kB]
-Get:224 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libibverbs-dev amd64 17.1-1ubuntu0.2 [103 kB]
-Get:225 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libnuma-dev amd64 2.0.11-2.1ubuntu0.1 [32.3 kB]
-Get:226 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libltdl-dev amd64 2.4.6-2 [162 kB]
-Get:227 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libhwloc-dev amd64 1.11.9-1 [167 kB]
-Get:228 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libopenmpi-dev amd64 2.1.1-8 [925 kB]
-Get:229 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 mpi-default-dev amd64 1.10 [3888 B]
-Get:230 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [137 kB]
-Get:231 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-dev amd64 1.65.1.0ubuntu1 [3004 B]
-Get:232 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-python1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [101 kB]
-Get:233 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 openmpi-bin amd64 2.1.1-8 [88.2 kB]
-Get:234 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 mpi-default-bin amd64 1.10 [3108 B]
-Get:235 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-python1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [214 kB]
-Get:236 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-python1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [24.7 kB]
-Get:237 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-python-dev amd64 1.65.1.0ubuntu1 [3040 B]
-Get:238 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-numpy1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [17.4 kB]
-Get:239 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-numpy1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [17.4 kB]
-Get:240 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-numpy-dev amd64 1.65.1.0ubuntu1 [2960 B]
-Get:241 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-program-options1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [137 kB]
-Get:242 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-program-options1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [163 kB]
-Get:243 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-program-options-dev amd64 1.65.1.0ubuntu1 [2940 B]
-Get:244 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7 amd64 2.7.17-1~18.04ubuntu1 [1053 kB]
-Get:245 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7-dev amd64 2.7.17-1~18.04ubuntu1 [28.3 MB]
-Get:246 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpython-dev amd64 2.7.15~rc1-1 [7684 B]
-Get:247 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7-dev amd64 2.7.17-1~18.04ubuntu1 [279 kB]
-Get:248 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-dev amd64 2.7.15~rc1-1 [1256 B]
-Get:249 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-python1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [103 kB]
-Get:250 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-python-dev amd64 1.65.1.0ubuntu1 [3216 B]
-Get:251 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-random1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [12.8 kB]
-Get:252 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-random1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [12.4 kB]
-Get:253 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-random-dev amd64 1.65.1.0ubuntu1 [2924 B]
-Get:254 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-regex-dev amd64 1.65.1.0ubuntu1 [3184 B]
-Get:255 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-serialization-dev amd64 1.65.1.0ubuntu1 [3144 B]
-Get:256 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-signals1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [30.6 kB]
-Get:257 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-signals1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [33.1 kB]
-Get:258 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-signals-dev amd64 1.65.1.0ubuntu1 [2996 B]
-Get:259 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-stacktrace1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [49.1 kB]
-Get:260 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-stacktrace1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [25.9 kB]
-Get:261 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-stacktrace-dev amd64 1.65.1.0ubuntu1 [2924 B]
-Get:262 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-system-dev amd64 1.65.1.0ubuntu1 [3060 B]
-Get:263 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-test-dev amd64 1.65.1.0ubuntu1 [2960 B]
-Get:264 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-thread-dev amd64 1.65.1.0ubuntu1 [2948 B]
-Get:265 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-timer1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [11.9 kB]
-Get:266 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-timer1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [11.8 kB]
-Get:267 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-timer-dev amd64 1.65.1.0ubuntu1 [3044 B]
-Get:268 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-type-erasure1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [20.7 kB]
-Get:269 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-type-erasure1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [20.1 kB]
-Get:270 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-type-erasure-dev amd64 1.65.1.0ubuntu1 [3024 B]
-Get:271 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-wave1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [178 kB]
-Get:272 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-wave1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [234 kB]
-Get:273 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-wave-dev amd64 1.65.1.0ubuntu1 [2952 B]
-Get:274 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-all-dev amd64 1.65.1.0ubuntu1 [2340 B]
-Get:275 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libbz2-dev amd64 1.0.6-8.1ubuntu0.2 [30.0 kB]
-Get:276 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcairo-gobject2 amd64 1.15.10-2ubuntu0.1 [17.1 kB]
-Get:277 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 liblcms2-2 amd64 2.9-1ubuntu0.1 [139 kB]
-Get:278 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libcolord2 amd64 1.3.3-2build1 [107 kB]
-Get:279 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libconsole-bridge0.4 amd64 0.4.0+dfsg-2 [8168 B]
-Get:280 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcups2 amd64 2.2.7-1ubuntu2.8 [211 kB]
-Get:281 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-amdgpu1 amd64 2.4.101-2~18.04.1 [18.2 kB]
-Get:282 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-intel1 amd64 2.4.101-2~18.04.1 [60.0 kB]
-Get:283 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-nouveau2 amd64 2.4.101-2~18.04.1 [16.5 kB]
-Get:284 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-radeon1 amd64 2.4.101-2~18.04.1 [21.7 kB]
-Get:285 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libepoxy0 amd64 1.4.3-1 [181 kB]
-Get:286 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgdk-pixbuf2.0-bin amd64 2.36.11-2 [7864 B]
-Get:287 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgfortran4 amd64 7.5.0-3ubuntu1~18.04 [492 kB]
-Get:288 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglapi-mesa amd64 19.2.8-0ubuntu0~18.04.3 [26.5 kB]
-Get:289 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libllvm9 amd64 1:9-2~ubuntu18.04.2 [14.8 MB]
-Get:290 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosmsg amd64 1.14.6-1bionic.20200530.031608 [22.3 kB]
-Get:291 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosservice amd64 1.14.6-1bionic.20200530.075342 [18.4 kB]
-Get:292 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-dynamic-reconfigure amd64 1.6.3-1bionic.20200530.093111 [94.4 kB]
-Get:293 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-message-filters amd64 1.14.6-1bionic.20200530.024328 [33.3 kB]
-Get:294 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsensors4 amd64 1:3.4.0-4 [28.8 kB]
-Get:295 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgl1-mesa-dri amd64 19.2.8-0ubuntu0~18.04.3 [8811 kB]
-Get:296 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-mk amd64 1.14.9-1bionic.20200529.232356 [10.2 kB]
-Get:297 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbash amd64 1.14.9-1bionic.20200529.223006 [20.3 kB]
-Get:298 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosboost-cfg amd64 1.14.9-1bionic.20200529.213712 [13.7 kB]
-Get:299 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosclean amd64 1.14.9-1bionic.20200529.213522 [11.8 kB]
-Get:300 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscreate amd64 1.14.9-1bionic.20200529.224230 [12.1 kB]
-Get:301 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslang amd64 1.14.9-1bionic.20200529.220402 [5888 B]
-Get:302 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosmake amd64 1.14.9-1bionic.20200529.213712 [32.5 kB]
-Get:303 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosunit amd64 1.14.9-1bionic.20200529.224236 [46.9 kB]
-Get:304 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros amd64 1.14.9-1bionic.20200529.234812 [1880 B]
-Get:305 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosmaster amd64 1.14.6-1bionic.20200529.223139 [40.8 kB]
-Get:306 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosout amd64 1.14.6-1bionic.20200530.015741 [33.4 kB]
-Get:307 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosparam amd64 1.14.6-1bionic.20200529.223139 [17.4 kB]
-Get:308 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslaunch amd64 1.14.6-1bionic.20200530.020940 [135 kB]
-Get:309 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libx11-xcb1 amd64 2:1.6.4-3ubuntu0.2 [9376 B]
-Get:310 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-dri2-0 amd64 1.13-2~ubuntu18.04 [6920 B]
-Get:311 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-dri3-0 amd64 1.13-2~ubuntu18.04 [6568 B]
-Get:312 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-glx0 amd64 1.13-2~ubuntu18.04 [22.1 kB]
-Get:313 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-present0 amd64 1.13-2~ubuntu18.04 [5552 B]
-Get:314 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-sync1 amd64 1.13-2~ubuntu18.04 [8808 B]
-Get:315 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxdamage1 amd64 1:1.1.4-3 [6934 B]
-Get:316 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxfixes3 amd64 1:5.0.3-1 [10.8 kB]
-Get:317 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxshmfence1 amd64 1.3-1 [5028 B]
-Get:318 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglx-mesa0 amd64 19.2.8-0ubuntu0~18.04.3 [139 kB]
-Get:319 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgpg-error-dev amd64 1.27-6 [94.8 kB]
-Get:320 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgpgme11 amd64 1.10.0-1ubuntu2 [111 kB]
-Get:321 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libgtest-dev amd64 1.8.0-6 [2718 B]
-Get:322 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgtk-3-common all 3.22.30-1ubuntu4 [229 kB]
-Get:323 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjson-glib-1.0-common all 1.4.2-3ubuntu0.18.04.1 [3480 B]
-Get:324 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjson-glib-1.0-0 amd64 1.4.2-3ubuntu0.18.04.1 [58.4 kB]
-Get:325 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsoup2.4-1 amd64 2.62.1-1ubuntu0.4 [292 kB]
-Get:326 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsoup-gnome2.4-1 amd64 2.62.1-1ubuntu0.4 [5088 B]
-Get:327 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librest-0.7-0 amd64 0.8.0-2 [31.8 kB]
-Get:328 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libwayland-client0 amd64 1.16.0-1ubuntu1.1~18.04.3 [23.6 kB]
-Get:329 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libwayland-cursor0 amd64 1.16.0-1ubuntu1.1~18.04.3 [10.1 kB]
-Get:330 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libwayland-egl1 amd64 1.16.0-1ubuntu1.1~18.04.3 [5464 B]
-Get:331 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxcomposite1 amd64 1:0.4.4-2 [6988 B]
-Get:332 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxcursor1 amd64 1:1.1.15-1 [19.8 kB]
-Get:333 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxi6 amd64 2:1.7.9-1 [29.2 kB]
-Get:334 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxkbcommon0 amd64 0.8.2-1~ubuntu18.04.1 [97.8 kB]
-Get:335 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxrandr2 amd64 2:1.5.1-1 [18.1 kB]
-Get:336 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgtk-3-0 amd64 3.22.30-1ubuntu4 [2503 kB]
-Get:337 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslisp amd64 1.9.24-1bionic.20200530.013541 [98.0 kB]
-Get:338 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgtk-3-bin amd64 3.22.30-1ubuntu4 [57.4 kB]
-Get:339 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 liblapack3 amd64 3.7.1-4ubuntu1 [2112 kB]
-Get:340 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rostopic amd64 1.14.6-1bionic.20200530.031535 [44.8 kB]
-Get:341 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosnode amd64 1.14.6-1bionic.20200530.033051 [20.2 kB]
-Get:342 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rostest amd64 1.14.6-1bionic.20200530.022337 [29.6 kB]
-Get:343 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roswtf amd64 1.14.6-1bionic.20200530.081019 [41.0 kB]
-Get:344 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 liblog4cxx10v5 amd64 0.10.0-13ubuntu2 [400 kB]
-Get:345 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libnotify4 amd64 0.7.7-3 [17.3 kB]
-Get:346 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libodbc1 amd64 2.3.4-1.1ubuntu3 [183 kB]
-Get:347 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpaper1 amd64 1.1.24+nmu5ubuntu1 [13.6 kB]
-Get:348 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpaper-utils amd64 1.1.24+nmu5ubuntu1 [8170 B]
-Get:349 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocofoundation50 amd64 1.8.0.1-1ubuntu4 [440 kB]
-Get:350 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-comm amd64 1.14.6-1bionic.20200530.082644 [2996 B]
-Get:351 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-actionlib-msgs amd64 1.12.7-0bionic.20200530.012008 [26.4 kB]
-Get:352 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpococrypto50 amd64 1.8.0.1-1ubuntu4 [66.9 kB]
-Get:353 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodata50 amd64 1.8.0.1-1ubuntu4 [377 kB]
-Get:354 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocojson50 amd64 1.8.0.1-1ubuntu4 [94.2 kB]
-Get:355 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodatamysql50 amd64 1.8.0.1-1ubuntu4 [46.4 kB]
-Get:356 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpoconet50 amd64 1.8.0.1-1ubuntu4 [313 kB]
-Get:357 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocomongodb50 amd64 1.8.0.1-1ubuntu4 [67.2 kB]
-Get:358 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocoxml50 amd64 1.8.0.1-1ubuntu4 [128 kB]
-Get:359 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocoutil50 amd64 1.8.0.1-1ubuntu4 [120 kB]
-Get:360 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpoconetssl50 amd64 1.8.0.1-1ubuntu4 [74.7 kB]
-Get:361 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodataodbc50 amd64 1.8.0.1-1ubuntu4 [210 kB]
-Get:362 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodatasqlite50 amd64 1.8.0.1-1ubuntu4 [92.6 kB]
-Get:363 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocoredis50 amd64 1.8.0.1-1ubuntu4 [45.6 kB]
-Get:364 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocozip50 amd64 1.8.0.1-1ubuntu4 [84.6 kB]
-Get:365 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsqlite3-dev amd64 3.22.0-1ubuntu0.4 [633 kB]
-Get:366 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-actionlib amd64 1.12.0-1bionic.20200530.075505 [142 kB]
-Get:367 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpoco-dev amd64 1.8.0.1-1ubuntu4 [518 kB]
-Get:368 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libtinyxml2-6 amd64 6.0.0+dfsg-1 [27.9 kB]
-Get:369 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libtool all 2.4.6-2 [194 kB]
-Get:370 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libwebp6 amd64 0.6.1-2 [185 kB]
-Get:371 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libwebpdemux2 amd64 0.6.1-2 [9472 B]
-Get:372 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libwebpmux3 amd64 0.6.1-2 [19.6 kB]
-Get:373 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libwxbase3.0-0v5 amd64 3.0.4+dfsg-3 [954 kB]
-Get:374 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-cmake-modules amd64 0.4.2-0bionic.20200529.220559 [17.8 kB]
-Get:375 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-diagnostic-msgs amd64 1.12.7-0bionic.20200529.234037 [31.8 kB]
-Get:376 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglvnd0 amd64 1.0.0-2ubuntu2.3 [47.0 kB]
-Get:377 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-geometry-msgs amd64 1.12.7-0bionic.20200529.232546 [66.4 kB]
-Get:378 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglx0 amd64 1.0.0-2ubuntu2.3 [28.1 kB]
-Get:379 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgl1 amd64 1.0.0-2ubuntu2.3 [86.2 kB]
-Get:380 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libwxgtk3.0-gtk3-0v5 amd64 3.0.4+dfsg-3 [4154 kB]
-Get:381 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nav-msgs amd64 1.12.7-0bionic.20200530.013349 [61.5 kB]
-Get:382 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 notification-daemon amd64 3.20.0-3 [36.9 kB]
-Get:383 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-asn1crypto all 0.24.0-1 [72.7 kB]
-Get:384 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-six all 1.11.0-2 [11.3 kB]
-Get:385 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-dateutil all 2.6.1-1 [60.6 kB]
-Get:386 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-roman all 2.0.0-3 [8548 B]
-Get:387 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-docutils all 0.14+dfsg-3 [365 kB]
-Get:388 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pyparsing all 2.2.0+dfsg1-2 [52.1 kB]
-Get:389 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-cffi-backend amd64 1.11.5-1 [63.4 kB]
-Get:390 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pkg-resources all 39.0.1-2 [128 kB]
-Get:391 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-chardet all 3.0.4-1 [80.3 kB]
-Get:392 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-enum34 all 1.1.6-2 [34.8 kB]
-Get:393 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-idna all 2.6-1 [32.4 kB]
-Get:394 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-ipaddress all 1.0.17-1 [18.2 kB]
-Get:395 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-cryptography amd64 2.1.4-1ubuntu1.3 [221 kB]
-Get:396 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-defusedxml all 0.5.0-1ubuntu1 [35.1 kB]
-Get:397 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-empy all 3.3.2-1build1 [72.5 kB]
-Get:398 http://ca.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 python-gnupg all 0.4.1-1ubuntu1.18.04.1 [17.0 kB]
-Get:399 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-netifaces amd64 0.10.4-0.1build4 [16.6 kB]
-Get:400 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-nose all 1.3.7-3 [116 kB]
-Get:401 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-numpy amd64 1:1.13.3-2ubuntu1 [1938 kB]
-Get:402 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-sensor-msgs amd64 1.12.7-0bionic.20200530.031753 [132 kB]
-Get:403 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-olefile all 0.45.1-1 [33.2 kB]
-Get:404 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pyasn1 all 0.4.2-3 [46.7 kB]
-Get:405 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-paramiko all 2.0.0-1ubuntu1.2 [110 kB]
-Get:406 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-pil amd64 5.1.0-1ubuntu0.2 [329 kB]
-Get:407 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pycryptodome amd64 3.4.7-1ubuntu1 [4755 kB]
-Get:408 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pygments all 2.2.0+dfsg-1 [577 kB]
-Get:409 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-yaml amd64 3.12-1build2 [115 kB]
-Get:410 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-setuptools all 39.0.1-2 [329 kB]
-Get:411 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-wxversion all 3.0.2.0+dfsg-7 [12.4 kB]
-Get:412 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-wxgtk3.0 amd64 3.0.2.0+dfsg-7 [5072 kB]
-Get:413 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-shape-msgs amd64 1.12.7-0bionic.20200530.000546 [22.5 kB]
-Get:414 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-stereo-msgs amd64 1.12.7-0bionic.20200530.131201 [18.6 kB]
-Get:415 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbag-migration-rule amd64 1.0.0-0bionic.20200529.223450 [4624 B]
-Get:416 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-trajectory-msgs amd64 1.12.7-0bionic.20200530.000654 [27.8 kB]
-Get:417 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-wxtools all 3.0.2.0+dfsg-7 [8040 B]
-Get:418 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libconsole-bridge-dev amd64 0.4.0+dfsg-2 [6596 B]
-Get:419 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 liblog4cxx-dev amd64 0.10.0-13ubuntu2 [857 kB]
-Get:420 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-visualization-msgs amd64 1.12.7-0bionic.20200530.000922 [70.3 kB]
-Get:421 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libtinyxml2-dev amd64 6.0.0+dfsg-1 [17.6 kB]
-Get:422 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgpgme-dev amd64 1.10.0-1ubuntu2 [306 kB]
-Get:423 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 liblz4-dev amd64 0.0~r131-2ubuntu3 [61.4 kB]
-Get:424 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 sbcl amd64 2:1.4.5-1 [8580 kB]
-Get:425 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-common-msgs amd64 1.12.7-0bionic.20200530.133110 [2668 B]
-Get:426 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nodelet amd64 1.9.16-0bionic.20200530.020959 [154 kB]
-Get:427 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nodelet-topic-tools amd64 1.9.16-0bionic.20200530.103359 [15.9 kB]
-Get:428 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nodelet-core amd64 1.9.16-0bionic.20200530.104855 [2408 B]
-Get:429 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosconsole-bridge amd64 0.5.3-0bionic.20200530.001213 [12.0 kB]
-Get:430 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp-core amd64 0.6.13-1bionic.20200529.225850 [1736 B]
-Get:431 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-core amd64 1.4.1-0bionic.20200530.134357 [2176 B]
-Get:432 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-base amd64 1.4.1-0bionic.20200530.140017 [1924 B]
+Need to get 157 MB of archives.
+After this operation, 992 MB of additional disk space will be used.
+Get:1 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 fonts-dejavu-core all 2.37-1 [1041 kB]
+Get:2 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-catkin-pkg-modules all 0.4.22-1 [42.1 kB]
+Get:3 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 fontconfig-config all 2.12.6-0ubuntu2 [55.8 kB]
+Get:4 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libfontconfig1 amd64 2.12.6-0ubuntu2 [137 kB]
+Get:5 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 fontconfig amd64 2.12.6-0ubuntu2 [169 kB]
+Get:6 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjpeg-turbo8 amd64 1.5.2-0ubuntu5.18.04.4 [110 kB]
+Get:7 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-catkin-pkg all 0.4.22-100 [3516 B]
+Get:8 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rospkg-modules all 1.2.8-1 [23.8 kB]
+Get:9 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 x11-common all 1:7.7+19ubuntu7.1 [22.5 kB]
+Get:10 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosdistro-modules all 0.8.2-1 [31.5 kB]
+Get:11 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libice6 amd64 2:1.0.9-2 [40.2 kB]
+Get:12 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsm6 amd64 2:1.2.2-1 [15.8 kB]
+Get:13 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxinerama1 amd64 2:1.1.3-1 [7908 B]
+Get:14 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxxf86vm1 amd64 1:1.1.4-1 [10.6 kB]
+Get:15 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7-minimal amd64 2.7.17-1~18.04ubuntu1 [335 kB]
+Get:16 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7-minimal amd64 2.7.17-1~18.04ubuntu1 [1294 kB]
+Get:17 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosdistro all 0.8.2-100 [6244 B]
+Get:18 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rospkg all 1.2.8-100 [2066 B]
+Get:19 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosdep-modules all 0.19.0-1 [50.5 kB]
+Get:20 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-minimal amd64 2.7.15~rc1-1 [28.1 kB]
+Get:21 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-cpp-common amd64 0.6.13-1bionic.20200529.221200 [22.0 kB]
+Get:22 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-catkin amd64 0.7.26-1bionic.20200529.204155 [127 kB]
+Get:23 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7-stdlib amd64 2.7.17-1~18.04ubuntu1 [1915 kB]
+Get:24 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-genmsg amd64 0.5.16-1bionic.20200529.214901 [35.6 kB]
+Get:25 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-genpy amd64 0.6.12-1bionic.20200529.220208 [51.0 kB]
+Get:26 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7 amd64 2.7.17-1~18.04ubuntu1 [248 kB]
+Get:27 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rostime amd64 0.6.13-1bionic.20200529.222355 [38.7 kB]
+Get:28 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp-traits amd64 0.6.13-1bionic.20200529.223651 [10.3 kB]
+Get:29 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpython-stdlib amd64 2.7.15~rc1-1 [7620 B]
+Get:30 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp-serialization amd64 0.6.13-1bionic.20200529.224631 [13.0 kB]
+Get:31 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python amd64 2.7.15~rc1-1 [140 kB]
+Get:32 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-message-runtime amd64 0.4.12-0bionic.20200529.225821 [4788 B]
+Get:33 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 sgml-base all 1.29 [12.3 kB]
+Get:34 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 hicolor-icon-theme all 0.17-2 [9976 B]
+Get:35 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libjpeg8 amd64 8c-2ubuntu8 [2194 B]
+Get:36 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libjbig0 amd64 2.1-3.1build1 [26.7 kB]
+Get:37 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libtiff5 amd64 4.0.9-5ubuntu0.3 [153 kB]
+Get:38 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgdk-pixbuf2.0-common all 2.36.11-2 [4536 B]
+Get:39 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgdk-pixbuf2.0-0 amd64 2.36.11-2 [165 kB]
+Get:40 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gtk-update-icon-cache amd64 3.22.30-1ubuntu4 [28.3 kB]
+Get:41 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpixman-1-0 amd64 0.34.0-2 [229 kB]
+Get:42 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-std-msgs amd64 0.5.12-0bionic.20200529.231145 [56.2 kB]
+Get:43 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bond amd64 1.8.5-1bionic.20200529.232913 [18.2 kB]
+Get:44 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-render0 amd64 1.13-2~ubuntu18.04 [14.7 kB]
+Get:45 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-shm0 amd64 1.13-2~ubuntu18.04 [5600 B]
+Get:46 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxrender1 amd64 1:0.9.10-1 [18.7 kB]
+Get:47 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcairo2 amd64 1.15.10-2ubuntu0.1 [580 kB]
+Get:48 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-gencpp amd64 0.6.5-1bionic.20200529.220139 [15.3 kB]
+Get:49 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-geneus amd64 2.2.6-0bionic.20200529.220145 [25.1 kB]
+Get:50 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libcroco3 amd64 0.6.12-2 [81.3 kB]
+Get:51 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-genlisp amd64 0.4.16-0bionic.20200529.220206 [21.8 kB]
+Get:52 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-gennodejs amd64 2.0.1-0bionic.20200529.220157 [21.8 kB]
+Get:53 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libthai-data all 0.1.27-2 [133 kB]
+Get:54 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libdatrie1 amd64 0.2.10-7 [17.8 kB]
+Get:55 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libthai0 amd64 0.1.27-2 [18.0 kB]
+Get:56 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpango-1.0-0 amd64 1.40.14-1ubuntu0.1 [153 kB]
+Get:57 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgraphite2-3 amd64 1.3.11-2 [78.7 kB]
+Get:58 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-message-generation amd64 0.4.1-1bionic.20200529.221414 [4764 B]
+Get:59 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbuild amd64 1.14.9-1bionic.20200529.231006 [27.9 kB]
+Get:60 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosconsole amd64 1.13.11-1bionic.20200529.232409 [86.8 kB]
+Get:61 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz0b amd64 1.7.2-1ubuntu1 [232 kB]
+Get:62 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpangoft2-1.0-0 amd64 1.40.14-1ubuntu0.1 [33.2 kB]
+Get:63 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpangocairo-1.0-0 amd64 1.40.14-1ubuntu0.1 [20.8 kB]
+Get:64 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librsvg2-2 amd64 2.40.20-2 [98.6 kB]
+Get:65 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librsvg2-common amd64 2.40.20-2 [5124 B]
+Get:66 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 humanity-icon-theme all 0.6.15 [1250 kB]
+Get:67 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosgraph-msgs amd64 1.11.2-0bionic.20200530.012010 [25.2 kB]
+Get:68 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-xmlrpcpp amd64 1.14.6-1bionic.20200529.223643 [57.9 kB]
+Get:69 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp amd64 1.14.6-1bionic.20200530.013156 [491 kB]
+Get:70 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 ubuntu-mono all 16.10+18.04.20181005-0ubuntu1 [149 kB]
+Get:71 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 adwaita-icon-theme all 3.28.0-1ubuntu1 [3306 kB]
+Get:72 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-smclib amd64 1.8.5-1bionic.20200529.223535 [13.6 kB]
+Get:73 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bondcpp amd64 1.8.5-1bionic.20200530.014946 [57.7 kB]
+Get:74 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosgraph amd64 1.14.6-1bionic.20200529.222007 [47.4 kB]
+Get:75 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-environment amd64 1.2.2-1bionic.20200529.220511 [5656 B]
+Get:76 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rospack amd64 2.5.6-1bionic.20200529.221741 [98.8 kB]
+Get:77 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslib amd64 1.14.9-1bionic.20200529.222958 [92.1 kB]
+Get:78 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rospy amd64 1.14.6-1bionic.20200530.015841 [134 kB]
+Get:79 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatspi2.0-0 amd64 2.28.0-1 [59.6 kB]
+Get:80 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxtst6 amd64 2:1.2.3-1 [12.8 kB]
+Get:81 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 at-spi2-core amd64 2.28.0-1 [47.9 kB]
+Get:82 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 autotools-dev all 20180224.1 [39.6 kB]
+Get:83 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 binfmt-support amd64 2.1.8-2 [51.6 kB]
+Get:84 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 bzip2-doc all 1.0.6-8.1ubuntu0.2 [294 kB]
+Get:85 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 cmake-data all 3.10.2-1ubuntu2.18.04.1 [1332 kB]
+Get:86 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bondpy amd64 1.8.5-1bionic.20200530.021055 [15.4 kB]
+Get:87 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-bond-core amd64 1.8.5-1bionic.20200530.022416 [2600 B]
+Get:88 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-class-loader amd64 0.4.1-0bionic.20200529.221751 [61.4 kB]
+Get:89 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-pluginlib amd64 1.12.1-0bionic.20200529.235012 [20.7 kB]
+Get:90 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslz4 amd64 1.14.6-1bionic.20200529.225314 [16.2 kB]
+Get:91 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbag-storage amd64 1.14.6-1bionic.20200530.024308 [177 kB]
+Get:92 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-std-srvs amd64 1.11.2-0bionic.20200529.231244 [18.4 kB]
+Get:93 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-topic-tools amd64 1.14.6-1bionic.20200530.024331 [140 kB]
+Get:94 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libarchive13 amd64 3.2.2-3.1ubuntu0.6 [288 kB]
+Get:95 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libjsoncpp1 amd64 1.7.4-3 [73.6 kB]
+Get:96 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librhash0 amd64 1.3.6-2 [78.1 kB]
+Get:97 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 cmake amd64 3.10.2-1ubuntu2.18.04.1 [3152 kB]
+Get:98 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbag amd64 1.14.6-1bionic.20200530.030003 [340 kB]
+Get:99 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosmsg amd64 1.14.6-1bionic.20200530.031608 [22.3 kB]
+Get:100 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosservice amd64 1.14.6-1bionic.20200530.075342 [18.4 kB]
+Get:101 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-dynamic-reconfigure amd64 1.6.3-1bionic.20200530.093111 [94.4 kB]
+Get:102 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-message-filters amd64 1.14.6-1bionic.20200530.024328 [33.3 kB]
+Get:103 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-mk amd64 1.14.9-1bionic.20200529.232356 [10.2 kB]
+Get:104 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbash amd64 1.14.9-1bionic.20200529.223006 [20.3 kB]
+Get:105 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosboost-cfg amd64 1.14.9-1bionic.20200529.213712 [13.7 kB]
+Get:106 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosclean amd64 1.14.9-1bionic.20200529.213522 [11.8 kB]
+Get:107 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscreate amd64 1.14.9-1bionic.20200529.224230 [12.1 kB]
+Get:108 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslang amd64 1.14.9-1bionic.20200529.220402 [5888 B]
+Get:109 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosmake amd64 1.14.9-1bionic.20200529.213712 [32.5 kB]
+Get:110 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosunit amd64 1.14.9-1bionic.20200529.224236 [46.9 kB]
+Get:111 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros amd64 1.14.9-1bionic.20200529.234812 [1880 B]
+Get:112 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosmaster amd64 1.14.6-1bionic.20200529.223139 [40.8 kB]
+Get:113 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosout amd64 1.14.6-1bionic.20200530.015741 [33.4 kB]
+Get:114 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosparam amd64 1.14.6-1bionic.20200529.223139 [17.4 kB]
+Get:115 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslaunch amd64 1.14.6-1bionic.20200530.020940 [135 kB]
+Get:116 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roslisp amd64 1.9.24-1bionic.20200530.013541 [98.0 kB]
+Get:117 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rostopic amd64 1.14.6-1bionic.20200530.031535 [44.8 kB]
+Get:118 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosnode amd64 1.14.6-1bionic.20200530.033051 [20.2 kB]
+Get:119 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rostest amd64 1.14.6-1bionic.20200530.022337 [29.6 kB]
+Get:120 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roswtf amd64 1.14.6-1bionic.20200530.081019 [41.0 kB]
+Get:121 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-comm amd64 1.14.6-1bionic.20200530.082644 [2996 B]
+Get:122 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libdconf1 amd64 0.26.0-2ubuntu3 [33.1 kB]
+Get:123 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-actionlib-msgs amd64 1.12.7-0bionic.20200530.012008 [26.4 kB]
+Get:124 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 dconf-service amd64 0.26.0-2ubuntu3 [28.4 kB]
+Get:125 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-actionlib amd64 1.12.0-1bionic.20200530.075505 [142 kB]
+Get:126 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 dconf-gsettings-backend amd64 0.26.0-2ubuntu3 [20.0 kB]
+Get:127 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 mysql-common all 5.8+1.0.4 [7308 B]
+Get:128 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libmysqlclient20 amd64 5.7.30-0ubuntu0.18.04.1 [690 kB]
+Get:129 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-cmake-modules amd64 0.4.2-0bionic.20200529.220559 [17.8 kB]
+Get:130 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-diagnostic-msgs amd64 1.12.7-0bionic.20200529.234037 [31.8 kB]
+Get:131 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-geometry-msgs amd64 1.12.7-0bionic.20200529.232546 [66.4 kB]
+Get:132 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nav-msgs amd64 1.12.7-0bionic.20200530.013349 [61.5 kB]
+Get:133 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-sensor-msgs amd64 1.12.7-0bionic.20200530.031753 [132 kB]
+Get:134 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-shape-msgs amd64 1.12.7-0bionic.20200530.000546 [22.5 kB]
+Get:135 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-stereo-msgs amd64 1.12.7-0bionic.20200530.131201 [18.6 kB]
+Get:136 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosbag-migration-rule amd64 1.0.0-0bionic.20200529.223450 [4624 B]
+Get:137 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-trajectory-msgs amd64 1.12.7-0bionic.20200530.000654 [27.8 kB]
+Get:138 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-visualization-msgs amd64 1.12.7-0bionic.20200530.000922 [70.3 kB]
+Get:139 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-common-msgs amd64 1.12.7-0bionic.20200530.133110 [2668 B]
+Get:140 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nodelet amd64 1.9.16-0bionic.20200530.020959 [154 kB]
+Get:141 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libssl-dev amd64 1.1.1-1ubuntu2.1~18.04.6 [1566 kB]
+Get:142 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nodelet-topic-tools amd64 1.9.16-0bionic.20200530.103359 [15.9 kB]
+Get:143 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-nodelet-core amd64 1.9.16-0bionic.20200530.104855 [2408 B]
+Get:144 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-rosconsole-bridge amd64 0.5.3-0bionic.20200530.001213 [12.0 kB]
+Get:145 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-roscpp-core amd64 0.6.13-1bionic.20200529.225850 [1736 B]
+Get:146 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-core amd64 1.4.1-0bionic.20200530.134357 [2176 B]
+Get:147 http://packages.ros.org/ros/ubuntu bionic/main amd64 ros-melodic-ros-base amd64 1.4.1-0bionic.20200530.140017 [1924 B]
+Get:148 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 zlib1g-dev amd64 1:1.2.11.dfsg-0ubuntu2 [176 kB]
+Get:149 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libmysqlclient-dev amd64 5.7.30-0ubuntu0.18.04.1 [989 kB]
+Get:150 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 default-libmysqlclient-dev amd64 1.0.4 [3736 B]
+Get:151 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 xml-core all 0.18 [21.3 kB]
+Get:152 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 docutils-common all 0.14+dfsg-3 [156 kB]
+Get:153 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 docutils-doc all 0.14+dfsg-3 [913 kB]
+Get:154 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 gir1.2-harfbuzz-0.0 amd64 1.7.2-1ubuntu1 [18.6 kB]
+Get:155 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libproxy1v5 amd64 0.4.15-1 [49.5 kB]
+Get:156 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 glib-networking-common all 2.56.0-1ubuntu0.1 [3476 B]
+Get:157 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 glib-networking-services amd64 2.56.0-1ubuntu0.1 [8632 B]
+Get:158 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 gsettings-desktop-schemas all 3.28.0-1ubuntu1 [27.8 kB]
+Get:159 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 glib-networking amd64 2.56.0-1ubuntu0.1 [56.7 kB]
+Get:160 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 googletest amd64 1.8.0-6 [652 kB]
+Get:161 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 google-mock amd64 1.8.0-6 [2972 B]
+Get:162 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libnl-route-3-200 amd64 3.2.29-0ubuntu3 [146 kB]
+Get:163 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libibverbs1 amd64 17.1-1ubuntu0.2 [44.4 kB]
+Get:164 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 ibverbs-providers amd64 17.1-1ubuntu0.2 [160 kB]
+Get:165 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 icu-devtools amd64 60.2-3ubuntu3.1 [179 kB]
+Get:166 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libapr1 amd64 1.6.3-2 [90.9 kB]
+Get:167 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 uuid-dev amd64 2.31.1-0.4ubuntu3.6 [33.2 kB]
+Get:168 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsctp1 amd64 1.0.17+dfsg-2 [8008 B]
+Get:169 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsctp-dev amd64 1.0.17+dfsg-2 [61.9 kB]
+Get:170 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libapr1-dev amd64 1.6.3-2 [690 kB]
+Get:171 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libaprutil1 amd64 1.6.1-2 [84.4 kB]
+Get:172 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libldap2-dev amd64 2.4.45+dfsg-1ubuntu1.6 [261 kB]
+Get:173 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libaprutil1-dev amd64 1.6.1-2 [391 kB]
+Get:174 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libassuan-dev amd64 2.5.1-2 [92.1 kB]
+Get:175 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatk1.0-data all 2.28.1-1 [2992 B]
+Get:176 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatk1.0-0 amd64 2.28.1-1 [43.9 kB]
+Get:177 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libatk-bridge2.0-0 amd64 2.26.2-1 [57.3 kB]
+Get:178 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-common-data amd64 0.7-3.1ubuntu1.2 [22.1 kB]
+Get:179 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-common3 amd64 0.7-3.1ubuntu1.2 [21.6 kB]
+Get:180 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-client3 amd64 0.7-3.1ubuntu1.2 [25.2 kB]
+Get:181 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libblas3 amd64 3.7.1-4ubuntu1 [140 kB]
+Get:182 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [7218 kB]
+Get:183 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-dev amd64 1.65.1.0ubuntu1 [3128 B]
+Get:184 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost1.65-tools-dev amd64 1.65.1+dfsg-0ubuntu5 [1222 kB]
+Get:185 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-tools-dev amd64 1.65.1.0ubuntu1 [3096 B]
+Get:186 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-atomic1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [7268 B]
+Get:187 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-atomic1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [5160 B]
+Get:188 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-atomic-dev amd64 1.65.1.0ubuntu1 [3224 B]
+Get:189 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-system1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [10.5 kB]
+Get:190 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-chrono1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [10.2 kB]
+Get:191 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-chrono1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [9804 B]
+Get:192 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-chrono-dev amd64 1.65.1.0ubuntu1 [3544 B]
+Get:193 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-container1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [43.4 kB]
+Get:194 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-container1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [41.7 kB]
+Get:195 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-container-dev amd64 1.65.1.0ubuntu1 [3400 B]
+Get:196 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-context1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [8336 B]
+Get:197 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-context1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [6364 B]
+Get:198 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-context-dev amd64 1.65.1.0ubuntu1 [3120 B]
+Get:199 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-thread1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [43.2 kB]
+Get:200 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-coroutine1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [22.6 kB]
+Get:201 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-coroutine1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [24.2 kB]
+Get:202 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-coroutine-dev amd64 1.65.1.0ubuntu1 [3196 B]
+Get:203 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-date-time1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [20.5 kB]
+Get:204 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-serialization1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [99.3 kB]
+Get:205 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-serialization1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [137 kB]
+Get:206 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-date-time1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [26.7 kB]
+Get:207 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-date-time-dev amd64 1.65.1.0ubuntu1 [2924 B]
+Get:208 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-exception1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [4580 B]
+Get:209 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-exception-dev amd64 1.65.1.0ubuntu1 [2916 B]
+Get:210 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-filesystem1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [40.3 kB]
+Get:211 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-fiber1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [108 kB]
+Get:212 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-fiber1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [121 kB]
+Get:213 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-fiber-dev amd64 1.65.1.0ubuntu1 [3348 B]
+Get:214 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-system1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [11.8 kB]
+Get:215 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-filesystem1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [52.1 kB]
+Get:216 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-filesystem-dev amd64 1.65.1.0ubuntu1 [2960 B]
+Get:217 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-regex1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [259 kB]
+Get:218 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [93.4 kB]
+Get:219 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-test1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [240 kB]
+Get:220 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-test1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [289 kB]
+Get:221 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [102 kB]
+Get:222 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-dev amd64 1.65.1.0ubuntu1 [3024 B]
+Get:223 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpsm-infinipath1 amd64 3.3+20.604758e7-5 [174 kB]
+Get:224 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 librdmacm1 amd64 17.1-1ubuntu0.2 [56.1 kB]
+Get:225 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libfabric1 amd64 1.5.3-1 [302 kB]
+Get:226 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libltdl7 amd64 2.4.6-2 [38.8 kB]
+Get:227 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libhwloc5 amd64 1.11.9-1 [105 kB]
+Get:228 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpciaccess0 amd64 0.14-1 [17.9 kB]
+Get:229 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 ocl-icd-libopencl1 amd64 2.2.11-1ubuntu1 [30.3 kB]
+Get:230 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libhwloc-plugins amd64 1.11.9-1 [12.5 kB]
+Get:231 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libopenmpi2 amd64 2.1.1-8 [2056 kB]
+Get:232 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [47.0 kB]
+Get:233 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-parallel1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [62.3 kB]
+Get:234 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-parallel1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [64.5 kB]
+Get:235 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-graph-parallel-dev amd64 1.65.1.0ubuntu1 [3056 B]
+Get:236 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libicu-le-hb0 amd64 1.0.3+git161113-4 [14.3 kB]
+Get:237 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libiculx60 amd64 60.2-3ubuntu3.1 [19.0 kB]
+Get:238 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz-icu0 amd64 1.7.2-1ubuntu1 [5604 B]
+Get:239 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz-gobject0 amd64 1.7.2-1ubuntu1 [13.4 kB]
+Get:240 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-bin amd64 2.56.4-0ubuntu0.18.04.6 [68.8 kB]
+Get:241 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-dev-bin amd64 2.56.4-0ubuntu0.18.04.6 [102 kB]
+Get:242 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcre16-3 amd64 2:8.39-9 [147 kB]
+Get:243 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcre32-3 amd64 2:8.39-9 [138 kB]
+Get:244 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcrecpp0v5 amd64 2:8.39-9 [15.3 kB]
+Get:245 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpcre3-dev amd64 2:8.39-9 [537 kB]
+Get:246 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 pkg-config amd64 0.29.1-0ubuntu2 [45.0 kB]
+Get:247 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglib2.0-dev amd64 2.56.4-0ubuntu0.18.04.6 [1385 kB]
+Get:248 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgraphite2-dev amd64 1.3.11-2 [14.5 kB]
+Get:249 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libharfbuzz-dev amd64 1.7.2-1ubuntu1 [302 kB]
+Get:250 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libicu-le-hb-dev amd64 1.0.3+git161113-4 [29.5 kB]
+Get:251 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libicu-dev amd64 60.2-3ubuntu3.1 [8889 kB]
+Get:252 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-regex1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [312 kB]
+Get:253 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-iostreams1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [29.2 kB]
+Get:254 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-iostreams1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [37.0 kB]
+Get:255 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-iostreams-dev amd64 1.65.1.0ubuntu1 [2916 B]
+Get:256 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-locale1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [241 kB]
+Get:257 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-locale1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [329 kB]
+Get:258 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-locale-dev amd64 1.65.1.0ubuntu1 [3248 B]
+Get:259 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-log1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [384 kB]
+Get:260 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-thread1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [49.0 kB]
+Get:261 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-log1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [553 kB]
+Get:262 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-log-dev amd64 1.65.1.0ubuntu1 [3124 B]
+Get:263 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-math1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [311 kB]
+Get:264 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-math1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [560 kB]
+Get:265 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-math-dev amd64 1.65.1.0ubuntu1 [3112 B]
+Get:266 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 openmpi-common all 2.1.1-8 [140 kB]
+Get:267 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libibverbs-dev amd64 17.1-1ubuntu0.2 [103 kB]
+Get:268 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libnuma-dev amd64 2.0.11-2.1ubuntu0.1 [32.3 kB]
+Get:269 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libltdl-dev amd64 2.4.6-2 [162 kB]
+Get:270 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libhwloc-dev amd64 1.11.9-1 [167 kB]
+Get:271 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libopenmpi-dev amd64 2.1.1-8 [925 kB]
+Get:272 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 mpi-default-dev amd64 1.10 [3888 B]
+Get:273 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [137 kB]
+Get:274 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-dev amd64 1.65.1.0ubuntu1 [3004 B]
+Get:275 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-python1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [101 kB]
+Get:276 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 openmpi-bin amd64 2.1.1-8 [88.2 kB]
+Get:277 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 mpi-default-bin amd64 1.10 [3108 B]
+Get:278 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-python1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [214 kB]
+Get:279 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-python1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [24.7 kB]
+Get:280 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-mpi-python-dev amd64 1.65.1.0ubuntu1 [3040 B]
+Get:281 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-numpy1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [17.4 kB]
+Get:282 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-numpy1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [17.4 kB]
+Get:283 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-numpy-dev amd64 1.65.1.0ubuntu1 [2960 B]
+Get:284 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-program-options1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [137 kB]
+Get:285 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-program-options1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [163 kB]
+Get:286 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-program-options-dev amd64 1.65.1.0ubuntu1 [2940 B]
+Get:287 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7 amd64 2.7.17-1~18.04ubuntu1 [1053 kB]
+Get:288 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpython2.7-dev amd64 2.7.17-1~18.04ubuntu1 [28.3 MB]
+Get:289 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpython-dev amd64 2.7.15~rc1-1 [7684 B]
+Get:290 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7-dev amd64 2.7.17-1~18.04ubuntu1 [279 kB]
+Get:291 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-dev amd64 2.7.15~rc1-1 [1256 B]
+Get:292 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-python1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [103 kB]
+Get:293 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-python-dev amd64 1.65.1.0ubuntu1 [3216 B]
+Get:294 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-random1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [12.8 kB]
+Get:295 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-random1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [12.4 kB]
+Get:296 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-random-dev amd64 1.65.1.0ubuntu1 [2924 B]
+Get:297 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-regex-dev amd64 1.65.1.0ubuntu1 [3184 B]
+Get:298 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-serialization-dev amd64 1.65.1.0ubuntu1 [3144 B]
+Get:299 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-signals1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [30.6 kB]
+Get:300 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-signals1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [33.1 kB]
+Get:301 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-signals-dev amd64 1.65.1.0ubuntu1 [2996 B]
+Get:302 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-stacktrace1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [49.1 kB]
+Get:303 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-stacktrace1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [25.9 kB]
+Get:304 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-stacktrace-dev amd64 1.65.1.0ubuntu1 [2924 B]
+Get:305 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-system-dev amd64 1.65.1.0ubuntu1 [3060 B]
+Get:306 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-test-dev amd64 1.65.1.0ubuntu1 [2960 B]
+Get:307 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libboost-thread-dev amd64 1.65.1.0ubuntu1 [2948 B]
+Get:308 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-timer1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [11.9 kB]
+Get:309 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-timer1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [11.8 kB]
+Get:310 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-timer-dev amd64 1.65.1.0ubuntu1 [3044 B]
+Get:311 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-type-erasure1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [20.7 kB]
+Get:312 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-type-erasure1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [20.1 kB]
+Get:313 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-type-erasure-dev amd64 1.65.1.0ubuntu1 [3024 B]
+Get:314 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-wave1.65.1 amd64 1.65.1+dfsg-0ubuntu5 [178 kB]
+Get:315 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-wave1.65-dev amd64 1.65.1+dfsg-0ubuntu5 [234 kB]
+Get:316 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-wave-dev amd64 1.65.1.0ubuntu1 [2952 B]
+Get:317 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libboost-all-dev amd64 1.65.1.0ubuntu1 [2340 B]
+Get:318 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libbz2-dev amd64 1.0.6-8.1ubuntu0.2 [30.0 kB]
+Get:319 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcairo-gobject2 amd64 1.15.10-2ubuntu0.1 [17.1 kB]
+Get:320 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 liblcms2-2 amd64 2.9-1ubuntu0.1 [139 kB]
+Get:321 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libcolord2 amd64 1.3.3-2build1 [107 kB]
+Get:322 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libconsole-bridge0.4 amd64 0.4.0+dfsg-2 [8168 B]
+Get:323 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcups2 amd64 2.2.7-1ubuntu2.8 [211 kB]
+Get:324 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-amdgpu1 amd64 2.4.101-2~18.04.1 [18.2 kB]
+Get:325 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-intel1 amd64 2.4.101-2~18.04.1 [60.0 kB]
+Get:326 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-nouveau2 amd64 2.4.101-2~18.04.1 [16.5 kB]
+Get:327 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-radeon1 amd64 2.4.101-2~18.04.1 [21.7 kB]
+Get:328 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libepoxy0 amd64 1.4.3-1 [181 kB]
+Get:329 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgdk-pixbuf2.0-bin amd64 2.36.11-2 [7864 B]
+Get:330 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgfortran4 amd64 7.5.0-3ubuntu1~18.04 [492 kB]
+Get:331 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglapi-mesa amd64 20.0.8-0ubuntu1~18.04.1 [26.6 kB]
+Get:332 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libllvm10 amd64 1:10.0.0-4ubuntu1~18.04.1 [15.4 MB]
+Get:333 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libsensors4 amd64 1:3.4.0-4 [28.8 kB]
+Get:334 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgl1-mesa-dri amd64 20.0.8-0ubuntu1~18.04.1 [9333 kB]
+Get:335 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libx11-xcb1 amd64 2:1.6.4-3ubuntu0.2 [9376 B]
+Get:336 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-dri2-0 amd64 1.13-2~ubuntu18.04 [6920 B]
+Get:337 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-dri3-0 amd64 1.13-2~ubuntu18.04 [6568 B]
+Get:338 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-glx0 amd64 1.13-2~ubuntu18.04 [22.1 kB]
+Get:339 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-present0 amd64 1.13-2~ubuntu18.04 [5552 B]
+Get:340 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-sync1 amd64 1.13-2~ubuntu18.04 [8808 B]
+Get:341 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxdamage1 amd64 1:1.1.4-3 [6934 B]
+Get:342 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxfixes3 amd64 1:5.0.3-1 [10.8 kB]
+Get:343 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxshmfence1 amd64 1.3-1 [5028 B]
+Get:344 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglx-mesa0 amd64 20.0.8-0ubuntu1~18.04.1 [139 kB]
+Get:345 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgpg-error-dev amd64 1.27-6 [94.8 kB]
+Get:346 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgpgme11 amd64 1.10.0-1ubuntu2 [111 kB]
+Get:347 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libgtest-dev amd64 1.8.0-6 [2718 B]
+Get:348 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgtk-3-common all 3.22.30-1ubuntu4 [229 kB]
+Get:349 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjson-glib-1.0-common all 1.4.2-3ubuntu0.18.04.1 [3480 B]
+Get:350 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjson-glib-1.0-0 amd64 1.4.2-3ubuntu0.18.04.1 [58.4 kB]
+Get:351 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsoup2.4-1 amd64 2.62.1-1ubuntu0.4 [292 kB]
+Get:352 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsoup-gnome2.4-1 amd64 2.62.1-1ubuntu0.4 [5088 B]
+Get:353 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 librest-0.7-0 amd64 0.8.0-2 [31.8 kB]
+Get:354 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libwayland-client0 amd64 1.16.0-1ubuntu1.1~18.04.3 [23.6 kB]
+Get:355 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libwayland-cursor0 amd64 1.16.0-1ubuntu1.1~18.04.3 [10.1 kB]
+Get:356 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libwayland-egl1 amd64 1.16.0-1ubuntu1.1~18.04.3 [5464 B]
+Get:357 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxcomposite1 amd64 1:0.4.4-2 [6988 B]
+Get:358 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxcursor1 amd64 1:1.1.15-1 [19.8 kB]
+Get:359 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxi6 amd64 2:1.7.9-1 [29.2 kB]
+Get:360 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxkbcommon0 amd64 0.8.2-1~ubuntu18.04.1 [97.8 kB]
+Get:361 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libxrandr2 amd64 2:1.5.1-1 [18.1 kB]
+Get:362 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgtk-3-0 amd64 3.22.30-1ubuntu4 [2503 kB]
+Get:363 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgtk-3-bin amd64 3.22.30-1ubuntu4 [57.4 kB]
+Get:364 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 liblapack3 amd64 3.7.1-4ubuntu1 [2112 kB]
+Get:365 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 liblog4cxx10v5 amd64 0.10.0-13ubuntu2 [400 kB]
+Get:366 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libnotify4 amd64 0.7.7-3 [17.3 kB]
+Get:367 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libodbc1 amd64 2.3.4-1.1ubuntu3 [183 kB]
+Get:368 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpaper1 amd64 1.1.24+nmu5ubuntu1 [13.6 kB]
+Get:369 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libpaper-utils amd64 1.1.24+nmu5ubuntu1 [8170 B]
+Get:370 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocofoundation50 amd64 1.8.0.1-1ubuntu4 [440 kB]
+Get:371 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpococrypto50 amd64 1.8.0.1-1ubuntu4 [66.9 kB]
+Get:372 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodata50 amd64 1.8.0.1-1ubuntu4 [377 kB]
+Get:373 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocojson50 amd64 1.8.0.1-1ubuntu4 [94.2 kB]
+Get:374 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodatamysql50 amd64 1.8.0.1-1ubuntu4 [46.4 kB]
+Get:375 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpoconet50 amd64 1.8.0.1-1ubuntu4 [313 kB]
+Get:376 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocomongodb50 amd64 1.8.0.1-1ubuntu4 [67.2 kB]
+Get:377 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocoxml50 amd64 1.8.0.1-1ubuntu4 [128 kB]
+Get:378 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocoutil50 amd64 1.8.0.1-1ubuntu4 [120 kB]
+Get:379 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpoconetssl50 amd64 1.8.0.1-1ubuntu4 [74.7 kB]
+Get:380 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodataodbc50 amd64 1.8.0.1-1ubuntu4 [210 kB]
+Get:381 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocodatasqlite50 amd64 1.8.0.1-1ubuntu4 [92.6 kB]
+Get:382 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocoredis50 amd64 1.8.0.1-1ubuntu4 [45.6 kB]
+Get:383 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpocozip50 amd64 1.8.0.1-1ubuntu4 [84.6 kB]
+Get:384 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libsqlite3-dev amd64 3.22.0-1ubuntu0.4 [633 kB]
+Get:385 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libpoco-dev amd64 1.8.0.1-1ubuntu4 [518 kB]
+Get:386 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libtinyxml2-6 amd64 6.0.0+dfsg-1 [27.9 kB]
+Get:387 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libtool all 2.4.6-2 [194 kB]
+Get:388 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libwebp6 amd64 0.6.1-2 [185 kB]
+Get:389 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libwebpdemux2 amd64 0.6.1-2 [9472 B]
+Get:390 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libwebpmux3 amd64 0.6.1-2 [19.6 kB]
+Get:391 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libwxbase3.0-0v5 amd64 3.0.4+dfsg-3 [954 kB]
+Get:392 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglvnd0 amd64 1.0.0-2ubuntu2.3 [47.0 kB]
+Get:393 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglx0 amd64 1.0.0-2ubuntu2.3 [28.1 kB]
+Get:394 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgl1 amd64 1.0.0-2ubuntu2.3 [86.2 kB]
+Get:395 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libwxgtk3.0-gtk3-0v5 amd64 3.0.4+dfsg-3 [4154 kB]
+Get:396 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 notification-daemon amd64 3.20.0-3 [36.9 kB]
+Get:397 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-asn1crypto all 0.24.0-1 [72.7 kB]
+Get:398 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-six all 1.11.0-2 [11.3 kB]
+Get:399 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-dateutil all 2.6.1-1 [60.6 kB]
+Get:400 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-roman all 2.0.0-3 [8548 B]
+Get:401 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-docutils all 0.14+dfsg-3 [365 kB]
+Get:402 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pyparsing all 2.2.0+dfsg1-2 [52.1 kB]
+Get:403 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-cffi-backend amd64 1.11.5-1 [63.4 kB]
+Get:404 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pkg-resources all 39.0.1-2 [128 kB]
+Get:405 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-chardet all 3.0.4-1 [80.3 kB]
+Get:406 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-enum34 all 1.1.6-2 [34.8 kB]
+Get:407 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-idna all 2.6-1 [32.4 kB]
+Get:408 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-ipaddress all 1.0.17-1 [18.2 kB]
+Get:409 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-cryptography amd64 2.1.4-1ubuntu1.3 [221 kB]
+Get:410 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-defusedxml all 0.5.0-1ubuntu1 [35.1 kB]
+Get:411 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-empy all 3.3.2-1build1 [72.5 kB]
+Get:412 http://ca.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 python-gnupg all 0.4.1-1ubuntu1.18.04.1 [17.0 kB]
+Get:413 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-netifaces amd64 0.10.4-0.1build4 [16.6 kB]
+Get:414 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-nose all 1.3.7-3 [116 kB]
+Get:415 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-numpy amd64 1:1.13.3-2ubuntu1 [1938 kB]
+Get:416 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-olefile all 0.45.1-1 [33.2 kB]
+Get:417 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pyasn1 all 0.4.2-3 [46.7 kB]
+Get:418 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-paramiko all 2.0.0-1ubuntu1.2 [110 kB]
+Get:419 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-pil amd64 5.1.0-1ubuntu0.2 [329 kB]
+Get:420 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pycryptodome amd64 3.4.7-1ubuntu1 [4755 kB]
+Get:421 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-pygments all 2.2.0+dfsg-1 [577 kB]
+Get:422 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-yaml amd64 3.12-1build2 [115 kB]
+Get:423 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-setuptools all 39.0.1-2 [329 kB]
+Get:424 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-wxversion all 3.0.2.0+dfsg-7 [12.4 kB]
+Get:425 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-wxgtk3.0 amd64 3.0.2.0+dfsg-7 [5072 kB]
+Get:426 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-wxtools all 3.0.2.0+dfsg-7 [8040 B]
+Get:427 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libconsole-bridge-dev amd64 0.4.0+dfsg-2 [6596 B]
+Get:428 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 liblog4cxx-dev amd64 0.10.0-13ubuntu2 [857 kB]
+Get:429 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libtinyxml2-dev amd64 6.0.0+dfsg-1 [17.6 kB]
+Get:430 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgpgme-dev amd64 1.10.0-1ubuntu2 [306 kB]
+Get:431 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 liblz4-dev amd64 0.0~r131-2ubuntu3 [61.4 kB]
+Get:432 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 sbcl amd64 2:1.4.5-1 [8580 kB]
 Preconfiguring packages ...
-Fetched 156 MB in 15s (10.3 MB/s)
+Fetched 157 MB in 1min 37s (1623 kB/s)
 Selecting previously unselected package fonts-dejavu-core.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 73646 files and directories currently installed.)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 73692 files and directories currently installed.)
 Preparing to unpack .../00-fonts-dejavu-core_2.37-1_all.deb ...
 Unpacking fonts-dejavu-core (2.37-1) ...
 Selecting previously unselected package fontconfig-config.
@@ -1120,7 +1374,7 @@ Setting up python2.7-minimal (2.7.17-1~18.04ubuntu1) ...
 Linking and byte-compiling packages for runtime python2.7...
 Setting up python-minimal (2.7.15~rc1-1) ...
 Selecting previously unselected package python.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 74595 files and directories currently installed.)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 74641 files and directories currently installed.)
 Preparing to unpack .../000-python_2.7.15~rc1-1_amd64.deb ...
 Unpacking python (2.7.15~rc1-1) ...
 Selecting previously unselected package sgml-base.
@@ -1330,8 +1584,8 @@ Selecting previously unselected package libaprutil1:amd64.
 Preparing to unpack .../068-libaprutil1_1.6.1-2_amd64.deb ...
 Unpacking libaprutil1:amd64 (1.6.1-2) ...
 Selecting previously unselected package libldap2-dev:amd64.
-Preparing to unpack .../069-libldap2-dev_2.4.45+dfsg-1ubuntu1.5_amd64.deb ...
-Unpacking libldap2-dev:amd64 (2.4.45+dfsg-1ubuntu1.5) ...
+Preparing to unpack .../069-libldap2-dev_2.4.45+dfsg-1ubuntu1.6_amd64.deb ...
+Unpacking libldap2-dev:amd64 (2.4.45+dfsg-1ubuntu1.6) ...
 Selecting previously unselected package libaprutil1-dev.
 Preparing to unpack .../070-libaprutil1-dev_1.6.1-2_amd64.deb ...
 Unpacking libaprutil1-dev (1.6.1-2) ...
@@ -1807,17 +2061,17 @@ Selecting previously unselected package libgfortran4:amd64.
 Preparing to unpack .../227-libgfortran4_7.5.0-3ubuntu1~18.04_amd64.deb ...
 Unpacking libgfortran4:amd64 (7.5.0-3ubuntu1~18.04) ...
 Selecting previously unselected package libglapi-mesa:amd64.
-Preparing to unpack .../228-libglapi-mesa_19.2.8-0ubuntu0~18.04.3_amd64.deb ...
-Unpacking libglapi-mesa:amd64 (19.2.8-0ubuntu0~18.04.3) ...
-Selecting previously unselected package libllvm9:amd64.
-Preparing to unpack .../229-libllvm9_1%3a9-2~ubuntu18.04.2_amd64.deb ...
-Unpacking libllvm9:amd64 (1:9-2~ubuntu18.04.2) ...
+Preparing to unpack .../228-libglapi-mesa_20.0.8-0ubuntu1~18.04.1_amd64.deb ...
+Unpacking libglapi-mesa:amd64 (20.0.8-0ubuntu1~18.04.1) ...
+Selecting previously unselected package libllvm10:amd64.
+Preparing to unpack .../229-libllvm10_1%3a10.0.0-4ubuntu1~18.04.1_amd64.deb ...
+Unpacking libllvm10:amd64 (1:10.0.0-4ubuntu1~18.04.1) ...
 Selecting previously unselected package libsensors4:amd64.
 Preparing to unpack .../230-libsensors4_1%3a3.4.0-4_amd64.deb ...
 Unpacking libsensors4:amd64 (1:3.4.0-4) ...
 Selecting previously unselected package libgl1-mesa-dri:amd64.
-Preparing to unpack .../231-libgl1-mesa-dri_19.2.8-0ubuntu0~18.04.3_amd64.deb ...
-Unpacking libgl1-mesa-dri:amd64 (19.2.8-0ubuntu0~18.04.3) ...
+Preparing to unpack .../231-libgl1-mesa-dri_20.0.8-0ubuntu1~18.04.1_amd64.deb ...
+Unpacking libgl1-mesa-dri:amd64 (20.0.8-0ubuntu1~18.04.1) ...
 Selecting previously unselected package libx11-xcb1:amd64.
 Preparing to unpack .../232-libx11-xcb1_2%3a1.6.4-3ubuntu0.2_amd64.deb ...
 Unpacking libx11-xcb1:amd64 (2:1.6.4-3ubuntu0.2) ...
@@ -1846,8 +2100,8 @@ Selecting previously unselected package libxshmfence1:amd64.
 Preparing to unpack .../240-libxshmfence1_1.3-1_amd64.deb ...
 Unpacking libxshmfence1:amd64 (1.3-1) ...
 Selecting previously unselected package libglx-mesa0:amd64.
-Preparing to unpack .../241-libglx-mesa0_19.2.8-0ubuntu0~18.04.3_amd64.deb ...
-Unpacking libglx-mesa0:amd64 (19.2.8-0ubuntu0~18.04.3) ...
+Preparing to unpack .../241-libglx-mesa0_20.0.8-0ubuntu1~18.04.1_amd64.deb ...
+Unpacking libglx-mesa0:amd64 (20.0.8-0ubuntu1~18.04.1) ...
 Selecting previously unselected package libgpg-error-dev.
 Preparing to unpack .../242-libgpg-error-dev_1.27-6_amd64.deb ...
 Unpacking libgpg-error-dev (1.27-6) ...
@@ -2372,7 +2626,7 @@ Preparing to unpack .../415-ros-melodic-ros-base_1.4.1-0bionic.20200530.140017_a
 Unpacking ros-melodic-ros-base (1.4.1-0bionic.20200530.140017) ...
 Setting up libtinyxml2-6:amd64 (6.0.0+dfsg-1) ...
 Setting up libxi6:amd64 (2:1.7.9-1) ...
-Setting up libldap2-dev:amd64 (2.4.45+dfsg-1ubuntu1.5) ...
+Setting up libldap2-dev:amd64 (2.4.45+dfsg-1ubuntu1.6) ...
 Setting up libpaper1:amd64 (1.1.24+nmu5ubuntu1) ...
 
 Creating config file /etc/papersize with new version
@@ -2393,6 +2647,7 @@ Setting up libboost-iostreams1.65.1:amd64 (1.65.1+dfsg-0ubuntu5) ...
 Setting up libboost-stacktrace1.65.1:amd64 (1.65.1+dfsg-0ubuntu5) ...
 Setting up libbz2-dev:amd64 (1.0.6-8.1ubuntu0.2) ...
 Setting up libxcb-render0:amd64 (1.13-2~ubuntu18.04) ...
+Setting up libllvm10:amd64 (1:10.0.0-4ubuntu1~18.04.1) ...
 Setting up libboost-python1.65.1 (1.65.1+dfsg-0ubuntu5) ...
 Setting up glib-networking-common (2.56.0-1ubuntu0.1) ...
 Setting up libxdamage1:amd64 (1:1.1.4-3) ...
@@ -2427,7 +2682,7 @@ Setting up cmake-data (3.10.2-1ubuntu2.18.04.1) ...
 Setting up libnl-route-3-200:amd64 (3.2.29-0ubuntu3) ...
 Setting up libjpeg-turbo8:amd64 (1.5.2-0ubuntu5.18.04.4) ...
 Setting up ros-melodic-rosboost-cfg (1.14.9-1bionic.20200529.213712) ...
-Setting up libglapi-mesa:amd64 (19.2.8-0ubuntu0~18.04.3) ...
+Setting up libglapi-mesa:amd64 (20.0.8-0ubuntu1~18.04.1) ...
 Setting up sgml-base (1.29) ...
 Setting up libboost-signals1.65.1:amd64 (1.65.1+dfsg-0ubuntu5) ...
 Setting up ros-melodic-rosbag-migration-rule (1.0.0-0bionic.20200529.223450) ...
@@ -2484,7 +2739,6 @@ Setting up liblz4-dev:amd64 (0.0~r131-2ubuntu3) ...
 Setting up libnuma-dev:amd64 (2.0.11-2.1ubuntu0.1) ...
 Setting up ocl-icd-libopencl1:amd64 (2.2.11-1ubuntu1) ...
 Setting up libxxf86vm1:amd64 (1:1.1.4-1) ...
-Setting up libllvm9:amd64 (1:9-2~ubuntu18.04.2) ...
 Setting up libboost-program-options1.65.1:amd64 (1.65.1+dfsg-0ubuntu5) ...
 Setting up libdrm-nouveau2:amd64 (2.4.101-2~18.04.1) ...
 Setting up libboost-numpy1.65.1 (1.65.1+dfsg-0ubuntu5) ...
@@ -2629,7 +2883,7 @@ Setting up python-wxversion (3.0.2.0+dfsg-7) ...
 Setting up at-spi2-core (2.28.0-1) ...
 Setting up libgdk-pixbuf2.0-0:amd64 (2.36.11-2) ...
 Setting up libicu-le-hb0:amd64 (1.0.3+git161113-4) ...
-Setting up libgl1-mesa-dri:amd64 (19.2.8-0ubuntu0~18.04.3) ...
+Setting up libgl1-mesa-dri:amd64 (20.0.8-0ubuntu1~18.04.1) ...
 Setting up libboost-type-erasure-dev:amd64 (1.65.1.0ubuntu1) ...
 Setting up libgdk-pixbuf2.0-bin (2.36.11-2) ...
 Setting up libboost-fiber-dev:amd64 (1.65.1.0ubuntu1) ...
@@ -2665,7 +2919,7 @@ Setting up python-pil:amd64 (5.1.0-1ubuntu0.2) ...
 Setting up python-gnupg (0.4.1-1ubuntu1.18.04.1) ...
 Setting up fontconfig (2.12.6-0ubuntu2) ...
 Regenerating fonts cache... done.
-Setting up libglx-mesa0:amd64 (19.2.8-0ubuntu0~18.04.3) ...
+Setting up libglx-mesa0:amd64 (20.0.8-0ubuntu1~18.04.1) ...
 Setting up libcups2:amd64 (2.2.7-1ubuntu2.8) ...
 Setting up libboost-python-dev (1.65.1.0ubuntu1) ...
 Setting up libcairo2:amd64 (1.15.10-2ubuntu0.1) ...
@@ -2712,7 +2966,7 @@ update-alternatives: using /usr/share/icons/Adwaita/cursor.theme to provide /usr
 Setting up humanity-icon-theme (0.6.15) ...
 Setting up ubuntu-mono (16.10+18.04.20181005-0ubuntu1) ...
 Processing triggers for libglib2.0-0:amd64 (2.56.4-0ubuntu0.18.04.6) ...
-Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
 Setting up glib-networking:amd64 (2.56.0-1ubuntu0.1) ...
 Processing triggers for systemd (237-3ubuntu10.41) ...
 Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
@@ -2836,15 +3090,12 @@ Setting up ros-melodic-ros-comm (1.14.6-1bionic.20200530.082644) ...
 Setting up ros-melodic-ros-core (1.4.1-0bionic.20200530.134357) ...
 Setting up ros-melodic-ros-base (1.4.1-0bionic.20200530.140017) ...
 Processing triggers for libgdk-pixbuf2.0-0:amd64 (2.36.11-2) ...
-Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
 Reading package lists...
 Building dependency tree...
 Reading state information...
 build-essential is already the newest version (12.4ubuntu1).
 build-essential set to manually installed.
-The following package was automatically installed and is no longer required:
-  libdumbnet1
-Use 'sudo apt autoremove' to remove it.
 The following additional packages will be installed:
   bzr libserf-1-1 libsvn1 mercurial mercurial-common python-bzrlib
   python-configobj python-crypto python-dbus python-gi python-httplib2
@@ -2875,7 +3126,7 @@ Get:1 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-vcstools all 0
 Get:2 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-wstool all 0.1.17-1 [42.4 kB]
 Get:3 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-configobj all 5.0.6-2 [34.2 kB]
 Get:4 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosinstall all 0.7.8-1 [23.7 kB]
-Get:5 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosinstall-generator all 0.1.21-1 [11.4 kB]
+Get:5 http://packages.ros.org/ros/ubuntu bionic/main amd64 python-rosinstall-generator all 0.1.22-1 [11.5 kB]
 Get:6 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-bzrlib amd64 2.7.0+bzr6622-10 [1456 kB]
 Get:7 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 bzr all 2.7.0+bzr6622-10 [37.4 kB]
 Get:8 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libserf-1-1 amd64 1.3.9-6 [44.4 kB]
@@ -2885,7 +3136,7 @@ Get:11 http://ca.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 mercuri
 Get:12 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-crypto amd64 2.6.1-8ubuntu2 [244 kB]
 Get:13 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-dbus amd64 1.2.6-1 [90.2 kB]
 Get:14 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-gi amd64 3.26.1-2ubuntu1 [197 kB]
-Get:15 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-httplib2 all 0.9.2+dfsg-1ubuntu0.1 [34.7 kB]
+Get:15 http://ca.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python-httplib2 all 0.9.2+dfsg-1ubuntu0.2 [34.8 kB]
 Get:16 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-secretstorage all 2.3.1-2 [11.8 kB]
 Get:17 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-keyring all 10.6.0-1 [30.6 kB]
 Get:18 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-keyrings.alt all 3.0-1 [16.7 kB]
@@ -2897,9 +3148,9 @@ Get:23 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-oauth all 1.
 Get:24 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-lazr.restfulclient all 0.13.5-1 [51.0 kB]
 Get:25 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-launchpadlib all 1.10.6-1 [45.9 kB]
 Get:26 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 subversion amd64 1.9.7-4ubuntu1 [834 kB]
-Fetched 7006 kB in 1s (6570 kB/s)
+Fetched 7006 kB in 5s (1526 kB/s)
 Selecting previously unselected package python-configobj.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 118012 files and directories currently installed.)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 118058 files and directories currently installed.)
 Preparing to unpack .../00-python-configobj_5.0.6-2_all.deb ...
 Unpacking python-configobj (5.0.6-2) ...
 Selecting previously unselected package python-bzrlib.
@@ -2930,8 +3181,8 @@ Selecting previously unselected package python-gi.
 Preparing to unpack .../09-python-gi_3.26.1-2ubuntu1_amd64.deb ...
 Unpacking python-gi (3.26.1-2ubuntu1) ...
 Selecting previously unselected package python-httplib2.
-Preparing to unpack .../10-python-httplib2_0.9.2+dfsg-1ubuntu0.1_all.deb ...
-Unpacking python-httplib2 (0.9.2+dfsg-1ubuntu0.1) ...
+Preparing to unpack .../10-python-httplib2_0.9.2+dfsg-1ubuntu0.2_all.deb ...
+Unpacking python-httplib2 (0.9.2+dfsg-1ubuntu0.2) ...
 Selecting previously unselected package python-secretstorage.
 Preparing to unpack .../11-python-secretstorage_2.3.1-2_all.deb ...
 Unpacking python-secretstorage (2.3.1-2) ...
@@ -2975,8 +3226,8 @@ Selecting previously unselected package python-rosinstall.
 Preparing to unpack .../24-python-rosinstall_0.7.8-1_all.deb ...
 Unpacking python-rosinstall (0.7.8-1) ...
 Selecting previously unselected package python-rosinstall-generator.
-Preparing to unpack .../25-python-rosinstall-generator_0.1.21-1_all.deb ...
-Unpacking python-rosinstall-generator (0.1.21-1) ...
+Preparing to unpack .../25-python-rosinstall-generator_0.1.22-1_all.deb ...
+Unpacking python-rosinstall-generator (0.1.22-1) ...
 Setting up python-simplejson (3.13.2-1) ...
 Setting up python-configobj (5.0.6-2) ...
 Setting up python-crypto (2.6.1-8ubuntu2) ...
@@ -2984,7 +3235,7 @@ Setting up python-bzrlib (2.7.0+bzr6622-10) ...
 Setting up bzr (2.7.0+bzr6622-10) ...
 update-alternatives: using /usr/bin/bzr.bzr to provide /usr/bin/bzr (bzr) in auto mode
 Setting up python-keyrings.alt (3.0-1) ...
-Setting up python-httplib2 (0.9.2+dfsg-1ubuntu0.1) ...
+Setting up python-httplib2 (0.9.2+dfsg-1ubuntu0.2) ...
 Setting up mercurial-common (4.5.3-1ubuntu2.1) ...
 Setting up python-gi (3.26.1-2ubuntu1) ...
 Setting up mercurial (4.5.3-1ubuntu2.1) ...
@@ -2996,7 +3247,7 @@ Setting up python-lazr.uri (1.0.3-2build1) ...
 Setting up libsvn1:amd64 (1.9.7-4ubuntu1) ...
 Setting up python-oauth (1.0.1-5) ...
 Setting up python-dbus (1.2.6-1) ...
-Setting up python-rosinstall-generator (0.1.21-1) ...
+Setting up python-rosinstall-generator (0.1.22-1) ...
 Setting up python-secretstorage (2.3.1-2) ...
 Setting up python-keyring (10.6.0-1) ...
 Setting up python-wadllib (1.3.2-3ubuntu0.18.04.1) ...
@@ -3007,13 +3258,10 @@ Setting up python-launchpadlib (1.10.6-1) ...
 Setting up python-wstool (0.1.17-1) ...
 Setting up python-rosinstall (0.7.8-1) ...
 Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
-Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
 Reading package lists...
 Building dependency tree...
 Reading state information...
-The following package was automatically installed and is no longer required:
-  libdumbnet1
-Use 'sudo apt autoremove' to remove it.
 The following additional packages will be installed:
   iputils-arping libbluetooth3 libgudev-1.0-0 libjansson4 libmbim-glib4
   libmbim-proxy libmm-glib0 libndp0 libnm0 libpcsclite1 libqmi-glib5
@@ -3051,9 +3299,9 @@ Get:18 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 pptp-linux amd64 1.
 Get:19 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 network-manager-pptp amd64 1.2.6-1 [30.0 kB]
 Get:20 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 usb-modeswitch-data all 20170806-2 [30.7 kB]
 Get:21 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 usb-modeswitch amd64 2.5.2+repack0-2ubuntu1 [53.6 kB]
-Fetched 4925 kB in 1s (6175 kB/s)
+Fetched 4925 kB in 6s (860 kB/s)
 Selecting previously unselected package iputils-arping.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 119733 files and directories currently installed.)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 119779 files and directories currently installed.)
 Preparing to unpack .../00-iputils-arping_3%3a20161105-1ubuntu3_amd64.deb ...
 Unpacking iputils-arping (3:20161105-1ubuntu3) ...
 Selecting previously unselected package libbluetooth3:amd64.
@@ -3150,13 +3398,10 @@ Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
 Processing triggers for dbus (1.12.2-1ubuntu1.2) ...
 Processing triggers for hicolor-icon-theme (0.17-2) ...
 Processing triggers for ureadahead (0.100.0-21) ...
-Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
 Reading package lists...
 Building dependency tree...
 Reading state information...
-The following package was automatically installed and is no longer required:
-  libdumbnet1
-Use 'sudo apt autoremove' to remove it.
 The following additional packages will be installed:
   gamin libgamin0 spawn-fcgi
 Suggested packages:
@@ -3170,9 +3415,9 @@ Get:1 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libgamin0 amd64 
 Get:2 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 gamin amd64 0.1.10-5build1 [43.0 kB]
 Get:3 http://ca.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 lighttpd amd64 1.4.45-1ubuntu3.18.04 [276 kB]
 Get:4 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 spawn-fcgi amd64 1.6.4-2 [14.9 kB]
-Fetched 350 kB in 0s (985 kB/s)
+Fetched 350 kB in 1s (338 kB/s)
 Selecting previously unselected package libgamin0.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 120173 files and directories currently installed.)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 120219 files and directories currently installed.)
 Preparing to unpack .../libgamin0_0.1.10-5build1_amd64.deb ...
 Unpacking libgamin0 (0.1.10-5build1) ...
 Selecting previously unselected package gamin.
@@ -3193,4 +3438,108 @@ Processing triggers for systemd (237-3ubuntu10.41) ...
 Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
 Processing triggers for ufw (0.36-0ubuntu0.18.04.1) ...
 Processing triggers for ureadahead (0.100.0-21) ...
-Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libgail-common libgail18 libgps23 libgtk2.0-0 libgtk2.0-bin libgtk2.0-common
+  python-cairo python-gobject-2 python-gps python-gtk2
+Suggested packages:
+  gvfs python-gobject-2-dbg python-gtk2-doc
+The following NEW packages will be installed:
+  gpsd gpsd-clients libgail-common libgail18 libgps-dev libgps23 libgtk2.0-0
+  libgtk2.0-bin libgtk2.0-common python-cairo python-gobject-2 python-gps
+  python-gtk2
+0 upgraded, 13 newly installed, 0 to remove and 0 not upgraded.
+Need to get 10.5 MB of archives.
+After this operation, 21.9 MB of additional disk space will be used.
+Get:1 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libgps23 amd64 3.17-5 [50.1 kB]
+Get:2 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 gpsd amd64 3.17-5 [230 kB]
+Get:3 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-gps amd64 3.17-5 [61.5 kB]
+Get:4 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgtk2.0-common all 2.24.32-1ubuntu1 [125 kB]
+Get:5 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgtk2.0-0 amd64 2.24.32-1ubuntu1 [1769 kB]
+Get:6 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 python-cairo amd64 1.16.2-1 [56.4 kB]
+Get:7 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-gobject-2 amd64 2.28.6-12ubuntu3 [180 kB]
+Get:8 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 python-gtk2 amd64 2.24.0-5.1ubuntu2 [619 kB]
+Get:9 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 gpsd-clients amd64 3.17-5 [7226 kB]
+Get:10 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgail18 amd64 2.24.32-1ubuntu1 [14.2 kB]
+Get:11 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgail-common amd64 2.24.32-1ubuntu1 [112 kB]
+Get:12 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 libgps-dev amd64 3.17-5 [96.9 kB]
+Get:13 http://ca.archive.ubuntu.com/ubuntu bionic/main amd64 libgtk2.0-bin amd64 2.24.32-1ubuntu1 [7536 B]
+Fetched 10.5 MB in 9s (1207 kB/s)
+Selecting previously unselected package libgps23:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 120468 files and directories currently installed.)
+Preparing to unpack .../00-libgps23_3.17-5_amd64.deb ...
+Unpacking libgps23:amd64 (3.17-5) ...
+Selecting previously unselected package gpsd.
+Preparing to unpack .../01-gpsd_3.17-5_amd64.deb ...
+Unpacking gpsd (3.17-5) ...
+Selecting previously unselected package python-gps.
+Preparing to unpack .../02-python-gps_3.17-5_amd64.deb ...
+Unpacking python-gps (3.17-5) ...
+Selecting previously unselected package libgtk2.0-common.
+Preparing to unpack .../03-libgtk2.0-common_2.24.32-1ubuntu1_all.deb ...
+Unpacking libgtk2.0-common (2.24.32-1ubuntu1) ...
+Selecting previously unselected package libgtk2.0-0:amd64.
+Preparing to unpack .../04-libgtk2.0-0_2.24.32-1ubuntu1_amd64.deb ...
+Unpacking libgtk2.0-0:amd64 (2.24.32-1ubuntu1) ...
+Selecting previously unselected package python-cairo:amd64.
+Preparing to unpack .../05-python-cairo_1.16.2-1_amd64.deb ...
+Unpacking python-cairo:amd64 (1.16.2-1) ...
+Selecting previously unselected package python-gobject-2.
+Preparing to unpack .../06-python-gobject-2_2.28.6-12ubuntu3_amd64.deb ...
+Unpacking python-gobject-2 (2.28.6-12ubuntu3) ...
+Selecting previously unselected package python-gtk2.
+Preparing to unpack .../07-python-gtk2_2.24.0-5.1ubuntu2_amd64.deb ...
+Unpacking python-gtk2 (2.24.0-5.1ubuntu2) ...
+Selecting previously unselected package gpsd-clients.
+Preparing to unpack .../08-gpsd-clients_3.17-5_amd64.deb ...
+Unpacking gpsd-clients (3.17-5) ...
+Selecting previously unselected package libgail18:amd64.
+Preparing to unpack .../09-libgail18_2.24.32-1ubuntu1_amd64.deb ...
+Unpacking libgail18:amd64 (2.24.32-1ubuntu1) ...
+Selecting previously unselected package libgail-common:amd64.
+Preparing to unpack .../10-libgail-common_2.24.32-1ubuntu1_amd64.deb ...
+Unpacking libgail-common:amd64 (2.24.32-1ubuntu1) ...
+Selecting previously unselected package libgps-dev.
+Preparing to unpack .../11-libgps-dev_3.17-5_amd64.deb ...
+Unpacking libgps-dev (3.17-5) ...
+Selecting previously unselected package libgtk2.0-bin.
+Preparing to unpack .../12-libgtk2.0-bin_2.24.32-1ubuntu1_amd64.deb ...
+Unpacking libgtk2.0-bin (2.24.32-1ubuntu1) ...
+Setting up libgtk2.0-common (2.24.32-1ubuntu1) ...
+Setting up libgps23:amd64 (3.17-5) ...
+Setting up python-gobject-2 (2.28.6-12ubuntu3) ...
+Setting up python-gps (3.17-5) ...
+Setting up python-cairo:amd64 (1.16.2-1) ...
+Setting up libgps-dev (3.17-5) ...
+Setting up gpsd (3.17-5) ...
+Creating/updating gpsd user account...
+Created symlink /etc/systemd/system/sockets.target.wants/gpsd.socket → /lib/systemd/system/gpsd.socket.
+Setting up libgtk2.0-0:amd64 (2.24.32-1ubuntu1) ...
+Setting up libgail18:amd64 (2.24.32-1ubuntu1) ...
+Setting up python-gtk2 (2.24.0-5.1ubuntu2) ...
+Setting up libgail-common:amd64 (2.24.32-1ubuntu1) ...
+Setting up gpsd-clients (3.17-5) ...
+Setting up libgtk2.0-bin (2.24.32-1ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.2) ...
+Processing triggers for systemd (237-3ubuntu10.41) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for ureadahead (0.100.0-21) ...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  pps-tools
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 12.9 kB of archives.
+After this operation, 66.6 kB of additional disk space will be used.
+Get:1 http://ca.archive.ubuntu.com/ubuntu bionic/universe amd64 pps-tools amd64 1.0.2-1 [12.9 kB]
+Fetched 12.9 kB in 0s (181 kB/s)
+Selecting previously unselected package pps-tools.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 120694 files and directories currently installed.)
+Preparing to unpack .../pps-tools_1.0.2-1_amd64.deb ...
+Unpacking pps-tools (1.0.2-1) ...
+Setting up pps-tools (1.0.2-1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...

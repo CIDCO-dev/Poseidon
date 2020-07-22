@@ -105,7 +105,7 @@ class Sonar{
 		void run(){
 
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
-                        gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
+            gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
 
 			ros::Rate retry_rate(1);
 
@@ -120,11 +120,10 @@ class Sonar{
 					memset(&sa,0,sizeof(sa));
 
 					getaddrinfo(serverAddress.c_str(),serverPort.c_str(),&sa,&res);
-
-                                        if((s = socket(res->ai_family,res->ai_socktype,res->ai_protocol))==-1){
-                                                perror("socket");
-                                                throw std::runtime_error("socket");
-                                        }
+                        if((s = socket(res->ai_family,res->ai_socktype,res->ai_protocol))==-1){
+                        perror("socket");
+                        throw std::runtime_error("socket");
+                        }
 
 
 					if(connect(s,res->ai_addr,res->ai_addrlen) == -1){
@@ -145,60 +144,59 @@ class Sonar{
 						}
 
 						if(ch == '\n'){
-                                                    dbtData dbt;    
-                                                    ggaData gga;
+                            dbtData dbt;    
+                            ggaData gga;
 
-                                                    //parse DBT strings such as $SDDBT,30.9,f,9.4,M,5.1,F*35
-                                                    if(sscanf(line.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
+                            //parse DBT strings such as $SDDBT,30.9,f,9.4,M,5.1,F*35
+                            if(sscanf(line.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
 
-                                                        //TODO: checksum
-                                                        //process depth
+                            //TODO: checksum
+                            //process depth
 
-                                                        geometry_msgs::PointStamped msg;
+                            geometry_msgs::PointStamped msg;
 
-                        			        msg.header.seq=++depthSequenceNumber;
-                                                        msg.header.stamp=ros::Time::now();
+           			        msg.header.seq=++depthSequenceNumber;
+                            msg.header.stamp=ros::Time::now();
 
-                                                        msg.point.z = dbt.depthMeters;
+                            msg.point.z = dbt.depthMeters;
 
-                                                        sonarTopic.publish(msg);
-                                                    }
-                                                        
-                                                    //parse GGA position strings
-                                                    else if(extractGGA(line,gga)){
-                                                        sensor_msgs::NavSatFix msg;
-                                                            
-                        			        msg.header.seq=++gpsSequenceNumber;
-                                                        msg.header.stamp=ros::Time::now();
-                                                        
-                                                        switch(gga.quality){
-                                                            //No fix
-                                                            case 0:
-                                                                msg.status.status=-1;
-                                                                break;
-                                                            
-                                                            //GPS Fix
-                                                            case 1:
-                                                                msg.status.status=0;
-                                                                break;
-                                                                
-                                                            //DGPS
-                                                            case 2:
-                                                                msg.status.status=2;
-                                                        }
-                                                        
-                                                        msg.latitude  = gga.latitude;
-                                                        msg.longitude = gga.longitude;
-                                                        msg.altitude  = gga.antennaAltitude;
-                                                        
-                                                        msg.position_covariance_type= 0;
+                            sonarTopic.publish(msg);
+                            }
 
-                                                            
-                                                        gnssTopic.publish(msg);
-                                                    }
+                            //parse GGA position strings
+                            else if(extractGGA(line,gga)){
+                                sensor_msgs::NavSatFix msg;
+
+               			        msg.header.seq=++gpsSequenceNumber;
+                                msg.header.stamp=ros::Time::now();
+
+                                switch(gga.quality){
+                                //No fix
+                                case 0:
+                                    msg.status.status=-1;
+                                    break;
+
+                                //GPS Fix
+                                case 1:
+                                    msg.status.status=0;
+                                    break;
+         
+								//DGPS
+                                case 2:
+                                msg.status.status=2;
+                                }
+                                
+								msg.latitude  = gga.latitude;
+                                msg.longitude = gga.longitude;
+                                msg.altitude  = gga.antennaAltitude;
+
+                                msg.position_covariance_type= 0;
+
+                                gnssTopic.publish(msg);
+                                }
 							
-                                                    //TODO: parse attitude strings
-                                                    line = "";
+                                //TODO: parse attitude strings
+                                line = "";
 						}
 						else{
 							line.append(1,ch);

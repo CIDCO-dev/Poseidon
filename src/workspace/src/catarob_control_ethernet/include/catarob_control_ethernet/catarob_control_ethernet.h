@@ -108,6 +108,7 @@ class CATAROB{
 		std::string serverAddress;
 		std::string serverPort;
 
+		std::uint16_t crc=0;
 
 	public:
 
@@ -118,7 +119,32 @@ class CATAROB{
 		state_L= n.advertise<catarob_msg::state>("state/left", 1000);
 		state_R= n.advertise<catarob_msg::state>("state/right", 1000);
 		}
+	
+	uint16_t calcul_crc(unsigned char *trame, int taille)
+	{
+        int i;
+        int j=0;
+        uint8_t octatraiter=0;
+        uint16_t crc=0xFFFF;
+        do
+        {
+            octatraiter = (uint8_t)trame[j];;
+            crc = crc ^ octatraiter;
+            for (i=0;i<8;i++)
+            {
+                if ((crc & 0x0001)>0)
+                {
+                    crc = (crc >> 1) ^ 0xA001;
+                }
+                else crc = crc >>1;
+            }
+            //qDebug() << "C_com_modbus_xport : " <<"trame[" << j <<"] = " << (uint8_t)trame[j] << " crc = " << crc << endl;
+            j++;
+        }while(j<taille);
 
+        return (crc);
+	}
+		
 	void motortransmit(char id,char pwm,char imaxl,char imaxh,char relay){ //section a travailler une fois la connection au serveur faite
 		unsigned char *WRbuffer;
 		//Allocation des buffer de ecriture
@@ -126,7 +152,7 @@ class CATAROB{
     	WRbuffer[0]= 0;
     	WRbuffer[1]= pwm;		//pwm low
     	WRbuffer[2]= 0x00;		//pwm high
-    	WRbuffer[3]= relay;		//relais low
+    	WRbuffer[3]= relay;		//relais low.
     	WRbuffer[4]= 0x00;		//relais hi
     	WRbuffer[5]= imaxl;		//imax low
     	WRbuffer[6]= imaxh;		//imax hi
@@ -139,9 +165,12 @@ class CATAROB{
     	WRbuffer[13]=51;		//utilisation i2c
 
   		//création du checksum
+		crc = calcul_crc(WRbuffer, 13);
+		WRbuffer[14]=low_byte(crc);		//
+    	WRbuffer[15]=hi_byte(crc);		//
 
     	//écriture des valeur
-
+		//transmit(WRbuffer);
 
 		free(WRbuffer);
 		}

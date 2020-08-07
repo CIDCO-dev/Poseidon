@@ -24,7 +24,7 @@ public:
 		tf2::Matrix3x3 mat(tfBodyPose);
 
 
-		mat.getEulerYPR(headingDegrees,rollDegrees,pitchDegrees);
+		mat.getEulerYPR(headingDegrees,pitchDegrees,rollDegrees);
 
 		headingDegrees = R2D(headingDegrees);
 		pitchDegrees   = R2D(pitchDegrees);

@@ -86,6 +86,14 @@ bool BNO055I2CActivity::reset() {
     _i2c_smbus_write_byte_data(file, BNO055_OPR_MODE_ADDR, BNO055_OPERATION_MODE_NDOF);
     ros::Duration(0.025).sleep();
 
+    //Remap axis to ENU
+    _i2c_smbus_write_byte_data(file, BNO055_AXIS_MAP_CONFIG_ADDR, 0x21);
+    ros::Duration(0.010).sleep();
+
+    _i2c_smbus_write_byte_data(file, BNO055_AXIS_MAP_SIGN_ADDR, 0x04);
+    ros::Duration(0.010).sleep();
+
+
     return true;
 }
 

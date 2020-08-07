@@ -3,8 +3,7 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
-#include "nav_msgs/Odometry.h"
-//#include "geometry_msgs/PoseStamped.h"
+#include "sensor_msgs/Imu.h"
 #include "geometry_msgs/PointStamped.h"
 #include "geometry_msgs/TransformStamped.h"
 
@@ -36,7 +35,7 @@ public:
 
         void gnssCallback(const sensor_msgs::NavSatFix& gnss);
 
-        void imuCallback(const nav_msgs::Odometry& odom);
+        void imuCallback(const sensor_msgs::Imu& imu);
 
         void sonarCallback(const geometry_msgs::PointStamped& sonar);
 

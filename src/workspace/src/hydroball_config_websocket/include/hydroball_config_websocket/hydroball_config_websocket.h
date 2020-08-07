@@ -307,7 +307,7 @@ public:
 			double rollOffset;
 
 			tf2::Quaternion q;
-			tf2::fromMsg(srv.response.state.odom.pose.pose.orientation,q);
+			tf2::fromMsg(srv.response.state.imu.orientation,q);
 			tf2::Matrix3x3 mat(q);
 			mat.getEulerYPR(headingOffset,pitchOffset,rollOffset);
 

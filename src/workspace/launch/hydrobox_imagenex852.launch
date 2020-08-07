@@ -25,16 +25,22 @@
                          }
 </rosparam>
 
-<node pkg="inertial_sense" name="IMU" type="inertial_sense_node" output="screen">
+<node ns="imu" name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" respawn="true" respawn_delay="2">
+        <param name="device" type="string" value="/dev/i2c-1"/>
+        <param name="address" type="int" value="40"/> <!-- 0x28 == 40 is the default for BNO055 -->
+        <param name="frame_id" type="string" value="imu"/>
+</node>
+
+
+<!-- <node pkg="inertial_sense" name="IMU" type="inertial_sense_node" output="screen">
   <remap from="ins" to="odom"/>
   <param name="port" value="/dev/imu"/>
   <param name="navigation_dt_ms" value="100"/>
   <param name="LTCF" value="1"/>
   <param name="dynamic_model" value="5"/>
   <param name="frame_id" value="imu"/>
-
-  <!-- <param name="INS_rpy_radians" value="0,0,90"/> //-->
-</node>
+  <param name="INS_rpy_radians" value="0,0,0"/>
+</node> //-->
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 <node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" args="$(arg loggerPath) $(arg gnssPortPath)"/>

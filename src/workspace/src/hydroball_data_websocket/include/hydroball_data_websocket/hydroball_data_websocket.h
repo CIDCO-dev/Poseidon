@@ -167,7 +167,7 @@ public:
             telemetry.AddMember("position", positionArray, telemetry.GetAllocator());
         }
 
-        if(!state.odom.header.seq){
+        if(!state.imu.header.seq){
             rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
             telemetry.AddMember("attitude", attitudeArray, telemetry.GetAllocator()); // empty attitude array
         }
@@ -179,7 +179,7 @@ public:
 
                 geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 
-                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.odom.pose.pose.orientation,heading,pitch,roll);
+                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.imu.orientation,heading,pitch,roll);
 
 		//hydrographers prefer heading from 0-360...
 		if(heading < 0){
@@ -249,7 +249,7 @@ public:
     }
 
     void stateChanged(const state_controller_msg::State & state) {
-        uint64_t timestamp = (state.odom.header.stamp.sec * 1000000) + (state.odom.header.stamp.nsec/1000);
+        uint64_t timestamp = (state.imu.header.stamp.sec * 1000000) + (state.imu.header.stamp.nsec/1000);
         //TODO: maybe add our own header?
         if(timestamp - lastTimestamp > 200000){
             std::string jsonString;

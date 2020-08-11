@@ -6,8 +6,6 @@
 
 <!-- <arg name="loggerPath"/> //-->
 
-<!-- <node pkg="logger_binary" name="logger_binary" type="logger_binary" output="screen" args="$(arg loggerPath)"/> //-->
-
 <!-- <node pkg="logger_text" name="logger_text" type="logger_text" output="screen" args="$(arg loggerPath)"/> //-->
 
 <!-- <node pkg="gnss_dummy" name="gnss_dummy" type="gnss_dummy" output="screen"/> //-->

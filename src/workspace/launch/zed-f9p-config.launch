@@ -1,9 +1,0 @@
-<launch>
-
-<arg name="portPath1" value="/dev/ttyACM0"/>
-
-
-<node pkg="gnss_zed-f9p-config" name="gnss_zed_f9p_config" type="gnss_zed-f9p-config" output="screen" args="$(arg portPath1)"/>
-
-
-</launch>

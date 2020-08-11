@@ -9,9 +9,7 @@
 class Writer
 {
 public:
-	Writer(std::string gnss, std::string imu, std::string sonar, bool bin)
-     : setupOK( false ), sep( ";" )
-    {
+	Writer(std::string & gnssFilePath, std::string & imuFilePath, std::string & sonarFilePath, std::string separator=";"){
 		init(gnss, imu, sonar, bin);
 	}
 

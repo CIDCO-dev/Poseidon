@@ -26,15 +26,15 @@ int old_fix_seq;
 class StateController{
 	public:
 		state_controller_msg::State state;
+
 		StateController(){
 			positionTopic = n.subscribe("fix", 1000, &StateController::gnssCallback,this);
 			attitudeTopic = n.subscribe("pose", 1000, &StateController::imuCallback,this);
 			sonarTopic    = n.subscribe("depth", 1000, &StateController::sonarCallback,this);
                         vitalsTopic   = n.subscribe("vitals", 1000, &StateController::vitalsCallback,this);
-                        
 
                         stateTopic    = n.advertise<state_controller_msg::State>("state", 1000);
-                        
+
                         state.position.status.status = -1;
 		}
 
@@ -47,17 +47,15 @@ class StateController{
 		uint64_t buildTimeStamp(int sec, int nsec);
 
 	private:
-            
-
             //ROS handles
             ros::NodeHandle n;
-                
+
             //Input topics
             ros::Subscriber positionTopic;
             ros::Subscriber attitudeTopic;
             ros::Subscriber sonarTopic;
 	    ros::Subscriber vitalsTopic;
-                
+
             //output topic
             ros::Publisher  stateTopic;
 };

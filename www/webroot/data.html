@@ -36,7 +36,7 @@ fileslist = state.fileslist;
 //Creating links to files
 //******************************
 for (i = 0; i < dataln; i++) {
-	linklist[i] = "<a href=\"" + fileslist[i][1] + "\" target=\"_blank\">" + fileslist[i][0] + "</a>";   
+	linklist[i] = "<a href=\"" + fileslist[i][1] + "\" target=\"_blank\" download>" + fileslist[i][0] + "</a>";   
 }
 //******************************
 //populating display
@@ -133,7 +133,7 @@ socket.send("{\"f-list\":[fileslist]}");
  <li class="nav-item inactive">
         <a class="nav-link" href="config.html">
           <i class="fas fa-fw fa-cogs"></i>
-          <span>System Config</span></a>
+          <span>System Settings</span></a>
       </li>
 
 

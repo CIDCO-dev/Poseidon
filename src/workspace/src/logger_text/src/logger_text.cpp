@@ -1,6 +1,6 @@
 #include "logger_text/logger_text.h"
 #include "../../utils/timestamp.h"
-
+#include "../../utils/QuaternionUtils.h"
 
 Writer::Writer(std::string & gnssFilePath, std::string & imuFilePath, std::string & sonarFilePath, std::string separator):gnssFilePath(gnssFilePath),imuFilePath(imuFilePath),sonarFilePath(sonarFilePath),separator(separator){
 	init();
@@ -37,11 +37,16 @@ void Writer::init(){
                         << separator << "EllipsoidalHeight"
                         << std::endl;
 
+	double heading;
+	double pitch;
+	double roll;
+
+	
+
         imuOutputFile   << "TimeStamp"
-                        << separator << "OrientationW"
-                        << separator << "OrientationX"
-                        << separator << "OrientationY"
-                        << separator << "OrientationZ"
+                        << separator << "Heading"
+                        << separator << "Pitch"
+                        << separator << "Roll"
                         << std::endl;
 
         sonarOutputFile << "TimeStamp"
@@ -58,11 +63,16 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 }
 
 void Writer::imuCallback(const nav_msgs::Odometry& odom){
-                imuOutputFile   << TimeUtils::buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec)
-                                << separator << odom.pose.pose.orientation.w
-                                << separator << odom.pose.pose.orientation.x
-                                << separator << odom.pose.pose.orientation.y
-                                << separator << odom.pose.pose.orientation.z
+        double heading;
+        double pitch;
+        double roll;
+
+        QuaternionUtils::convertToEulerAngles(odom.pose.pose.orientation,heading,pitch,roll);
+
+        imuOutputFile   << TimeUtils::buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec)
+                                << separator << R2D(heading)
+                                << separator << R2D(pitch)
+                                << separator << R2D(roll)
                                 << std::endl;
 }
 

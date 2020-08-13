@@ -1,9 +1,9 @@
 <launch>
 
 <arg name="loggerPath" value="/home/glm/src/Poseidon/www/webroot/record/"/>
-<arg name="gnssPortPath" value="/dev/ttyACM0"/>
-<arg name="gpsdIp" value="localhost"/>
-<arg name="gpsdPort" value="2947"/>
+<arg name="configPath" value="/home/glm/config.txt"/>
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
 
 <node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
 
@@ -22,5 +22,7 @@
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)"/>
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)"/>
+
+
 
 </launch>

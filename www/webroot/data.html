@@ -28,18 +28,18 @@ var olddataln = 0;
       
 
 //******************************
-//population de la base de donée
+//populating data model
 //******************************
 dataln = state.fileslist.length;
 fileslist = state.fileslist;
 //******************************
-//création des lien pour l'affichage sur le site web
+//Creating links to files
 //******************************
 for (i = 0; i < dataln; i++) {
-	linklist[i] = "<a href=\"" + fileslist[i][1] + "\">" + fileslist[i][0] + "</a>";   
+	linklist[i] = "<a href=\"" + fileslist[i][1] + "\" target=\"_blank\" download>" + fileslist[i][0] + "</a>";   
 }
 //******************************
-//création de la structure de donnée pour l'affichage
+//populating display
 //******************************
 if (dataln !== olddataln) {
 	olddataln = dataln;
@@ -54,7 +54,7 @@ if (dataln !== olddataln) {
 	}
 }
 //******************************
-//procédure de supression des fichier sélectionner
+//Sends a delete command to delete a file
 //******************************
 function sendDelete() {
 	for (i = 0; i < dataln; i++) {
@@ -63,7 +63,7 @@ function sendDelete() {
 		}
 }
 //******************************
-//procédure de selection des fichier 
+//Select all files 
 //******************************
 function selectall() {
 	for (i = 0; i < dataln; i++) {
@@ -73,29 +73,23 @@ function selectall() {
 
 
 //******************************
-//Fonction pour appeler la liste de fichier
+//Periodically poll for new files
 //******************************
 time=setInterval(function(list){
 socket.send("{\"f-list\":[fileslist]}");
 	setTimeout(list, 500);	
-
 },500);
 
 //******************************
-//Ouverture du websocket
+//Open websocket
 //******************************
       
-  var mutexrx = 0;    
   var socket = new WebSocket("ws://" + window.location.hostname +":9003");
-    if (mutexrx==0){	
-    	socket.onmessage = function (event) {
-        	console.log(event.data);
-		mutexrx = 1;
-	        var state = JSON.parse(event.data);
-	        processState(state);
-		mutexrx = 0;
-	}
-    }  
+  socket.onmessage = function (event) {
+  	console.log(event.data);
+	var state = JSON.parse(event.data);
+	processState(state);
+  }
      
 </script>
 </head>
@@ -128,7 +122,7 @@ socket.send("{\"f-list\":[fileslist]}");
       <li class="nav-item inactive">
         <a class="nav-link" href="status.html">
           <i class="fas fa-fw fa-globe-americas"></i>
-          <span>Live Data</span></a>
+          <span>System Status</span></a>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="data.html">
@@ -139,7 +133,7 @@ socket.send("{\"f-list\":[fileslist]}");
  <li class="nav-item inactive">
         <a class="nav-link" href="config.html">
           <i class="fas fa-fw fa-cogs"></i>
-          <span>System Config</span></a>
+          <span>System Settings</span></a>
       </li>
 
 
@@ -178,7 +172,7 @@ socket.send("{\"f-list\":[fileslist]}");
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Data</h1>
+            <h1 class="h3 mb-0 text-gray-800">Download Data</h1>
           </div>
 
 
@@ -190,19 +184,19 @@ socket.send("{\"f-list\":[fileslist]}");
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">File deletion</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Delete Files</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <h1>File deletion</h1>
+        <h2>This cannot be undone</h2>
 	<div class="data-file"></div>	
-      <p>Are you sure you want to delete the files?</p>
+      <p>Are you sure you want to proceed?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">No Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="sendDelete()" data-dismiss="modal">Yes Delete</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" onclick="sendDelete()" data-dismiss="modal">Yes</button>
       </div>
     </div>
   </div>
@@ -211,27 +205,28 @@ socket.send("{\"f-list\":[fileslist]}");
 
           </div>
 
-	  <!-- Gauges row -->
-          <!-- DataTales Example -->
+          <!-- DataTable -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Data Logged</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Files</h6>
             </div>
             <div class="card-body">
+
+              <button type="button" class="btn btn-primary" onclick="selectall()" data-dismiss="modal">Select All</button>
+
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filedel">Delete</button>
+
+	      <br/><br/>
+
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th width="100px"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filedel">Delete</button></th>
-		      <th><button type="button" class="btn btn-primary" onclick="selectall()" data-dismiss="modal">File Name</button></th>
+                      <th width="100px"></th>
+		      <th></th>
                     </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <th><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filedel">Delete</button></th>
-		      <th><button type="button" class="btn btn-primary" onclick="selectall()" data-dismiss="modal">File Name</button></th>
-                    </tr>
-                  </tfoot>
+                  </thead> 
+
 		  <tbody id='tableContents'>
                   </tbody>
                 </table>

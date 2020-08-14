@@ -9,7 +9,7 @@
   <meta name="description" content="Hydroball Control Panel">
   <meta name="author" content="CIDCO">
 
-  <title>Hydroball - Data</title>
+  <title>Hydroball - System Settings</title>
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
@@ -17,84 +17,68 @@
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
 <script>
-var i;
-var newcfglist;
-var dataln;
-var configlist = Array();
-var configvaluelist = Array();
-var olddataln = 0;
 
+var socket;
 
-function processState(state){
-      
+function processConfig(config){
+	var form = document.getElementById('formContent');
 
-//******************************
-//population de la base de donée
-//******************************
-dataln = state.configlist.length;
-configlist= state.configlist;
-//******************************
-//création de la structure de donnée pour l'affichage
-//******************************
-if (dataln !== olddataln) {
-	olddataln = dataln;
-	var table = document.getElementById('tableContents');
-	var tabledata = " ";
-	for (i = 0; i < dataln; i++) {
-		if (tabledata.length<2) {tabledata = '<tr><td>'+configlist [i][0]+'</td><td><input type="text" size="50" id="'+configlist [i][0]+'" name="'+configlist [i][0]+'" value="'+configlist [i][1]+'"></td></tr>';}
-		else {tabledata = tabledata + '<tr><td>'+configlist [i][0]+'</td><td><input type="text" size="50" id="'+configlist [i][0]+'" name="'+configlist [i][0]+'" value="'+configlist [i][1]+'"></td></tr>';}
-		}
+	form.innerHTML='';
+	var newHTML='';
 
-	table.innerHTML = tabledata;
-	}
-}
-//******************************
-//Fonction pour aenvoyer la nouvelle config
-//******************************
-function sendnewcfg() {
-	newcfglist = "{\"newcfg\": [";
-	for (i = 0; i < dataln; i++) {
-		var x = document.getElementById(configlist [i][0]).value;
+	config.forEach(function (item,index){
+		newHTML += '<div class="form-group row"> <label class="col-lg-2 col-form-label" for="' + item.key +'">' + item.key + '</label> <div class="col-lg-10"> <input id="'+ item.key  + '" class="form-control text-right configurationField" type="text" value="' + item.value + '"/> </div></div>';
+	});	
 
-		if (i > 0) newcfglist = newcfglist + ",";  
-		newcfglist = newcfglist + "[\"";
-		newcfglist = newcfglist + configlist [i][0];
-		newcfglist = newcfglist +"\",\"";
-		newcfglist = newcfglist + x;
-		newcfglist = newcfglist +"\"]";
-		}
-	newcfglist = newcfglist + "]}";
-        socket.send(newcfglist);  
-	location.reload();
+	form.innerHTML = newHTML;
 }
 
-
-
-
-//******************************
-//Fonction pour appeler la config
-//******************************
-time=setInterval(function(list){
-socket.send("{\"config\":[\"config\"]}");
-	setTimeout(list, 500);	
-
-},500);
+function processMessage(msg){
+	if(msg.configuration){
+		processConfig(msg.configuration);
+	}
+}
 
 //******************************
-//Ouverture du websocket
+//Function to save configuration
+//******************************
+function saveConfig() {
+	var cmd = { command : "saveConfiguration", configuration: []};
+
+	var elements = document.getElementsByClassName("configurationField");
+
+	var i;
+	for(i=0;i<elements.length;i++){
+		var setting = {key:elements[i].id,value:elements[i].value};
+		cmd.configuration.push(setting);
+	}
+
+	console.log(cmd);
+	socket.send(JSON.stringify(cmd));
+}
+
+//******************************
+//Function to get configuration
+//******************************
+function getConfig(){
+	var cmd = { command : "getConfiguration"};
+	socket.send(JSON.stringify(cmd));	
+}
+
+//******************************
+// Main
 //******************************
       
-  var mutexrx = 0;    
-  var socket = new WebSocket("ws://" + window.location.hostname +":9004");
-    if (mutexrx==0){	
-    	socket.onmessage = function (event) {
-        	console.log(event.data);
-		mutexrx = 1;
-	        var state = JSON.parse(event.data);
-	        processState(state);
-		mutexrx = 0;
-	}
-    }  
+socket = new WebSocket("ws://" + window.location.hostname +":9004");
+
+socket.onmessage = function (event) {
+        var msg = JSON.parse(event.data);
+        processMessage(msg);
+}
+
+socket.onopen = function( event ){
+	getConfig();
+}
      
 </script>
 </head>
@@ -127,7 +111,7 @@ socket.send("{\"config\":[\"config\"]}");
       <li class="nav-item inactive">
         <a class="nav-link" href="status.html">
           <i class="fas fa-fw fa-globe-americas"></i>
-          <span>Live Data</span></a>
+          <span>System Status</span></a>
       </li>
       <li class="nav-item inactive">
         <a class="nav-link" href="data.html">
@@ -138,7 +122,7 @@ socket.send("{\"config\":[\"config\"]}");
  <li class="nav-item active">
         <a class="nav-link" href="config.html">
           <i class="fas fa-fw fa-cogs"></i>
-          <span>System Config</span></a>
+          <span>System Settings</span></a>
       </li>
 
 
@@ -177,7 +161,7 @@ socket.send("{\"config\":[\"config\"]}");
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Config</h1>
+            <h1 class="h3 mb-0 text-gray-800">System Settings</h1>
           </div>
 
 
@@ -189,19 +173,19 @@ socket.send("{\"config\":[\"config\"]}");
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Send New Config</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Save Configuration</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <h1>Send New Config</h1>
+        <h2>Changing the system configuration can cause unstability and crashes.</h2>
 	<div class="data-file"></div>	
-      <p>Are you sure you want to send the new config?</p>
+      <p>Are you sure you want to proceed?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-        <button type="button" class="btn btn-primary" onclick="sendnewcfg()" data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-primary" onclick="saveConfig()" data-dismiss="modal">Yes</button>
       </div>
     </div>
   </div>
@@ -210,32 +194,37 @@ socket.send("{\"config\":[\"config\"]}");
 
           </div>
 
-	  <!-- Gauges row -->
-          <!-- DataTales Example -->
+          <!-- DataTable -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">System Config</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Configuration</h6>
             </div>
             <div class="card-body">
+
+		<!--
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
-                    <tr>
-                      <th width="100px">Config</th>
+                      <th>Name</th>
 		      <th>Value</th>
-                    </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th width="100px">Config</th>
-		      <th>Value</th>
-                    </tr>
-                  </tfoot>
 		  <tbody id='tableContents'>
                   </tbody>
                 </table>
               </div>
-	      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendcfg">Send New Config</button>
+
+	      //-->
+
+	      <form>
+		<div id="formContent">
+
+		</div>
+	      </form>
+
+	      <br/>
+              <br/>
+
+	      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendcfg">Save Configuration</button>
 
             </div>
 
@@ -262,8 +251,6 @@ socket.send("{\"config\":[\"config\"]}");
   <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
   </a>
-
- 
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>

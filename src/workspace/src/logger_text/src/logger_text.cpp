@@ -1,45 +1,83 @@
 #include "logger_text/logger_text.h"
+#include "../../utils/timestamp.h"
+#include "../../utils/QuaternionUtils.h"
 
-Writer *writer;
-
-uint64_t buildTimeStamp(int sec, int nsec){
-  uint64_t timestamp;
-  timestamp = sec;
-  timestamp = (timestamp * 1000000000)+nsec;
-  return timestamp;
+Writer::Writer(std::string & gnssFilePath, std::string & imuFilePath, std::string & sonarFilePath, std::string separator):gnssFilePath(gnssFilePath),imuFilePath(imuFilePath),sonarFilePath(sonarFilePath),separator(separator){
+	init();
 }
 
-void gnssCallback(const sensor_msgs::NavSatFix& gnss)
-{
-  Position pos;
- 
-  pos.timeStamp = buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
-  pos.x = gnss.longitude;
-  pos.y = gnss.latitude;
-  pos.z = gnss.altitude;
-
-  writer->writeGnss(pos);
+Writer::~Writer(){
+	if(gnssOutputFile.is_open())   gnssOutputFile.close();
+	if(imuOutputFile.is_open())    imuOutputFile.close();
+	if(sonarOutputFile.is_open())  sonarOutputFile.close();
 }
 
-void imuCallback(const nav_msgs::Odometry& odom)
-{
-	Imu imu;
+void Writer::init(){
+	gnssOutputFile.open(gnssFilePath);
 
-	imu.timeStamp = buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec);
-	imu.x = odom.pose.pose.orientation.x;
-	imu.y = odom.pose.pose.orientation.y;
-	imu.z = odom.pose.pose.orientation.z;
-	imu.w = odom.pose.pose.orientation.w;
+	if(!gnssOutputFile.is_open()){
+		throw std::invalid_argument(std::string("Couldn't open GNSS log file ") + gnssFilePath);
+	}
 
-	writer->writeImu(imu);
+	imuOutputFile.open(imuFilePath);
+
+        if(!imuOutputFile.is_open()){
+	        throw std::invalid_argument(std::string("Couldn't open IMU log file ") + imuFilePath);
+        }
+
+	sonarOutputFile.open(sonarFilePath);
+
+        if(!sonarOutputFile.is_open()){
+ 	       throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFilePath);
+        }
+
+	gnssOutputFile  << "TimeStamp"
+                        << separator << "Longitude"
+                        << separator << "Latitude"
+                        << separator << "EllipsoidalHeight"
+                        << std::endl;
+
+	double heading;
+	double pitch;
+	double roll;
+
+	
+
+        imuOutputFile   << "TimeStamp"
+                        << separator << "Heading"
+                        << separator << "Pitch"
+                        << separator << "Roll"
+                        << std::endl;
+
+        sonarOutputFile << "TimeStamp"
+                        << separator << "Depth"
+                        << std::endl;
 }
 
-void sonarCallback(const geometry_msgs::PointStamped& sonarMsgs)
-{
-  Sonar sonar;
-  
-  sonar.timeStamp = buildTimeStamp(sonarMsgs.header.stamp.sec, sonarMsgs.header.stamp.nsec);
-  sonar.depth = sonarMsgs.point.z;
+void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
+	gnssOutputFile  << TimeUtils::buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec)
+                        << separator << gnss.longitude
+                        << separator << gnss.latitude
+                        << separator << gnss.altitude
+                        << std::endl;
+}
 
-  writer->writeSonar(sonar);
+void Writer::imuCallback(const nav_msgs::Odometry& odom){
+        double heading;
+        double pitch;
+        double roll;
+
+        QuaternionUtils::convertToEulerAngles(odom.pose.pose.orientation,heading,pitch,roll);
+
+        imuOutputFile   << TimeUtils::buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec)
+                                << separator << R2D(heading)
+                                << separator << R2D(pitch)
+                                << separator << R2D(roll)
+                                << std::endl;
+}
+
+void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
+                sonarOutputFile << TimeUtils::buildTimeStamp(sonar.header.stamp.sec, sonar.header.stamp.nsec)
+                                << separator << sonar.point.z
+                                << std::endl;
 }

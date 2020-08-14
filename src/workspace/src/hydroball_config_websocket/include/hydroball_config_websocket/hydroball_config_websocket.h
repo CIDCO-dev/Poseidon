@@ -25,6 +25,8 @@
 
 #include "setting_msg/Setting.h"
 
+#include "setting_msg/ConfigurationService.h"
+
 typedef websocketpp::server<websocketpp::config::asio> server;
 
 using websocketpp::connection_hdl;
@@ -38,7 +40,8 @@ public:
 		srv.set_close_handler(bind(&ConfigurationServer::on_close,this,std::placeholders::_1));
 		srv.set_message_handler(bind(&ConfigurationServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
 
-		configTopic    = n.advertise<setting_msg::Setting>("configuration", 1000);
+		configTopic     = n.advertise<setting_msg::Setting>("configuration", 1000);
+		configService   = n.advertiseService("get_configuration", &ConfigurationServer::getConfigurationService,this);
 
 		readConfigurationFromFile();
 	}
@@ -207,17 +210,25 @@ public:
 			configTopic.publish(setting);
 		}
 	}
+
+	bool getConfigurationService(setting_msg::ConfigurationService::Request & req,setting_msg::ConfigurationService::Response & res){
+                if(configuration.find(req.key) != configuration.end()){
+	                res.value = configuration[req.key];
+                }
+
+		return true;
+	}
 private:
     typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
 
-    server srv;
-    con_list connections;
-    std::mutex mtx;
+    server 		srv;
+    con_list 		connections;
+    std::mutex 		mtx;
 
-    ros::NodeHandle n;
-    ros::Publisher configTopic;
-
-    std::string configFilePath;
+    ros::NodeHandle 	n;
+    ros::Publisher	configTopic;
+    ros::ServiceServer	configService;
+    std::string 	configFilePath;
 
     std::map<std::string,std::string>  configuration;
 };

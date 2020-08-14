@@ -8,8 +8,11 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <errno.h>
+#include <mutex>
+#include <thread>
 
 #include "setting_msg/Setting.h"
+#include "setting_msg/ConfigurationService.h"
 
 #pragma pack(1)
 typedef struct{
@@ -57,37 +60,60 @@ class Imagenex852{
 	public:
 		Imagenex852(std::string devicePath) : devicePath(devicePath){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
+			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+			getConfiguration();
 		}
 
 		~Imagenex852(){
 			if(deviceFile>=0) close(deviceFile);
 		}
 
+		void getConfiguration(){
+			char *    configKeys[] = {"sonarStartGain","sonarRange","sonarAbsorbtion","sonarPulseLength"};
+			uint8_t * valuePtrs[]  = {&sonarStartGain,&sonarRange,&sonarAbsorbtion,&sonarPulseLength};
+
+			for(int i=0;i<sizeof(configKeys);i++){
+				std::string valueString = getConfigValue(configKeys[i]);
+                        	setConfigValue(valueString, valuePtrs[i]);
+			}
+		}
+
+		std::string getConfigValue(std::string key){
+			setting_msg::ConfigurationService srv;
+
+			srv.request.key = key;
+
+			if(configurationClient.call(srv)){
+				return srv.response.value;
+			}
+			else{
+				return "";
+			}
+		}
+
+		void setConfigValue(const std::string & valStr,uint8_t * val){
+			mtx.lock();
+			sscanf(valStr.c_str(),"%hhu",val);
+			mtx.unlock();
+		}
+
 		void configurationChange(const setting_msg::Setting & setting){
 			if(setting.key.compare("sonarStartGain")==0){
-				mtx.lock();
-				sscanf(setting.value.c_str(),"%hhu",&sonarStartGain);
-				mtx.unlock();
+				setConfigValue(setting.value,&sonarStartGain);
 			}
 			else if(setting.key.compare("sonarRange")==0){
-                                mtx.lock();
-				sscanf(setting.value.c_str(),"%hhu",&sonarRange);
-                                mtx.unlock();
+				setConfigValue(setting.value,&sonarRange);
 			}
 			else if(setting.key.compare("sonarAbsorbtion")==0){
-                                mtx.lock();
-				sscanf(setting.value.c_str(),"%hhu",&sonarAbsorbtion);
-                                mtx.unlock();
+				setConfigValue(setting.value,&sonarAbsorbtion);
 			}
 			else if(setting.key.compare("sonarPulseLength")==0){
-                                mtx.lock();
-				sscanf(setting.value.c_str(),"%hhu",&sonarPulseLength);
-                                mtx.unlock();
+				setConfigValue(setting.value,&sonarPulseLength);
 			}
 		}
 
 		void processMessages(){
-			ros::Subscriber sub = n.subscribe("configuration", 1000, &Imagenex852::configurationChange,this);
+			ros::Subscriber sub = node.subscribe("configuration", 1000, &Imagenex852::configurationChange,this);
 			ros::spin();
 		}
 
@@ -186,9 +212,9 @@ class Imagenex852{
 
 			mtx.lock();
                         cmd.range       = sonarRange;
-                        cmd.startGain   = sonarGain    ; 
-                        cmd.absorption  = sonarAbsorbtion    ; //20 = 0.2db    675kHz
-                        cmd.pulseLength = sonarPulseLength     ; //1-255 -> 1us to 255us in 1us increments
+                        cmd.startGain   = sonarStartGain;
+                        cmd.absorption  = sonarAbsorbtion; //20 = 0.2db    675kHz
+                        cmd.pulseLength = sonarPulseLength; //1-255 -> 1us to 255us in 1us increments
 			mtx.unlock();
 
 		        cmd.magic[0]    = 0xFE    ;
@@ -256,10 +282,11 @@ class Imagenex852{
 		uint8_t sonarAbsorbtion = 0x14; //20 = 0.2db    675kHz
 		uint8_t sonarPulseLength= 150;
 
-		ros::NodeHandle node;
-		ros::Publisher sonarTopic;
+		ros::NodeHandle		node;
+		ros::Publisher		sonarTopic;
+		ros::ServiceClient	configurationClient;
 
-		std::string   devicePath;
+		std::string   		devicePath;
 		int deviceFile = -1;
 
 		uint32_t sequenceNumber;

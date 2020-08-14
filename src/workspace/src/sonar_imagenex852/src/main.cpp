@@ -9,6 +9,8 @@
 #include <termios.h>
 #include <errno.h>
 
+#include "setting_msg/Setting.h"
+
 #pragma pack(1)
 typedef struct{
 	uint8_t magic[2];
@@ -61,7 +63,38 @@ class Imagenex852{
 			if(deviceFile>=0) close(deviceFile);
 		}
 
+		void configurationChange(const setting_msg::Setting & setting){
+			if(setting.key.compare("sonarStartGain")==0){
+				mtx.lock();
+				sscanf(setting.value.c_str(),"%hhu",&sonarStartGain);
+				mtx.unlock();
+			}
+			else if(setting.key.compare("sonarRange")==0){
+                                mtx.lock();
+				sscanf(setting.value.c_str(),"%hhu",&sonarRange);
+                                mtx.unlock();
+			}
+			else if(setting.key.compare("sonarAbsorbtion")==0){
+                                mtx.lock();
+				sscanf(setting.value.c_str(),"%hhu",&sonarAbsorbtion);
+                                mtx.unlock();
+			}
+			else if(setting.key.compare("sonarPulseLength")==0){
+                                mtx.lock();
+				sscanf(setting.value.c_str(),"%hhu",&sonarPulseLength);
+                                mtx.unlock();
+			}
+		}
+
+		void processMessages(){
+			ros::Subscriber sub = n.subscribe("configuration", 1000, &Imagenex852::configurationChange,this);
+			ros::spin();
+		}
+
 		void run(){
+			//Launch message pump
+			std::thread t(&Imagenex852::processMessages,this);
+
 			//open serial port
 			deviceFile = open(devicePath.c_str(),O_RDWR);
 
@@ -151,14 +184,18 @@ class Imagenex852{
 			Imagenex852SwitchDataCommand cmd;
 			memset(&cmd,0,sizeof(Imagenex852SwitchDataCommand));
 
+			mtx.lock();
+                        cmd.range       = sonarRange;
+                        cmd.startGain   = sonarGain    ; 
+                        cmd.absorption  = sonarAbsorbtion    ; //20 = 0.2db    675kHz
+                        cmd.pulseLength = sonarPulseLength     ; //1-255 -> 1us to 255us in 1us increments
+			mtx.unlock();
+
 		        cmd.magic[0]    = 0xFE    ;
 			cmd.magic[1]    = 0x44    ;
 			cmd.headId      = 0x11    ;
-			cmd.range       = 32      ;
 			cmd.masterSlave = 0x43    ;
-			cmd.startGain   = 0x06    ; 
-			cmd.absorption  = 0x14    ; //20 = 0.2db    675kHz
-			cmd.pulseLength = 150     ; //1-255 -> 1us to 255us in 1us increments
+
 			cmd.profileMinimumRange =  0; //Min range in meters / 10
 			cmd.triggerControl = 0x00;
 			cmd.dataPoints  = dataPoints/10;
@@ -213,6 +250,11 @@ class Imagenex852{
 		}
 
 	private:
+		std::mutex mtx;
+		uint8_t sonarStartGain = 0x06;
+		uint8_t sonarRange = 32;
+		uint8_t sonarAbsorbtion = 0x14; //20 = 0.2db    675kHz
+		uint8_t sonarPulseLength= 150;
 
 		ros::NodeHandle node;
 		ros::Publisher sonarTopic;

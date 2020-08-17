@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>logger_text</name>
+  <name>logger_service</name>
   <version>0.0.0</version>
-  <description>The logger_text package</description>
+  <description>The logger_service package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="cidco@todo.todo">hugo</maintainer>
+  <maintainer email="info@cidco.ca">glm</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>MIT</license>
+  <license>TODO</license>
 
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/gnss_dummy</url> -->
+  <!-- <url type="website">http://wiki.ros.org/logger_service</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -49,22 +49,12 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>nav_msgs</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>logger_service</build_depend>
-
-  <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
-
-  <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
-  <exec_depend>nav_msgs</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>logger_service</exec_depend>
+
+<build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

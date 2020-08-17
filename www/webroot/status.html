@@ -229,7 +229,7 @@
 
 
 	// Memory
-        $("#freeram").removeClass("bg-gradient-warning").removeClass(( state.vitals[2]>10 ? "bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.vitals[2]>10 ? "bg-gradient-success" : "bg-gradient-danger" );
+        $("#freeram").removeClass("bg-gradient-warning").removeClass(( state.vitals[2]>10 ? "bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.vitals[2]>10 ? "bg-gradient-success" : "bg-gradient-danger" ));
 
         $("#freeramText").text(100 - state.vitals[2] + "%");
         $("#freeram").width(100 - state.vitals[2] + "%");
@@ -238,58 +238,16 @@
         $("#freehdd").removeClass("bg-gradient-warning").removeClass( ( state.vitals[3]>20 ?"bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.vitals[3]>20 ? "bg-gradient-success" : "bg-gradient-danger"));
 
         $("#freehddText").text(100 - state.vitals[3] + "%");
-        $("#freehdd").width(100 - state.vitals[3] + "%");
-    }
-
-       
-//********** tracé sur la carte
-
-  
-	//focus sur la derniere position
-
-	if (state.vitals[4] > oldstate){
-		oldstate = state.vitals[4];
-currentZoom = m.getZoom();
-curentweight= (23-currentZoom)*6+23; 
-		//positionne la carte sur la position gps
-		m.panTo([state.position[1], state.position[0]]);
-
-		//dessine la ligne parcourue
-		latlon = [state.position[1], state.position[0]];
-		qp = [state.position[1], state.position[0], state.depth[0]];
-		currentpolyline .push(latlon);
-		quakePoints.push(qp);
-		polyline.remove();
-		hotlineLayer.remove();
-		polyline = L.polyline([currentpolyline ],{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
-		hotlineLayer =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: curentweight,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
-		polyLatLngs = polyline.getLatLngs();
-		
-		/*if (currentpolyline.length == 200) 
-			{
-			polyline1 = L.polyline(currentpolyline,{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
-			currentpolyline= [latlon];
-			hotlineLayer1 =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
-			quakePoints = [qp];
-			
-			}*/
-		//inscrire d'autre détail
-		
-
-
-
-		
-		}
-
-        //TODO: update rest
+        $("#freehdd").width(100 - state.vitals[3] + "%");       
     }
       
-  var socket = new WebSocket("ws://" + window.location.hostname +":9002");
-  socket.onmessage = function (event) {
-  	console.log(event.data);
-        var state = JSON.parse(event.data);
+    var socket = new WebSocket("ws://" + window.location.hostname +":9002");
+
+    socket.onmessage = function (event) {
+	var state = JSON.parse(event.data);
         processState(state);
-  }
+    }
+
 Â  </script>
 
 </html>

@@ -6,8 +6,8 @@ sudo apt install lighttpd -y | tee -a log.txt
 sudo systemctl start lighttpd.service | tee -a log.txt
 sudo systemctl enable lighttpd.service | tee -a log.txt
 
-echo "[+] Installing websocket library"
-sudo apt install libwebsocketpp-dev
+echo "[+] Installing websocket and JSON libraries"
+sudo apt install libwebsocketpp-dev rapidjson-dev
 
 sudo bash -c 'cat << EOF2 > /etc/lighttpd/lighttpd.conf
 server.modules = (

@@ -25,7 +25,6 @@
   <script src="/leaflet/leaflet-heat.js"></script>
   <script src="/leaflet/leaflet.hotline.js"></script>
 
-
 </head>
 
 <body id="page-top">
@@ -95,6 +94,25 @@
             <i class="fa fa-bars"></i>
           </button>
 
+	  <ul class="navbar-nav ml-auto">
+	  <li>
+	  <div class="float-right d-inline">
+		<div id="btnStartRecording" class="d-inline">
+		<a href="#" onclick="startRecording()" class="btn btn-success">
+			<span class="icon-text-white-50"><i class="fas fa-circle"></i></span>
+			<span class="text">Start Recording</span>
+		</a>
+		</div>
+
+		<div id="btnStopRecording" class="d-inline">
+		<a href="#" onclick="stopRecording()" class="btn btn-danger">
+                        <i class="fa fa-stop"></i>
+                        Stop Recording
+                </a>
+		</div>
+	  </div>
+          </li>
+          </ul>
           
         </nav>
         <!-- End of Topbar -->
@@ -107,10 +125,14 @@
             <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
           </div>
 
-          <div id="systemStatus" class="alert alert-danger d-none">
+          <div id="systemStatus" class="alert alert-danger animated--grow-in d-none">
               <strong> Warning: </strong> <div id="systemStatusText"></div>
           </div>
           
+          <div id="recordingStatus" class="alert alert-success animated--grow-in d-none">
+              <div id="recordingStatusText">The system is currently recording data</div>
+          </div>	   
+
           <!-- Status Row -->
           <div class="row">            
 
@@ -119,21 +141,21 @@
                   <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
-                      <h6>GNSS</h6>
+                      <p>GNSS</p>
                       <div class="row">
                           <div class="col mr-2">
                             <div class="row">
-                                <div class="col-xl-6 col-md-6">
+                                <div class="col-lg-6">
                                     <div>Longitude</div>
                                     <div id="gnssLongitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
                                 </div>
-                                <div class="col-xl-6 col-md-6">
+                                <div class="col-lg-6">
                                     <div>Latitude</div>
                                     <div id="gnssLatitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
                                 </div>
                             </div>
                             <div class="row">
-                               <div class="col-xl-12 col-md-12">
+                               <div class="col-lg-12">
                                 <div id="gnssStatusText">Waiting for data...</div>
                                </div>
                             </div>
@@ -154,25 +176,25 @@
 
                     <div class="card-body">
 		
-                      <h6>IMU</h6>
+                      <p>IMU</p>
                       <div class="row">
                           <div class="col mr-2">
 			    <div class="row">
-				<div class="col-xl-4 col-md-4">
+				<div class="col-lg-4">
 				    <div>Heading</div>
 	                            <div id="imuHeadingValue" class="text-gray-200 h6 font-weight-bold"></div>
 				</div>
-				<div class="col-xl-4 col-md-4">
+				<div class="col-lg-4">
 				    <div>Pitch</div>
         	                    <div id="imuPitchValue" class="text-gray-200 h6 font-weight-bold"></div>
 				</div>
-				<div class="col-xl-4 col-md-4">
+				<div class="col-lg-4">
 				    <div>Roll</div>
                 	            <div id="imuRollValue" class="text-gray-200 h6 font-weight-bold"></div>
 				</div>
 			    </div>
 			    <div class="row">
-			       <div class="col-xl-12 col-md-12">
+			       <div class="col-lg-12">
 				<div id="imuStatusText">Waiting for data...</div>
 			       </div>
 			    </div>
@@ -191,17 +213,17 @@
                   <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
 
                     <div class="card-body">
-                      <h6>Sonar</h6>
+                      <p>Sonar</p>
                       <div class="row">
                           <div class="col mr-2">
                             <div class="row">
-                                <div class="col-xl-4 col-md-4">
+                                <div class="col-lg-12">
                                     <div>Meters</div>
                                     <div id="sonarDepthValue" class="text-gray-200 h6 font-weight-bold"></div>
                                 </div>
                             </div>
                             <div class="row">
-                               <div class="col-xl-12 col-md-12">
+                               <div class="col-lg-12">
                                 <div id="sonarStatusText">Waiting for data...</div>
                                </div>
                             </div>
@@ -220,8 +242,6 @@
           <div class="row">
 
             <!-- Content Column -->
-            
-
   
             <!-- Map Card -->
             <div class="col-lg-8 mb-8">
@@ -234,7 +254,7 @@
     
                 <div class="card-body">
 
-                  <div id="map" style="width: 100%; height: 600px;" class="card-body">
+                  <div id="navMap" style="width: 100%; height: 600px;">
 
                   </div>
 
@@ -345,17 +365,24 @@
  
 </body>
 <script>
-	
+	var socket;
 
-	var depth = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	var depthChart;
+        var depth = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        
+	var attitudeChart;
 	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+	var headingGauge;
+	
+$( document ).ready(function() {
 
         //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
         //Chart.defaults.global.defaultFontColor = '#858796'
 		
 	var ctxAttitude = document.getElementById("attitudeChart").getContext('2d');
-	var attitudeChart = new Chart(ctxAttitude, {
+	attitudeChart = new Chart(ctxAttitude, {
 		type: 'line',
 		data: {
 		labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
@@ -363,9 +390,9 @@
 		           {label: "Roll", data:imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
 		options: { responsive: true, animation: false, elements: {point:{radius: 0}}} 
 	});
-
+/*
         var ctxDepth = document.getElementById("depthChart").getContext('2d');
-        var depthChart = new Chart(ctxDepth, 
+        depthChart = new Chart(ctxDepth, 
 	{
                	type: 'line',
 		labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
@@ -374,8 +401,8 @@
 		},
 	        options: { responsive: true, animation: false, elements: {point:{radius: 0}} }
 	});
-
-	var gauge = new RadialGauge({
+*/
+	headingGauge = new RadialGauge({
 	    renderTo: 'imuz',
 	    minValue: 0,
 	    maxValue: 360,
@@ -424,8 +451,8 @@
 	    animateOnInit: true
 	}).draw();
 
-//************************ Draw map
-/*
+	//Init map
+/*	
         var latlon = Array(2);
         var currentpolyline = Array(10);
         var currentpolyline1 = Array(10);
@@ -449,27 +476,27 @@
         currentpolyline = currentpolyline.filter(item => item);
         quakePoints = quakePoints.filter(item => item);
         var oldstate = 0;
-        var m = new L.map("map").setView([0, 0], 23);
+        navMap = new L.map("map").setView([0, 0], 23);
         var polycolor = "";
 
         //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
         //Chart.defaults.global.defaultFontColor = '#858796'
 
-        L.control.scale().addTo(m);
+        L.control.scale().addTo(navMap);
 
-        var polynew = new L.polyline([]).addTo(m);
-        var polyline = new L.polyline([]).addTo(m);
+        var polynew = new L.polyline([]).addTo(navMap);
+        var polyline = new L.polyline([]).addTo(navMap);
         var polyLatLngs = [];
 
-        var newhotline = new L.hotline([], {}).addTo(m);
-        var hotlineLayer = new L.hotline([], {}).addTo(m);
-        var hotlineLayer1 = new L.hotline([], {}).addTo(m);
+        var newhotline = new L.hotline([], {}).addTo(navMap);
+        var hotlineLayer = new L.hotline([], {}).addTo(navMap);
+        var hotlineLayer1 = new L.hotline([], {}).addTo(navMap);
         var hotqp = [];
 
         var curentweight = 23;
         var smootf = 5;
 
-        var shpfile = new L.Shapefile('/map/TM_WORLD_BORDERS-0.3.zip', {
+        var shpfile = new L.Shapefile("map/TM_WORLD_BORDERS-0.3.zip", {
                 onEachFeature: function(feature, layer) {
                         if (feature.properties) {
                                 layer.bindPopup(Object.keys(feature.properties).map(function(k) {
@@ -480,16 +507,89 @@
                         }
                 }
         });
-        shpfile.addTo(m);
+
+        shpfile.addTo(navMap);
         shpfile.once("data:loaded", function() {
-        console.log("finished loaded shapefile");
+        	console.log("finished loaded shapefile");
         });
-        var currentZoom = m.getZoom();
+
+        var currentZoom = navMap.getZoom();
 */
 
-    function processState(state){
+/*
+	navMap = new L.map("navMap").setView([0, 0], 1);	
+        var shpfile = new L.Shapefile("map/TM_WORLD_BORDERS-0.3.zip", {
+                onEachFeature: function(feature, layer) {
+                        if (feature.properties) {
+                                layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+                                        return k + ": " + feature.properties[k];
+                                }).join("<br />"), {
+                                        maxHeight: 200
+                                });
+                        }
+                }
+        });
+
+        shpfile.addTo(navMap);
+	navMap.invalidateSize();
+*/
+	// Init websocket
+
+	socket = new WebSocket("ws://" + window.location.hostname +":9002");
+
+	socket.onmessage = function (event) {
+        	//console.log(event.data);
+        	var msg = JSON.parse(event.data);
+
+        	if(msg.telemetry){
+                	processTelemetry(msg.telemetry);
+        	}
+        	else if(msg.recordingStatus){
+                	console.log(msg);
+                	processRecordingStatus(msg.recordingStatus);
+        	}
+  	};
+
+	socket.onopen = function(event){
+        	getRecordingStatus();
+	};
+
+});
+
+/*
+INSIDE PROCESS STATE:
+        if (state.vitals[4] > oldstate){
+                oldstate = state.vitals[4];
+                currentZoom = m.getZoom();
+                curentweight= (23-currentZoom)*6+23;
+                //positionne la carte sur la position gps
+                m.panTo([state.position[1], state.position[0]]);
+
+                //dessine la ligne parcourue
+                latlon = [state.position[1], state.position[0]];
+                qp = [state.position[1], state.position[0], state.depth[0]];
+                currentpolyline .push(latlon);
+                quakePoints.push(qp);
+                polyline.remove();
+                hotlineLayer.remove();
+                polyline = L.polyline([currentpolyline ],{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
+                hotlineLayer =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: curentweight,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+                polyLatLngs = polyline.getLatLngs();
+
+                //if (currentpolyline.length == 200)
+                //        {
+                 //       polyline1 = L.polyline(currentpolyline,{weight: 2,opacity:1, smoothFactor: smootf , color:'red'}).addTo(m);
+                //        currentpolyline= [latlon];
+                //        hotlineLayer1 =  L.hotline(quakePoints, {min: 7,max: 10,palette: {0.0: '#ff0000',0.2: '#ffff00',0.4: '#00ff00',0.6: '#00ffff',0.8: '#0000ff',0.9: '#8000ff', 1.0: '#000000'},smoothFactor: smootf ,weight: 20,outlineColor: '#000000', outlineWidth: 0}).addTo(m);
+                //        quakePoints = [qp];
+
+                //        }
+
+*/
+
+    function processTelemetry(state){
        
-//********** Update dashboard top marquees  
+	// Update dashboard top marquees  
         
         if(!state.position.length || !state.attitude.length || !state.depth.length){
             $("#systemStatus").removeClass("d-none").addClass("d-block");
@@ -540,7 +640,7 @@
             $("#sonarStatusText").text("No Sonar Data");
         }
 
-//**********  Attitude/depth plot
+	// Update attitude/depth plot
 
 	imu_x .push(state.attitude[1]);
 	imu_x .shift();
@@ -548,93 +648,54 @@
 	imu_y .push(state.attitude[2]);
 	imu_y .shift();
 
-	depth.push(state.depth);
-	depth.shift();		
+	//depth.push(state.depth);
+	//depth.shift();		
 	
 	attitudeChart.update();
-	depthChart.update();
+	//depthChart.update();
 
-	gauge.value = (state.attitude[0]+180);
-		
-// Vitals bars
-
-//********** Uptime
-	var timeup    = state.vitals[4];
-	var jourup  = Math.floor(timeup/86400);
-	var heureup = Math.floor((timeup-(jourup *86400))/3600);
-	var minuteup  = Math.floor((timeup-(jourup*86400+heureup*3600))/60);
-	var secondeup = Math.floor(timeup-((jourup * 86400) + (heureup * 3600) + (minuteup * 60)));
-	var uptime    = jourup + " ";
-	if (heureup<10){uptime = uptime + "0" }
-	uptime    = uptime + heureup + ":";
-	if (minuteup<10){uptime = uptime + "0" }
-	uptime    = uptime + minuteup + ":";
-	if (secondeup<10){uptime = uptime + "0" }
-	uptime    = uptime + secondeup;
-	$("#uptimeText").text(uptime);
-
- 
-//********** CPU load
-	if(state.vitals[1]<90){
-            $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            
-        }
-	 else{
-             $("#cpuload").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-        }
-
-	$("#cpuloadText").text(state.vitals[1] + "%");
-	$("#cpuload").width(state.vitals[1] + "%");
-	
-
-//********** CPU temperature 
-	if(state.vitals[0]>60){
-            $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            
-        }
-	 else{
-             $("#cputemp").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-        }
-
-	$("#cputempText").text(state.vitals[0] + "\u00B0" + "C");
-	$("#cputemp").width(state.vitals[0] + "%");
-
-
-//********** Memory
-
-	if(state.vitals[2]>10){
-            $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            
-        }
-	 else{
-             $("#freeram").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-        }
-
-	$("#freeramText").text(100 - state.vitals[2] + "%");
-	$("#freeram").width(100 - state.vitals[2] + "%");
-
-//********** HDD free space
-
- 	if(state.vitals[3]>20){
-            $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            
-        }
-	 else{
-             $("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-        }
-
-	$("#freehddText").text(100 - state.vitals[3] + "%");
-	$("#freehdd").width(100 - state.vitals[3] + "%");	
-    }
-
-  var socket = new WebSocket("ws://" + window.location.hostname +":9002");
-
-  socket.onmessage = function (event) {
-  	console.log(event.data);
-        var state = JSON.parse(event.data);
-        processState(state);
+	headingGauge.value = (state.attitude[0]+180);
+			
   }
 
+  function getRecordingStatus(){
+  	var cmd = {command : "getLoggingStatus"};
+	socket.send(JSON.stringify(cmd));
+  }
+
+  function processRecordingStatus(recordingStatus){
+	if(recordingStatus.status){
+		//currently recording
+		showRecording();
+	}
+	else{
+		//Not recording
+		showNotRecording();
+	}	
+  }
+
+  function startRecording(){
+	var cmd = { command : "startLogging"};
+	socket.send(JSON.stringify(cmd));
+  }
+
+  function stopRecording(){
+	var cmd = { command : "stopLogging"};
+        socket.send(JSON.stringify(cmd));
+  }
+
+  function showRecording(){
+        $("#btnStartRecording").removeClass("d-inline").addClass("d-none");
+        $("#btnStopRecording").removeClass("d-none").addClass("d-inline");
+        $("#recordingStatus").removeClass("d-none").addClass("d-block");
+  }
+
+  function showNotRecording(){
+        $("#btnStartRecording").removeClass("d-none").addClass("d-inline");
+        $("#btnStopRecording").removeClass("d-inline").addClass("d-none");
+        $("#recordingStatus").removeClass("d-block").addClass("d-none");
+  }
   </script>
 
 </html>
+

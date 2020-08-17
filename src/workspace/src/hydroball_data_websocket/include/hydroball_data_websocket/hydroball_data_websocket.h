@@ -19,6 +19,13 @@
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+
+#include "logger_service/GetLoggingStatus.h"
+#include "logger_service/ToggleLogging.h"
+
 #include "../../utils/QuaternionUtils.h"
 
 
@@ -34,11 +41,69 @@ public:
         srv.set_close_handler(bind(&TelemetryServer::on_close,this,std::placeholders::_1));
 	srv.set_message_handler(bind(&TelemetryServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
         stateTopic = n.subscribe("state", 1000, &TelemetryServer::stateChanged,this);
+	getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
+	toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
     }
 
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
+	rapidjson::Document document;
 
+        if(document.Parse(msg->get_payload().c_str()).HasParseError()){
+        	//Not valid JSON
+                return;
+        }
+
+        if(document.HasMember("command") && document["command"].IsString()){
+        	//get command
+                std::string command = document["command"].GetString();
+
+                if(command.compare("getLoggingStatus")==0){
+			bool isRecording = getRecordingStatus();
+                	sendRecordingStatus(hdl,isRecording);
+                }
+                else if(command.compare("startLogging")==0){
+			logger_service::ToggleLogging toggle;
+
+			toggle.request.loggingEnabled = true;
+
+			if(toggleLoggingService.call(toggle)){
+				if(toggle.response.loggingStatus){
+                			sendRecordingStatus(hdl,true);
+				}
+				else{
+					ROS_ERROR("Failed at enabling logging");
+				}
+			}
+			else{
+				ROS_ERROR("Error while calling ToggleLogging service");
+			}
+               	}
+                else if(command.compare("stopLogging")==0){
+                        logger_service::ToggleLogging toggle;
+
+                        toggle.request.loggingEnabled = false;
+
+                        if(toggleLoggingService.call(toggle)){
+                                if(!toggle.response.loggingStatus){
+                                        sendRecordingStatus(hdl,false);
+                                }
+                                else{
+                                        ROS_ERROR("Failed at disabling logging");
+                                }
+                        }
+                        else{
+                                ROS_ERROR("Error while calling ToggleLogging service");
+                        }
+                }
+                else{
+                	ROS_ERROR("Unknown command");
+                }
+        }
+        else{
+        	//no command found. ignore
+                ROS_ERROR("No command found");
+        }
     }
 
     void on_open(connection_hdl hdl) {
@@ -51,6 +116,34 @@ public:
         connections.erase(hdl);
     }
 
+    void sendRecordingStatus(connection_hdl & hdl, bool isRecording){
+	rapidjson::Document document;
+	document.SetObject();
+	rapidjson::Value recordingStatus(rapidjson::Type::kObjectType);
+
+	recordingStatus.AddMember("status",isRecording,document.GetAllocator());
+
+	document.AddMember("recordingStatus",recordingStatus,document.GetAllocator());
+
+        rapidjson::StringBuffer sb;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+        document.Accept(writer);
+        std::string jsonString = sb.GetString();
+
+        srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
+    }
+
+    bool getRecordingStatus(){
+	logger_service::GetLoggingStatus status;
+
+	if(!getLoggingStatusService.call(status)){
+		ROS_ERROR("Error while calling GetLoggingStatus service");
+	}
+
+
+	return status.response.status;
+    }
+
     void stateChanged(const state_controller_msg::State & state) {
 
         uint64_t timestamp = (state.odom.header.stamp.sec * 1000000) + (state.odom.header.stamp.nsec/1000);
@@ -59,9 +152,10 @@ public:
                 //TODO: maybe add our own header?
                 timestamp - lastTimestamp > 200000
         ){
+	    //FIXME: Use RapidJSON to build our JSON object
             //Build JSON object to send to web interface
             std::stringstream ss;
-            ss << "{";
+            ss << "{\"telemetry\":{";
 
             if( !state.position.header.seq  &&  state.position.status.status < 0){
                 //No fix
@@ -98,7 +192,8 @@ public:
               ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "]";
             }
 
-            ss << "}";
+            ss << "}}";
+
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
                  srv.send(it,ss.str(),websocketpp::frame::opcode::text);
@@ -127,6 +222,9 @@ private:
 
     ros::NodeHandle n;
     ros::Subscriber stateTopic;
+    ros::ServiceClient getLoggingStatusService;
+    ros::ServiceClient toggleLoggingService;
+
     uint64_t lastTimestamp;
 };
 

@@ -49,8 +49,6 @@ public:
 	void on_message(connection_hdl hdl, server::message_ptr msg) {
 		rapidjson::Document document;
 
-		ROS_INFO("%s",msg->get_payload().c_str());
-
 		if(document.Parse(msg->get_payload().c_str()).HasParseError()){
 			//Not valid JSON
 			return;
@@ -64,7 +62,6 @@ public:
 				sendConfiguration(hdl);
 			}
 			else if(command.compare("saveConfiguration")==0){
-				ROS_INFO("Saving config....");
 				saveConfiguration(document);
 			}
 			else{
@@ -112,7 +109,9 @@ public:
 
 				ss >> key >> value;
 
-				configuration[key]=value;
+				if(key.size() > 0 && value.size() > 0){
+					configuration[key]=value;
+				}
 			}
 
 			in.close();

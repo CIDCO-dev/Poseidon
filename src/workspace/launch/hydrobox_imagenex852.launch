@@ -5,8 +5,10 @@
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>
 
-<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
+<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
 
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
 
 <rosparam subst_value="True">
 
@@ -41,7 +43,11 @@
 
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 
+<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
+
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)"/>
+
+<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)"/>
 
 
 

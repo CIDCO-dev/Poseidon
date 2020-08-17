@@ -1,7 +1,7 @@
 <launch>
 
-<arg name="loggerPath" value="/home/glm/src/Poseidon/www/webroot/record/"/>
-<arg name="configPath" value="/home/glm/config.txt"/>
+<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
 

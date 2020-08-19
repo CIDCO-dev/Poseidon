@@ -67,7 +67,7 @@ void Writer::finalize(){
 
 void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	if(loggerEnabled){
-		gnssOutputFile  << TimeUtils::buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec)
+		gnssOutputFile  << TimeUtils::getTimestampString(gnss.header.stamp.sec, gnss.header.stamp.nsec)
         	                << separator << gnss.longitude
                 	        << separator << gnss.latitude
                         	<< separator << gnss.altitude
@@ -83,7 +83,7 @@ void Writer::imuCallback(const nav_msgs::Odometry& odom){
 
         	QuaternionUtils::convertToEulerAngles(odom.pose.pose.orientation,heading,pitch,roll);
 
-        	imuOutputFile   << TimeUtils::buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec)
+        	imuOutputFile   << TimeUtils::getTimestampString(odom.header.stamp.sec, odom.header.stamp.nsec)
                                 << separator << R2D(heading)
                                 << separator << R2D(pitch)
                                 << separator << R2D(roll)
@@ -93,7 +93,7 @@ void Writer::imuCallback(const nav_msgs::Odometry& odom){
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 	if(loggerEnabled){
-                sonarOutputFile << TimeUtils::buildTimeStamp(sonar.header.stamp.sec, sonar.header.stamp.nsec)
+                sonarOutputFile << TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec)
                                 << separator << sonar.point.z
                                 << std::endl;
 	}
@@ -101,7 +101,6 @@ void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 
 bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){
 	response.status = loggerEnabled;
-
 	return true;
 }
 

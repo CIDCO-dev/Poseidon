@@ -12,6 +12,7 @@ add_definitions(-std=c++11 -Wall -g)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  setting_msg
 )
 
 ## System dependencies are found with CMake's conventions

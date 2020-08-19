@@ -6,11 +6,29 @@
 class TimeUtils{
 public:
 
+	//returns timestamp in microseconds
 	static uint64_t buildTimeStamp(int sec, int nsec){
 		uint64_t timestamp;
 		timestamp = sec;
-		timestamp = (timestamp * 1000000000)+nsec;
+		timestamp = (timestamp * 1000000)+nsec/1000;
 		return timestamp;
+	}
+
+	static std::string getTimestampString(int sec,int nsec){
+		time_t seconds = sec;
+		struct tm * timeinfo;
+		char buffer[80];
+
+		timeinfo = localtime(&seconds);
+
+                strftime(buffer,sizeof(buffer),"%Y-%m-%d %H:%M:%S",timeinfo);
+                std::string date(buffer);
+
+		memset(buffer,0,sizeof(buffer));
+		sprintf(buffer,"%06d",nsec/1000);
+		date = date + std::string(".") + std::string(buffer);
+
+                return date;
 	}
 
 	static std::string getStringDate(){

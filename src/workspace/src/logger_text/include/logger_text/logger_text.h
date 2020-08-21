@@ -15,6 +15,7 @@
 #include <inttypes.h>
 #include <fstream>
 #include <mutex>
+#include <cstdio>
 
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
@@ -44,9 +45,9 @@ private:
 	std::mutex mtx;
 	bool loggerEnabled = false;
 
-        std::ofstream gnssOutputFile;
-        std::ofstream imuOutputFile;
-        std::ofstream sonarOutputFile;
+        FILE * gnssOutputFile;
+        FILE * imuOutputFile;
+        FILE * sonarOutputFile;
 
         std::string outputFolder;
 

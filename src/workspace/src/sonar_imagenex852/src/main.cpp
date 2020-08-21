@@ -60,7 +60,9 @@ class Imagenex852{
 	public:
 		Imagenex852(std::string devicePath) : devicePath(devicePath){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
+			printf("Getting config service...");
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+			ROS_INFO("Fetching sonar configuration...");
 			getConfiguration();
 		}
 
@@ -68,34 +70,36 @@ class Imagenex852{
 			if(deviceFile>=0) close(deviceFile);
 		}
 
-		void getConfiguration(){
-			char *    configKeys[] = {"sonarStartGain","sonarRange","sonarAbsorbtion","sonarPulseLength"};
-			uint8_t * valuePtrs[]  = {&sonarStartGain,&sonarRange,&sonarAbsorbtion,&sonarPulseLength};
+                void getConfiguration(){
+                        char *    configKeys[] = {"sonarStartGain","sonarRange","sonarAbsorbtion","sonarPulseLength"};
+                        uint8_t * valuePtrs[]  = {&sonarStartGain,&sonarRange,&sonarAbsorbtion,&sonarPulseLength};
 
-			for(int i=0;i<sizeof(configKeys);i++){
-				std::string valueString = getConfigValue(configKeys[i]);
-                        	setConfigValue(valueString, valuePtrs[i]);
-			}
-		}
+                        for(int i=0;i<4;i++){
+				ROS_INFO("Fetching config key %s",configKeys[i]);
+                                std::string valueString = getConfigValue(configKeys[i]);
+                                setConfigValue(valueString, valuePtrs[i]);
+                        }
+                }
 
-		std::string getConfigValue(std::string key){
-			setting_msg::ConfigurationService srv;
+                std::string getConfigValue(std::string key){
+                        setting_msg::ConfigurationService srv;
 
-			srv.request.key = key;
+                        srv.request.key = key;
 
-			if(configurationClient.call(srv)){
-				return srv.response.value;
-			}
-			else{
-				return "";
-			}
-		}
+                        if(configurationClient.call(srv)){
+                                ROS_INFO("%s : %s",key.c_str(),srv.response.value.c_str());
+                                return srv.response.value;
+                        }
+                        else{
+                                return "";
+                        }
+                }
 
-		void setConfigValue(const std::string & valStr,uint8_t * val){
-			mtx.lock();
-			sscanf(valStr.c_str(),"%hhu",val);
-			mtx.unlock();
-		}
+                void setConfigValue(const std::string & valStr,uint8_t * val){
+                        mtx.lock();
+                        sscanf(valStr.c_str(),"%hhu",val);
+                        mtx.unlock();
+                }
 
 		void configurationChange(const setting_msg::Setting & setting){
 			if(setting.key.compare("sonarStartGain")==0){

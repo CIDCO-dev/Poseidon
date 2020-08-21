@@ -1,4 +1,4 @@
 sonarAbsorbtion 20
 sonarPulseLength 120
 sonarRange 32
-sonarStartGain 6
+sonarStartGain 10

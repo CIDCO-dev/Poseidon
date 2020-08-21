@@ -1,6 +1,5 @@
 <launch>
 
-<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
 <arg name="gnssPortPath" value="/dev/ttyACM0"/>
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>

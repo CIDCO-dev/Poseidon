@@ -1,0 +1,5 @@
+echo "source melodic setup.bash"
+source /opt/ros/melodic/setup.bash
+echo "running tests"
+catkin_make run_tests_angles
+echo "tests run"

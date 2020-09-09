@@ -158,18 +158,21 @@ TEST_F(MyTestSuite, pub_value1) {
 }
 
 
-
-int main(int argc, char** argv) {
-    ros::init(argc, argv, "TestNode");
-    
-    testing::InitGoogleTest(&argc, argv);
-    
-    std::thread t([]{while(ros::ok()) ros::spin();});
-    
-    auto res = RUN_ALL_TESTS();
-    
-    ros::shutdown();
-    
-    return res;
-}
 */
+int main(int argc, char** argv) {
+
+    return 0;
+    /*
+    ros::init(argc, argv, "TestNode");
+
+    testing::InitGoogleTest(&argc, argv);
+
+    std::thread t([]{while(ros::ok()) ros::spin();});
+
+    auto res = RUN_ALL_TESTS();
+
+    ros::shutdown();
+
+    return res;
+    */
+}

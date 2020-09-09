@@ -1,0 +1,2 @@
+. /opt/ros/melodic/setup.sh
+catkin_make run_tests

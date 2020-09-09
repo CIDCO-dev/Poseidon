@@ -78,27 +78,27 @@ class MyTestSuite : public ::testing::Test {
 
 void imuCallbackzm(const nav_msgs::Odometry& imuMsgs)
 {
-  EXPECT_GE(imuMsgs.pose.orientation.z, -180);
+  EXPECT_GE(imuMsgs.pose.pose.orientation.z, -180);
 }
 void imuCallbackxm(const nav_msgs::Odometry& imuMsgs)
 {
-   EXPECT_GE(imuMsgs.pose.orientation.x, -180);
+   EXPECT_GE(imuMsgs.pose.pose.orientation.x, -180);
 }
 void imuCallbackym(const nav_msgs::Odometry& imuMsgs)
 {
-  EXPECT_GE(imuMsgs.pose.orientation.y, -180);
+  EXPECT_GE(imuMsgs.pose.pose.orientation.y, -180);
 }
 void imuCallbackzx(const nav_msgs::Odometry& imuMsgs)
 {
-   EXPECT_LE(imuMsgs.pose.orientation.z, 180);
+   EXPECT_LE(imuMsgs.pose.pose.orientation.z, 180);
 }
 void imuCallbackxx(const nav_msgs::Odometry& imuMsgs)
 {
-  EXPECT_LE(imuMsgs.pose.orientation.x, 180);
+  EXPECT_LE(imuMsgs.pose.pose.orientation.x, 180);
 }
 void imuCallbackyx(const nav_msgs::Odometry& imuMsgs)
 {
-   EXPECT_LE(imuMsgs.pose.orientation.y, 180);
+   EXPECT_LE(imuMsgs.pose.pose.orientation.y, 180);
 }
 
 

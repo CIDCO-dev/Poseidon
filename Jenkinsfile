@@ -2,7 +2,7 @@ pipeline {
 
   agent none
   stages {
-    stage('run angles test') {
+    stage('run test on VM') {
       agent { label 'ros-ubuntu-vm'}
       steps {
         sh 'scripts/vm_tests'

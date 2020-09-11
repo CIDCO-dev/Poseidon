@@ -1,8 +1,6 @@
 #ifndef imu_dummy
 #define imu_dummy
 
-
-
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 
@@ -20,6 +18,7 @@ class IMU{
 		
 		
 		void run();
+		void message(uint32_t sequenceNumber,double yaw, double pitch, double roll);
 		void convertToQuaternion(double yaw, double pitch, double roll,nav_msgs::Odometry& pose);
 };
 

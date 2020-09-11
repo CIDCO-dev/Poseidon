@@ -5,24 +5,22 @@ GNSS::GNSS():sequenceNumber(0){
 }
 
 
-double GNSS::ellipsoidalHeight(int sequenceNumber){
+double GNSS::ellipsoidalHeight(uint32_t sequenceNumber){
 	return sin(sequenceNumber*42+100)*10;
+}
 
-	}
-
-void GNSS::message(int sequenceNumber,double longitude,double latitude){
+void GNSS::message(uint32_t msgSequenceNumber,double longitude,double latitude){
 	sensor_msgs::NavSatFix msg;
-	msg.header.seq=sequenceNumber;
+	msg.header.seq=msgSequenceNumber;
 	msg.header.stamp=ros::Time::now();
 	msg.status.service = 1;
 	msg.header.stamp.nsec=0;
 	msg.longitude=longitude;
 	msg.latitude=latitude;
-	msg.altitude=GNSS::ellipsoidalHeight(sequenceNumber);
+	msg.altitude=GNSS::ellipsoidalHeight(msgSequenceNumber);
 
 	gnssTopic.publish(msg);
-
-	}
+}
 
 void GNSS::talk(){
 	double earthRadius = 6371000;

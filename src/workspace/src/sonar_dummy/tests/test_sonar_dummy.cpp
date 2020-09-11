@@ -2,116 +2,55 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
-
 #include <thread>
 #include <chrono>
 
-class AnyMessage
-{
-};
-typedef boost::shared_ptr<AnyMessage> AnyMessagePtr;
-typedef boost::shared_ptr<AnyMessage const> AnyMessageConstPtr;
-
-namespace ros
-{
-namespace message_traits
-{
-
-template<>
-struct MD5Sum<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
-
-template<>
-struct DataType<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
-
-template<>
-struct Definition<AnyMessage>
-{
-};
-
-}
-
-namespace serialization
-{
-template<>
-struct Serializer<AnyMessage>
-{
-  template<typename Stream, typename T>
-  static void allInOne(Stream s, T t)
-  {
-  }
-
-  ROS_DECLARE_ALLINONE_SERIALIZER;
-};
-}
-}
-
-struct AnyHelper
-{
-  AnyHelper()
-  : count(0)
-  {
-  }
-  void cb(const AnyMessageConstPtr& msg)
-  {
-    ++count;
-  }
-
-  uint32_t count;
-};
-
-class MyTestSuite : public ::testing::Test {
+class SonarDummyTestSuite : public ::testing::Test {
   public:
-    MyTestSuite() {
+    SonarDummyTestSuite() {
     }
-    ~MyTestSuite() {}
+    ~SonarDummyTestSuite() {}
 };
 
-
-
-void sonarCallbackmin(const geometry_msgs::PointStamped& sonarMsgs)
+//global variable to tests if callback was called by subscriber
+bool subscriberReceivedData = false;
+void callback_AssertSubscriberReceivedWhatIsPublished(const geometry_msgs::PointStamped & depthMsg)
 {
-  EXPECT_GE(sonarMsgs.point.z, 0);
+    double expected_z = 11.2;
+
+    double epsilon = 1e-15;
+    ASSERT_NEAR(expected_z, depthMsg.point.z, epsilon) << "subscriber didn't receive expected depth";
+
+    subscriberReceivedData = true;
 }
-void sonarCallbackmax(const geometry_msgs::PointStamped& sonarMsgs)
-{
-  EXPECT_LE(sonarMsgs.point.z, -180);
+
+TEST(SonarDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
+
+    Sonar sonar;
+    ros::NodeHandle nh;
+
+    //setup subscriber with callback that will assert if test passes
+    ros::Subscriber sub = nh.subscribe("depth", 1000, callback_AssertSubscriberReceivedWhatIsPublished);
+
+    //publish a imu message
+    double z = 11.2;
+    sonar.message(z);
+
+    //wait a bit for subscriber to pick up message
+    sleep(1);
+
+    //verify that callback was called by subscriber
+    ASSERT_TRUE(subscriberReceivedData) << "callback was not called by subscriber";
 }
-
-
-TEST_F(MyTestSuite, pub_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub3 = nh.subscribe("depth", 1000, sonarCallbackmin);
-  }
-TEST_F(MyTestSuite, pub_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub3 = nh.subscribe("depth", 1000, sonarCallbackmax);
-  }
-
-
-
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "TestNode");
-    
+    ros::init(argc, argv, "TestSonarNode");
     testing::InitGoogleTest(&argc, argv);
-    
     std::thread t([]{while(ros::ok()) ros::spin();});
-    
     auto res = RUN_ALL_TESTS();
     
     ros::shutdown();
+    t.join();
     
     return res;
 }

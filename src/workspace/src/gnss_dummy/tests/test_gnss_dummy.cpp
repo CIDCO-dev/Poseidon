@@ -2,172 +2,63 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
-
 #include <thread>
 #include <chrono>
 
-class AnyMessage
-{
-};
-typedef boost::shared_ptr<AnyMessage> AnyMessagePtr;
-typedef boost::shared_ptr<AnyMessage const> AnyMessageConstPtr;
+#include <unistd.h>
 
-namespace ros
-{
-namespace message_traits
-{
-
-template<>
-struct MD5Sum<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
-
-template<>
-struct DataType<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
-
-template<>
-struct Definition<AnyMessage>
-{
-};
-
-}
-
-namespace serialization
-{
-template<>
-struct Serializer<AnyMessage>
-{
-  template<typename Stream, typename T>
-  static void allInOne(Stream s, T t)
-  {
-  }
-
-  ROS_DECLARE_ALLINONE_SERIALIZER;
-};
-}
-}
-
-struct AnyHelper
-{
-  AnyHelper()
-  : count(0)
-  {
-  }
-  void cb(const AnyMessageConstPtr& msg)
-  {
-    ++count;
-  }
-
-  uint32_t count;
-};
-
-class MyTestSuite : public ::testing::Test {
+class GnssDummyTestSuite : public ::testing::Test {
+  //in case we want some setup, teardown
   public:
-    MyTestSuite() {
+
+    GnssDummyTestSuite() {
     }
-    ~MyTestSuite() {}
+    ~GnssDummyTestSuite() {}
 };
 
-TEST_F(MyTestSuite, ellipsoidalHeight_low) {  
-  GNSS gnss;
-  int initial_value = 1;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be it's initial value plus 5";
+//global variable to tests if callback was called by subscriber
+bool subscriberReceivedData = false;
+void callback_AssertSubscriberReceivedWhatIsPublished(const sensor_msgs::NavSatFix& gnss)
+{
+    double epsilon = 1e-15;
+
+    double expectedLongitude = 49.00;
+    double expectedLatitude = 60.00;
+
+    ASSERT_NEAR(expectedLongitude, gnss.longitude, epsilon);
+    ASSERT_NEAR(expectedLatitude, gnss.latitude, epsilon);
+
+    subscriberReceivedData = true;
 }
 
-TEST_F(MyTestSuite, ellipsoidalHeight_high) {
-  GNSS gnss;
-  int initial_value = 49;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be 0";
-}
+TEST(GnssDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
+    GNSS gnss;
+    ros::NodeHandle nh;
 
+    //setup subscriber with callback that will assert if test passes
+    ros::Subscriber sub = nh.subscribe("fix", 1, callback_AssertSubscriberReceivedWhatIsPublished);
 
+    //publish a gnss message
+    uint32_t sequenceNumber= 0;
+    double longitude = 49.00;
+    double latitude = 60.00;
+    gnss.message(sequenceNumber, longitude, latitude);
 
+    //wait a bit for subscriber to pick up message
+    sleep(1);
 
-void gnssCallbacklatmin(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_GE(gnss.latitude, -90);
-}
-void gnssCallbacklongmin(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_GE(gnss.longitude, -180);
-}
-void gnssCallbacklatmax(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_LE(gnss.latitude, 90);
-}
-void gnssCallbacklongmax(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_LE(gnss.longitude, 180);
-}
-
-
-TEST_F(MyTestSuite, pub_lat_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmin);
-  }
-TEST_F(MyTestSuite, pub_long_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmin);
-  }
-
-TEST_F(MyTestSuite, pub_lat_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmax);
-  }
-TEST_F(MyTestSuite, pub_long_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmax);
-  }
-
-void gnssCallbackvalue1(const sensor_msgs::NavSatFix& gnss)
-{
-   ASSERT_EQ(gnss.header.seq, 12);
-   ASSERT_EQ(gnss.longitude, 49.00);
-   ASSERT_EQ(gnss.latitude, 60.00);
-
-}
-
-
-TEST_F(MyTestSuite, pub_value1) {
-  GNSS gnss;
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbackvalue1);
-  int sequenceNumber= 12;
-  double longitude = 49.00;
-  double latitude = 60.00;
-  gnss.message(sequenceNumber, longitude, latitude);
-  
+    //verify that callback was called by subscriber
+    ASSERT_TRUE(subscriberReceivedData);
 }
 
 
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "TestNode");
-    
+    ros::init(argc, argv, "TestGnssDummyNode");
     testing::InitGoogleTest(&argc, argv);
-    
     std::thread t([]{while(ros::ok()) ros::spin();});
-    
     auto res = RUN_ALL_TESTS();
-    
     ros::shutdown();
-    
+    t.join(); //t needs to join main thread otherwise it will raise exception and get a core dump
     return res;
 }

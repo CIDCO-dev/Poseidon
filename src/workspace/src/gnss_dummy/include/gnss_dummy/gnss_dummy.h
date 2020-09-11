@@ -24,8 +24,8 @@ class GNSS{
 		GNSS();
 
 		void talk();
-		double ellipsoidalHeight(int sequenceNumber);
-               	void message(int sequenceNumber,double longitude,double latitude);
+		double ellipsoidalHeight(uint32_t sequenceNumber);
+        void message(uint32_t msgSequenceNumber,double longitude,double latitude);
 };
 
 

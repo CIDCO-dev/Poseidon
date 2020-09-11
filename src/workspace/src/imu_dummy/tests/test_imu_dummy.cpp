@@ -2,150 +2,76 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
-
 #include <thread>
 #include <chrono>
 
-class AnyMessage
-{
-};
-typedef boost::shared_ptr<AnyMessage> AnyMessagePtr;
-typedef boost::shared_ptr<AnyMessage const> AnyMessageConstPtr;
+#include <unistd.h>
 
-namespace ros
-{
-namespace message_traits
-{
+#include "../../utils/QuaternionUtils.h"
+#include "../../utils/haversine.hpp"
 
-template<>
-struct MD5Sum<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
-
-template<>
-struct DataType<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
-
-template<>
-struct Definition<AnyMessage>
-{
-};
-
-}
-
-namespace serialization
-{
-template<>
-struct Serializer<AnyMessage>
-{
-  template<typename Stream, typename T>
-  static void allInOne(Stream s, T t)
-  {
-  }
-
-  ROS_DECLARE_ALLINONE_SERIALIZER;
-};
-}
-}
-
-struct AnyHelper
-{
-  AnyHelper()
-  : count(0)
-  {
-  }
-  void cb(const AnyMessageConstPtr& msg)
-  {
-    ++count;
-  }
-
-  uint32_t count;
-};
-
-class MyTestSuite : public ::testing::Test {
+class ImuDummyTestSuite : public ::testing::Test {
   public:
-    MyTestSuite() {
+    ImuDummyTestSuite() {
     }
-    ~MyTestSuite() {}
+    ~ImuDummyTestSuite() {}
 };
 
+//global variable to tests if callback was called by subscriber
+bool subscriberReceivedData = false;
+void callback_AssertSubscriberReceivedWhatIsPublished(const nav_msgs::Odometry & imuMsg)
+{
+    double expected_yaw = 135.4*D2R;
+    double expected_pitch = 2.3*D2R;
+    double expected_roll = -1.4*D2R;
 
+    double yaw = 0.0;
+    double pitch = 0.0;
+    double roll = 0.0;
 
-void imuCallbackzm(const nav_msgs::Odometry& imuMsgs)
-{
-  EXPECT_GE(imuMsgs.pose.pose.orientation.z, -180);
-}
-void imuCallbackxm(const nav_msgs::Odometry& imuMsgs)
-{
-   EXPECT_GE(imuMsgs.pose.pose.orientation.x, -180);
-}
-void imuCallbackym(const nav_msgs::Odometry& imuMsgs)
-{
-  EXPECT_GE(imuMsgs.pose.pose.orientation.y, -180);
-}
-void imuCallbackzx(const nav_msgs::Odometry& imuMsgs)
-{
-   EXPECT_LE(imuMsgs.pose.pose.orientation.z, 180);
-}
-void imuCallbackxx(const nav_msgs::Odometry& imuMsgs)
-{
-  EXPECT_LE(imuMsgs.pose.pose.orientation.x, 180);
-}
-void imuCallbackyx(const nav_msgs::Odometry& imuMsgs)
-{
-   EXPECT_LE(imuMsgs.pose.pose.orientation.y, 180);
+    QuaternionUtils::convertToEulerAngles(imuMsg.pose.pose.orientation, yaw, pitch, roll);
+
+    double epsilon = 1e-15;
+    ASSERT_NEAR(expected_yaw, yaw, epsilon) << "subscriber didn't receive expected yaw angle";
+    ASSERT_NEAR(expected_pitch, pitch, epsilon) << "subscriber didn't receive expected pitch angle";
+    ASSERT_NEAR(expected_roll, roll, epsilon) << "subscriber didn't receive expected roll angle";
+
+    subscriberReceivedData = true;
 }
 
+void printAllTopics() {
+    ros::master::V_TopicInfo topic_infos;
+    ros::master::getTopics(topic_infos);
 
-TEST_F(MyTestSuite, pub_z_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub2 = nh.subscribe("pose", 1000, imuCallbackzm);
-  }
-TEST_F(MyTestSuite, pub_x_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub2 = nh.subscribe("pose", 1000, imuCallbackxm);
-  }
+    for(unsigned int i=0; i<topic_infos.size(); i++) {
+        std::cout << topic_infos[i].name << std::endl;
+    }
+}
 
-TEST_F(MyTestSuite, pub_y_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub2 = nh.subscribe("pose", 1000, imuCallbackym);
-  }
-TEST_F(MyTestSuite, pub_z_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub2 = nh.subscribe("pose", 1000, imuCallbackzx);
-  }
+TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
-TEST_F(MyTestSuite, pub_x_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub2 = nh.subscribe("pose", 1000, imuCallbackxx);
-  }
-TEST_F(MyTestSuite, pub_y_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub2 = nh.subscribe("pose", 1000, imuCallbackyx);
-  }
+    IMU imu;
+    ros::NodeHandle nh;
 
+    //setup subscriber with callback that will assert if test passes
+    ros::Subscriber sub = nh.subscribe("pose", 1000, callback_AssertSubscriberReceivedWhatIsPublished);
 
+    //publish a imu message
+    uint32_t sequenceNumber= 0;
+    double yaw = 135.4*D2R;
+    double pitch = 2.3*D2R;
+    double roll = -1.4*D2R;
+    imu.message(sequenceNumber, yaw, pitch, roll);
 
+    //wait a bit for subscriber to pick up message
+    sleep(1);
+
+    //verify that callback was called by subscriber
+    ASSERT_TRUE(subscriberReceivedData) << "callback was not called by subscriber";
+}
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "TestNode");
+    ros::init(argc, argv, "TestImuDummyNode");
     
     testing::InitGoogleTest(&argc, argv);
     
@@ -154,6 +80,7 @@ int main(int argc, char** argv) {
     auto res = RUN_ALL_TESTS();
     
     ros::shutdown();
+    t.join();
     
     return res;
 }

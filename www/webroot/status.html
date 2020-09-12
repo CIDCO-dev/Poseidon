@@ -199,7 +199,7 @@
 	// Vitals bars
 
 	// Uptime
-        var timeup    = state.vitals[4];
+        var timeup    = state.telemetry.vitals[4];
         var jourup  = Math.floor(timeup/86400);
         var heureup = Math.floor((timeup-(jourup *86400))/3600);
         var minuteup  = Math.floor((timeup-(jourup*86400+heureup*3600))/60);
@@ -215,30 +215,30 @@
 
 
 	// CPU load
-        $("#cpuload").removeClass("bg-gradient-warning").removeClass((state.vitals[1]<90 ?"bg-gradient-danger":"bg-gradient-success")).addClass( (state.vitals[1]<90 ? "bg-gradient-success" : "bg-gradient-danger"));
+        $("#cpuload").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[1]<90 ?"bg-gradient-danger":"bg-gradient-success")).addClass( (state.telemetry.vitals[1]<90 ? "bg-gradient-success" : "bg-gradient-danger"));
 
-        $("#cpuloadText").text(state.vitals[1] + "%");
-        $("#cpuload").width(state.vitals[1] + "%");
+        $("#cpuloadText").text(state.telemetry.vitals[1] + "%");
+        $("#cpuload").width(state.telemetry.vitals[1] + "%");
 
 
 	// CPU temperature
-        $("#cputemp").removeClass("bg-gradient-warning").removeClass( (state.vitals[0]>60 ?"bg-gradient-success":"bg-gradient-danger")).addClass( ( state.vitals[0]>60 ?"bg-gradient-danger":"bg-gradient-success"));
+        $("#cputemp").removeClass("bg-gradient-warning").removeClass( (state.telemetry.vitals[0]>60 ?"bg-gradient-success":"bg-gradient-danger")).addClass( ( state.telemetry.vitals[0]>60 ?"bg-gradient-danger":"bg-gradient-success"));
 
-        $("#cputempText").text(state.vitals[0] + "\u00B0" + "C");
-        $("#cputemp").width(state.vitals[0] + "%");
+        $("#cputempText").text(state.telemetry.vitals[0] + "\u00B0" + "C");
+        $("#cputemp").width(state.telemetry.vitals[0] + "%");
 
 
 	// Memory
-        $("#freeram").removeClass("bg-gradient-warning").removeClass(( state.vitals[2]>10 ? "bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.vitals[2]>10 ? "bg-gradient-success" : "bg-gradient-danger" ));
+        $("#freeram").removeClass("bg-gradient-warning").removeClass(( state.telemetry.vitals[2]>10 ? "bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.telemetry.vitals[2]>10 ? "bg-gradient-success" : "bg-gradient-danger" ));
 
-        $("#freeramText").text(100 - state.vitals[2] + "%");
-        $("#freeram").width(100 - state.vitals[2] + "%");
+        $("#freeramText").text(100 - state.telemetry.vitals[2] + "%");
+        $("#freeram").width(100 - state.telemetry.vitals[2] + "%");
 
 	// HDD free space
-        $("#freehdd").removeClass("bg-gradient-warning").removeClass( ( state.vitals[3]>20 ?"bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.vitals[3]>20 ? "bg-gradient-success" : "bg-gradient-danger"));
+        $("#freehdd").removeClass("bg-gradient-warning").removeClass( ( state.telemetry.vitals[3]>20 ?"bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.telemetry.vitals[3]>20 ? "bg-gradient-success" : "bg-gradient-danger"));
 
-        $("#freehddText").text(100 - state.vitals[3] + "%");
-        $("#freehdd").width(100 - state.vitals[3] + "%");       
+        $("#freehddText").text(100 - state.telemetry.vitals[3] + "%");
+        $("#freehdd").width(100 - state.telemetry.vitals[3] + "%");       
     }
       
     var socket = new WebSocket("ws://" + window.location.hostname +":9002");

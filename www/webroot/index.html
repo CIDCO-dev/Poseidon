@@ -390,7 +390,7 @@ $( document ).ready(function() {
 		           {label: "Roll", data:imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
 		options: { responsive: true, animation: false, elements: {point:{radius: 0}}} 
 	});
-/*
+
         var ctxDepth = document.getElementById("depthChart").getContext('2d');
         depthChart = new Chart(ctxDepth, 
 	{
@@ -399,9 +399,9 @@ $( document ).ready(function() {
                	data: {
                		datasets: [ {label: "Depth(m)", data:depth , backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] 
 		},
-	        options: { responsive: true, animation: false, elements: {point:{radius: 0}} }
+	        options: { maintainAspectRatio: false, responsive: true, animation: false, elements: {point:{radius: 0}} }
 	});
-*/
+
 	headingGauge = new RadialGauge({
 	    renderTo: 'imuz',
 	    minValue: 0,
@@ -648,11 +648,11 @@ INSIDE PROCESS STATE:
 	imu_y .push(state.attitude[2]);
 	imu_y .shift();
 
-	//depth.push(state.depth);
-	//depth.shift();		
+	depth.push(state.depth);
+	depth.shift();
 	
 	attitudeChart.update();
-	//depthChart.update();
+	depthChart.update();
 
 	headingGauge.value = (state.attitude[0]+180);
 			

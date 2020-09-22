@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <istream>
+#include <sstream>
 #include <vector>
 #include <string.h>
 #include <boost/lexical_cast.hpp>
@@ -16,6 +17,7 @@
 #include <string>
 
 #include "ros/ros.h"
+#include <ros/console.h>
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -84,14 +86,31 @@ public:
 		connections.erase(hdl);
 	}
 
-	void receiveMessages(){
-		ros::spin();
-	}
-
 	void run(uint16_t port){
 		srv.listen(port);
 		srv.start_accept();
 		srv.run();
+	}
+
+	void stop() {
+	    websocketpp::lib::error_code ec_stop_listening;
+	    srv.stop_listening(ec_stop_listening);
+	    if(ec_stop_listening) {
+	        ROS_ERROR_STREAM("failed to stop listening: " << ec_stop_listening.message());
+	        return;
+	    }
+
+	    std::string closingMessage = "Server has closed the connection";
+	    for (auto it : connections) {
+             websocketpp::lib::error_code ec_close_connection;
+             srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
+             if(ec_close_connection) {
+                ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
+             }
+        }
+
+        ROS_INFO("Stopping Configuration server");
+        srv.stop();
 	}
 
 	//Read configuration from file

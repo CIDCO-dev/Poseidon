@@ -10,13 +10,11 @@ class IMU{
 		ros::Publisher imuTopic;
 
 		uint32_t sequenceNumber;
-		
 	public:
 		IMU(){
-			imuTopic = node.advertise<nav_msgs::Odometry>("pose", 1000);
+			imuTopic = node.advertise<nav_msgs::Odometry>("odom", 1000);
 		}
-		
-		
+
 		void run();
 		void message(uint32_t sequenceNumber,double yaw, double pitch, double roll);
 };

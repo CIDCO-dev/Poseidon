@@ -1,0 +1,5 @@
+float64 headingOffset
+float64 pitchOffset
+float64 rollOffset
+---
+string value

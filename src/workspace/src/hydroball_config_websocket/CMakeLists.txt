@@ -17,6 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   state_controller
   setting_msg
+  tf2
+  tf2_ros
 )
 
 find_package(RapidJSON)
@@ -110,7 +112,7 @@ find_package(RapidJSON)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES hydroball_config_websocket
-  CATKIN_DEPENDS roscpp std_msgs setting_msg
+  CATKIN_DEPENDS roscpp std_msgs setting_msg geometry_msgs state_controller_msg tf2 tf2_ros
   DEPENDS system_lib
 )
 

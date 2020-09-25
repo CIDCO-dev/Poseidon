@@ -18,6 +18,10 @@
 
 #include "ros/ros.h"
 #include <ros/console.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <tf2/LinearMath/Quaternion.h>
+
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -25,9 +29,15 @@
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 
-#include "setting_msg/Setting.h"
 
+#include "setting_msg/Setting.h"
 #include "setting_msg/ConfigurationService.h"
+#include "setting_msg/ImuOffsetService.h"
+
+#include "state_controller_msg/GetStateService.h"
+
+#include "../../utils/QuaternionUtils.h"
+
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -44,8 +54,11 @@ public:
 
 		configTopic     = n.advertise<setting_msg::Setting>("configuration", 1000);
 		configService   = n.advertiseService("get_configuration", &ConfigurationServer::getConfigurationService,this);
+		zeroImuService  = n.advertiseService("zero_imu_offsets", &ConfigurationServer::zeroImuOffsetService,this);
+		getStateClient  = n.serviceClient<state_controller_msg::GetStateService>("get_state");
 
 		readConfigurationFromFile();
+		broadcastImuTransform();
 	}
 
 	void on_message(connection_hdl hdl, server::message_ptr msg) {
@@ -65,6 +78,11 @@ public:
 			}
 			else if(command.compare("saveConfiguration")==0){
 				saveConfiguration(document);
+			}
+			else if(command.compare("zeroImu")==0){
+				setting_msg::ImuOffsetService::Request  request;
+				setting_msg::ImuOffsetService::Response response;
+				zeroImuOffsetService(request,response);
 			}
 			else{
 				ROS_ERROR("Unknown command");
@@ -102,15 +120,15 @@ public:
 
 	    std::string closingMessage = "Server has closed the connection";
 	    for (auto it : connections) {
-             websocketpp::lib::error_code ec_close_connection;
-             srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
-             if(ec_close_connection) {
-                ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
-             }
-        }
+	        websocketpp::lib::error_code ec_close_connection;
+            	srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
+             	if(ec_close_connection) {
+                	ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
+             	}
+            }
 
-        ROS_INFO("Stopping Configuration server");
-        srv.stop();
+	    ROS_INFO("Stopping Configuration server");
+            srv.stop();
 	}
 
 	//Read configuration from file
@@ -229,6 +247,44 @@ public:
 		}
 	}
 
+	void broadcastImuTransform(){
+		if(
+			configuration.find("headingOffset")!=configuration.end() &&
+			configuration.find("pitchOffset")!=configuration.end() &&
+			configuration.find("rollOffset")!=configuration.end()
+		){
+			double headingOffset;
+			double pitchOffset;
+			double rollOffset;
+
+			if(
+				sscanf(configuration["headingOffset"].c_str(),"%lf",&headingOffset)==1 &&
+				sscanf(configuration["pitchOffset"].c_str()  ,"%lf",&pitchOffset  )==1 &&
+				sscanf(configuration["rollOffset"].c_str()   ,"%lf",&rollOffset   )==1
+			){
+				//init broadcaster
+				static tf2_ros::StaticTransformBroadcaster broadcaster;
+
+				//init transform quaternion
+				tf2::Quaternion q;
+				q.setRPY(rollOffset,pitchOffset,headingOffset);
+
+				//pack transform and send
+				geometry_msgs::TransformStamped imuTransform;
+
+				imuTransform.header.stamp         = ros::Time::now();
+				imuTransform.header.frame_id      = "base_link";
+				imuTransform.child_frame_id       = "imu";
+				imuTransform.transform.rotation.x = q.x();
+				imuTransform.transform.rotation.y = q.y();
+				imuTransform.transform.rotation.z = q.z();
+				imuTransform.transform.rotation.w = q.w();
+
+				broadcaster.sendTransform(imuTransform);
+			}
+		}
+	}
+
 	bool getConfigurationService(setting_msg::ConfigurationService::Request & req,setting_msg::ConfigurationService::Response & res){
                 if(configuration.find(req.key) != configuration.end()){
 	                res.value = configuration[req.key];
@@ -236,6 +292,31 @@ public:
 
 		return true;
 	}
+
+	bool zeroImuOffsetService(setting_msg::ImuOffsetService::Request & req, setting_msg::ImuOffsetService::Response & res){
+
+		state_controller_msg::GetStateService srv;
+
+		if(getStateClient.call(srv)){
+			double headingOffset;
+			double pitchOffset;
+			double rollOffset;
+
+			QuaternionUtils::convertToEulerAngles(srv.response.state.odom.pose.pose.orientation,headingOffset,pitchOffset,rollOffset);
+
+			//Offsets are negated so that steady-state angle + offset = 0
+			configuration["headingOffset"] = std::to_string(-headingOffset);
+			configuration["pitchOffset"]   = std::to_string(-pitchOffset);
+			configuration["rollOffset"]    = std::to_string(-rollOffset);
+
+			broadcastImuTransform();
+
+			return true;
+		}
+
+		return false;
+	}
+
 private:
     typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
 
@@ -246,6 +327,10 @@ private:
     ros::NodeHandle 	n;
     ros::Publisher	configTopic;
     ros::ServiceServer	configService;
+    ros::ServiceServer  zeroImuService;
+    ros::ServiceClient  getStateClient;
+
+
     std::string 	configFilePath;
 
     std::map<std::string,std::string>  configuration;

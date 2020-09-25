@@ -13,7 +13,7 @@
 
     inertial_sense_node: { port: "/dev/imu",
                            baud: 921600,
-                           navigation_dt_ms: 10,
+                           navigation_dt_ms: 100,
                            stream_INS: true,
                            stream_IMU: false,
                            stream_GPS: false,
@@ -26,8 +26,9 @@
 </rosparam>
 
 <node pkg="inertial_sense" name="IMU" type="inertial_sense_node" output="screen">
-  <remap from="ins" to="pose"/>
+  <remap from="ins" to="odom"/>
   <param name="port" value="/dev/imu"/>
+  <param name="navigation_dt_ms" value="100"/>
   <!-- <param name="INS_rpy_radians" value="0,0,90"/> //-->
 </node>
 

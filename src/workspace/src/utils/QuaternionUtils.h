@@ -2,6 +2,7 @@
 #define QUATERNIONUTILS_H
 
 #define R2D(x) (x * ((double)180/(double)M_PI))
+#define D2R(x) (x * ((double)M_PI/(double)180))
 
 class QuaternionUtils{
 public:

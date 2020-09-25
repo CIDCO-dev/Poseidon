@@ -267,7 +267,7 @@ public:
 
 				//init transform quaternion
 				tf2::Quaternion q;
-				q.setRPY(rollOffset,pitchOffset,headingOffset);
+				q.setRPY(D2R(rollOffset),D2R(pitchOffset),D2R(headingOffset));
 
 				//pack transform and send
 				geometry_msgs::TransformStamped imuTransform;
@@ -309,6 +309,8 @@ public:
 			configuration["pitchOffset"]   = std::to_string(-pitchOffset);
 			configuration["rollOffset"]    = std::to_string(-rollOffset);
 
+                        writeConfigurationToFile();
+                        broadcastConfiguration();
 			broadcastImuTransform();
 
 			return true;

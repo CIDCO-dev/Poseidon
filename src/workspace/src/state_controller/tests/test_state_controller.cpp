@@ -122,7 +122,7 @@ TEST_F(MyTestSuite, pub_value1) {
   msg1.altitude=123.66;
 //  pub1.publish(msg1);
   
-  ros::Publisher pub2 = nh.advertise<sensor_msgs::Imu>("pose", 1);
+  ros::Publisher pub2 = nh.advertise<sensor_msgs::Imu>("odom", 1);
   sensor_msgs::Imu msg2;
   msg2.header.seq=22;
   msg2.header.stamp=time;

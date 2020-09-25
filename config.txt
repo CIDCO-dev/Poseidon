@@ -2,3 +2,7 @@ sonarAbsorbtion 20
 sonarPulseLength 120
 sonarRange 32
 sonarStartGain 10
+headingOffset 0
+pitchOffset 0
+rollOffset 0
+

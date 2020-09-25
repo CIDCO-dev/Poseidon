@@ -7,9 +7,9 @@ void IMU::run(){
     msg.header.seq=++sequenceNumber;
     msg.header.stamp=ros::Time::now();
 
-    double heading = sin(sequenceNumber)*30;
-    double pitch   = cos(sequenceNumber)*20;
-    double roll    = sin(sequenceNumber*42+100)*10;
+    double heading = sin(sequenceNumber/360)*30;
+    double pitch   = cos(sequenceNumber/360)*20;
+    double roll    = sin(sequenceNumber/360)*10;
 
     QuaternionUtils::convertToQuaternion(heading,pitch,roll,msg);
 

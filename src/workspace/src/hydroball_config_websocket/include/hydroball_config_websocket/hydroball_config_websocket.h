@@ -230,6 +230,7 @@ public:
 
 			writeConfigurationToFile();
 			broadcastConfiguration();
+			broadcastImuTransform();
 		}
 		else{
 			ROS_ERROR("%s","Configuration array not found");

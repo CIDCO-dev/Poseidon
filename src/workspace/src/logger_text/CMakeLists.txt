@@ -3,12 +3,12 @@ project(logger_text)
 
 add_definitions(-std=c++11 -Wall -g)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs logger_service)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs logger_service
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs
   DEPENDS system_lib
 )
 

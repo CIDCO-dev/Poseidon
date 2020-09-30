@@ -6,6 +6,11 @@
 #include "nav_msgs/Odometry.h"
 //#include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PointStamped.h"
+#include "geometry_msgs/TransformStamped.h"
+
+#include <tf2_ros/transform_listener.h>
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+
 #include "std_msgs/String.h"
 #include <iostream>
 #include <string>
@@ -44,14 +49,18 @@ public:
 private:
 	std::mutex mtx;
 	bool loggerEnabled = false;
+	bool bootstrappedGnssTime = false;
 
-        FILE * gnssOutputFile;
-        FILE * imuOutputFile;
-        FILE * sonarOutputFile;
+        FILE * gnssOutputFile  = NULL;
+        FILE * imuOutputFile   = NULL;
+        FILE * sonarOutputFile = NULL;
 
         std::string outputFolder;
 
         std::string separator;
+
+	tf2_ros::Buffer buffer;
+	tf2_ros::TransformListener transformListener;
 };
 
 

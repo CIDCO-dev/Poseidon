@@ -3,10 +3,8 @@
 #include "../../utils/QuaternionUtils.h"
 #include <cstdio>
 
-Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator){
-	if(loggerEnabled){
-		init();
-	}
+Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
+
 }
 
 Writer::~Writer(){
@@ -56,34 +54,58 @@ void Writer::finalize(){
         if(gnssOutputFile)   fclose(gnssOutputFile);
         if(imuOutputFile)    fclose(imuOutputFile);
         if(sonarOutputFile)  fclose(sonarOutputFile);
+
+	gnssOutputFile  = NULL;
+	imuOutputFile   = NULL;
+	sonarOutputFile = NULL;
 }
 
 void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
-	if(loggerEnabled){
-		fprintf(gnssOutputFile,"%s%s%.8f%s%.8f%s%.3f\n",TimeUtils::getTimestampString(gnss.header.stamp.sec, gnss.header.stamp.nsec).c_str(),separator.c_str(),gnss.longitude,separator.c_str(),gnss.latitude,separator.c_str(),gnss.altitude);
+
+	if(!bootstrappedGnssTime && gnss.status.status >= 0){
+		bootstrappedGnssTime = true;
+		init();
+	}
+
+	if(bootstrappedGnssTime && loggerEnabled){
+		fprintf(gnssOutputFile,"%s%s%.10f%s%.10f%s%.3f%s%d%s%d\n",
+			TimeUtils::getTimestampString(gnss.header.stamp.sec, gnss.header.stamp.nsec).c_str(),
+			separator.c_str(),
+			gnss.longitude,
+			separator.c_str(),
+			gnss.latitude,
+			separator.c_str(),
+			gnss.altitude,
+			separator.c_str(),
+			gnss.status.status,
+			separator.c_str(),
+			gnss.status.service
+		);
 	}
 }
 
 void Writer::imuCallback(const nav_msgs::Odometry& odom){
-	if(loggerEnabled){
-	        double heading;
-        	double pitch;
-	        double roll;
+	if(bootstrappedGnssTime && loggerEnabled){
+	        double heading = 0;
+        	double pitch   = 0;
+	        double roll    = 0;
 
-        	QuaternionUtils::convertToEulerAngles(odom.pose.pose.orientation,heading,pitch,roll);
+                geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 
-		fprintf(imuOutputFile,"%s%s%.3f%s%.3f%s%.3f\n",TimeUtils::getTimestampString(odom.header.stamp.sec, odom.header.stamp.nsec).c_str(),separator.c_str(),R2D(heading),separator.c_str(),R2D(pitch),separator.c_str(),R2D(roll));
+                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,odom.pose.pose.orientation,heading,pitch,roll);
+
+		fprintf(imuOutputFile,"%s%s%.3f%s%.3f%s%.3f\n",TimeUtils::getTimestampString(odom.header.stamp.sec, odom.header.stamp.nsec).c_str(),separator.c_str(),heading,separator.c_str(),pitch,separator.c_str(),roll);
 	}
 }
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
-	if(loggerEnabled){
+	if(bootstrappedGnssTime && loggerEnabled){
 		fprintf(sonarOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec).c_str(),separator.c_str(),sonar.point.z);
 	}
 }
 
 bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){
-	response.status = loggerEnabled;
+	response.status = bootstrappedGnssTime && loggerEnabled;
 	return true;
 }
 
@@ -91,22 +113,23 @@ bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,lo
 bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
 	mtx.lock();
 
-	if(!loggerEnabled && request.loggingEnabled){
-		//Enabling logging, init logfiles
-		loggerEnabled=true;
-		init();
+	if(bootstrappedGnssTime){
+		if(!loggerEnabled && request.loggingEnabled){
+			//Enabling logging, init logfiles
+			loggerEnabled=true;
+			init();
+		}
+		else if(loggerEnabled && !request.loggingEnabled){
+			//shutting down logging, finalize logfiles
+			loggerEnabled=false;
+			finalize();
+		}
+
+		mtx.unlock();
+
+		response.loggingStatus=loggerEnabled;
+		return true;
 	}
-	else if(loggerEnabled && !request.loggingEnabled){
-		//shutting down logging, finalize logfiles
-		loggerEnabled=false;
-		finalize();
-	}
 
-	mtx.unlock();
-
-	response.loggingStatus=loggerEnabled;
-
-
-
-	return true;
+	return false;
 }

@@ -4,8 +4,15 @@
 
 int main(int argc,char** argv){
 	ros::init(argc, argv, "zedf9p");
+
+	if(argc != 2){
+		std::cerr << "gnss_zed_f9p logPath serialDevice" << std::endl;
+		exit(1);
+	}
+
 	std::string logPath (argv[1]);
 	std::string serialPortPath (argv[2]);
+
 	if (logPath.length()<2){
 		ROS_INFO("Missing output log path\n");
     		return 1;

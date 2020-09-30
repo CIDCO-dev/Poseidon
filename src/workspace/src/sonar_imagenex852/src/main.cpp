@@ -75,7 +75,6 @@ class Imagenex852{
                         uint8_t * valuePtrs[]  = {&sonarStartGain,&sonarRange,&sonarAbsorbtion,&sonarPulseLength};
 
                         for(int i=0;i<4;i++){
-				ROS_INFO("Fetching config key %s",configKeys[i]);
                                 std::string valueString = getConfigValue(configKeys[i]);
                                 setConfigValue(valueString, valuePtrs[i]);
                         }
@@ -87,7 +86,6 @@ class Imagenex852{
                         srv.request.key = key;
 
                         if(configurationClient.call(srv)){
-                                ROS_INFO("%s : %s",key.c_str(),srv.response.value.c_str());
                                 return srv.response.value;
                         }
                         else{

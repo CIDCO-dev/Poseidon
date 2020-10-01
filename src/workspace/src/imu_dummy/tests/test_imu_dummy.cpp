@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 #include "../../utils/QuaternionUtils.h"
-#include "../../utils/haversine.hpp"
+#include "../../utils/Constants.h"
 
 class ImuDummyTestSuite : public ::testing::Test {
   public:

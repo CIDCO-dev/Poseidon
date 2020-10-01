@@ -37,6 +37,7 @@
 #include "state_controller_msg/GetStateService.h"
 
 #include "../../utils/QuaternionUtils.h"
+#include "../../utils/Constants.hpp"
 
 
 typedef websocketpp::server<websocketpp::config::asio> server;

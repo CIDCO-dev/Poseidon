@@ -26,8 +26,7 @@ typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::connection_hdl;
 
 //TODO: move this to a util class
-
-#define D2R(x) (x * ((double)180/(double)M_PI))
+#include "../../utils/Constants.hpp"
 
 
 

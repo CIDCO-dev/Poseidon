@@ -16,9 +16,14 @@
 #include "ros/ros.h"
 
 #include "state_controller_msg/State.h"
+#include "geometry_msgs/Quaternion.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+
+
+#include <tf2_ros/transform_listener.h>
 
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -34,7 +39,7 @@ using websocketpp::connection_hdl;
 
 class TelemetryServer {
 public:
-    TelemetryServer(){
+    TelemetryServer(): transformListener(buffer){
         srv.init_asio();
         srv.set_reuse_addr(true);
         srv.set_open_handler(bind(&TelemetryServer::on_open,this,std::placeholders::_1));
@@ -44,7 +49,6 @@ public:
 	getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
 	toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
     }
-
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
 	rapidjson::Document document;
@@ -140,46 +144,7 @@ public:
 		ROS_ERROR("Error while calling GetLoggingStatus service");
 	}
 
-
 	return status.response.status;
-    }
-
-    void convertState2stringstream(const state_controller_msg::State & state, std::stringstream & ss) {
-
-        ss << "{\"telemetry\":{";
-
-        if( !state.position.header.seq  &&  state.position.status.status < 0){
-            //No fix
-            ss << "\"position\":[],";
-        } else{
-            ss << "\"position\":[" << std::setprecision(12) << state.position.longitude << "," <<  state.position.latitude  << "],";
-        }
-
-        if(!state.odom.header.seq){
-            ss << "\"attitude\":[],";
-        } else{
-            double heading = 0;
-            double pitch = 0;
-            double roll = 0;
-
-            QuaternionUtils::convertToEulerAngles(state.odom.pose.pose.orientation,heading,pitch,roll);
-
-            ss << "\"attitude\":[" << std::setprecision(5)  << R2D(heading) << "," << R2D(pitch) << "," << R2D(roll)  << "],";
-        }
-
-        if(!state.depth.header.seq){
-            ss << "\"depth\":[],";
-        } else{
-            ss << "\"depth\":[" << std::setprecision(6) << state.depth.point.z  << "],";
-        }
-
-        if(!state.vitals.header){
-            ss << "\"vitals\":[],";
-        } else{
-            ss << "\"vitals\":[" << std::setprecision(5)  << state.vitals.cputemp << "," << (int) state.vitals.cpuload << "," << (int) state.vitals.freeram  << "," << (int) state.vitals.freehdd << "," << (int) state.vitals.uptime  << "," <<  state.vitals.vbat << "," << (int) state.vitals.rh  << "," << (int) state.vitals.temp << "," << (int) state.vitals.psi << "]";
-        }
-
-        ss << "}}";
     }
 
     void convertState2json(const state_controller_msg::State & state, std::string & json) {
@@ -203,29 +168,36 @@ public:
         if(!state.odom.header.seq){
             rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
             telemetry.AddMember("attitude", attitudeArray, telemetry.GetAllocator()); // empty attitude array
-        } else {
-            double heading = 0;
-            double pitch = 0;
-            double roll = 0;
+        }
+	    else {
+            try{
+                double heading = 0;
+                double pitch = 0;
+                double roll = 0;
 
-            QuaternionUtils::convertToEulerAngles(state.odom.pose.pose.orientation,heading,pitch,roll);
+                geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 
-            rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
-            //Conversion to degrees
-            rapidjson::Value headingValue(R2D(heading));
-            rapidjson::Value pitchValue(R2D(pitch));
-            rapidjson::Value rollValue(R2D(roll));
+                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.odom.pose.pose.orientation,heading,pitch,roll);
 
-            attitudeArray.PushBack(headingValue, telemetry.GetAllocator());
-            attitudeArray.PushBack(pitchValue, telemetry.GetAllocator());
-            attitudeArray.PushBack(rollValue, telemetry.GetAllocator());
-            telemetry.AddMember("attitude", attitudeArray, telemetry.GetAllocator());
+                rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
+                rapidjson::Value headingValue(heading);
+                rapidjson::Value pitchValue(pitch);
+                rapidjson::Value rollValue(roll);
+
+                attitudeArray.PushBack(headingValue, telemetry.GetAllocator());
+                attitudeArray.PushBack(pitchValue, telemetry.GetAllocator());
+                attitudeArray.PushBack(rollValue, telemetry.GetAllocator());
+                telemetry.AddMember("attitude", attitudeArray, telemetry.GetAllocator());
+            } catch (tf2::TransformException &ex) {
+                ROS_WARN("IMU transform missing: %s",ex.what());
+            }
         }
 
         if(!state.depth.header.seq){
             rapidjson::Value depthArray(rapidjson::Type::kArrayType);
             telemetry.AddMember("depth", depthArray, telemetry.GetAllocator()); // empty depth array
-        } else {
+        }
+	else {
             rapidjson::Value depthArray(rapidjson::Type::kArrayType);
             rapidjson::Value z(state.depth.point.z);
 
@@ -236,7 +208,8 @@ public:
         if(!state.vitals.header) {
             rapidjson::Value vitalsArray(rapidjson::Type::kArrayType);
             telemetry.AddMember("vitals", vitalsArray, telemetry.GetAllocator()); // empty vitals array
-        } else{
+        }
+	else{
             rapidjson::Value vitalsArray(rapidjson::Type::kArrayType);
             rapidjson::Value cputemp(state.vitals.cputemp);
             rapidjson::Value cpuload((int) state.vitals.cpuload);
@@ -269,18 +242,12 @@ public:
     void stateChanged(const state_controller_msg::State & state) {
         uint64_t timestamp = (state.odom.header.stamp.sec * 1000000) + (state.odom.header.stamp.nsec/1000);
         //TODO: maybe add our own header?
-        if(timestamp - lastTimestamp > 200000)
-        {
+        if(timestamp - lastTimestamp > 200000){
             std::string jsonString;
             convertState2json(state, jsonString);
 
-            //TODO: remove reference to stringstream once unit tests are passing
-            //std::stringstream ss;
-            //convertState2stringstream(state, ss);
-
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
-                 //srv.send(it,ss.str(),websocketpp::frame::opcode::text);
                  srv.send(it,jsonString,websocketpp::frame::opcode::text);
             }
 
@@ -309,16 +276,16 @@ public:
 	    std::string closingMessage = "Server has closed the connection";
 	    std::lock_guard<std::mutex> lock(mtx); // server stopped listening is this needed?
 	    for (auto it : connections) {
-             websocketpp::lib::error_code ec_close_connection;
-             srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
-             if(ec_close_connection) {
-                ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
-             }
-        }
+            	websocketpp::lib::error_code ec_close_connection;
+            	srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
+            	if(ec_close_connection) {
+                	ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
+             	}
+            }
 
-        ROS_INFO("Stopping Configuration server");
-        srv.stop();
-	}
+	    ROS_INFO("Stopping Configuration server");
+            srv.stop();
+     }
 
 private:
     typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
@@ -331,6 +298,9 @@ private:
     ros::Subscriber stateTopic;
     ros::ServiceClient getLoggingStatusService;
     ros::ServiceClient toggleLoggingService;
+
+    tf2_ros::Buffer buffer;
+    tf2_ros::TransformListener transformListener;
 
     uint64_t lastTimestamp;
 };

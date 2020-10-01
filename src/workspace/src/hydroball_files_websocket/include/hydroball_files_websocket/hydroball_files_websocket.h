@@ -25,11 +25,6 @@ typedef websocketpp::server<websocketpp::config::asio> server;
 //std::mutex mtx;
 using websocketpp::connection_hdl;
 
-//TODO: move this to a util class
-#include "../../utils/Constants.hpp"
-
-
-
 class ControlFiles {
 public:
     ControlFiles(std::string & logFolder): logFolder(logFolder) {

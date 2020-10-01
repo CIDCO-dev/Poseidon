@@ -16,11 +16,9 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   state_controller
-  sensor_msgs
-  geometry_msgs
-  message_generation
-  raspberrypi_vitals_msg
-  state_controller_msg
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 find_package(RapidJSON)
@@ -117,7 +115,7 @@ find_package(RapidJSON)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES hydroball_data_websocket
-  CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs tf2 tf2_ros tf2_geometry_msgs
   DEPENDS system_lib
 )
 
@@ -159,8 +157,9 @@ include_directories(
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES} ${PROJECT_NAME}
+   ${catkin_LIBRARIES} # ${PROJECT_NAME}
  )
+
  target_link_libraries(${PROJECT_NAME}
    ${catkin_LIBRARIES}
  )
@@ -226,6 +225,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   raspberrypi_vitals_msg
   state_controller_msg
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 catkin_add_gtest(test_${PROJECT_NAME} tests/test_hydroball_data_websocket.cpp)

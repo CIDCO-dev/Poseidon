@@ -1,8 +1,6 @@
 #ifndef QUATERNIONUTILS_H
 #define QUATERNIONUTILS_H
 
-#include "Constants.hpp"
-
 class QuaternionUtils{
 public:
 

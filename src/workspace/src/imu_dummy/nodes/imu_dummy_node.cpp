@@ -3,14 +3,17 @@
 
 int main(int argc,char** argv){
 	ros::init(argc, argv, "imu");
+
 	IMU imu;
+
 	ros::Rate loop_rate( 200 );
-	std::string msgString("yay");
+
 	while(ros::ok()){
 		imu.run();
 		ros::spinOnce();
                 loop_rate.sleep();
 	}
+
 	return 0;
 }
 

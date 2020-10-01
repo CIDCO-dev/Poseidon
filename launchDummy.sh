@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 source /opt/ros/melodic/setup.bash
 source src/workspace/devel/setup.bash

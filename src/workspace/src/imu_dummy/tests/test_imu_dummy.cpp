@@ -54,7 +54,7 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
     ros::NodeHandle nh;
 
     //setup subscriber with callback that will assert if test passes
-    ros::Subscriber sub = nh.subscribe("pose", 1000, callback_AssertSubscriberReceivedWhatIsPublished);
+    ros::Subscriber sub = nh.subscribe("odom", 1000, callback_AssertSubscriberReceivedWhatIsPublished);
 
     //publish a imu message
     uint32_t sequenceNumber= 0;

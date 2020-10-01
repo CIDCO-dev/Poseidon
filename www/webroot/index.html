@@ -64,10 +64,18 @@
       </li>
 
     <li class="nav-item inactive">
-        <a class="nav-link" href="config.html">
-          <i class="fas fa-fw fa-cogs"></i>
-          <span>System Settings</span></a>
-      </li>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>System Configuration</span>
+        </a>
+        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Configuration Utilities:</h6>
+            <a class="collapse-item" href="calibration.html">Calibration</a>
+            <a class="collapse-item" href="settings.html">Settings</a>
+          </div>
+        </div>
+    </li>
 
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
@@ -373,6 +381,7 @@
 	var attitudeChart;
 	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
         var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	var depth = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 	var headingGauge;
 	
@@ -395,8 +404,8 @@ $( document ).ready(function() {
         depthChart = new Chart(ctxDepth, 
 	{
                	type: 'line',
-		labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
                	data: {
+			labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
                		datasets: [ {label: "Depth(m)", data:depth , backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] 
 		},
 	        options: { maintainAspectRatio: false, responsive: true, animation: false, elements: {point:{radius: 0}} }
@@ -603,8 +612,8 @@ INSIDE PROCESS STATE:
         
         if(state.position.length){
             $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#gnssLongitudeValue").text(state.position[0]);
-            $("#gnssLatitudeValue").text(state.position[1]);
+            $("#gnssLongitudeValue").text(state.position[0].toFixed(8));
+            $("#gnssLatitudeValue").text(state.position[1].toFixed(8));
 	    $("#gnssStatusText").text("");
         }
         else{
@@ -616,9 +625,9 @@ INSIDE PROCESS STATE:
         
         if(state.attitude.length){
             $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#imuHeadingValue").text(state.attitude[0]);
-            $("#imuPitchValue").text(state.attitude[1]);
-            $("#imuRollValue").text(state.attitude[2]);
+            $("#imuHeadingValue").text(state.attitude[0].toFixed(3));
+            $("#imuPitchValue").text(state.attitude[1].toFixed(3));
+            $("#imuRollValue").text(state.attitude[2].toFixed(3));
 	    $("#imuStatusText").text("");
         }
         else{
@@ -631,7 +640,7 @@ INSIDE PROCESS STATE:
         
         if(state.depth.length){
             $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#sonarDepthValue").text(state.depth[0]);
+            $("#sonarDepthValue").text(state.depth[0].toFixed(2));
             $("#sonarStatusText").text("");
         }
         else{
@@ -648,7 +657,7 @@ INSIDE PROCESS STATE:
 	imu_y .push(state.attitude[2]);
 	imu_y .shift();
 
-	depth.push(state.depth);
+	depth.push(state.depth[0]);
 	depth.shift();
 	
 	attitudeChart.update();

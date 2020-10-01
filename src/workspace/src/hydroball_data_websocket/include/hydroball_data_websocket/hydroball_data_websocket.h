@@ -211,9 +211,10 @@ public:
             QuaternionUtils::convertToEulerAngles(state.odom.pose.pose.orientation,heading,pitch,roll);
 
             rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
-            rapidjson::Value headingValue(heading);
-            rapidjson::Value pitchValue(pitch);
-            rapidjson::Value rollValue(roll);
+            //Conversion to degrees
+            rapidjson::Value headingValue(R2D(heading));
+            rapidjson::Value pitchValue(R2D(pitch));
+            rapidjson::Value rollValue(R2D(roll));
 
             attitudeArray.PushBack(headingValue, telemetry.GetAllocator());
             attitudeArray.PushBack(pitchValue, telemetry.GetAllocator());

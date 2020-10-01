@@ -1,177 +1,304 @@
-/*
-#include <gnss_dummy/gnss_dummy.h>
+#include <hydroball_data_websocket/hydroball_data_websocket.h>
+
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
+#include "state_controller_msg/State.h"
+#include "sensor_msgs/NavSatFix.h"
+
+//#include "../../utils/ClientWpp.hpp"
+#include "../../utils/QuaternionUtils.h"
+#include "../../utils/Constants.hpp"
+
+#include "ClientTester.hpp"
+
+#include <websocketpp/config/asio_no_tls_client.hpp>
+#include <websocketpp/client.hpp>
+#include <websocketpp/config/asio_no_tls.hpp>
+#include <websocketpp/server.hpp>
+
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
 
 #include <thread>
 #include <chrono>
 
-class AnyMessage
-{
-};
-typedef boost::shared_ptr<AnyMessage> AnyMessagePtr;
-typedef boost::shared_ptr<AnyMessage const> AnyMessageConstPtr;
+typedef websocketpp::client<websocketpp::config::asio_client> client;
 
-namespace ros
-{
-namespace message_traits
-{
+/*
+class TestClient : public ClientWpp {
 
-template<>
-struct MD5Sum<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
+public:
+    TestClient(std::string & uri) : ClientWpp{uri} {}
+    ~TestClient(){};
 
-template<>
-struct DataType<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
+protected:
+    void business() {
+        while(1) {
+            bool wait = false;
 
-template<>
-struct Definition<AnyMessage>
-{
-};
+            { // check status scope
+                scoped_lock guard(lock);
+                if(done) {
+                    break;
+                }
 
-}
+                if(!open) {
+                    wait = true; // wait until client opens connection
+                }
+            }
 
-namespace serialization
-{
-template<>
-struct Serializer<AnyMessage>
-{
-  template<typename Stream, typename T>
-  static void allInOne(Stream s, T t)
-  {
-  }
+            if(wait) {
+                sleep(1000);
+                continue;
+            }
 
-  ROS_DECLARE_ALLINONE_SERIALIZER;
-};
-}
-}
-
-struct AnyHelper
-{
-  AnyHelper()
-  : count(0)
-  {
-  }
-  void cb(const AnyMessageConstPtr& msg)
-  {
-    ++count;
-  }
-
-  uint32_t count;
-};
-
-class MyTestSuite : public ::testing::Test {
-  public:
-    MyTestSuite() {
+            // Do client work here
+        }
     }
-    ~MyTestSuite() {}
+};
+*/
+
+class DataWebsocketTestSuite : public ::testing::Test {
+  public:
+    DataWebsocketTestSuite() {
+    }
+    ~DataWebsocketTestSuite() {}
 };
 
-TEST_F(MyTestSuite, ellipsoidalHeight_low) {  
-  GNSS gnss;
-  int initial_value = 1;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be it's initial value plus 5";
+class HydroBallDataWebSocketTest : ClientTester {
+
+public:
+
+    //test values
+    static constexpr double testLongitude = -68.5;
+    static constexpr double testLatitude = 48.5;
+    static constexpr double testHeight = -22.5;
+
+    static constexpr double testRoll = D2R(45.0);
+    static constexpr double testPitch = D2R(30.0);
+    static constexpr double testHeading = D2R(15.0);
+
+    static constexpr double testDepth = 10.1;
+
+    static constexpr double test_cputemp = 1.0;
+    static constexpr double test_cpuload = 2.0;
+    static constexpr double test_freeram = 3.0;
+    static constexpr double test_freehdd = 4.0;
+    static constexpr double test_uptime = 5.0;
+    static constexpr double test_vbat = 6.0;
+    static constexpr double test_rh = 7.0;
+    static constexpr double test_temp = 8.0;
+    static constexpr double test_psi = 9.0;
+
+    double epsilon = 1e-12;
+
+    void on_open(websocketpp::client<websocketpp::config::asio_client> * c, websocketpp::connection_hdl hdl) {
+        // do nothing, this client only listens
+    }
+
+    void on_fail(websocketpp::client<websocketpp::config::asio_client> * c, websocketpp::connection_hdl hdl) {
+        ASSERT_TRUE(false) << "client connection failed during hydroball data websokect test";
+    }
+
+    void on_message(websocketpp::client<websocketpp::config::asio_client> * c, websocketpp::connection_hdl hdl, websocketpp::config::asio_client::message_type::ptr msg) {
+        ASSERT_TRUE(true) << "client received message from server";
+
+        //TODO: write asserts for telemetry data
+        rapidjson::Document document;
+
+        if(document.Parse(msg->get_payload().c_str()).HasParseError()){
+        	ASSERT_TRUE(false) << "Couldn't parse json message";
+            return;
+        }
+
+        if( ! document.HasMember("telemetry")) {
+            ASSERT_TRUE(false) << "Message does not contain telemetry";
+            return;
+        } else {
+            const rapidjson::Value& position = document["position"];
+            ASSERT_NEAR(testLongitude, position[0].GetDouble(), epsilon) << "client didn't receive expected longitude";
+            ASSERT_NEAR(testLatitude, position[1].GetDouble(), epsilon) << "client didn't receive expected latitude";
+            ASSERT_NEAR(testHeight, position[2].GetDouble(), epsilon) << "client didn't receive expected height";
+
+            const rapidjson::Value& attitude = document["attitude"];
+            ASSERT_NEAR(testHeading, attitude[0].GetDouble(), epsilon) << "client didn't receive expected heading";
+            ASSERT_NEAR(testPitch, attitude[1].GetDouble(), epsilon) << "client didn't receive expected pitch";
+            ASSERT_NEAR(testRoll, attitude[2].GetDouble(), epsilon) << "client didn't receive expected roll";
+
+            const rapidjson::Value& depth = document["depth"];
+            ASSERT_NEAR(testDepth, depth[0].GetDouble(), epsilon) << "client didn't receive expected depth";
+
+            const rapidjson::Value& vitals = document["vitals"];
+            ASSERT_NEAR(test_cputemp, vitals[0].GetDouble(), epsilon) << "client didn't receive expected cputemp";
+            ASSERT_NEAR(test_cpuload, vitals[0].GetDouble(), epsilon) << "client didn't receive expected cpuload";
+            ASSERT_NEAR(test_freeram, vitals[0].GetDouble(), epsilon) << "client didn't receive expected freeram";
+            ASSERT_NEAR(test_freehdd, vitals[0].GetDouble(), epsilon) << "client didn't receive expected freehdd";
+            ASSERT_NEAR(test_uptime, vitals[0].GetDouble(), epsilon) << "client didn't receive expected uptime";
+            ASSERT_NEAR(test_vbat, vitals[0].GetDouble(), epsilon) << "client didn't receive expected vbat";
+            ASSERT_NEAR(test_rh, vitals[0].GetDouble(), epsilon) << "client didn't receive expected rh";
+            ASSERT_NEAR(test_temp, vitals[0].GetDouble(), epsilon) << "client didn't receive expected temp";
+            ASSERT_NEAR(test_psi, vitals[0].GetDouble(), epsilon) << "client didn't receive expected psi";
+        }
+    }
+
+    void on_close(websocketpp::client<websocketpp::config::asio_client> * c, websocketpp::connection_hdl hdl) {
+        // do nothing
+    }
+
+};
+
+void createNavMsg(double longitude, double latitude, double height, sensor_msgs::NavSatFix & msg) {
+    msg.header.seq=0;
+	msg.header.stamp=ros::Time::now();
+	msg.status.service = 1;
+	msg.header.stamp.nsec=0;
+    msg.longitude=longitude;
+	msg.latitude=latitude;
+	msg.altitude=height;
 }
 
-TEST_F(MyTestSuite, ellipsoidalHeight_high) {
-  GNSS gnss;
-  int initial_value = 49;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be 0";
+
+void createOdomMsg(double yaw, double pitch, double roll, nav_msgs::Odometry & msg) {
+    msg.header.seq=0;
+    msg.header.stamp=ros::Time::now();
+    QuaternionUtils::convertToQuaternion(yaw,pitch,roll,msg);
+}
+
+void createSonarMsg(double depth, geometry_msgs::PointStamped & msg) {
+    msg.point.z = depth;
+}
+
+void createVitalsMsg(double cputemp, double cpuload, double freeram, double freehdd, double uptime, double vbat, double rh, double temp, double psi, raspberrypi_vitals_msg::sysinfo & msg) {
+    //msg.header.seq=0;
+    msg.cputemp = cputemp;
+    msg.cpuload = cpuload;
+    msg.freeram = freeram;
+    msg.freehdd = freehdd;
+    msg.uptime = uptime;
+    msg.vbat = vbat;
+    msg.rh = rh;
+    msg.temp = temp;
+    msg.psi = psi;
 }
 
 
 
+TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
-void gnssCallbacklatmin(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_GE(gnss.latitude, -90);
+    TelemetryServer telemetryServer;
+    uint16_t port = 9002;
+    std::thread telemetryThread(std::bind(&TelemetryServer::run,&telemetryServer,port));
+
+
+    //create a connection to the telemetryServer
+    std::string uri = "ws://localhost:9002/";
+    HydroBallDataWebSocketTest ct;
+    client c;
+
+    //no logging
+    c.clear_access_channels(websocketpp::log::alevel::all);
+
+    c.init_asio();
+
+    //register handlers
+    c.set_open_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_open, &ct, &c, websocketpp::lib::placeholders::_1));
+    c.set_fail_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_fail, &ct, &c, websocketpp::lib::placeholders::_1));
+    c.set_message_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_message, &ct, &c, websocketpp::lib::placeholders::_1, websocketpp::lib::placeholders::_2));
+    c.set_close_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_close, &ct, &c, websocketpp::lib::placeholders::_1));
+
+    // start the client's asio loop
+    std::thread telemetryClientThread(std::bind(&client::run,&c));
+
+    //connect client to telemetry server
+    websocketpp::lib::error_code ec;
+    client::connection_ptr con = c.get_connection(uri, ec);
+    c.connect(con);
+
+
+
+
+    // create a publisher node to topic state
+    ros::NodeHandle nh;
+    ros::Publisher statePublisher = nh.advertise<state_controller_msg::State>("state", 1000);
+
+    // publish a state message to "state"
+    state_controller_msg::State state;
+
+
+    // position
+    sensor_msgs::NavSatFix nav;
+    createNavMsg(HydroBallDataWebSocketTest::testLongitude, HydroBallDataWebSocketTest::testLatitude, HydroBallDataWebSocketTest::testHeight, nav);
+    memcpy(&state.position,&nav,sizeof(nav));
+
+    //odometry
+    nav_msgs::Odometry odom;
+
+    createOdomMsg(HydroBallDataWebSocketTest::testHeading, HydroBallDataWebSocketTest::testPitch, HydroBallDataWebSocketTest::testRoll, odom);
+    memcpy(&state.odom,&odom,sizeof(odom));
+
+    //sonar
+    geometry_msgs::PointStamped sonar;
+    createSonarMsg(HydroBallDataWebSocketTest::testDepth, sonar);
+    memcpy(&state.depth,&sonar,sizeof(sonar));
+
+    // vitals
+    raspberrypi_vitals_msg::sysinfo vital;
+    createVitalsMsg(
+        HydroBallDataWebSocketTest::test_cputemp,
+         HydroBallDataWebSocketTest::test_cpuload,
+          HydroBallDataWebSocketTest::test_freeram,
+           HydroBallDataWebSocketTest::test_freehdd,
+            HydroBallDataWebSocketTest::test_uptime,
+             HydroBallDataWebSocketTest::test_vbat,
+              HydroBallDataWebSocketTest::test_rh,
+               HydroBallDataWebSocketTest::test_temp,
+                HydroBallDataWebSocketTest::test_psi,
+                 vital
+    );
+    memcpy(&state.vitals,&vital,sizeof(vital));
+
+
+
+
+    // publish the state
+    statePublisher.publish(state);
+
+    // The handlers defined in
+
+
+
+    //wait a bit for subscriber to pick up message
+    sleep(10);
+
+    telemetryServer.stop();
+    telemetryThread.join();
+
+    ASSERT_TRUE(true);
 }
-void gnssCallbacklongmin(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_GE(gnss.longitude, -180);
-}
-void gnssCallbacklatmax(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_LE(gnss.latitude, 90);
-}
-void gnssCallbacklongmax(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_LE(gnss.longitude, 180);
+
+TEST(DataWebsocketTestSuite, testAreWorking) {
+    ASSERT_TRUE(true);
 }
 
 
-TEST_F(MyTestSuite, pub_lat_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmin);
-  }
-TEST_F(MyTestSuite, pub_long_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmin);
-  }
-
-TEST_F(MyTestSuite, pub_lat_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmax);
-  }
-TEST_F(MyTestSuite, pub_long_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmax);
-  }
-
-void gnssCallbackvalue1(const sensor_msgs::NavSatFix& gnss)
-{
-   ASSERT_EQ(gnss.header.seq, 12);
-   ASSERT_EQ(gnss.longitude, 49.00);
-   ASSERT_EQ(gnss.latitude, 60.00);
-
-}
-
-
-TEST_F(MyTestSuite, pub_value1) {
-  GNSS gnss;
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbackvalue1);
-  int sequenceNumber= 12;
-  double longitude = 49.00;
-  double latitude = 60.00;
-  gnss.message(sequenceNumber, longitude, latitude);
-  
-}
-
-*/
 
 int main(int argc, char** argv) {
     return 0;
-    /*
-    ros::init(argc, argv, "TestNode");
+
+    ros::init(argc, argv, "TestDataWebSocketNode");
     
     testing::InitGoogleTest(&argc, argv);
+
+
     
     std::thread t([]{while(ros::ok()) ros::spin();});
     
     auto res = RUN_ALL_TESTS();
     
     ros::shutdown();
+
+    t.join();
     
     return res;
-    */
 }

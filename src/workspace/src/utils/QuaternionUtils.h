@@ -1,12 +1,12 @@
 #ifndef QUATERNIONUTILS_H
 #define QUATERNIONUTILS_H
 
-#define R2D(x) (x * ((double)180/(double)M_PI))
+#include "Constants.hpp"
 
 class QuaternionUtils{
 public:
 
-    static void convertToQuaternion(double yaw, double pitch, double roll, nav_msgs::Odometry& odom){
+    static void convertToQuaternion(double yaw, double pitch, double roll, nav_msgs::Odometry& odom) {
         // Abbreviations for the various angular functions
         double cy = cos(yaw * 0.5);
         double sy = sin(yaw * 0.5);
@@ -21,7 +21,7 @@ public:
         odom.pose.pose.orientation.z = sy * cp * cr - cy * sp * sr;
     }
 
-	static void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,double & pitch, double & roll){
+	static void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,double & pitch, double & roll) {
 		// roll (x-axis rotation)
 		double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
 		double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);

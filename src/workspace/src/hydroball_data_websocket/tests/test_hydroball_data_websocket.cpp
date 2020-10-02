@@ -73,7 +73,6 @@ public:
     //test values
     static constexpr double testLongitude = -68.5;
     static constexpr double testLatitude = 48.5;
-    static constexpr double testHeight = -22.5;
 
     static constexpr double testRoll = 45.0;
     static constexpr double testPitch = 30.0;
@@ -104,7 +103,6 @@ public:
     void on_message(websocketpp::client<websocketpp::config::asio_client> * c, websocketpp::connection_hdl hdl, websocketpp::config::asio_client::message_type::ptr msg) {
         ASSERT_TRUE(true) << "client received message from server";
 
-        //TODO: write asserts for telemetry data
         rapidjson::Document document;
 
         if(document.Parse(msg->get_payload().c_str()).HasParseError()){
@@ -119,7 +117,6 @@ public:
             const rapidjson::Value& position = document["position"];
             ASSERT_NEAR(testLongitude, position[0].GetDouble(), epsilon) << "client didn't receive expected longitude";
             ASSERT_NEAR(testLatitude, position[1].GetDouble(), epsilon) << "client didn't receive expected latitude";
-            ASSERT_NEAR(testHeight, position[2].GetDouble(), epsilon) << "client didn't receive expected height";
 
             const rapidjson::Value& attitude = document["attitude"];
             ASSERT_NEAR(testHeading, attitude[0].GetDouble(), epsilon) << "client didn't receive expected heading";
@@ -162,7 +159,7 @@ void createNavMsg(double longitude, double latitude, double height, sensor_msgs:
 void createOdomMsg(double yawDegrees, double pitchDegrees, double rollDegrees, nav_msgs::Odometry & msg) {
     msg.header.seq=0;
     msg.header.stamp=ros::Time::now();
-    QuaternionUtils::convertDegreesToQuaternion(yaw,pitch,roll,msg);
+    QuaternionUtils::convertDegreesToQuaternion(yawDegrees,pitchDegrees,rollDegrees,msg);
 }
 
 void createSonarMsg(double depth, geometry_msgs::PointStamped & msg) {
@@ -183,80 +180,152 @@ void createVitalsMsg(double cputemp, double cpuload, double freeram, double free
 }
 
 
-
 TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
-    TelemetryServer telemetryServer;
-    uint16_t port = 9002;
-    std::thread telemetryThread(std::bind(&TelemetryServer::run,&telemetryServer,port));
+    try {
+        TelemetryServer telemetryServer;
+        uint16_t port = 9002;
+        std::thread telemetryThread(std::bind(&TelemetryServer::run,&telemetryServer,port));
+
+        //wait for server to spinup
+        sleep(5);
 
 
-    //create a connection to the telemetryServer
-    std::string uri = "ws://localhost:9002/";
-    HydroBallDataWebSocketTest ct;
-    client c;
+        //create a connection to the telemetryServer
+        std::string uri = "ws://localhost:9002/";
+        HydroBallDataWebSocketTest ct;
+        client c;
 
-    //no logging
-    c.clear_access_channels(websocketpp::log::alevel::all);
+        //no logging
+        c.clear_access_channels(websocketpp::log::alevel::all);
 
-    c.init_asio();
+        c.init_asio();
 
-    //register handlers
-    c.set_open_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_open, &ct, &c, websocketpp::lib::placeholders::_1));
-    c.set_fail_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_fail, &ct, &c, websocketpp::lib::placeholders::_1));
-    c.set_message_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_message, &ct, &c, websocketpp::lib::placeholders::_1, websocketpp::lib::placeholders::_2));
-    c.set_close_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_close, &ct, &c, websocketpp::lib::placeholders::_1));
+        //register handlers
+        c.set_open_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_open, &ct, &c, websocketpp::lib::placeholders::_1));
+        c.set_fail_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_fail, &ct, &c, websocketpp::lib::placeholders::_1));
+        c.set_message_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_message, &ct, &c, websocketpp::lib::placeholders::_1, websocketpp::lib::placeholders::_2));
+        c.set_close_handler(websocketpp::lib::bind(&HydroBallDataWebSocketTest::on_close, &ct, &c, websocketpp::lib::placeholders::_1));
 
-    // start the client's asio loop
-    std::thread telemetryClientThread(std::bind(&client::run,&c));
-
-    //connect client to telemetry server
-    websocketpp::lib::error_code ec;
-    client::connection_ptr con = c.get_connection(uri, ec);
-    c.connect(con);
+        // start the client's asio loop
+        std::thread telemetryClientThread(std::bind(&client::run,&c));
 
 
 
+        //connect client to telemetry server
+        websocketpp::lib::error_code ec;
+        client::connection_ptr con = c.get_connection(uri, ec);
+        c.connect(con);
+
+        //wait for client to spinup
+        sleep(5);
+
+
+
+
+        // create a publisher node to topic state
+        ros::NodeHandle nh;
+        ros::Publisher statePublisher = nh.advertise<state_controller_msg::State>("state", 1000);
+
+        // publish a state message to "state"
+        state_controller_msg::State state;
+        memset(&state,0,sizeof(state));
+
+
+        // position
+        sensor_msgs::NavSatFix nav;
+        memset(&nav,0,sizeof(nav));
+        createNavMsg(HydroBallDataWebSocketTest::testLongitude, HydroBallDataWebSocketTest::testLatitude, HydroBallDataWebSocketTest::testHeight, nav);
+        memcpy(&state.position,&nav,sizeof(nav));
+
+        //odometry
+        nav_msgs::Odometry odom;
+        memset(&odom,0,sizeof(odom));
+        createOdomMsg(HydroBallDataWebSocketTest::testHeading, HydroBallDataWebSocketTest::testPitch, HydroBallDataWebSocketTest::testRoll, odom);
+        memcpy(&state.odom,&odom,sizeof(odom));
+
+        //sonar
+        geometry_msgs::PointStamped sonar;
+        memset(&sonar,0,sizeof(sonar));
+        createSonarMsg(HydroBallDataWebSocketTest::testDepth, sonar);
+        memcpy(&state.depth,&sonar,sizeof(sonar));
+
+        // vitals
+        raspberrypi_vitals_msg::sysinfo vital;
+        memset(&vital,0,sizeof(vital));
+        createVitalsMsg(
+            HydroBallDataWebSocketTest::test_cputemp,
+             HydroBallDataWebSocketTest::test_cpuload,
+              HydroBallDataWebSocketTest::test_freeram,
+               HydroBallDataWebSocketTest::test_freehdd,
+                HydroBallDataWebSocketTest::test_uptime,
+                 HydroBallDataWebSocketTest::test_vbat,
+                  HydroBallDataWebSocketTest::test_rh,
+                   HydroBallDataWebSocketTest::test_temp,
+                    HydroBallDataWebSocketTest::test_psi,
+                     vital
+        );
+        memcpy(&state.vitals,&vital,sizeof(vital));
+
+
+
+        std::cout << state << std::endl;
+        // publish the state
+        statePublisher.publish(state);
+
+        // The handlers defined in
+
+
+
+        //wait a bit for subscriber to pick up message
+        sleep(10);
+
+        telemetryServer.stop();
+        telemetryThread.join();
+
+        ASSERT_TRUE(true);
+
+    }
+    catch(...) {
+        ADD_FAILURE() << "Uncaught exception";
+    }
+}
+
+void callback_AssertSubscriberReceivedWhatIsPublished(const state_controller_msg::State & stateMsg)
+{
+    std::cout << "printing depth:" << std::endl;
+    std::cout << stateMsg.depth.point.z << std::endl;
+}
+
+/*
+TEST(DataWebsocketTestSuite, testAreWorking) {
+    ASSERT_TRUE(true);
+
+    std::cout << "Testing nodes" << std::endl;
 
     // create a publisher node to topic state
     ros::NodeHandle nh;
     ros::Publisher statePublisher = nh.advertise<state_controller_msg::State>("state", 1000);
 
+    //setup subscriber with callback that will assert if test passes
+    ros::Subscriber sub = nh.subscribe("state", 1000, callback_AssertSubscriberReceivedWhatIsPublished);
+
     // publish a state message to "state"
+    std::cout << "building state" << std::endl;
     state_controller_msg::State state;
-
-
-    // position
-    sensor_msgs::NavSatFix nav;
-    createNavMsg(HydroBallDataWebSocketTest::testLongitude, HydroBallDataWebSocketTest::testLatitude, HydroBallDataWebSocketTest::testHeight, nav);
-    memcpy(&state.position,&nav,sizeof(nav));
-
-    //odometry
-    nav_msgs::Odometry odom;
-
-    createOdomMsg(HydroBallDataWebSocketTest::testHeading, HydroBallDataWebSocketTest::testPitch, HydroBallDataWebSocketTest::testRoll, odom);
-    memcpy(&state.odom,&odom,sizeof(odom));
+    memset(&state, 0, sizeof(state));
 
     //sonar
+
+
     geometry_msgs::PointStamped sonar;
+    memset(&sonar, 0, sizeof(sonar));
     createSonarMsg(HydroBallDataWebSocketTest::testDepth, sonar);
     memcpy(&state.depth,&sonar,sizeof(sonar));
 
-    // vitals
-    raspberrypi_vitals_msg::sysinfo vital;
-    createVitalsMsg(
-        HydroBallDataWebSocketTest::test_cputemp,
-         HydroBallDataWebSocketTest::test_cpuload,
-          HydroBallDataWebSocketTest::test_freeram,
-           HydroBallDataWebSocketTest::test_freehdd,
-            HydroBallDataWebSocketTest::test_uptime,
-             HydroBallDataWebSocketTest::test_vbat,
-              HydroBallDataWebSocketTest::test_rh,
-               HydroBallDataWebSocketTest::test_temp,
-                HydroBallDataWebSocketTest::test_psi,
-                 vital
-    );
-    memcpy(&state.vitals,&vital,sizeof(vital));
+    //state.depth.point.z = HydroBallDataWebSocketTest::testDepth;
+
+    std::cout << "publishing state" << std::endl;
 
 
 
@@ -264,27 +333,16 @@ TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
     // publish the state
     statePublisher.publish(state);
 
-    // The handlers defined in
+    //wait for subscriber to receive
+    sleep(1);
 
 
-
-    //wait a bit for subscriber to pick up message
-    sleep(10);
-
-    telemetryServer.stop();
-    telemetryThread.join();
-
-    ASSERT_TRUE(true);
 }
-
-TEST(DataWebsocketTestSuite, testAreWorking) {
-    ASSERT_TRUE(true);
-}
+*/
 
 
 
 int main(int argc, char** argv) {
-    return 0;
 
     ros::init(argc, argv, "TestDataWebSocketNode");
     

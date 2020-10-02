@@ -75,9 +75,9 @@ public:
     static constexpr double testLatitude = 48.5;
     static constexpr double testHeight = -22.5;
 
-    static constexpr double testRoll = D2R(45.0);
-    static constexpr double testPitch = D2R(30.0);
-    static constexpr double testHeading = D2R(15.0);
+    static constexpr double testRoll = 45.0;
+    static constexpr double testPitch = 30.0;
+    static constexpr double testHeading = 15.0;
 
     static constexpr double testDepth = 10.1;
 
@@ -159,10 +159,10 @@ void createNavMsg(double longitude, double latitude, double height, sensor_msgs:
 }
 
 
-void createOdomMsg(double yaw, double pitch, double roll, nav_msgs::Odometry & msg) {
+void createOdomMsg(double yawDegrees, double pitchDegrees, double rollDegrees, nav_msgs::Odometry & msg) {
     msg.header.seq=0;
     msg.header.stamp=ros::Time::now();
-    QuaternionUtils::convertToQuaternion(yaw,pitch,roll,msg);
+    QuaternionUtils::convertDegreesToQuaternion(yaw,pitch,roll,msg);
 }
 
 void createSonarMsg(double depth, geometry_msgs::PointStamped & msg) {

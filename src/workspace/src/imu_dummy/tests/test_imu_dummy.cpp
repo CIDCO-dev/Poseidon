@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 #include "../../utils/QuaternionUtils.h"
-#include "../../utils/Constants.h"
 
 class ImuDummyTestSuite : public ::testing::Test {
   public:
@@ -21,9 +20,9 @@ class ImuDummyTestSuite : public ::testing::Test {
 bool subscriberReceivedData = false;
 void callback_AssertSubscriberReceivedWhatIsPublished(const nav_msgs::Odometry & imuMsg)
 {
-    double expected_yaw = D2R(135.4);
-    double expected_pitch = D2R(2.3);
-    double expected_roll = D2R(-1.4);
+    double expected_yaw = 135.4;
+    double expected_pitch = 2.3;
+    double expected_roll = -1.4;
 
     double yaw = 0.0;
     double pitch = 0.0;
@@ -58,9 +57,9 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     //publish a imu message
     uint32_t sequenceNumber= 0;
-    double yaw = D2R(135.4);
-    double pitch = D2R(2.3);
-    double roll = D2R(-1.4);
+    double yaw = 135.4;
+    double pitch = 2.3;
+    double roll = -1.4;
     imu.message(sequenceNumber, yaw, pitch, roll);
 
     //wait a bit for subscriber to pick up message

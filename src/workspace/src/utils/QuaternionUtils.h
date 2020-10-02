@@ -7,7 +7,7 @@
 
 #define TF2_EULER_DEFAULT_ZYX 1
 
-#include "../../utils/Constants.hpp"
+#include "Constants.hpp"
 
 class QuaternionUtils{
 public:
@@ -22,6 +22,10 @@ public:
 
                 QuaternionUtils::convertToEulerAngles(bodyPose,headingDegrees,pitchDegrees,rollDegrees);
 	}
+
+	static void convertDegreesToQuaternion(double yawDegrees, double pitchDegrees, double rollDegrees, nav_msgs::Odometry& odom) {
+        convertToQuaternion(D2R(yawDegrees), D2R(pitchDegrees), D2R(rollDegrees), odom);
+    }
 
 	static void convertToQuaternion(double yawRadians, double pitchRadians, double rollRadians, nav_msgs::Odometry& odom) {
         // Abbreviations for the various angular functions

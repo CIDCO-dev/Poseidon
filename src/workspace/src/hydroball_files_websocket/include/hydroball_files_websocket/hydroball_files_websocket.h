@@ -195,16 +195,40 @@ public:
         connections.erase(hdl);
     }
 
+/*
     void receiveMessages(){
         ros::spin();
-	
+
     }
+    */
 
     void run(uint16_t port){
         srv.listen(port);
         srv.start_accept();
         srv.run();
     }
+
+    void stop() {
+	    websocketpp::lib::error_code ec_stop_listening;
+	    srv.stop_listening(ec_stop_listening);
+	    if(ec_stop_listening) {
+	        ROS_ERROR_STREAM("failed to stop listening: " << ec_stop_listening.message());
+	        return;
+	    }
+
+	    std::string closingMessage = "Server has closed the connection";
+	    std::lock_guard<std::mutex> lock(mtx); // server stopped listening is this needed?
+	    for (auto it : connections) {
+            	websocketpp::lib::error_code ec_close_connection;
+            	srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
+            	if(ec_close_connection) {
+                	ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
+             	}
+            }
+
+	    ROS_INFO("Stopping Files server");
+            srv.stop();
+     }
   
     
 private:

@@ -283,7 +283,7 @@ public:
              	}
             }
 
-	    ROS_INFO("Stopping Configuration server");
+	    ROS_INFO("Stopping Telemetry server");
             srv.stop();
      }
 

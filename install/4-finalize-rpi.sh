@@ -90,3 +90,19 @@ echo "[+] Config uart"
 sudo bash -c 'cat << EOF2 > /boot/firmware/nobtcmd.txt
 net.ifnames=0 dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
 EOF2'
+
+echo "[+] Adding roslaunch on boot"
+sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service
+[Unit]
+Description=Launch ROS on boot.
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bash /home/ubuntu/Poseidon/launchHydrobox.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF3'
+
+chmod 755 /etc/systemd/system/ros.service
+systemctl enable ros

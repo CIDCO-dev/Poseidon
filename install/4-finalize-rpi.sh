@@ -98,7 +98,7 @@ Description=Launch ROS on boot.
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/bash /home/ubuntu/Poseidon/launchHydrobox.sh
+ExecStart=source /opt/ros/melodic/setup.bash && source /home/ubuntu/Poseidon/src/workspace/devel/setup.bash && /usr/bin/bash /home/ubuntu/Poseidon/launchHydrobox.sh
 
 [Install]
 WantedBy=multi-user.target

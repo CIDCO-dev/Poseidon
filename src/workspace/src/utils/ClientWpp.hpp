@@ -83,32 +83,7 @@ public:
 
 protected:
 
-    virtual void business() = 0;
-     /* Example business:
-     {
-        while(1) {
-            bool wait = false;
-
-            { // check status scope
-                scoped_lock guard(lock);
-                if(done) {
-                    break;
-                }
-
-                if(!open) {
-                    wait = true; // wait until client opens connection
-                }
-            }
-
-            if(wait) {
-                sleep(1000);
-                continue;
-            }
-
-            // Do client work here
-        }
-    }
-    */
+    virtual void doClientWork() = 0;
 
     client clt;
     websocketpp::connection_hdl con_hdl;

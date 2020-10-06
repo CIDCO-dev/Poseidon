@@ -12,9 +12,6 @@ sudo apt upgrade -y | tee -a log.txt
 echo "[+] Installing toolchain"
 sudo apt install gcc python3-dev python3-pip python3-setuptools git curl -y | tee -a log.txt
 
-echo "[+] Installing RPi.GPIO"
-pip3 install RPi.GPIO | tee -a log.txt
-
 echo "[+] Installing ROS"
 
 # Setup sources.list

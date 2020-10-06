@@ -1,8 +1,8 @@
 #!/bin/bash
 
 source /opt/ros/melodic/setup.bash
-source src/workspace/devel/setup.bash
+source /home/ubuntu/Poseidon/src/workspace/devel/setup.bash
 
-roslaunch src/workspace/launch/hydrobox_imagenex852.launch
+roslaunch /home/ubuntu/Poseidon/src/workspace/launch/hydrobox_imagenex852.launch
 
 

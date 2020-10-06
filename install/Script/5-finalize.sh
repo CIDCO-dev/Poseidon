@@ -95,7 +95,7 @@ FILE=/swaprpi.img
 if [ -f "$FILE" ]; then
     echo "$FILE exists."
     sudo swapoff -a
-    sudo rm swaprpi.img
+    sudo rm /swaprpi.img
 else 
     echo "$FILE does not exist."
 fi

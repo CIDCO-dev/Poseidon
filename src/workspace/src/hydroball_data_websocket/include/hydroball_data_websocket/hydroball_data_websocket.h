@@ -213,6 +213,7 @@ public:
             rapidjson::Value vitalsArray(rapidjson::Type::kArrayType);
             rapidjson::Value cputemp(state.vitals.cputemp);
             rapidjson::Value cpuload((int) state.vitals.cpuload);
+            rapidjson::Value freeram((int) state.vitals.freeram);
             rapidjson::Value freehdd((int) state.vitals.freehdd);
             rapidjson::Value uptime((int) state.vitals.uptime);
             rapidjson::Value vbat(state.vitals.vbat);
@@ -222,6 +223,7 @@ public:
 
             vitalsArray.PushBack(cputemp, telemetry.GetAllocator());
             vitalsArray.PushBack(cpuload, telemetry.GetAllocator());
+            vitalsArray.PushBack(freeram, telemetry.GetAllocator());
             vitalsArray.PushBack(freehdd, telemetry.GetAllocator());
             vitalsArray.PushBack(uptime, telemetry.GetAllocator());
             vitalsArray.PushBack(vbat, telemetry.GetAllocator());

@@ -34,7 +34,7 @@ Description=Launch ROS on boot.
 
 [Service]
 Type=simple
-ExecStart=source /opt/ros/melodic/setup.bash && source /home/jordan/Poseidon/src/workspace/devel/setup.bash && roscore
+ExecStart=source /opt/ros/melodic/setup.bash && source ~/Poseidon/src/workspace/devel/setup.bash && roscore
 [Install]
 WantedBy=multi-user.target
 EOF3'

@@ -67,6 +67,7 @@
   <exec_depend>tf2_geometry_msgs</exec_depend>
 
   <test_depend>state_controller</test_depend>
+  <test_depend>hydroball_config_websocket</test_depend>
 
 
 

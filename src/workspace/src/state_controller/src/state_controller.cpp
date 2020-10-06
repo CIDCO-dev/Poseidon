@@ -3,7 +3,7 @@
 void StateController::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	if( gnss.status.service > 0) { 
 		stateMtx.lock();
-		memcpy(&state.position,&gnss,sizeof(gnss));
+		state.position = gnss;
 		stateMtx.unlock();
 
 		StateController::stateUpdated();
@@ -12,7 +12,7 @@ void StateController::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 
 void StateController::imuCallback(const nav_msgs::Odometry& odom){
 	stateMtx.lock();
-	memcpy(&state.odom,&odom,sizeof(odom));
+	state.odom = odom;
 	stateMtx.unlock();
 
 	StateController::stateUpdated();
@@ -20,15 +20,31 @@ void StateController::imuCallback(const nav_msgs::Odometry& odom){
 
 void StateController::sonarCallback(const geometry_msgs::PointStamped& sonar){
 	stateMtx.lock();
-	memcpy(&state.depth,&sonar,sizeof(sonar));
+	/*
+	state.depth.header.seq = sonar.header.seq;
+    state.depth.header.stamp = sonar.header.stamp;
+    state.depth.point.z = sonar.point.z
+    */
+    state.depth = sonar;
 	stateMtx.unlock();
 
-        StateController::stateUpdated();
+	StateController::stateUpdated();
 }
 
 void StateController::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vital){
 	stateMtx.lock();
-        memcpy(&state.vitals,&vital,sizeof(vital));
+	/*
+	state.vitals.cputemp = vital.cputemp;
+    state.vitals.cpuload = vital.cpuload;
+    state.vitals.freeram = vital.freeram;
+    state.vitals.freehdd = vital.freehdd;
+    state.vitals.uptime = vital.uptime;
+    state.vitals.vbat = vital.vbat;
+    state.vitals.rh = vital.rh;
+    state.vitals.temp = vital.temp;
+    state.vitals.psi = vital.psi;
+    */
+    state.vitals = vital;
 	stateMtx.unlock();
 
 	StateController::stateUpdated();

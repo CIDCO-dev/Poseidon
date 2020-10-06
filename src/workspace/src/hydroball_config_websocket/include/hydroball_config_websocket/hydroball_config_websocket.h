@@ -122,14 +122,15 @@ public:
 	    std::string closingMessage = "Server has closed the connection";
 	    for (auto it : connections) {
 	        websocketpp::lib::error_code ec_close_connection;
-            	srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
-             	if(ec_close_connection) {
-                	ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
-             	}
+
+            srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
+            if(ec_close_connection) {
+                ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
             }
+        }
 
 	    ROS_INFO("Stopping Configuration server");
-            srv.stop();
+        srv.stop();
 	}
 
 	//Read configuration from file

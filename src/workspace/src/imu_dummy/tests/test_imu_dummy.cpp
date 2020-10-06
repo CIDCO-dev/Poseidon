@@ -7,7 +7,8 @@
 
 #include <unistd.h>
 
-#include "../../utils/QuaternionUtils.h"
+#include "hydroball_config_websocket/hydroball_config_websocket.h"
+//#include "../../utils/QuaternionUtils.h"
 
 class ImuDummyTestSuite : public ::testing::Test {
   public:
@@ -49,6 +50,12 @@ void printAllTopics() {
 
 TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
+    std::string configFilePath = "../../../../config4Tests.txt";
+    ConfigurationServer configurationServer(configFilePath);
+    uint16_t portConfig = 9004;
+    //run the server in separate thread
+    std::thread configurationThread(std::bind(&ConfigurationServer::run,&configurationServer, portConfig));
+
     IMU imu;
     ros::NodeHandle nh;
 
@@ -67,6 +74,9 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     //verify that callback was called by subscriber
     ASSERT_TRUE(subscriberReceivedData) << "callback was not called by subscriber";
+
+    configurationServer.stop();
+    configurationThread.join();
 }
 
 int main(int argc, char** argv) {

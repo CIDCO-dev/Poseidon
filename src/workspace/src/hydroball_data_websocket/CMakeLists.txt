@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   state_controller
+  hydroball_config_websocket
   tf2
   tf2_ros
   tf2_geometry_msgs

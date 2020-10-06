@@ -23,25 +23,6 @@ public:
                 QuaternionUtils::convertToEulerAngles(bodyPose,headingDegrees,pitchDegrees,rollDegrees);
 	}
 
-	static void convertDegreesToQuaternion(double yawDegrees, double pitchDegrees, double rollDegrees, nav_msgs::Odometry& odom) {
-        convertToQuaternion(D2R(yawDegrees), D2R(pitchDegrees), D2R(rollDegrees), odom);
-    }
-
-	static void convertToQuaternion(double yawRadians, double pitchRadians, double rollRadians, nav_msgs::Odometry& odom) {
-        // Abbreviations for the various angular functions
-        double cy = cos(yawRadians * 0.5);
-        double sy = sin(yawRadians * 0.5);
-        double cp = cos(pitchRadians * 0.5);
-        double sp = sin(pitchRadians * 0.5);
-        double cr = cos(rollRadians * 0.5);
-        double sr = sin(rollRadians * 0.5);
-
-        odom.pose.pose.orientation.w = cy * cp * cr + sy * sp * sr;
-        odom.pose.pose.orientation.x = cy * cp * sr - sy * sp * cr;
-        odom.pose.pose.orientation.y = sy * cp * sr + cy * sp * cr;
-        odom.pose.pose.orientation.z = sy * cp * cr - cy * sp * sr;
-    }
-
 	/* Returns angles in DEGREES */
 	static void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,double & pitch, double & roll){
 		// roll (x-axis rotation)

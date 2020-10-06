@@ -72,6 +72,7 @@ cd RTKLIB/app
 sudo chmod +x makeall.sh
 ./makeall.sh | tee -a log.txt
 
+echo "[+] Creating temporary swap file"
 FILE=/swap.img
 if [ -f "$FILE" ]; then
     echo "$FILE exists."
@@ -83,10 +84,13 @@ else
     sudo swapon /swaprpi.img
 fi
 
+echo "[+] Building Poseidon"
+
 cd /home/ubuntu/Poseidon/src/workspace
-source /opt/ros/melodic/setub.bash
+source /opt/ros/melodic/setup.bash
 catkin_make -j1
 
+echo "[+] Disabling temporary swap"
 FILE=/swaprpi.img
 if [ -f "$FILE" ]; then
     echo "$FILE exists."

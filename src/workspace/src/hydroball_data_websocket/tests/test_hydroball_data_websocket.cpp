@@ -31,40 +31,6 @@
 
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
-/*
-class TestClient : public ClientWpp {
-
-public:
-    TestClient(std::string & uri) : ClientWpp{uri} {}
-    ~TestClient(){};
-
-protected:
-    void business() {
-        while(1) {
-            bool wait = false;
-
-            { // check status scope
-                scoped_lock guard(lock);
-                if(done) {
-                    break;
-                }
-
-                if(!open) {
-                    wait = true; // wait until client opens connection
-                }
-            }
-
-            if(wait) {
-                sleep(1000);
-                continue;
-            }
-
-            // Do client work here
-        }
-    }
-};
-*/
-
 class DataWebsocketTestSuite : public ::testing::Test {
   public:
     DataWebsocketTestSuite() {
@@ -177,16 +143,6 @@ public:
 TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     try {
-        std::cout << "Test started" << std::endl;
-
-        char buff[ FILENAME_MAX ];
-        getcwd(buff, FILENAME_MAX);
-        std::string currentDir(buff);
-
-        std::cout << "currentDir: " << std::endl;
-        std::cout << currentDir << std::endl;
-
-
         //create configuration server
         std::string configFilePath = "../../../../config4Tests.txt";
         ConfigurationServer configurationServer(configFilePath);
@@ -293,8 +249,6 @@ TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
         //wait a bit for subscriber to pick up message
         sleep(10);
 
-        //websocketpp::close::status::value closeValue;
-        //c.close(con, closeValue, "client is closing conneciton", ec);
         telemetryServer.stop();
 
         configurationServer.stop();
@@ -312,57 +266,6 @@ TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
         ADD_FAILURE() << "Uncaught exception";
     }
 }
-
-void callback_AssertSubscriberReceivedWhatIsPublished(const state_controller_msg::State & stateMsg)
-{
-    std::cout << "printing depth:" << std::endl;
-    std::cout << stateMsg.depth.point.z << std::endl;
-}
-
-/*
-TEST(DataWebsocketTestSuite, testAreWorking) {
-    ASSERT_TRUE(true);
-
-    std::cout << "Testing nodes" << std::endl;
-
-    // create a publisher node to topic state
-    ros::NodeHandle nh;
-    ros::Publisher statePublisher = nh.advertise<state_controller_msg::State>("state", 1000);
-
-    //setup subscriber with callback that will assert if test passes
-    ros::Subscriber sub = nh.subscribe("state", 1000, callback_AssertSubscriberReceivedWhatIsPublished);
-
-    // publish a state message to "state"
-    std::cout << "building state" << std::endl;
-    state_controller_msg::State state;
-    memset(&state, 0, sizeof(state));
-
-    //sonar
-
-
-    geometry_msgs::PointStamped sonar;
-    memset(&sonar, 0, sizeof(sonar));
-    createSonarMsg(HydroBallDataWebSocketTest::testDepth, sonar);
-    memcpy(&state.depth,&sonar,sizeof(sonar));
-
-    //state.depth.point.z = HydroBallDataWebSocketTest::testDepth;
-
-    std::cout << "publishing state" << std::endl;
-
-
-
-
-    // publish the state
-    statePublisher.publish(state);
-
-    //wait for subscriber to receive
-    sleep(1);
-
-
-}
-*/
-
-
 
 int main(int argc, char** argv) {
 

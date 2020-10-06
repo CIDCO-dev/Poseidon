@@ -207,7 +207,7 @@
 	// Vitals bars
 
 	// Uptime
-        var timeup    = state.telemetry.vitals[4];
+        var timeup    = state.telemetry.vitals[3];
         var jourup  = Math.floor(timeup/86400);
         var heureup = Math.floor((timeup-(jourup *86400))/3600);
         var minuteup  = Math.floor((timeup-(jourup*86400+heureup*3600))/60);
@@ -243,10 +243,10 @@
         $("#freeram").width(100 - state.telemetry.vitals[2] + "%");
 
 	// HDD free space
-        $("#freehdd").removeClass("bg-gradient-warning").removeClass( ( state.telemetry.vitals[3]>20 ?"bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.telemetry.vitals[3]>20 ? "bg-gradient-success" : "bg-gradient-danger"));
+        $("#freehdd").removeClass("bg-gradient-warning").removeClass( ( state.telemetry.vitals[4]>20 ?"bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.telemetry.vitals[4]>20 ? "bg-gradient-success" : "bg-gradient-danger"));
 
-        $("#freehddText").text(100 - state.telemetry.vitals[3] + "%");
-        $("#freehdd").width(100 - state.telemetry.vitals[3] + "%");       
+        $("#freehddText").text(100 - state.telemetry.vitals[4] + "%");
+        $("#freehdd").width(100 - state.telemetry.vitals[4] + "%");       
     }
       
     var socket = new WebSocket("ws://" + window.location.hostname +":9002");

@@ -98,11 +98,12 @@ Description=Launch ROS on boot.
 
 [Service]
 Type=simple
-ExecStart=source /opt/ros/melodic/setup.bash && source /home/ubuntu/Poseidon/src/workspace/devel/setup.bash && /usr/bin/bash /home/ubuntu/Poseidon/launchHydrobox.sh
+ExecStart=/home/ubuntu/Poseidon/launchHydrobox.sh
 
 [Install]
 WantedBy=multi-user.target
 EOF3'
 
-chmod 755 /etc/systemd/system/ros.service
-systemctl enable ros
+sudo chmod 755 /etc/systemd/system/ros.service
+sudo systemctl enable ros
+sudo systemctl start ros

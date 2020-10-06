@@ -72,3 +72,26 @@ cd RTKLIB/app
 sudo chmod +x makeall.sh
 ./makeall.sh | tee -a log.txt
 
+FILE=/swap.img
+if [ -f "$FILE" ]; then
+    echo "$FILE exists."
+else 
+    echo "$FILE does not exist."
+    sudo swapoff -a
+    sudo dd if=/dev/zero of=/swaprpi.img bs=1024k count=128
+    sudo mkswap /swaprpi.img
+    sudo swapon /swaprpi.img
+fi
+
+cd /home/ubuntu/Poseidon/src/workspace
+source /opt/ros/melodic/setub.bash
+catkin_make -j1
+
+FILE=/swaprpi.img
+if [ -f "$FILE" ]; then
+    echo "$FILE exists."
+    sudo swapoff -a
+    sudo rm swaprpi.img
+else 
+    echo "$FILE does not exist."
+fi

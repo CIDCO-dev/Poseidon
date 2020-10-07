@@ -36,10 +36,7 @@ sudo bash -c 'cat << EOF3 > /etc/cron.d/uart
 EOF3'
 
 echo "[+] Install PPS"
-
-sudo anet.ifnames=0 dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
 sudo apt-get install pps-tools -y | tee -a log.txt
-
 
 sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
 sudo bash -c 'echo "pps-ldisc" >> /etc/modules'

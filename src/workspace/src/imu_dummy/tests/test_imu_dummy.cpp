@@ -7,8 +7,8 @@
 
 #include <unistd.h>
 
-#include "../../utils/QuaternionUtils.h"
-#include "../../utils/haversine.hpp"
+#include "hydroball_config_websocket/hydroball_config_websocket.h"
+//#include "../../utils/QuaternionUtils.h"
 
 class ImuDummyTestSuite : public ::testing::Test {
   public:
@@ -21,9 +21,9 @@ class ImuDummyTestSuite : public ::testing::Test {
 bool subscriberReceivedData = false;
 void callback_AssertSubscriberReceivedWhatIsPublished(const nav_msgs::Odometry & imuMsg)
 {
-    double expected_yaw = 135.4*D2R;
-    double expected_pitch = 2.3*D2R;
-    double expected_roll = -1.4*D2R;
+    double expected_yaw = 135.4;
+    double expected_pitch = 2.3;
+    double expected_roll = -1.4;
 
     double yaw = 0.0;
     double pitch = 0.0;
@@ -50,6 +50,12 @@ void printAllTopics() {
 
 TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
+    std::string configFilePath = "../../../../test/config4Tests.txt";
+    ConfigurationServer configurationServer(configFilePath);
+    uint16_t portConfig = 9004;
+    //run the server in separate thread
+    std::thread configurationThread(std::bind(&ConfigurationServer::run,&configurationServer, portConfig));
+
     IMU imu;
     ros::NodeHandle nh;
 
@@ -58,9 +64,9 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     //publish a imu message
     uint32_t sequenceNumber= 0;
-    double yaw = 135.4*D2R;
-    double pitch = 2.3*D2R;
-    double roll = -1.4*D2R;
+    double yaw = 135.4;
+    double pitch = 2.3;
+    double roll = -1.4;
     imu.message(sequenceNumber, yaw, pitch, roll);
 
     //wait a bit for subscriber to pick up message
@@ -68,6 +74,9 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     //verify that callback was called by subscriber
     ASSERT_TRUE(subscriberReceivedData) << "callback was not called by subscriber";
+
+    configurationServer.stop();
+    configurationThread.join();
 }
 
 int main(int argc, char** argv) {

@@ -169,29 +169,28 @@ public:
             rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
             telemetry.AddMember("attitude", attitudeArray, telemetry.GetAllocator()); // empty attitude array
         }
-	else {
-	    try{
+	    else {
+            try{
                 double heading = 0;
                 double pitch = 0;
                 double roll = 0;
 
-		geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
+                geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 
-		QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.odom.pose.pose.orientation,heading,pitch,roll);
+                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.odom.pose.pose.orientation,heading,pitch,roll);
 
-		rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
-		rapidjson::Value headingValue(heading);
-		rapidjson::Value pitchValue(pitch);
-		rapidjson::Value rollValue(roll);
+                rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
+                rapidjson::Value headingValue(heading);
+                rapidjson::Value pitchValue(pitch);
+                rapidjson::Value rollValue(roll);
 
-		attitudeArray.PushBack(headingValue, telemetry.GetAllocator());
-		attitudeArray.PushBack(pitchValue, telemetry.GetAllocator());
-		attitudeArray.PushBack(rollValue, telemetry.GetAllocator());
-		telemetry.AddMember("attitude", attitudeArray, telemetry.GetAllocator());
-	    }
-	    catch (tf2::TransformException &ex) {
-		ROS_WARN("IMU transform missing: %s",ex.what());
- 	    }
+                attitudeArray.PushBack(headingValue, telemetry.GetAllocator());
+                attitudeArray.PushBack(pitchValue, telemetry.GetAllocator());
+                attitudeArray.PushBack(rollValue, telemetry.GetAllocator());
+                telemetry.AddMember("attitude", attitudeArray, telemetry.GetAllocator());
+            } catch (tf2::TransformException &ex) {
+                ROS_WARN("IMU transform missing: %s",ex.what());
+            }
         }
 
         if(!state.depth.header.seq){
@@ -214,6 +213,7 @@ public:
             rapidjson::Value vitalsArray(rapidjson::Type::kArrayType);
             rapidjson::Value cputemp(state.vitals.cputemp);
             rapidjson::Value cpuload((int) state.vitals.cpuload);
+            rapidjson::Value freeram((int) state.vitals.freeram);
             rapidjson::Value freehdd((int) state.vitals.freehdd);
             rapidjson::Value uptime((int) state.vitals.uptime);
             rapidjson::Value vbat(state.vitals.vbat);
@@ -223,6 +223,7 @@ public:
 
             vitalsArray.PushBack(cputemp, telemetry.GetAllocator());
             vitalsArray.PushBack(cpuload, telemetry.GetAllocator());
+            vitalsArray.PushBack(freeram, telemetry.GetAllocator());
             vitalsArray.PushBack(freehdd, telemetry.GetAllocator());
             vitalsArray.PushBack(uptime, telemetry.GetAllocator());
             vitalsArray.PushBack(vbat, telemetry.GetAllocator());
@@ -284,7 +285,7 @@ public:
              	}
             }
 
-	    ROS_INFO("Stopping Configuration server");
+	    ROS_INFO("Stopping Telemetry server");
             srv.stop();
      }
 

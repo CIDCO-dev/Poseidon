@@ -1,6 +1,7 @@
 #include "logger_text/logger_text.h"
 #include "../../utils/timestamp.h"
 #include "../../utils/QuaternionUtils.h"
+#include "../../utils/Constants.hpp"
 #include <cstdio>
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){

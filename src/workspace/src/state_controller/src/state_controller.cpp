@@ -3,7 +3,7 @@
 void StateController::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	if( gnss.status.service > 0) { 
 		stateMtx.lock();
-		memcpy(&state.position,&gnss,sizeof(gnss));
+		state.position = gnss;
 		stateMtx.unlock();
 
 		StateController::stateUpdated();
@@ -12,7 +12,7 @@ void StateController::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 
 void StateController::imuCallback(const nav_msgs::Odometry& odom){
 	stateMtx.lock();
-	memcpy(&state.odom,&odom,sizeof(odom));
+	state.odom = odom;
 	stateMtx.unlock();
 
 	StateController::stateUpdated();
@@ -20,15 +20,15 @@ void StateController::imuCallback(const nav_msgs::Odometry& odom){
 
 void StateController::sonarCallback(const geometry_msgs::PointStamped& sonar){
 	stateMtx.lock();
-	memcpy(&state.depth,&sonar,sizeof(sonar));
+    state.depth = sonar;
 	stateMtx.unlock();
 
-        StateController::stateUpdated();
+	StateController::stateUpdated();
 }
 
 void StateController::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vital){
 	stateMtx.lock();
-        memcpy(&state.vitals,&vital,sizeof(vital));
+    state.vitals = vital;
 	stateMtx.unlock();
 
 	StateController::stateUpdated();

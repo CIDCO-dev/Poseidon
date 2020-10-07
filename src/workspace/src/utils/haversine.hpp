@@ -5,11 +5,7 @@
 
 #include <math.h>
 
-#ifdef _WIN32
-#define M_PI 3.14159265358979323846
-#endif
-#define PI M_PI
-#define D2R ((double)PI/(double)180)
+#include "Constants.hpp"
 
 
     /**
@@ -39,10 +35,10 @@ double haversine(double longitude1, double latitude1, double longitude2, double 
 */
 
 
-    longitude1 *= D2R;
-    latitude1 *= D2R;
-    longitude2 *= D2R;
-    latitude2 *= D2R;
+    longitude1 *= D2R(1);
+    latitude1 *= D2R(1);
+    longitude2 *= D2R(1);
+    latitude2 *= D2R(1);
 
 
     // https://en.wikipedia.org/wiki/Haversine_formula

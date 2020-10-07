@@ -11,6 +11,10 @@ add_definitions(-std=c++11 -Wall -g)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   geometry_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
+  hydroball_config_websocket
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES imu_dummy
-  CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs tf2 tf2_ros tf2_geometry_msgs
   DEPENDS system_lib
 )
 

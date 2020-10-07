@@ -7,8 +7,7 @@
 
 #define TF2_EULER_DEFAULT_ZYX 1
 
-#define R2D(x) (x * ((double)180/(double)M_PI))
-#define D2R(x) (x * ((double)M_PI/(double)180))
+#include "Constants.hpp"
 
 class QuaternionUtils{
 public:

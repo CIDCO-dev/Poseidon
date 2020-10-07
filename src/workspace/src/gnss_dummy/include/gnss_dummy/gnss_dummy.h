@@ -7,8 +7,7 @@
 #include "sensor_msgs/NavSatFix.h"
 #include <sstream>
 
-#define PI M_PI
-#define R2D ((double)180/(double)PI)
+#include "../../utils/Constants.hpp"
 
 class GNSS{
 	private:

@@ -42,7 +42,7 @@ void GNSS::talk(){
 
         double distanceCovered = sequenceNumber / 1 * vesselSpeed;
 
-        latitude  = 48.632697 + distanceCovered / earthRadius * R2D;
+        latitude  = 48.632697 + R2D(distanceCovered / earthRadius);
 
 	GNSS::message(sequenceNumber,longitude,latitude);
 	

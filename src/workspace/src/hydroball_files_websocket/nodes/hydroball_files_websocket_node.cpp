@@ -14,6 +14,12 @@ int main(int argc,char ** argv){
  
     //ROS_INFO("Using log path at %s",logPath.c_str());
     ControlFiles server(logPath);
-    std::thread t(std::bind(&ControlFiles::receiveMessages,&server));
-    server.run(9003);
+    uint16_t port = 9003;
+    std::thread t(std::bind(&ControlFiles::run,&server, port));
+
+    ros::spin(); // loop until shutdown or ctrl-c
+
+    server.stop(); // stop the server
+
+	t.join(); // join the thread before returning from node
 }

@@ -10,12 +10,7 @@ int main(int argc,char ** argv){
     uint16_t port = 9002;
     std::thread t(std::bind(&TelemetryServer::run,&server, port));
 
-    // this is the spin() code;
-    /*
-	while(ros::ok()){
-		ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0.1));
-	}
-	*/
+
 	ros::spin(); // loop until shutdown or ctrl-c
 
 	server.stop(); // stop the server

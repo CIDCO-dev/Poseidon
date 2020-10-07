@@ -144,7 +144,7 @@ TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     try {
         //create configuration server
-        std::string configFilePath = "../../../../config4Tests.txt";
+        std::string configFilePath = "../../../../test/config4Tests.txt";
         ConfigurationServer configurationServer(configFilePath);
         uint16_t portConfig = 9004;
         //run the server in separate thread

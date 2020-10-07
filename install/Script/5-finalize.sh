@@ -12,7 +12,7 @@ sudo apt-get install chrony -y | tee -a log.txt
 
 sudo bash -c 'cat << EOF2 > /etc/chrony/chrony.conf
 # PPS: /dev/pps0: Kernel-mode PPS ref-clock for the precise seconds
-refclock  PPS /dev/pps0  refid PPS  precision 1e-9  lock NMEA  poll 3  trust  prefer
+refclock  PPS /dev/pps0  refid PPS  precision 1e-9  poll 3  trust  prefer
 # SHM(2), gpsd: PPS data from shared memory provided by gpsd
 #refclock  SHM 2  refid PPSx  precision 1e-9  poll 3  trust
 # SOCK, gpsd: PPS data from socket provided by gpsd

@@ -9,6 +9,8 @@ sudo systemctl enable lighttpd.service | tee -a log.txt
 echo "[+] Installing websocket and JSON libraries"
 sudo apt install libwebsocketpp-dev rapidjson-dev
 
+mkdir -p ~/Poseidon/www/webroot/record
+
 sudo bash -c 'cat << EOF2 > /etc/lighttpd/lighttpd.conf
 server.modules = (
 	"mod_access",
@@ -17,7 +19,7 @@ server.modules = (
  	"mod_redirect",
 )
 
-server.document-root        = "/home/jordan/Poseidon/www/webroot"
+server.document-root        = "~/Poseidon/www/webroot"
 server.upload-dirs          = ( "/var/cache/lighttpd/uploads" )
 server.errorlog             = "/var/log/lighttpd/error.log"
 server.pid-file             = "/var/run/lighttpd.pid"
@@ -40,3 +42,4 @@ include_shell "/usr/share/lighttpd/create-mime.assign.pl"
 include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 EOF2'
 sudo systemctl restart lighttpd.service
+

@@ -42,3 +42,4 @@ include_shell "/usr/share/lighttpd/create-mime.assign.pl"
 include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 EOF2'
 sudo systemctl restart lighttpd.service
+

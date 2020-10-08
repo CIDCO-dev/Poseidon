@@ -12,7 +12,7 @@ sudo apt-get install chrony -y | tee -a log.txt
 
 sudo bash -c 'cat << EOF2 > /etc/chrony/chrony.conf
 # PPS: /dev/pps0: Kernel-mode PPS ref-clock for the precise seconds
-refclock  PPS /dev/pps0  refid PPS  precision 1e-9  lock NMEA  poll 3  trust  prefer
+refclock  PPS /dev/pps0  refid PPS  precision 1e-9  poll 3  trust  prefer
 # SHM(2), gpsd: PPS data from shared memory provided by gpsd
 #refclock  SHM 2  refid PPSx  precision 1e-9  poll 3  trust
 # SOCK, gpsd: PPS data from socket provided by gpsd
@@ -79,7 +79,7 @@ if [ -f "$FILE" ]; then
 else 
     echo "$FILE does not exist."
     sudo swapoff -a
-    sudo dd if=/dev/zero of=/swaprpi.img bs=1024k count=128
+    sudo dd if=/dev/zero of=/swaprpi.img bs=1024k count=516
     sudo mkswap /swaprpi.img
     sudo swapon /swaprpi.img
 fi
@@ -95,7 +95,7 @@ FILE=/swaprpi.img
 if [ -f "$FILE" ]; then
     echo "$FILE exists."
     sudo swapoff -a
-    sudo rm swaprpi.img
+    sudo rm /swaprpi.img
 else 
     echo "$FILE does not exist."
 fi

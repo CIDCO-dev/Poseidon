@@ -172,10 +172,9 @@ class Imagenex852{
 
 						try{
 	        		        		msg.point.z = measureDepth(500);
-
         	        				sonarTopic.publish(msg);
 						}
-						catch(Exception e){
+						catch(std::exception & e){
 							//ROS_ERROR already has been called. Lets sleep on this
 							error_rate.sleep();
 						}
@@ -276,18 +275,18 @@ class Imagenex852{
 						}
 						else{
 							ROS_ERROR("Could not read datapoints ( %d bytes read)",nbBytes);
-							throw std::runtime_error();
+							throw std::system_error();
 						}
 					}
 				}
 				else{
 					ROS_ERROR("Cannot read return data header (%d bytes read)",nbBytes);
-					throw std::runtime_error();
+					throw std::system_error();
 				}
 			}
 			else{
 				ROS_ERROR("Cannot write switch data command (%d bytes written)",nbBytes);
-				throw std::runtime_error();
+				throw std::system_error();
 			}
 			return depth;
 		}

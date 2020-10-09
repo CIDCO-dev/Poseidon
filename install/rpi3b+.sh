@@ -1,13 +1,13 @@
 #!/bin/sh
 
-~/Poseidon/install/Script/1-base-ros.sh
+~/Poseidon/install/stages/1-base-ros.sh
 
-~/Poseidon/install/Script/2-rpi.sh
+~/Poseidon/install/stages/2-rpi.sh
 
-~/Poseidon/install/Script/3-network.sh
+~/Poseidon/install/stages/3-network.sh
 
-~/Poseidon/install/Script/4-rpi.sh
+~/Poseidon/install/stages/4-rpi.sh
 
-~/Poseidon/install/Script/5-finalize.sh
+~/Poseidon/install/stages/5-finalize.sh
 
-~/Poseidon/install/Script/6-devices-rpi.sh
+~/Poseidon/install/stages/6-devices-rpi.sh

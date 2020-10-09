@@ -1,4 +1,6 @@
-Before Runing Any Script You Have To Edit Uboot.
+Install instructions for Raspberry Pi:
+
+Edit UBoot before running the install scripts:
 
 When The RaspBerry Boot Press A Key On Your Keyboard.
 

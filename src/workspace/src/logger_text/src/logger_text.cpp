@@ -69,7 +69,7 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	}
 
 	if(bootstrappedGnssTime && loggerEnabled){
-		uint64_t timestamp = TimeUtils::buildTimestamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
+		uint64_t timestamp = TimeUtils::buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
 
 		if(timestamp > lastGnssTimestamp){
 			fprintf(gnssOutputFile,"%s%s%.10f%s%.10f%s%.3f%s%d%s%d\n",
@@ -97,7 +97,7 @@ void Writer::imuCallback(const nav_msgs::Odometry& odom){
         	double pitch   = 0;
 	        double roll    = 0;
 
-		uint64_t timestamp = TimeUtils::buildTimestamp(odom.header.stamp.sec, gnss.header.stamp.nsec);
+		uint64_t timestamp = TimeUtils::buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec);
 
 		if(timestamp > lastImuTimestamp){
 	                geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
@@ -113,7 +113,7 @@ void Writer::imuCallback(const nav_msgs::Odometry& odom){
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 	if(bootstrappedGnssTime && loggerEnabled){
-		uint64_t timestamp = TimeUtils::buildTimestamp(sonar.header.stamp.sec, sonar.header.stamp.nsec);
+		uint64_t timestamp = TimeUtils::buildTimeStamp(sonar.header.stamp.sec, sonar.header.stamp.nsec);
 
 		if(timestamp > lastSonarTimestamp){
 			fprintf(sonarOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec).c_str(),separator.c_str(),sonar.point.z);

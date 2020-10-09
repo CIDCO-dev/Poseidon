@@ -69,19 +69,25 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	}
 
 	if(bootstrappedGnssTime && loggerEnabled){
-		fprintf(gnssOutputFile,"%s%s%.10f%s%.10f%s%.3f%s%d%s%d\n",
-			TimeUtils::getTimestampString(gnss.header.stamp.sec, gnss.header.stamp.nsec).c_str(),
-			separator.c_str(),
-			gnss.longitude,
-			separator.c_str(),
-			gnss.latitude,
-			separator.c_str(),
-			gnss.altitude,
-			separator.c_str(),
-			gnss.status.status,
-			separator.c_str(),
-			gnss.status.service
-		);
+		uint64_t timestamp = TimeUtils::buildTimestamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
+
+		if(timestamp > lastGnssTimestamp){
+			fprintf(gnssOutputFile,"%s%s%.10f%s%.10f%s%.3f%s%d%s%d\n",
+				TimeUtils::getTimestampString(gnss.header.stamp.sec, gnss.header.stamp.nsec).c_str(),
+				separator.c_str(),
+				gnss.longitude,
+				separator.c_str(),
+				gnss.latitude,
+				separator.c_str(),
+				gnss.altitude,
+				separator.c_str(),
+				gnss.status.status,
+				separator.c_str(),
+				gnss.status.service
+			);
+
+			lastGnssTimestamp = timestamp;
+		}
 	}
 }
 
@@ -91,17 +97,29 @@ void Writer::imuCallback(const nav_msgs::Odometry& odom){
         	double pitch   = 0;
 	        double roll    = 0;
 
-                geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
+		uint64_t timestamp = TimeUtils::buildTimestamp(odom.header.stamp.sec, gnss.header.stamp.nsec);
 
-                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,odom.pose.pose.orientation,heading,pitch,roll);
+		if(timestamp > lastImuTimestamp){
+	                geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 
-		fprintf(imuOutputFile,"%s%s%.3f%s%.3f%s%.3f\n",TimeUtils::getTimestampString(odom.header.stamp.sec, odom.header.stamp.nsec).c_str(),separator.c_str(),heading,separator.c_str(),pitch,separator.c_str(),roll);
+	                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,odom.pose.pose.orientation,heading,pitch,roll);
+
+			fprintf(imuOutputFile,"%s%s%.3f%s%.3f%s%.3f\n",TimeUtils::getTimestampString(odom.header.stamp.sec, odom.header.stamp.nsec).c_str(),separator.c_str(),heading,separator.c_str(),pitch,separator.c_str(),roll);
+
+			lastImuTimestamp = timestamp;
+		}
 	}
 }
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 	if(bootstrappedGnssTime && loggerEnabled){
-		fprintf(sonarOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec).c_str(),separator.c_str(),sonar.point.z);
+		uint64_t timestamp = TimeUtils::buildTimestamp(sonar.header.stamp.sec, sonar.header.stamp.nsec);
+
+		if(timestamp > lastSonarTimestamp){
+			fprintf(sonarOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec).c_str(),separator.c_str(),sonar.point.z);
+
+			lastSonarTimestamp = timestamp;
+		}
 	}
 }
 

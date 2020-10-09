@@ -61,6 +61,10 @@ private:
 
 	tf2_ros::Buffer buffer;
 	tf2_ros::TransformListener transformListener;
+
+	uint64_t lastGnssTimestamp = 0;
+	uint64_t lastImuTimestmap  = 0;
+	uint64_t lastSonarTimestamp= 0;
 };
 
 

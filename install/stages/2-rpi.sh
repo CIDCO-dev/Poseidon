@@ -2,7 +2,7 @@
 
 echo "[+] Editing uboot"
 # removing hang on bonnt cause by data from gps on uart
-sudo sed -i -e "s/bootdelay=2/bootdelay=-2/g" /boot/firmware/uboot.env | tee -a log.txt
+sudo cp /home/ubuntu/Poseidon/install/stages/rpi-cfg-files/uboot.env /boot/firmware
 
 echo "[+] Installing RPi.GPIO"
 pip3 install RPi.GPIO | tee -a log.txt

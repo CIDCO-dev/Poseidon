@@ -59,7 +59,7 @@ if (dataln !== olddataln) {
 function sendDelete() {
 	for (i = 0; i < dataln; i++) {
 		var checkBox = document.getElementById(fileslist[i][0]);
-		if (checkBox.checked == true) {socket.send("{\"delete\":["+ fileslist[i][0]+"]}"); }   
+		if (checkBox.checked == true) {socket.send("{\"delete\":\""+ fileslist[i][0]+"\"}"); }   
 		}
 }
 //******************************
@@ -76,7 +76,7 @@ function selectall() {
 //Periodically poll for new files
 //******************************
 time=setInterval(function(list){
-socket.send("{\"f-list\":[fileslist]}");
+socket.send("{\"f-list\":\"fileslist\"}");
 	setTimeout(list, 500);	
 },500);
 

@@ -59,7 +59,7 @@ if (dataln !== olddataln) {
 function sendDelete() {
 	for (i = 0; i < dataln; i++) {
 		var checkBox = document.getElementById(fileslist[i][0]);
-		if (checkBox.checked == true) {socket.send("{\"delete\":\""+ fileslist[i][0]+"\"}"); }   
+		if (checkBox.checked == true) {socket.send("{\"delete\":[\""+ fileslist[i][0]+"\"]}"); }   
 		}
 }
 //******************************

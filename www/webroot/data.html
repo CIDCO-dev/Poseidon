@@ -54,12 +54,15 @@ if (dataln !== olddataln) {
 	}
 }
 //******************************
-//Sends a delete command to delete a file
+//Sends a delete command for selected file
 //******************************
 function sendDelete() {
 	for (i = 0; i < dataln; i++) {
 		var checkBox = document.getElementById(fileslist[i][0]);
-		if (checkBox.checked == true) {socket.send("{\"delete\":[\""+ fileslist[i][0]+"\"]}"); }   
+		if (checkBox.checked == true)  {var cmd = { command : "delete",file : fileslist[i][0]};
+						socket.send(JSON.stringify(cmd));
+					        //socket.send("{\"delete\":[\""+ fileslist[i][0]+"\"]}");
+					       }   
 		}
 }
 //******************************

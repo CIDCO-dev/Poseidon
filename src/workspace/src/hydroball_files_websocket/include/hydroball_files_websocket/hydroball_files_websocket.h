@@ -109,8 +109,8 @@ public:
 			return;
 		}
 
-		if(document.HasMember("delete") && document["delete"].IsArray()) {
-		    std::string fileToDelete = logFolder + document["delete"][0].GetString();
+		if(document.HasMember("delete")) {
+		    std::string fileToDelete = logFolder + document["delete"].GetString();
 		    deleteFile(fileToDelete);
 		} else if(document.HasMember("f-list")) {
 		    sendFileList();

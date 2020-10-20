@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo systemctl stop ros
+
 echo "[+] Creating temporary swap file"
 FILE=/swap.img
 if [ -f "$FILE" ]; then
@@ -16,6 +18,7 @@ echo "[+] Building Poseidon"
 
 cd /home/ubuntu/Poseidon/src/workspace
 source /opt/ros/melodic/setup.bash
+catkin_make clean
 catkin_make -j1
 
 echo "[+] Disabling temporary swap"
@@ -27,3 +30,7 @@ if [ -f "$FILE" ]; then
 else 
     echo "$FILE does not exist."
 fi
+
+
+sudo systemctl start ros
+sudo systemctl status ros

@@ -29,6 +29,10 @@
   <remap from="ins" to="odom"/>
   <param name="port" value="/dev/imu"/>
   <param name="navigation_dt_ms" value="100"/>
+  <param name="LTCF" value="1"/>
+  <param name="dynamic_model" value="5"/>
+  <param name="frame_id" value="imu"/>
+
   <!-- <param name="INS_rpy_radians" value="0,0,90"/> //-->
 </node>
 

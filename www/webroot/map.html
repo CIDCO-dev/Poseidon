@@ -294,32 +294,7 @@ $( document ).ready(function() {
         shpfile.addTo(navMap);
 	navMap.invalidateSize();
 
-	// Init websocket
-
-	socket = new WebSocket("ws://" + window.location.hostname +":9002");
-
-	socket.onmessage = function (event) {
-        	//console.log(event.data);
-        	var msg = JSON.parse(event.data);
-
-        	if(msg.telemetry){
-                	processTelemetry(msg.telemetry);
-        	}
-        	else if(msg.recordingStatus){
-                	console.log(msg);
-                	processRecordingStatus(msg.recordingStatus);
-        	}
-  	};
-
-	socket.onopen = function(event){
-        	getRecordingStatus();
-	};
-
-});
-
-
-INSIDE PROCESS STATE:
-        if (state.vitals[4] > oldstate){
+      if (state.vitals[4] > oldstate){
                 oldstate = state.vitals[4];
                 currentZoom = m.getZoom();
                 curentweight= (23-currentZoom)*6+23;
@@ -347,6 +322,33 @@ INSIDE PROCESS STATE:
                 //        }
 
 
+
+	// Init websocket
+
+	socket = new WebSocket("ws://" + window.location.hostname +":9002");
+
+	socket.onmessage = function (event) {
+        	//console.log(event.data);
+        	var msg = JSON.parse(event.data);
+
+        	if(msg.telemetry){
+                	processTelemetry(msg.telemetry);
+        	}
+        	else if(msg.recordingStatus){
+                	console.log(msg);
+                	processRecordingStatus(msg.recordingStatus);
+        	}
+  	};
+
+	socket.onopen = function(event){
+        	getRecordingStatus();
+	};
+
+});
+
+
+
+  
 
 
   </script>

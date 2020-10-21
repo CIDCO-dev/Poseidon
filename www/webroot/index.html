@@ -249,8 +249,25 @@
 	  <!-- Gauges row -->
           <div class="row">
 
-            <!-- Content Column -->
-  
+            <!-- Depth Card --> 
+            <div class="col-lg-8 mb-4">
+              <div class="card shadow mb-4">
+
+                <div class="card-header py-3" >
+                  <h6 class="m-0 font-weight-bold text-primary">Depth</h6>
+                </div>
+
+                <div class="card-body">
+                  <div class="chart-area">
+                    <div id="depthChartContainer">
+                      <canvas id="depthChart"></canvas>
+			<br style="clear:both"/>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+           </div>
 
            <!-- Attitude Card -->
            <div class="col-lg-4 mb-4">
@@ -279,25 +296,8 @@
               </div>
             </div>            
 
-           <!-- Depth Card --> 
-            <div class="col-lg-8 mb-4">
-              <div class="card shadow mb-4">
-
-                <div class="card-header py-3" >
-                  <h6 class="m-0 font-weight-bold text-primary">Depth</h6>
-                </div>
-
-                <div class="card-body">
-                  <div class="chart-area">
-                    <div id="depthChartContainer">
-                      <canvas id="depthChart"></canvas>
-			<br style="clear:both"/>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
+          
+ 
 
           </div>
 

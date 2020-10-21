@@ -30,10 +30,11 @@ public:
     ControlFiles(std::string & logFolder): logFolder(logFolder) {
         srv.init_asio();
         srv.set_reuse_addr(true);
+	srv.clear_access_channels(websocketpp::log::alevel::all);
         srv.set_open_handler(bind(&ControlFiles::on_open,this,std::placeholders::_1));
         srv.set_close_handler(bind(&ControlFiles::on_close,this,std::placeholders::_1));
 	srv.set_message_handler(bind(&ControlFiles::on_message,this,std::placeholders::_1,std::placeholders::_2));
-        }
+    }
 
     void deleteFile(std::string & fileToDelete) {
         if( remove(fileToDelete.c_str()) != 0 ){

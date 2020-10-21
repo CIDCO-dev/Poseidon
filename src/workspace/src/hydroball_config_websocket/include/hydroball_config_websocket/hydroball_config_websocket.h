@@ -21,7 +21,7 @@
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2/LinearMath/Quaternion.h>
-
+#include <tf2/LinearMath/Matrix3x3.h>
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -49,6 +49,7 @@ public:
 	ConfigurationServer(std::string & configFilePath): configFilePath(configFilePath) {
 		srv.init_asio();
 		srv.set_reuse_addr(true);
+		srv.clear_access_channels(websocketpp::log::alevel::all); 
 		srv.set_open_handler(bind(&ConfigurationServer::on_open,this,std::placeholders::_1));
 		srv.set_close_handler(bind(&ConfigurationServer::on_close,this,std::placeholders::_1));
 		srv.set_message_handler(bind(&ConfigurationServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
@@ -305,12 +306,15 @@ public:
 			double pitchOffset;
 			double rollOffset;
 
-			QuaternionUtils::convertToEulerAngles(srv.response.state.odom.pose.pose.orientation,headingOffset,pitchOffset,rollOffset);
+			tf2::Quaternion q;
+			tf2::fromMsg(srv.response.state.odom.pose.pose.orientation,q);
+			tf2::Matrix3x3 mat(q);
+			mat.getEulerYPR(headingOffset,pitchOffset,rollOffset);
 
 			//Offsets are negated so that steady-state angle + offset = 0
-			configuration["headingOffset"] = std::to_string(-headingOffset);
-			configuration["pitchOffset"]   = std::to_string(-pitchOffset);
-			configuration["rollOffset"]    = std::to_string(-rollOffset);
+			configuration["headingOffset"] = std::to_string(headingOffset);
+			configuration["pitchOffset"]   = std::to_string(pitchOffset);
+			configuration["rollOffset"]    = std::to_string(rollOffset);
 
                         writeConfigurationToFile();
                         broadcastConfiguration();

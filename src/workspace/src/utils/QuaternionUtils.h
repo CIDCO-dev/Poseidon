@@ -22,41 +22,11 @@ public:
 		tf2::Matrix3x3 mat(tfBodyPose);
 		mat.getEulerYPR(headingDegrees,pitchDegrees,rollDegrees);
 
-
-                //geometry_msgs::Quaternion bodyPose = tf2::toMsg(tfBodyPose);
-
-		
-
-        	//       QuaternionUtils::convertToEulerAngles(bodyPose,headingDegrees,pitchDegrees,rollDegrees);
+		headingDegrees = R2D(headingDegrees);
+		pitchDegrees   = R2D(pitchDegrees);
+		rollDegrees    = R2D(rollDegrees);
 	}
 
-	/* Returns angles in DEGREES */
-	static void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,double & pitch, double & roll){
-	
-
-		// roll (x-axis rotation)
-		double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-		double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-		roll = R2D( std::atan2(sinr_cosp, cosr_cosp) );
-
-		// pitch (y-axis rotation)
-		double sinp = 2 * (q.w * q.y - q.z * q.x);
-
-		if (std::abs(sinp) >= 1){
-			pitch = R2D( std::copysign(M_PI / 2, sinp) ); // use 90 degrees if out of range
-		}
-		else{
-			pitch = R2D( std::asin(sinp) );
-		}
-
-		// yaw (z-axis rotation)
-		double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-		double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-		heading = R2D( std::atan2(siny_cosp, cosy_cosp) );
-
-
-		
-	}
 };
 
 #endif

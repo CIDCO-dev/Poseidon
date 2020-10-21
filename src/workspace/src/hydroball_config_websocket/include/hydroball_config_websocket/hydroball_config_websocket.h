@@ -21,7 +21,7 @@
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2/LinearMath/Quaternion.h>
-
+#include <tf2/LinearMath/Matrix3x3.h>
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -305,12 +305,15 @@ public:
 			double pitchOffset;
 			double rollOffset;
 
-			QuaternionUtils::convertToEulerAngles(srv.response.state.odom.pose.pose.orientation,headingOffset,pitchOffset,rollOffset);
+			tf2::Quaternion q;
+			tf2::fromMsg(srv.response.state.odom.pose.pose.orientation,q);
+			tf2::Matrix3x3 mat(q);
+			mat.getEulerYPR(headingOffset,pitchOffset,rollOffset);
 
 			//Offsets are negated so that steady-state angle + offset = 0
-			configuration["headingOffset"] = std::to_string(-headingOffset);
-			configuration["pitchOffset"]   = std::to_string(-pitchOffset);
-			configuration["rollOffset"]    = std::to_string(-rollOffset);
+			configuration["headingOffset"] = std::to_string(headingOffset);
+			configuration["pitchOffset"]   = std::to_string(pitchOffset);
+			configuration["rollOffset"]    = std::to_string(rollOffset);
 
                         writeConfigurationToFile();
                         broadcastConfiguration();

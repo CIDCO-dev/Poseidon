@@ -65,10 +65,14 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){
 		bootstrappedGnssTime = true;
-		init();
 	}
 
 	if(bootstrappedGnssTime && loggerEnabled){
+
+		if(!gnssOutputFile){
+			init();
+		}
+
 		uint64_t timestamp = TimeUtils::buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
 
 		if(timestamp > lastGnssTimestamp){

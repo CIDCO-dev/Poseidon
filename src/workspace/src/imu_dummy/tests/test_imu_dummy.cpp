@@ -29,7 +29,9 @@ void callback_AssertSubscriberReceivedWhatIsPublished(const nav_msgs::Odometry &
     double pitch = 0.0;
     double roll = 0.0;
 
-    QuaternionUtils::convertToEulerAngles(imuMsg.pose.pose.orientation, yaw, pitch, roll);
+
+    tf2::Matrix3x3 mat(imuMsg.pose.pose.orientation);
+    mat.getEulerYPR(yaw,pitch,roll);
 
     double epsilon = 1e-15;
     ASSERT_NEAR(expected_yaw, yaw, epsilon) << "subscriber didn't receive expected yaw angle";

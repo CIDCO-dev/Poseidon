@@ -53,6 +53,11 @@
           <span>Dashboard</span></a>
       </li>
       <li class="nav-item inactive">
+        <a class="nav-link" href="map.html">
+          <i class="fas fa-fw fa-globe-americas"></i>
+          <span>Map</span></a>
+      </li>
+      <li class="nav-item inactive">
         <a class="nav-link" href="status.html">
           <i class="fas fa-fw fa-globe-americas"></i>
           <span>System Status</span></a>
@@ -302,7 +307,8 @@
           </div>
 
         </div>
-
+        </div>
+        </div>
         <!-- /.container-fluid -->
 
       </div>
@@ -394,19 +400,19 @@ $( document ).ready(function() {
 	    minValue: 0,
 	    maxValue: 360,
 	    majorTicks: [
-	        "180",
-	        "-135",
-	        "-90",
-	        "-45",
 	        "0",
 	        "45",
 	        "90",
 	        "135",
-	        "180"
+	        "180",
+	        "225",
+	        "270",
+	        "315",
+	        "0"
 	    ],
 	    minorTicks: 22,
 	    ticksAngle: 360,	
-	    startAngle: 0,
+	    startAngle: 180,
 	    strokeTicks: false,
 	    highlights: false,
 	    colorPlate: "#222",

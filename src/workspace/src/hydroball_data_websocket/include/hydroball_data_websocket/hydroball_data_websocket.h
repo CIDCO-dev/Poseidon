@@ -42,6 +42,8 @@ public:
     TelemetryServer(): transformListener(buffer){
         srv.init_asio();
         srv.set_reuse_addr(true);
+	srv.clear_access_channels(websocketpp::log::alevel::all);  //remove cout logging
+
         srv.set_open_handler(bind(&TelemetryServer::on_open,this,std::placeholders::_1));
         srv.set_close_handler(bind(&TelemetryServer::on_close,this,std::placeholders::_1));
 	srv.set_message_handler(bind(&TelemetryServer::on_message,this,std::placeholders::_1,std::placeholders::_2));

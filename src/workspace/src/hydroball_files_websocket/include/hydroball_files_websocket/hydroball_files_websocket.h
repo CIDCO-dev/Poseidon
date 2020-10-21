@@ -33,7 +33,6 @@ public:
         srv.set_open_handler(bind(&ControlFiles::on_open,this,std::placeholders::_1));
         srv.set_close_handler(bind(&ControlFiles::on_close,this,std::placeholders::_1));
 	srv.set_message_handler(bind(&ControlFiles::on_message,this,std::placeholders::_1,std::placeholders::_2));
-        logfolder = logFolder;
         }
 
     void deleteFile(std::string & fileToDelete) {
@@ -61,18 +60,18 @@ public:
 
 	    //list files and send it over websocket
 	    ss << "\"fileslist\":[" ;
-
+	    glob_logFolder = logFolder + "*";
 	    glob_t glob_result;
-	    glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
+	    glob(glob_logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
 	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
 	    	std::string str = glob_result.gl_pathv[i];
 		    if (i > 0) {ss << "," ;}
 
             ss << "[";
-            str.erase (0,(logFolder.length()-1));
+            str.erase (0,(logFolder.length()));
             ss << "\"" << str << "\"" ; //file name
             str = glob_result.gl_pathv[i];
-            str.erase (0,(logFolder.length()-8));
+            str.erase (0,(logFolder.length()-7));
             ss << "," ;
             ss << "\"" << str << "\"" ;
             ss << "]";
@@ -110,8 +109,8 @@ public:
 			return;
 		}
 
-		if(document.HasMember("delete") && document["delete"].IsArray()) {
-		    std::string fileToDelete = document["delete"][0].GetString();
+		if(document.HasMember("delete")) {
+		    std::string fileToDelete = logFolder + document["delete"].GetString();
 		    deleteFile(fileToDelete);
 		} else if(document.HasMember("f-list")) {
 		    sendFileList();
@@ -240,7 +239,7 @@ private:
     
     ros::NodeHandle n;    
     ros::Subscriber stateTopic;
-    std::string logfolder;
+    std::string glob_logFolder;
     std::string logFolder;
     uint64_t lastTimestamp;
     std::string data_recived;

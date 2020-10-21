@@ -18,13 +18,22 @@ public:
                 tf2::fromMsg(pose, tfImuPose);
                 tf2::Quaternion tfBodyPose = rotation * tfImuPose;
                 tfBodyPose.normalize();
-                geometry_msgs::Quaternion bodyPose = tf2::toMsg(tfBodyPose);
 
-                QuaternionUtils::convertToEulerAngles(bodyPose,headingDegrees,pitchDegrees,rollDegrees);
+		tf2::Matrix3x3 mat(tfBodyPose);
+		mat.getEulerYPR(headingDegrees,pitchDegrees,rollDegrees);
+
+
+                //geometry_msgs::Quaternion bodyPose = tf2::toMsg(tfBodyPose);
+
+		
+
+        	//       QuaternionUtils::convertToEulerAngles(bodyPose,headingDegrees,pitchDegrees,rollDegrees);
 	}
 
 	/* Returns angles in DEGREES */
 	static void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,double & pitch, double & roll){
+	
+
 		// roll (x-axis rotation)
 		double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
 		double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
@@ -44,6 +53,9 @@ public:
 		double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
 		double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
 		heading = R2D( std::atan2(siny_cosp, cosy_cosp) );
+
+
+		
 	}
 };
 

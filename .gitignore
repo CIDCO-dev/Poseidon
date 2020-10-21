@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# poseidon config files
+config.txt
+
 # from https://github.com/github/gitignore/blob/master/ROS.gitignore
 
 src/workspace/build/

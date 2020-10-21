@@ -5,7 +5,7 @@
 int main(int argc,char** argv){
 	ros::init(argc, argv, "zedf9p");
 
-	if(argc != 2){
+	if(argc != 3){
 		std::cerr << "gnss_zed_f9p logPath serialDevice" << std::endl;
 		exit(1);
 	}

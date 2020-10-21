@@ -18,7 +18,7 @@ echo "[+] Building Poseidon"
 
 cd /home/ubuntu/Poseidon/src/workspace
 source /opt/ros/melodic/setup.bash
-catkin_make clean
+
 catkin_make -j1
 
 echo "[+] Disabling temporary swap"

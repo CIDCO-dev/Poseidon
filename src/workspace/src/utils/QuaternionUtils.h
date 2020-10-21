@@ -31,7 +31,7 @@ public:
 	}
 
 	/* Returns angles in DEGREES */
-	/*static void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,double & pitch, double & roll){
+	static void convertToEulerAngles(const geometry_msgs::Quaternion & q,double & heading,double & pitch, double & roll){
 	
 
 		// roll (x-axis rotation)
@@ -56,7 +56,7 @@ public:
 
 
 		
-	}*/
+	}
 };
 
 #endif

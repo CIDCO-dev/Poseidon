@@ -235,10 +235,10 @@
 
 
 	// CPU temperature
-        $("#cputemp").removeClass("bg-gradient-warning").removeClass( (state.telemetry.vitals[0]>60 ?"bg-gradient-success":"bg-gradient-danger")).addClass( ( state.telemetry.vitals[0]>60 ?"bg-gradient-danger":"bg-gradient-success"));
+        $("#cputemp").removeClass("bg-gradient-warning").removeClass( (state.telemetry.vitals[0]>60 ?"bg-gradient-success":"bg-gradient-danger")).addClass( ( state.telemetry.vitals[0]>75 ?"bg-gradient-danger":"bg-gradient-success"));
 
         $("#cputempText").text(state.telemetry.vitals[0] + "\u00B0" + "C");
-        $("#cputemp").width(state.telemetry.vitals[0] + "%");
+        $("#cputemp").width(20 + state.telemetry.vitals[0] + "%");
 
 
 	// Memory

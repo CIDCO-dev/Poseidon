@@ -218,7 +218,7 @@ public:
         }
 	else{
             rapidjson::Value vitalsArray(rapidjson::Type::kArrayType);
-            rapidjson::Value cputemp(state.vitals.cputemp);
+            rapidjson::Value cputemp((int)state.vitals.cputemp);
             rapidjson::Value cpuload((int) state.vitals.cpuload);
             rapidjson::Value freeram((int) state.vitals.freeram);
             rapidjson::Value freehdd((int) state.vitals.freehdd);

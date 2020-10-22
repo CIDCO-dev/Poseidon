@@ -42,7 +42,7 @@ void Writer::init(){
  	       throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
         }
 
-	fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight\n",separator.c_str(),separator.c_str(),separator.c_str());
+	fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
 
 	fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
 

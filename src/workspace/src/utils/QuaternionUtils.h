@@ -16,11 +16,15 @@ public:
                 tf2::Quaternion rotation, tfImuPose;
                 tf2::fromMsg(transform, rotation);
                 tf2::fromMsg(pose, tfImuPose);
+		rotation.normalize();
+		tfImuPose.normalize();
                 tf2::Quaternion tfBodyPose = rotation * tfImuPose;
                 tfBodyPose.normalize();
 
 		tf2::Matrix3x3 mat(tfBodyPose);
-		mat.getEulerYPR(headingDegrees,pitchDegrees,rollDegrees);
+
+
+		mat.getEulerYPR(headingDegrees,rollDegrees,pitchDegrees);
 
 		headingDegrees = R2D(headingDegrees);
 		pitchDegrees   = R2D(pitchDegrees);

@@ -59,6 +59,6 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)"/>
 
-<test test-name="test_gpsd_client_node" pkg="gpsd_client" type="test_gpsd_client_node" />
+<test test-name="test_imu_bno055_node" pkg="imu_bno055" type="test_imu_bno055_node" />
 
 </launch>

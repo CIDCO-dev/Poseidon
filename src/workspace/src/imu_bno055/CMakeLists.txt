@@ -22,3 +22,14 @@ install(TARGETS bno055_i2c_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+#############
+## Testing ##
+#############
+
+if(CATKIN_ENABLE_TESTING)
+  # test with launch file
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_imu_bno055_node tests/imu_bno055_node.test tests/test_imu_bno055_node.cpp)
+  # target_link_libraries(test_imu_bno055_node ...) #what libraries are needed on rpi?
+endif()
+

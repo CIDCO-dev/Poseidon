@@ -65,3 +65,11 @@ add_dependencies(inertial_sense_ros inertial_sense_generate_messages_cpp)
 
 add_executable(inertial_sense_node src/inertial_sense_node.cpp)
 target_link_libraries(inertial_sense_node inertial_sense_ros ${catkin_LIBRARIES})
+
+
+if(CATKIN_ENABLE_TESTING)
+  # test with launch file
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_inertialsense_node tests/inertialsense_node.test tests/test_inertialsense_node.cpp)
+  # target_link_libraries(test_inertialsense_node ...) #what libraries are needed on rpi?
+endif()

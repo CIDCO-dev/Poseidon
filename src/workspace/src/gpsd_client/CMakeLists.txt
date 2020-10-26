@@ -37,3 +37,10 @@ install(TARGETS ${PROJECT_NAME}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+if(CATKIN_ENABLE_TESTING)
+  # test with launch file
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_gpsd_client_node tests/gpsd_client_node.test tests/test_gpsd_client_node.cpp)
+  # target_link_libraries(test_gpsd_client_node ...) #what libraries are needed on rpi?
+endif()

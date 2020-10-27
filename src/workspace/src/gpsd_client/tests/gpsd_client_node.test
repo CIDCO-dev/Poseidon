@@ -1,0 +1,16 @@
+<launch>
+
+<arg name="gnssPortPath" value="/dev/ttyACM0"/>
+<arg name="gpsdIp" value="localhost"/>
+<arg name="gpsdPort" value="2947"/>
+
+<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+
+
+<node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" args="$(arg gpsdIp) $(arg gpsdPort)"/>
+<node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+
+<test test-name="test_gpsd_client_node" pkg="gpsd_client" type="test_gpsd_client_node" />
+
+</launch>

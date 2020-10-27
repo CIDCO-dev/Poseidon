@@ -25,7 +25,7 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
     ros::Subscriber sub = nh.subscribe("depth", 1000, callback_AssertSubscriberReceivedData);
 
     // wait for subscriber to receive data from imu
-    sleep(10);
+    sleep(2);
 
     //verify that callback was called by subscriber
     ASSERT_TRUE(subscriberReceivedData) << "callback was not called by subscriber";

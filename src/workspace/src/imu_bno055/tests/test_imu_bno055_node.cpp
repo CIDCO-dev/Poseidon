@@ -4,11 +4,11 @@
 #include <thread>
 #include <unistd.h>
 
-#include "nav_msgs/Odometry.h"
+#include <sensor_msgs/Imu.h>
 
 //global variable to test if callback was called by subscriber
 bool subscriberReceivedData = false;
-void callback_AssertSubscriberReceivedData(const nav_msgs::Odometry & imuMsg)
+void callback_AssertSubscriberReceivedData(const sensor_msgs::Imu & imuMsg)
 {
     if(!subscriberReceivedData) {
         subscriberReceivedData = true;

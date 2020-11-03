@@ -5,7 +5,6 @@
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/Imu.h"
 #include "geometry_msgs/PointStamped.h"
-#include "nav_msgs/Odometry.h"
 #include "std_msgs/String.h"
 #include "raspberrypi_vitals_msg/sysinfo.h"
 
@@ -25,7 +24,7 @@ class StateController{
 	public:
 		StateController(){
 			positionTopic = n.subscribe("fix", 1000, &StateController::gnssCallback,this);
-			attitudeTopic = n.subscribe("odom", 1000, &StateController::imuCallback,this);
+			attitudeTopic = n.subscribe("/imu/data", 1000, &StateController::imuCallback,this);
 			sonarTopic    = n.subscribe("depth", 1000, &StateController::sonarCallback,this);
                         vitalsTopic   = n.subscribe("vitals", 1000, &StateController::vitalsCallback,this);
 
@@ -37,7 +36,7 @@ class StateController{
 		}
 
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss);
-		void imuCallback(const nav_msgs::Odometry& odom);
+		void imuCallback(const sensor_msgs::Imu& imu);
 		void sonarCallback(const geometry_msgs::PointStamped& sonar);
 		void vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vital);
 		void stateUpdated();

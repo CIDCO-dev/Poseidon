@@ -307,14 +307,14 @@ public:
 			double rollOffset;
 
 			tf2::Quaternion q;
-			tf2::fromMsg(srv.response.state.odom.pose.pose.orientation,q);
+			tf2::fromMsg(srv.response.state.imu.orientation,q);
 			tf2::Matrix3x3 mat(q);
 			mat.getEulerYPR(headingOffset,pitchOffset,rollOffset);
 
 			//Offsets are negated so that steady-state angle + offset = 0
-			configuration["headingOffset"] = std::to_string(headingOffset);
-			configuration["pitchOffset"]   = std::to_string(pitchOffset);
-			configuration["rollOffset"]    = std::to_string(rollOffset);
+			configuration["headingOffset"] = std::to_string(-R2D(headingOffset));
+			configuration["pitchOffset"]   = std::to_string(-R2D(pitchOffset));
+			configuration["rollOffset"]    = std::to_string(-R2D(rollOffset));
 
                         writeConfigurationToFile();
                         broadcastConfiguration();

@@ -42,7 +42,7 @@ void Writer::init(){
  	       throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
         }
 
-	fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight\n",separator.c_str(),separator.c_str(),separator.c_str());
+	fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
 
 	fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
 
@@ -95,24 +95,24 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	}
 }
 
-void Writer::imuCallback(const nav_msgs::Odometry& odom){
+void Writer::imuCallback(const sensor_msgs::Imu& imu){
 	if(bootstrappedGnssTime && loggerEnabled){
 	        double heading = 0;
         	double pitch   = 0;
 	        double roll    = 0;
 
-		uint64_t timestamp = TimeUtils::buildTimeStamp(odom.header.stamp.sec, odom.header.stamp.nsec);
+		uint64_t timestamp = TimeUtils::buildTimeStamp(imu.header.stamp.sec, imu.header.stamp.nsec);
 
 		if(timestamp > lastImuTimestamp){
 	                geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 
-	                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,odom.pose.pose.orientation,heading,pitch,roll);
+	                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,imu.orientation,heading,pitch,roll);
 
 			if(heading < 0){
 				heading += 360.0;
 			}
 
-			fprintf(imuOutputFile,"%s%s%.3f%s%.3f%s%.3f\n",TimeUtils::getTimestampString(odom.header.stamp.sec, odom.header.stamp.nsec).c_str(),separator.c_str(),heading,separator.c_str(),pitch,separator.c_str(),roll);
+			fprintf(imuOutputFile,"%s%s%.3f%s%.3f%s%.3f\n",TimeUtils::getTimestampString(imu.header.stamp.sec, imu.header.stamp.nsec).c_str(),separator.c_str(),heading,separator.c_str(),pitch,separator.c_str(),roll);
 
 			lastImuTimestamp = timestamp;
 		}

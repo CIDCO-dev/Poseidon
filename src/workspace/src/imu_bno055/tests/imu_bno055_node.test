@@ -1,0 +1,20 @@
+<launch>
+
+<arg name="gnssPortPath" value="/dev/ttyACM0"/>
+<arg name="gpsdIp" value="localhost"/>
+<arg name="gpsdPort" value="2947"/>
+
+<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
+
+<node ns="imu" name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" respawn="true" respawn_delay="2">
+        <param name="device" type="string" value="/dev/i2c-1"/>
+        <param name="address" type="int" value="40"/> <!-- 0x28 == 40 is the default for BNO055 -->
+        <param name="frame_id" type="string" value="imu"/>
+</node>
+
+<test test-name="test_imu_bno055_node" pkg="imu_bno055" type="test_imu_bno055_node" />
+
+</launch>

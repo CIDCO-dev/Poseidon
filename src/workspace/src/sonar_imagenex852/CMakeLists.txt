@@ -196,11 +196,9 @@ add_executable(${PROJECT_NAME}_node src/main.cpp)
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_sonar_imagenex852.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+if(CATKIN_ENABLE_TESTING)
+  # test with launch file
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_sonar_imagenex852_node tests/sonar_imagenex852_node.test tests/test_sonar_imagenex852_node.cpp)
+  # target_link_libraries(test_sonar_imagenex852_node ...) #what libraries are needed on rpi?
+endif()

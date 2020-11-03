@@ -10,9 +10,9 @@ void StateController::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	}
 }
 
-void StateController::imuCallback(const nav_msgs::Odometry& odom){
+void StateController::imuCallback(const sensor_msgs::Imu& imu){
 	stateMtx.lock();
-	state.odom = odom;
+	state.imu = imu;
 	stateMtx.unlock();
 
 	StateController::stateUpdated();

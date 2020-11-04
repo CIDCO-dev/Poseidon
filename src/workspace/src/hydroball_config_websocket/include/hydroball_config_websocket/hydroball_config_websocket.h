@@ -312,9 +312,9 @@ public:
 			mat.getEulerYPR(headingOffset,pitchOffset,rollOffset);
 
 			//Offsets are negated so that steady-state angle + offset = 0
-			configuration["headingOffset"] = std::to_string(headingOffset);
-			configuration["pitchOffset"]   = std::to_string(pitchOffset);
-			configuration["rollOffset"]    = std::to_string(rollOffset);
+			configuration["headingOffset"] = std::to_string(-R2D(headingOffset));
+			configuration["pitchOffset"]   = std::to_string(-R2D(pitchOffset));
+			configuration["rollOffset"]    = std::to_string(-R2D(rollOffset));
 
                         writeConfigurationToFile();
                         broadcastConfiguration();

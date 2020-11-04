@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 		Writer writer(outputFolder);
 
 		ros::Subscriber sub1 = n.subscribe("fix", 1000, &Writer::gnssCallback,&writer);
-		ros::Subscriber sub2 = n.subscribe("odom", 1000, &Writer::imuCallback,&writer);
+		ros::Subscriber sub2 = n.subscribe("imu/data", 1000, &Writer::imuCallback,&writer);
 		ros::Subscriber sub3 = n.subscribe("depth", 1000, &Writer::sonarCallback,&writer);
 
 		ros::ServiceServer getLoggingStatusService = n.advertiseService("get_logging_status", &Writer::getLoggingStatus,&writer);

@@ -1,4 +1,4 @@
-headingOffset 0
+headingOffset 180
 pitchOffset 0
 rollOffset 0
 sonarAbsorbtion 20

@@ -41,6 +41,9 @@ sudo apt-get install pps-tools -y | tee -a log.txt
 sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
 sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
 
+echo "[+] Config I2C speed"
+sudo bash -c 'echo "dtparam=i2c_arm_baudrate=500000" >> /boot/firmware/config.txt'
+
 echo "[+] Config uart"
 sudo bash -c 'cat << EOF2 > /boot/firmware/nobtcmd.txt
 net.ifnames=0 dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc

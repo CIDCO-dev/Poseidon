@@ -1,9 +1,19 @@
 <launch>
 
-<node pkg="rosbag" name="record_gps"   type="record" args="-O ~/gnss.bag --node=gpsd_client" />
-<node pkg="rosbag" name="record_sonar" type="record" args="-O ~/imu.bag --node=sonar_imagenex852_node" />
-<node pkg="rosbag" name="record_imu"   type="record" args="-O ~/sonar.bag --node=bno055_i2c_node" />
-<node pkg="rosbag" name="record_vital" type="record" args="-O ~/vital.bag --node=raspberrypi_vitals_node" />
+<node pkg="rosbag" name="record_gps"   type="record" args="-O /home/ubuntu/gnss.bag /fix" />
+<node pkg="rosbag" name="record_imu_data" type="record" args="-O /home/ubuntu/imu-data.bag /imu/data" />
+<node pkg="rosbag" name="record_imu_mag" type="record" args="-O /home/ubuntu/imu-mag.bag /imu/mag" />
+<node pkg="rosbag" name="record_imu_raw" type="record" args="-O /home/ubuntu/imu-raw.bag /imu/raw" />
+<node pkg="rosbag" name="record_imu_status" type="record" args="-O /home/ubuntu/imu-status.bag /imu/status" />
+<node pkg="rosbag" name="record_imu_temp" type="record" args="-O /home/ubuntu/imu-temp.bag /imu/temp" />
+<node pkg="rosbag" name="record_sonar"   type="record" args="-O /home/ubuntu/sonar.bag /depth" />
+<node pkg="rosbag" name="record_vital" type="record" args="-O /home/ubuntu/vital.bag /vitals" />
+<node pkg="rosbag" name="record_configuration" type="record" args="-O /home/ubuntu/configuration.bag /configuration" />
+<node pkg="rosbag" name="record_extended_fix" type="record" args="-O /home/ubuntu/extented-fix.bag /extended_fix" />
+<node pkg="rosbag" name="state" type="record" args="-O /home/ubuntu/state.bag /state" />
+
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/all.bag" />
+
 
 
 </launch>

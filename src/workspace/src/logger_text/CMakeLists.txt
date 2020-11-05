@@ -42,9 +42,8 @@ include_directories(
    PATTERN ".svn" EXCLUDE
  )
 
-if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_${PROJECT_NAME} tests/test_${PROJECT_NAME}.cpp)
-target_link_libraries(test_${PROJECT_NAME} gnss_dummy  ${logger_text_LIBRARIES})
-add_dependencies(test_${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-
-endif()
+# if(CATKIN_ENABLE_TESTING)
+#    find_package(rostest REQUIRED)
+#    add_rostest_gtest(test_logger_text_node tests/logger_node_test.launch tests/test_logger_text_node.cpp)
+#    target_link_libraries(test_logger_text_node ${PROJECT_NAME})
+# endif()

@@ -1,0 +1,5 @@
+<launch>
+
+    <test test-name="test_logger_text_node" pkg="logger_text" type="test_logger_text_node" />
+
+</launch>

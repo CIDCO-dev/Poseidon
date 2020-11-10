@@ -1,6 +1,7 @@
 #include <hydroball_data_websocket/hydroball_data_websocket.h>
 
 #include <ros/ros.h>
+#include <ros/package.h>
 #include <gtest/gtest.h>
 
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -142,9 +143,13 @@ public:
 
 TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
+    ROS_ERROR("Test started");
+
     try {
         //create configuration server
-        std::string configFilePath = "../../../../test/config4Tests.txt";
+        std::string packagePath = ros::package::getPath("hydroball_data_websocket");
+        std::string configFilePath = packagePath + "/tests/config4Tests.txt";
+
         ConfigurationServer configurationServer(configFilePath);
         uint16_t portConfig = 9004;
         //run the server in separate thread

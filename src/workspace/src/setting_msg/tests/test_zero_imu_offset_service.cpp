@@ -4,14 +4,7 @@
 
 #include <thread>
 #include <unistd.h>
-/*
 
-#include "sensor_msgs/NavSatFix.h"
-#include "nav_msgs/Odometry.h"
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include "raspberrypi_vitals_msg/sysinfo.h"
-
-*/
 #include <map>
 #include <fstream>
 #include <sstream>

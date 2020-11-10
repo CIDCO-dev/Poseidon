@@ -1,0 +1,7 @@
+headingOffset 180
+pitchOffset 10
+rollOffset 15
+sonarAbsorbtion 20
+sonarPulseLength 120
+sonarRange 32
+sonarStartGain 10

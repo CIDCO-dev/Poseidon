@@ -71,7 +71,7 @@ TEST(LoggerTextTestSuite, testToggle) {
 
 int main(int argc, char **argv) {
 
-    ros::init(argc, argv, "TestLoggerNode");
+    ros::init(argc, argv, "TestLoggerService");
 
     testing::InitGoogleTest(&argc, argv);
 

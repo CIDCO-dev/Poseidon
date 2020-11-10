@@ -208,18 +208,13 @@ include_directories(
 
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_state_controller tests/test_state_controller.cpp)
-target_link_libraries(test_state_controller state_controller  ${state_controller_LIBRARIES})
-add_dependencies(test_state_controller ${catkin_EXPORTED_TARGETS})
+    find_package(rostest REQUIRED)
+    find_package(catkin REQUIRED COMPONENTS
+      roscpp
+      std_msgs
+    )
 
+    add_rostest_gtest(test_get_state_service tests/get_state_service_test.launch tests/test_get_state_service.cpp)
+    target_link_libraries(test_get_state_service ${catkin_LIBRARIES})
 endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
-
-#add_executable(state_controller src/main.cpp)
-
-#add_dependencies( state_controller state_controller_generate_messages_cpp )
-
-#target_link_libraries(state_controller ${catkin_LIBRARIES})
 

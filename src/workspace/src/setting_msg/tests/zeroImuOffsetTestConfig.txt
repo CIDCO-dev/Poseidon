@@ -1,0 +1,7 @@
+headingOffset -31.823687
+pitchOffset -19.067610
+rollOffset -5.503161
+sonarAbsorbtion 20
+sonarPulseLength 120
+sonarRange 32
+sonarStartGain 10

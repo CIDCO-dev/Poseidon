@@ -1,0 +1,8 @@
+<launch>
+    <arg name="configPath" default="$(find setting_msg)/tests/zeroImuOffsetTestConfig.txt"/>
+    <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
+
+    <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
+
+    <test test-name="test_zero_imu_offset_service" pkg="setting_msg" type="test_zero_imu_offset_service" />
+</launch>

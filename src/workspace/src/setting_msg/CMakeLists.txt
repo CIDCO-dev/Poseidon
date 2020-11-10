@@ -197,11 +197,17 @@ include_directories(
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_setting_msg.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+    find_package(catkin REQUIRED COMPONENTS
+      roscpp
+      std_msgs
+      roslib
+    )
 
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+    add_rostest_gtest(test_zero_imu_offset_service tests/zero_imu_offset_test.launch tests/test_zero_imu_offset_service.cpp)
+    target_link_libraries(test_zero_imu_offset_service ${catkin_LIBRARIES})
+
+    add_rostest_gtest(test_get_configuration_service tests/get_configuration_test.launch tests/test_get_configuration.cpp)
+    target_link_libraries(test_get_configuration_service ${catkin_LIBRARIES})
+endif()

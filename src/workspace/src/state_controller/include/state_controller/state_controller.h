@@ -26,13 +26,13 @@ class StateController{
 			positionTopic = n.subscribe("fix", 1000, &StateController::gnssCallback,this);
 			attitudeTopic = n.subscribe("/imu/data", 1000, &StateController::imuCallback,this);
 			sonarTopic    = n.subscribe("depth", 1000, &StateController::sonarCallback,this);
-                        vitalsTopic   = n.subscribe("vitals", 1000, &StateController::vitalsCallback,this);
+            vitalsTopic   = n.subscribe("vitals", 1000, &StateController::vitalsCallback,this);
 
-                        stateTopic    = n.advertise<state_controller_msg::State>("state", 1000);
+            stateTopic    = n.advertise<state_controller_msg::State>("state", 1000);
 
 			getStateServiceServer = n.advertiseService("get_state",&StateController::getStateService,this);
 
-                        state.position.status.status = -1;
+            state.position.status.status = -1;
 		}
 
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss);
@@ -44,17 +44,17 @@ class StateController{
 		bool getStateService(state_controller_msg::GetStateService::Request & req,state_controller_msg::GetStateService::Response & res);
 
 	private:
-            //ROS handles
-            ros::NodeHandle n;
+        //ROS handles
+        ros::NodeHandle n;
 
-            //Input topics
-            ros::Subscriber positionTopic;
-            ros::Subscriber attitudeTopic;
-            ros::Subscriber sonarTopic;
+        //Input topics
+        ros::Subscriber positionTopic;
+        ros::Subscriber attitudeTopic;
+        ros::Subscriber sonarTopic;
 	    ros::Subscriber vitalsTopic;
 
-            //output topic
-            ros::Publisher  stateTopic;
+        //output topic
+        ros::Publisher  stateTopic;
 
 	    //services
 	    ros::ServiceServer getStateServiceServer;

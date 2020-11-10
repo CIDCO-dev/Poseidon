@@ -216,11 +216,11 @@ TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
         state.position.latitude=HydroBallDataWebSocketTest::testLatitude;
 
         //odometry
-        state.odom.header.seq=1;
-        state.odom.header.stamp=ros::Time::now();
+        state.imu.header.seq=1;
+        state.imu.header.stamp=ros::Time::now();
         tf2::Quaternion q;
         q.setRPY(D2R(HydroBallDataWebSocketTest::testRoll),D2R(HydroBallDataWebSocketTest::testPitch),D2R(HydroBallDataWebSocketTest::testHeading));
-        state.odom.pose.pose.orientation = tf2::toMsg(q);
+        state.imu.orientation = tf2::toMsg(q);
 
         //sonar
         state.depth.header.seq = 1;

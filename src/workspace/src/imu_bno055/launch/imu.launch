@@ -3,5 +3,6 @@
         <param name="device" type="string" value="/dev/i2c-1"/>
         <param name="address" type="int" value="40"/> <!-- 0x28 == 40 is the default for BNO055 -->
         <param name="frame_id" type="string" value="imu"/>
+	<param name="calibrationFile" type="string" value="/home/ubuntu/Poseidon/calibration.dat" />
     </node>
 </launch>

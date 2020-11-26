@@ -1,23 +1,23 @@
 /* bno055_i2c_activity.cpp
- * Author: Dheera Venkatraman <dheera@dheera.net>
+ * Authors: Dheera Venkatraman <dheera@dheera.net>, Guillaume Labbe-Morissette <guillaume.morissette@cidco.ca>
  *
  * Defines a BNO055I2C Activity class, constructed with node handles
  * and which handles all ROS duties.
  */
-
+#include <exception>
 #include "imu_bno055/bno055_i2c_activity.h"
 
 namespace imu_bno055 {
 
 // ******** constructors ******** //
 
-BNO055I2CActivity::BNO055I2CActivity(ros::NodeHandle &_nh, ros::NodeHandle &_nh_priv) :
-  nh(_nh), nh_priv(_nh_priv) {
+BNO055I2CActivity::BNO055I2CActivity(ros::NodeHandle &_nh, ros::NodeHandle &_nh_priv,std::string & calibrationFile) :
+  nh(_nh), nh_priv(_nh_priv),calibrationFile(calibrationFile) {
     ROS_INFO("initializing");
     nh_priv.param("device", param_device, (std::string)"/dev/i2c-1");
     nh_priv.param("address", param_address, (int)BNO055_ADDRESS_A);
     nh_priv.param("frame_id", param_frame_id, (std::string)"imu");
-
+    
     current_status.level = 0;
     current_status.name = "BNO055 IMU";
     current_status.hardware_id = "bno055_i2c";
@@ -75,6 +75,52 @@ bool BNO055I2CActivity::reset() {
     }
     ros::Duration(0.100).sleep();
 
+
+    _i2c_smbus_write_byte_data(file, BNO055_OPR_MODE_ADDR, BNO055_OPERATION_MODE_CONFIG);
+    ros::Duration(0.025).sleep();
+
+    //If a previous calibration file exists, load it
+    int calibFile = open(calibrationFile.c_str(),O_RDONLY);
+
+    if(calibFile != -1){
+        IMUCalibrationRecord calibration;
+
+        if(read(calibFile,&calibration,sizeof(IMUCalibrationRecord)) == sizeof(IMUCalibrationRecord)){
+                ROS_INFO("Read calibration data from %s",calibrationFile.c_str());
+
+		/*
+		for(unsigned int i=0;i<sizeof(IMUCalibrationRecord);i+=2){
+			ROS_INFO("%.2x %.2x\n",((uint8_t*)&calibration)[i],((uint8_t*)&calibration)[i+1]);
+		}
+		*/
+
+		int totalBytes = 0;
+
+		for(unsigned int i = 0;i<sizeof(IMUCalibrationRecord);i++){
+			int retVal = _i2c_smbus_write_byte_data(file, BNO055_ACCEL_OFFSET_X_LSB_ADDR + i , ((unsigned char*) &calibration)[i]);
+			ros::Duration(0.025).sleep();
+
+	               	if(retVal == -1 ){
+        	               	ROS_ERROR("Error while writing calibration configuration from %s",calibrationFile.c_str());
+				break;
+               		}
+			else{
+				totalBytes++;
+			}
+		}
+
+		if(totalBytes == 22) ROS_INFO("Calibration loaded");
+
+        }
+	else{
+		ROS_ERROR("Error while reading calibration data from %s",calibrationFile.c_str());
+	}
+    }
+    else{
+	ROS_ERROR("No calibration file found at %s",calibrationFile.c_str());
+    }
+
+
     // normal power mode
     _i2c_smbus_write_byte_data(file, BNO055_PWR_MODE_ADDR, BNO055_POWER_MODE_NORMAL);
     ros::Duration(0.010).sleep();
@@ -85,6 +131,12 @@ bool BNO055I2CActivity::reset() {
 
     _i2c_smbus_write_byte_data(file, BNO055_OPR_MODE_ADDR, BNO055_OPERATION_MODE_NDOF);
     ros::Duration(0.025).sleep();
+
+    /*
+    for(unsigned int i=0;i<sizeof(IMUCalibrationRecord);i+=2){
+	ROS_INFO("%.2x %.2x",_i2c_smbus_read_byte_data(file, BNO055_ACCEL_OFFSET_X_LSB_ADDR + i),_i2c_smbus_read_byte_data(file, BNO055_ACCEL_OFFSET_X_LSB_ADDR + i + 1));
+    }
+    */
 
     //Remap axis to ENU
     _i2c_smbus_write_byte_data(file, BNO055_AXIS_MAP_CONFIG_ADDR, 0x21);
@@ -144,6 +196,64 @@ bool BNO055I2CActivity::start() {
     }
 
     return true;
+}
+
+bool BNO055I2CActivity::startCalibration(){
+//	_i2c_smbus_write_byte_data(file, BNO055_OPR_MODE_ADDR, BNO055_OPERATION_MODE_CONFIG);
+//	ros::Duration(0.025).sleep();
+
+	return true;
+}
+
+bool BNO055I2CActivity::spinCalibrationOnce(){
+	IMURecord record;
+
+	// can only read a length of 0x20 at a time, so do it in 2 reads
+	// BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR is the start of the data block that aligns with the IMURecord struct
+	if(_i2c_smbus_read_i2c_block_data(file, BNO055_ACCEL_DATA_X_LSB_ADDR, 0x20, (uint8_t*)&record) != 0x20) {
+        	throw std::runtime_error("Error while reading from I2C bus");
+	}
+
+	if(_i2c_smbus_read_i2c_block_data(file, BNO055_ACCEL_DATA_X_LSB_ADDR + 0x20, 0x13, (uint8_t*)&record + 0x20) != 0x13) {
+		throw std::runtime_error("Error while reading from I2C bus");
+	}
+
+	ROS_INFO("Magnetometer: %d",   record.calibration_status & 0x03);
+	ROS_INFO("Accelerometer: %d", (record.calibration_status >> 2)  & 0x03);
+	ROS_INFO("Gyro: %d",          (record.calibration_status >> 4)  & 0x03);
+	ROS_INFO("System: %d",        (record.calibration_status >> 6)  & 0x03);
+
+	//ROS_INFO("Calibration complete");
+	if(record.calibration_status == 0xFF){
+		_i2c_smbus_write_byte_data(file, BNO055_OPR_MODE_ADDR, BNO055_OPERATION_MODE_CONFIG);
+		ros::Duration(0.025).sleep();
+
+		IMUCalibrationRecord calibration;
+
+		//Read calibration block
+		int sz = sizeof(IMUCalibrationRecord);
+
+                if(_i2c_smbus_read_i2c_block_data(file, BNO055_ACCEL_OFFSET_X_LSB_ADDR , sz, (uint8_t*)&calibration) != sz) {
+                        throw std::runtime_error("Error while reading from I2C bus");
+                }
+
+		//write calibration block to file
+		int outputFile = open(calibrationFile.c_str(),O_RDWR|O_CREAT|O_TRUNC);
+		if(outputFile == -1){
+			throw std::runtime_error("Error while opening configuration file");
+		}
+
+		if( write(outputFile,&calibration,sz) != sz){
+			throw std::runtime_error("Error while writing configuration file");
+		}
+
+		close(outputFile);
+
+		return true;
+	}
+
+	//false if calibration is not complete
+        return false;
 }
 
 bool BNO055I2CActivity::spinOnce() {

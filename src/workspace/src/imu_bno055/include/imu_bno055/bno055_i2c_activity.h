@@ -231,13 +231,30 @@ typedef struct {
   uint8_t system_error_code;
 } IMURecord;
 
+typedef struct{
+ uint16_t acc_offset_x;
+ uint16_t acc_offset_y;
+ uint16_t acc_offset_z;
+ uint16_t mag_offset_x;
+ uint16_t mag_offset_y;
+ uint16_t mag_offset_z;
+ uint16_t gyro_offset_x;
+ uint16_t gyro_offset_y;
+ uint16_t gyro_offset_z;
+ uint16_t acc_radius;
+ uint16_t mag_radius;
+} IMUCalibrationRecord;
+
 class BNO055I2CActivity {
   public:
-    BNO055I2CActivity(ros::NodeHandle &_nh, ros::NodeHandle &_nh_priv);
+    BNO055I2CActivity(ros::NodeHandle &_nh, ros::NodeHandle &_nh_priv, std::string & calibrationFile);
 
     bool start();
+    bool startCalibration();
+
     bool stop();
     bool spinOnce();
+    bool spinCalibrationOnce();
 
     bool onServiceReset(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
     bool onServiceCalibrate(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
@@ -254,6 +271,7 @@ class BNO055I2CActivity {
     std::string param_frame_id;
     std::string param_device;
     int param_address;
+    std::string calibrationFile;
 
     // ROS node handles
     ros::NodeHandle nh;

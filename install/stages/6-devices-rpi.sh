@@ -5,6 +5,8 @@ sudo bash -c 'cat << EOF2 > /etc/udev/rules.d/50-spi.rules
 KERNEL=="spidev*", GROUP="dialout", MODE="0664"
 EOF2'
 
+echo "[+] Adding user to i2c group"
+sudo usermod -a -G i2c ubuntu
 
 echo "[+] Remapping hydrographic devices"
 

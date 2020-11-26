@@ -60,7 +60,6 @@ class Imagenex852{
 	public:
 		Imagenex852(std::string devicePath) : devicePath(devicePath){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
-			printf("Getting config service...");
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 			ROS_INFO("Fetching sonar configuration...");
 			getConfiguration();

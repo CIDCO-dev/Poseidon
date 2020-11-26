@@ -11,22 +11,16 @@
 #include <csignal>
 
 int main(int argc, char *argv[]) {
-    ros::NodeHandle* nh = NULL;
-    ros::NodeHandle* nh_priv = NULL;
-
-    imu_bno055::BNO055I2CActivity* activity = NULL;
-    watchdog::Watchdog* watchdog = NULL;
-
     ros::init(argc, argv, "bno055_node");
 
-    nh = new ros::NodeHandle();
+    ros::NodeHandle* nh = new ros::NodeHandle();
     if(!nh) {
         ROS_FATAL("Failed to initialize NodeHandle");
         ros::shutdown();
         return -1;
     }
 
-    nh_priv = new ros::NodeHandle("~");
+    ros::NodeHandle* nh_priv = new ros::NodeHandle("~");
     if(!nh_priv) {
         ROS_FATAL("Failed to initialize private NodeHandle");
         delete nh;
@@ -34,8 +28,11 @@ int main(int argc, char *argv[]) {
         return -2;
     }
 
-    activity = new imu_bno055::BNO055I2CActivity(*nh, *nh_priv);
-    watchdog = new watchdog::Watchdog();
+    std::string calibrationFile;
+    nh->param<std::string>("calibrationFile",calibrationFile,"/home/ubuntu/Poseidon/calibration.dat");
+
+    imu_bno055::BNO055I2CActivity* activity = new imu_bno055::BNO055I2CActivity(*nh, *nh_priv,calibrationFile);
+    watchdog::Watchdog* watchdog = new watchdog::Watchdog();
 
     if(!activity) {
         ROS_FATAL("Failed to initialize driver");

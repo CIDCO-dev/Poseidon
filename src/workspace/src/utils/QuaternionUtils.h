@@ -12,13 +12,13 @@ class QuaternionUtils{
 public:
 
 	static void applyTransform(geometry_msgs::Quaternion transform,geometry_msgs::Quaternion pose, double & headingDegrees,double & pitchDegrees,double & rollDegrees){
-                tf2::Quaternion rotation, tfImuPose;
-                tf2::fromMsg(transform, rotation);
-                tf2::fromMsg(pose, tfImuPose);
+        tf2::Quaternion rotation, tfImuPose;
+        tf2::fromMsg(transform, rotation);
+        tf2::fromMsg(pose, tfImuPose);
 		rotation.normalize();
 		tfImuPose.normalize();
-                tf2::Quaternion tfBodyPose = rotation * tfImuPose;
-                tfBodyPose.normalize();
+        tf2::Quaternion tfBodyPose = rotation * tfImuPose;
+        tfBodyPose.normalize();
 
 		tf2::Matrix3x3 mat(tfBodyPose);
 

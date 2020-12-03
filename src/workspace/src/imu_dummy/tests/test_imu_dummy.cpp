@@ -7,8 +7,10 @@
 
 #include <unistd.h>
 
+#include <sensor_msgs/Imu.h>
+
 #include "hydroball_config_websocket/hydroball_config_websocket.h"
-//#include "../../utils/QuaternionUtils.h"
+#include "../../utils/QuaternionUtils.h"
 
 class ImuDummyTestSuite : public ::testing::Test {
   public:
@@ -17,6 +19,7 @@ class ImuDummyTestSuite : public ::testing::Test {
     ~ImuDummyTestSuite() {}
 };
 
+/*
 //global variable to tests if callback was called by subscriber
 bool subscriberReceivedData = false;
 void callback_AssertSubscriberReceivedWhatIsPublished(const nav_msgs::Odometry & imuMsg)
@@ -50,6 +53,7 @@ void printAllTopics() {
     }
 }
 
+
 TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     std::string configFilePath = "../../../../test/config4Tests.txt";
@@ -79,6 +83,37 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 
     configurationServer.stop();
     configurationThread.join();
+}
+*/
+
+TEST(ImuDummyTestSuite, testCaseQuaternionUtils) {
+
+    double headingTest = 15;
+    double pitchTest   = 30;
+    double rollTest    = 45;
+
+    double headingBoresight = 0;
+    double pitchBoresight   = 0;
+    double rollBoresight    = 0;
+
+    tf2::Quaternion transform;
+    transform.setRPY(rollBoresight, pitchBoresight, headingBoresight);
+    geometry_msgs::Quaternion transformQ = tf2::toMsg(transform);
+
+    tf2::Quaternion pose;
+    pose.setRPY(rollTest, pitchTest, headingTest);
+    geometry_msgs::Quaternion poseQ  = tf2::toMsg(pose);
+
+    double expectedHeading = 0;
+    double expectedPitch   = 0;
+    double expectedRoll    = 0;
+
+    QuaternionUtils::applyTransform(transformQ, poseQ, expectedHeading, expectedPitch, expectedRoll);
+
+    double epsilon = 1e-15;
+    ASSERT_NEAR(expectedHeading, headingTest, epsilon) << "wrong heading";
+    ASSERT_NEAR(expectedPitch, pitchTest, epsilon) << "wrong pitch";
+    ASSERT_NEAR(expectedRoll, rollTest, epsilon) << "wrong roll";
 }
 
 int main(int argc, char** argv) {

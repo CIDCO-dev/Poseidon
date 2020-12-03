@@ -12,6 +12,8 @@
 #include "hydroball_config_websocket/hydroball_config_websocket.h"
 #include "../../utils/QuaternionUtils.h"
 
+#include "../../utils/Constants.hpp"
+
 class ImuDummyTestSuite : public ::testing::Test {
   public:
     ImuDummyTestSuite() {
@@ -97,20 +99,21 @@ TEST(ImuDummyTestSuite, testCaseQuaternionUtils) {
     double rollBoresight    = 0;
 
     tf2::Quaternion transform;
-    transform.setRPY(rollBoresight, pitchBoresight, headingBoresight);
+    transform.setRPY(D2R(rollBoresight), D2R(pitchBoresight), D2R(headingBoresight));
     geometry_msgs::Quaternion transformQ = tf2::toMsg(transform);
 
     tf2::Quaternion pose;
-    pose.setRPY(rollTest, pitchTest, headingTest);
+    pose.setRPY(D2R(rollTest), D2R(pitchTest), D2R(headingTest));
     geometry_msgs::Quaternion poseQ  = tf2::toMsg(pose);
 
     double expectedHeading = 0;
     double expectedPitch   = 0;
     double expectedRoll    = 0;
 
+    // this one gives degrees
     QuaternionUtils::applyTransform(transformQ, poseQ, expectedHeading, expectedPitch, expectedRoll);
 
-    double epsilon = 1e-15;
+    double epsilon = 1e-12;
     ASSERT_NEAR(expectedHeading, headingTest, epsilon) << "wrong heading";
     ASSERT_NEAR(expectedPitch, pitchTest, epsilon) << "wrong pitch";
     ASSERT_NEAR(expectedRoll, rollTest, epsilon) << "wrong roll";

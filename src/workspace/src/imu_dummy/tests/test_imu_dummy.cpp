@@ -88,6 +88,8 @@ TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 }
 */
 
+
+
 TEST(ImuDummyTestSuite, testCaseQuaternionUtils) {
 
     double headingTest = 15;
@@ -115,6 +117,37 @@ TEST(ImuDummyTestSuite, testCaseQuaternionUtils) {
 
     double epsilon = 1e-12;
     ASSERT_NEAR(expectedHeading, headingTest, epsilon) << "wrong heading";
+    ASSERT_NEAR(expectedPitch, pitchTest, epsilon) << "wrong pitch";
+    ASSERT_NEAR(expectedRoll, rollTest, epsilon) << "wrong roll";
+}
+
+TEST(ImuDummyTestSuite, testCaseTransform90DegreesHeading) {
+
+    double headingTest = 15;
+    double pitchTest   = 30;
+    double rollTest    = 45;
+
+    double headingBoresight = 90;
+    double pitchBoresight   = 0;
+    double rollBoresight    = 0;
+
+    tf2::Quaternion transform;
+    transform.setRPY(D2R(rollBoresight), D2R(pitchBoresight), D2R(headingBoresight));
+    geometry_msgs::Quaternion transformQ = tf2::toMsg(transform);
+
+    tf2::Quaternion pose;
+    pose.setRPY(D2R(rollTest), D2R(pitchTest), D2R(headingTest));
+    geometry_msgs::Quaternion poseQ  = tf2::toMsg(pose);
+
+    double expectedHeading = 0;
+    double expectedPitch   = 0;
+    double expectedRoll    = 0;
+
+    // this one gives degrees
+    QuaternionUtils::applyTransform(transformQ, poseQ, expectedHeading, expectedPitch, expectedRoll);
+
+    double epsilon = 1e-12;
+    ASSERT_NEAR(expectedHeading, headingTest+headingBoresight, epsilon) << "wrong heading";
     ASSERT_NEAR(expectedPitch, pitchTest, epsilon) << "wrong pitch";
     ASSERT_NEAR(expectedRoll, rollTest, epsilon) << "wrong roll";
 }

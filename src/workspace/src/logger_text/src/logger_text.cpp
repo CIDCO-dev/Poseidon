@@ -108,10 +108,6 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 
 	                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,imu.orientation,heading,pitch,roll);
 
-			if(heading < 0){
-				heading += 360.0;
-			}
-
 			fprintf(imuOutputFile,"%s%s%.3f%s%.3f%s%.3f\n",TimeUtils::getTimestampString(imu.header.stamp.sec, imu.header.stamp.nsec).c_str(),separator.c_str(),heading,separator.c_str(),pitch,separator.c_str(),roll);
 
 			lastImuTimestamp = timestamp;

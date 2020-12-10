@@ -26,7 +26,7 @@ public:
 
 		mat.getEulerYPR(headingDegrees,pitchDegrees,rollDegrees);
 
-		headingDegrees = 360-R2D(headingDegrees);
+		headingDegrees = R2D(headingDegrees);
 		pitchDegrees   = R2D(pitchDegrees);
 		rollDegrees    = R2D(rollDegrees);
 	}

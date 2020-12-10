@@ -19,8 +19,6 @@ echo "[+] Building Poseidon"
 cd /home/ubuntu/Poseidon/src/workspace
 source /opt/ros/melodic/setup.bash
 
-catkin_make clean -j1
-
 catkin_make -j1
 
 

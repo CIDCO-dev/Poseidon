@@ -238,7 +238,7 @@ bool BNO055I2CActivity::spinCalibrationOnce(){
                 }
 
 		//write calibration block to file
-		int outputFile = open(calibrationFile.c_str(),O_RDWR|O_CREAT|O_TRUNC);
+		int outputFile = open(calibrationFile.c_str(),O_RDWR|O_CREAT|O_TRUNC,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
 		if(outputFile == -1){
 			throw std::runtime_error("Error while opening configuration file");
 		}

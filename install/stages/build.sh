@@ -9,7 +9,7 @@ if [ -f "$FILE" ]; then
 else 
     echo "$FILE does not exist."
     sudo swapoff -a
-    sudo dd if=/dev/zero of=/swaprpi.img bs=1024k count=516
+    sudo dd if=/dev/zero of=/swaprpi.img bs=1024k count=800
     sudo mkswap /swaprpi.img
     sudo swapon /swaprpi.img
 fi
@@ -20,6 +20,7 @@ cd /home/ubuntu/Poseidon/src/workspace
 source /opt/ros/melodic/setup.bash
 
 catkin_make -j1
+
 
 echo "[+] Disabling temporary swap"
 FILE=/swaprpi.img

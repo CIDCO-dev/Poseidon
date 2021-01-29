@@ -139,10 +139,10 @@ bool BNO055I2CActivity::reset() {
     */
 
     //Remap axis to ENU
-    _i2c_smbus_write_byte_data(file, BNO055_AXIS_MAP_CONFIG_ADDR, 0x21);
+    _i2c_smbus_write_byte_data(file, BNO055_AXIS_MAP_CONFIG_ADDR, 0x24);
     ros::Duration(0.010).sleep();
 
-    _i2c_smbus_write_byte_data(file, BNO055_AXIS_MAP_SIGN_ADDR, 0x04);
+    _i2c_smbus_write_byte_data(file, BNO055_AXIS_MAP_SIGN_ADDR, 0x00);
     ros::Duration(0.010).sleep();
 
 
@@ -238,7 +238,7 @@ bool BNO055I2CActivity::spinCalibrationOnce(){
                 }
 
 		//write calibration block to file
-		int outputFile = open(calibrationFile.c_str(),O_RDWR|O_CREAT|O_TRUNC);
+		int outputFile = open(calibrationFile.c_str(),O_RDWR|O_CREAT|O_TRUNC,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
 		if(outputFile == -1){
 			throw std::runtime_error("Error while opening configuration file");
 		}

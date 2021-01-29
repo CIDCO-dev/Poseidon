@@ -65,6 +65,7 @@ void callback_AssertSubscriberReceivedWhatIsPublished(const nav_msgs::Odometry &
 
     subscriberReceivedData = true;
 }
+*/
 
 void printAllTopics() {
     ros::master::V_TopicInfo topic_infos;
@@ -76,44 +77,11 @@ void printAllTopics() {
 }
 
 
-TEST(ImuDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
-
-    std::string configFilePath = "../../../../test/config4Tests.txt";
-    ConfigurationServer configurationServer(configFilePath);
-    uint16_t portConfig = 9004;
-    //run the server in separate thread
-    std::thread configurationThread(std::bind(&ConfigurationServer::run,&configurationServer, portConfig));
-
-    IMU imu;
-    ros::NodeHandle nh;
-
-    //setup subscriber with callback that will assert if test passes
-    ros::Subscriber sub = nh.subscribe("odom", 1000, callback_AssertSubscriberReceivedWhatIsPublished);
-
-    //publish a imu message
-    uint32_t sequenceNumber= 0;
-    double yaw = 135.4;
-    double pitch = 2.3;
-    double roll = -1.4;
-    imu.message(sequenceNumber, yaw, pitch, roll);
-
-    //wait a bit for subscriber to pick up message
-    sleep(1);
-
-    //verify that callback was called by subscriber
-    ASSERT_TRUE(subscriberReceivedData) << "callback was not called by subscriber";
-
-    configurationServer.stop();
-    configurationThread.join();
-}
-*/
-
 TEST(ImuDummyTestSuite, testCaseApplyTransformWithNoTransform) {
 
     double epsilon = 1e-12;
 
     double headingTest = 15;
-    double headingTestFlipped = 345; // 360 - 15
     double pitchTest   = 30;
     double rollTest    = 45;
 
@@ -134,12 +102,12 @@ TEST(ImuDummyTestSuite, testCaseApplyTransformWithNoTransform) {
     double rollDegrees = 0.0;
     QuaternionUtils::applyTransform(transformQ, poseQ, headingDegrees, pitchDegrees, rollDegrees);
 
-    ASSERT_NEAR(headingDegrees, headingTestFlipped, epsilon) << "wrong heading";
+    ASSERT_NEAR(headingDegrees, headingTest, epsilon) << "wrong heading";
     ASSERT_NEAR(pitchDegrees, pitchTest, epsilon) << "wrong pitch";
     ASSERT_NEAR(rollDegrees, rollTest, epsilon) << "wrong roll";
 }
 
-TEST(ImuDummyTestSuite, testCaseBody2ENU_15dHeading) {
+TEST(ImuDummyTestSuite, testCaseBody2ENU_15dHeading_90dHeadingBoresight) {
 
     double epsilon = 1e-12;
 
@@ -164,16 +132,13 @@ TEST(ImuDummyTestSuite, testCaseBody2ENU_15dHeading) {
     double rollDegrees = 0.0;
     QuaternionUtils::applyTransform(transformQ, poseQ, headingDegrees, pitchDegrees, rollDegrees);
 
-    ROS_INFO_STREAM("heading: " << headingDegrees);
-    ROS_INFO_STREAM("pitch: " << pitchDegrees);
-    ROS_INFO_STREAM("roll: " << rollDegrees);
-
-    ASSERT_NEAR(headingDegrees, 75, epsilon) << "wrong heading";
+    ASSERT_NEAR(headingDegrees, headingTest - headingBoresight, epsilon) << "wrong heading";
     ASSERT_NEAR(pitchDegrees, 0, epsilon) << "wrong pitch";
     ASSERT_NEAR(rollDegrees, 0, epsilon) << "wrong roll";
 }
 
-TEST(ImuDummyTestSuite, testCaseBody2ENU_15dPitch) {
+
+TEST(ImuDummyTestSuite, testCaseBody2ENU_15dPitch_90dHeadingBoresight) {
 
     double epsilon = 1e-12;
 
@@ -202,12 +167,14 @@ TEST(ImuDummyTestSuite, testCaseBody2ENU_15dPitch) {
     ROS_INFO_STREAM("pitch: " << pitchDegrees);
     ROS_INFO_STREAM("roll: " << rollDegrees);
 
-    ASSERT_NEAR(headingDegrees, 90, epsilon) << "wrong heading";
-    ASSERT_NEAR(pitchDegrees, 0, epsilon) << "wrong pitch";
-    ASSERT_NEAR(rollDegrees, -15, epsilon) << "wrong roll";
+    ASSERT_NEAR(headingDegrees, -headingBoresight, epsilon) << "wrong heading";
+    ASSERT_NEAR(pitchDegrees, rollTest, epsilon) << "wrong pitch";
+    ASSERT_NEAR(rollDegrees, -pitchTest, epsilon) << "wrong roll";
 }
 
-TEST(ImuDummyTestSuite, testCaseBody2ENU_15dRoll) {
+
+
+TEST(ImuDummyTestSuite, testCaseBody2ENU_15dRoll_90dHeadingBoresight) {
 
     double epsilon = 1e-12;
 
@@ -236,10 +203,12 @@ TEST(ImuDummyTestSuite, testCaseBody2ENU_15dRoll) {
     ROS_INFO_STREAM("pitch: " << pitchDegrees);
     ROS_INFO_STREAM("roll: " << rollDegrees);
 
-    ASSERT_NEAR(headingDegrees, 90, epsilon) << "wrong heading";
-    ASSERT_NEAR(pitchDegrees, 15, epsilon) << "wrong pitch";
-    ASSERT_NEAR(rollDegrees, 0, epsilon) << "wrong roll";
+    ASSERT_NEAR(headingDegrees, -headingBoresight, epsilon) << "wrong heading";
+    ASSERT_NEAR(pitchDegrees, rollTest, epsilon) << "wrong pitch";
+    ASSERT_NEAR(rollDegrees, -pitchTest, epsilon) << "wrong roll";
 }
+
+
 
 TEST(ImuDummyTestSuite, testCaseQuaternionToYPR) {
 
@@ -262,6 +231,9 @@ TEST(ImuDummyTestSuite, testCaseQuaternionToYPR) {
     ASSERT_NEAR(pitchDegrees, pitchTest, epsilon) << "wrong pitch";
     ASSERT_NEAR(rollDegrees, rollTest, epsilon) << "wrong roll";
 }
+
+
+
 
 TEST(ImuDummyTestSuite, testCaseModuloAngles) {
 
@@ -287,6 +259,7 @@ TEST(ImuDummyTestSuite, testCaseModuloAngles) {
     double angleM719Mod360 = TestQuaternionUtils::test_modulo360(angleM719);
     ASSERT_NEAR(angleM719Mod360, 1, epsilon) << "wrong angleMod360: -719 should become 1";
 }
+
 
 TEST(ImuDummyTestSuite, testCaseFlipHeading) {
 

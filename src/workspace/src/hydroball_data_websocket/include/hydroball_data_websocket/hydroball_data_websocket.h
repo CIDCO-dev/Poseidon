@@ -181,10 +181,10 @@ public:
 
                 QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.imu.orientation,heading,pitch,roll);
 
-		//hydrographers prefer heading from 0-360...
-		if(heading < 0){
-			heading+=360.0;
-		}
+		        //hydrographers prefer heading from 0-360...
+                if(heading < 0) {
+                    heading += 360.0;
+                }
 
                 rapidjson::Value attitudeArray(rapidjson::Type::kArrayType);
                 rapidjson::Value headingValue(heading);

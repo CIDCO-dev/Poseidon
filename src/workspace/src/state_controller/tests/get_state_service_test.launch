@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
+
+    <test test-name="test_services_node" pkg="setting_msg" type="test_services_node" />
+
+</launch>

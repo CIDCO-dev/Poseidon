@@ -163,21 +163,20 @@ public:
 
 	//Write configuration to file
 	void writeConfigurationToFile(){
-                std::ofstream out;
+        std::ofstream out;
 
-                out.open(configFilePath,std::ofstream::trunc);
+        out.open(configFilePath,std::ofstream::trunc);
 
-                if(out.is_open()){
-                        for(auto i = configuration.begin();i!=configuration.end();i++){
-				out << i->first << " " << i->second << std::endl;
-                        }
+        if(out.is_open()){
+            for(auto i = configuration.begin();i!=configuration.end();i++){
+                out << i->first << " " << i->second << std::endl;
+            }
 
-                        out.close();
-                }
-                else{
-                        throw std::invalid_argument(std::string("Cannot open file ") + configFilePath);
-                }
-
+            out.close();
+        }
+        else{
+                throw std::invalid_argument(std::string("Cannot open file ") + configFilePath);
+        }
 	}
 
 	//Send settings as a JSON object
@@ -316,8 +315,8 @@ public:
 			configuration["pitchOffset"]   = std::to_string(-R2D(pitchOffset));
 			configuration["rollOffset"]    = std::to_string(-R2D(rollOffset));
 
-                        writeConfigurationToFile();
-                        broadcastConfiguration();
+            writeConfigurationToFile();
+            broadcastConfiguration();
 			broadcastImuTransform();
 
 			return true;

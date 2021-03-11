@@ -211,33 +211,24 @@ include_directories(
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_hydroball_data_websocket.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
 if(CATKIN_ENABLE_TESTING)
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  state_controller
-  sensor_msgs
-  geometry_msgs
-  message_generation
-  raspberrypi_vitals_msg
-  state_controller_msg
-  tf2
-  tf2_ros
-  tf2_geometry_msgs
-)
+    find_package(catkin REQUIRED COMPONENTS
+      roscpp
+      std_msgs
+      state_controller
+      sensor_msgs
+      geometry_msgs
+      message_generation
+      raspberrypi_vitals_msg
+      state_controller_msg
+      tf2
+      tf2_ros
+      tf2_geometry_msgs
+      roslib
+    )
 
-catkin_add_gtest(test_${PROJECT_NAME} tests/test_hydroball_data_websocket.cpp)
-target_link_libraries(test_${PROJECT_NAME} ${PROJECT_NAME}  ${hydroball_data_websocket_LIBRARIES})
-add_dependencies(test_${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+    add_rostest_gtest(test_hydroball_data_websocket tests/hydroball_data_websocket_test.launch tests/test_hydroball_data_websocket.cpp)
+    target_link_libraries(test_hydroball_data_websocket ${catkin_LIBRARIES} ${PROJECT_NAME}  ${hydroball_data_websocket_LIBRARIES})
+    add_dependencies(test_hydroball_data_websocket ${catkin_EXPORTED_TARGETS})
 
 endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
-
-

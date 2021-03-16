@@ -37,11 +37,7 @@ venv/
 ENV/
 
 # User-specific stuff:
-georef/.idea/workspace.xml
-georef/.idea/tasks.xml
-georef/.idea/dictionaries
-georef/.idea/vcs.xml
-georef/.idea/jsLibraryMappings.xml
+georef/.idea/
 
 # from https://github.com/github/gitignore/blob/master/ROS.gitignore
 

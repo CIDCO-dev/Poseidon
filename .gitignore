@@ -31,6 +31,18 @@
 *.out
 *.app
 
+
+# virtualenv
+venv/
+ENV/
+
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
 # from https://github.com/github/gitignore/blob/master/ROS.gitignore
 
 src/workspace/build/

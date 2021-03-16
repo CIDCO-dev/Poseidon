@@ -31,6 +31,14 @@
 *.out
 *.app
 
+
+# virtualenv
+venv/
+ENV/
+
+# User-specific stuff:
+georef/.idea/
+
 # from https://github.com/github/gitignore/blob/master/ROS.gitignore
 
 src/workspace/build/

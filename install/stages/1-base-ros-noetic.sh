@@ -32,3 +32,17 @@ rosdep update | tee -a log.txt
 
 echo "Installing ROS tools"
 sudo apt install python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y | tee -a log.txt
+
+echo "cleaning gpsd_client"
+sudo rm -rd /home/ubuntu/Poseidon/src/workspace/src/gpsd_client
+sudo rm -rd /home/ubuntu/Poseidon/src/workspace/src/gps_umd
+sudo rm -rd /home/ubuntu/Poseidon/src/workspace/src/gps_common
+
+echo "Downloading GPSD-Client"
+cd /home/ubuntu
+git clone https://github.com/swri-robotics/gps_umd.git
+cd /home/ubuntu/gps_umd
+sudo mv gps* /home/ubuntu/Poseidon/src/workspace/src/
+cd /home/ubuntu
+sudo rm -rd gps_umd
+

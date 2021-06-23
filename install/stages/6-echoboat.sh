@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ccd /home/ubuntu/Poseidon/src/workspace/src/
+cd /home/ubuntu/Poseidon/src/workspace/src/
 
 echo "Download mavros"
 git clone https://github.com/mavlink/mavros.git

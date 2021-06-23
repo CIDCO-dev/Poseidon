@@ -11,6 +11,8 @@ sudo apt-get install ros-noetic-velodyne
 git clone https://github.com/ros-drivers/velodyne.git
 rosdep install --from-paths src --ignore-src --rosdistro noetic -y
 
+git clone https://github.com/ros-perception/perception_pcl.git
+
 echo "Download sbg driver"
 git clone https://github.com/SBG-Systems/sbg_ros_driver.git
 sudo adduser $USER dialout

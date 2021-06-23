@@ -1,6 +1,6 @@
 #!/bin/sh
 
-~/Poseidon/install/stages/1-base-ros.sh
+~/Poseidon/install/stages/1-base-ros-melodic.sh
 
 ~/Poseidon/install/stages/2-rpi.sh
 

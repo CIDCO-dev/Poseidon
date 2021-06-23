@@ -78,6 +78,6 @@ echo "[+] Building Poseidon"
 
 cd /home/ubuntu/Poseidon/src/workspace
 source /opt/ros/melodic/setup.bash
-source /opt/ros/noetc/setup.bash
+source /opt/ros/noetic/setup.bash
 catkin_make -j1
 

@@ -24,7 +24,7 @@ curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo ap
 sudo apt-get update | tee -a log.txt
 
 #sudo apt install ros-kinetic-ros-base g++ -y >> log.txt
-sudo apt install ros-noetic-ros-base ros-noetic-tf2-geometry-msgs g++ -y | tee -a log.txt
+sudo apt install ros-noetic-ros-base ros-noetic-tf2-geometry-msgs g++ python3-rosdep -y | tee -a log.txt
 
 echo "[+] Initializing ROS dependencies"
 rosdep init | tee -a log.txt

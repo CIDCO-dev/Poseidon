@@ -3,7 +3,7 @@
 cd /home/ubuntu/Poseidon/src/workspace/src/
 
 echo "Download mavros"
-git clone https://github.com/mavlink/mavros.git
+sudo apt install ros-kinetic-mavros ros-kinetic-mavros-extras -y
 
 
 echo "Download VLP-16 driver"

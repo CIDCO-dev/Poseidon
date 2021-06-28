@@ -27,8 +27,8 @@ sudo apt-get update | tee -a log.txt
 sudo apt install ros-noetic-ros-base ros-noetic-tf2-geometry-msgs g++ python3-rosdep -y | tee -a log.txt
 
 echo "[+] Initializing ROS dependencies"
-rosdep init | tee -a log.txt
-rosdep update | tee -a log.txt
+sudo rosdep init | tee -a log.txt
+sudo rosdep update | tee -a log.txt
 
 echo "Installing ROS tools"
 sudo apt install python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y | tee -a log.txt

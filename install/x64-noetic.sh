@@ -9,3 +9,5 @@
 ~/Poseidon/install/stages/4-x64.sh
 
 ~/Poseidon/install/stages/5-finalize.sh
+
+~/Poseidon/install/stages/6-echoboat.sh

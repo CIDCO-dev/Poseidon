@@ -1,6 +1,6 @@
 #!/bin/sh
 
-~/Poseidon/install/stages/1-base-ros.sh
+~/Poseidon/install/stages/1-base-ros-noetic.sh
 
 ~/Poseidon/install/stages/2-x64.sh
 
@@ -10,3 +10,4 @@
 
 ~/Poseidon/install/stages/5-finalize.sh
 
+~/Poseidon/install/stages/6-echoboat.sh

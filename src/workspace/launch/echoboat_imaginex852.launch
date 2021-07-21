@@ -15,9 +15,9 @@
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/src/sbg_ros_driver/launch/sbg_device.launch"/>
+<include file="/home/ubuntu/Poseidon/src/workspace/launch/sbg_device.launch"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/src/velodyne/velodyne_driver/launch/nodelet_manager.launch"/>
+<include file="/home/ubuntu/Poseidon/src/workspace/launch/nodelet_manager.launch"/>
 
 <?ignore
 <node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>

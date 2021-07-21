@@ -1,4 +1,3 @@
-  GNU nano 4.8                                                                   echoboat_imaginex852.launch                                                                              
 <launch>
 
 <arg name="time_now" default="temp" />
@@ -9,23 +8,21 @@
 <arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
 
 <remap from="/imu/nav_sat_fix" to="/fix"/>
-<?ignore
-<remap from="/sbg/imu_data" to="/imu/data"/>
-?>
 
-<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1">
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/launch/sbg_device.launch"/>
+<include file="/home/ubuntu/Poseidon/src/workspace/src/sbg_ros_driver/launch/sbg_device.launch"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/launch/nodelet_manager.launch"/>
+<include file="/home/ubuntu/Poseidon/src/workspace/src/velodyne/velodyne_driver/launch/nodelet_manager.launch"/>
 
 <?ignore
 <node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
 ?>
-
+  
 
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
 

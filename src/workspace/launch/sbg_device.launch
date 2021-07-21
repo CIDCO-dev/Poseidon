@@ -1,5 +1,5 @@
 <launch>
   <node name="sbg_device" pkg="sbg_driver" type="sbg_device" output="screen">
-  	<rosparam command="load" file="/home/ubuntu/Poseidon/src/workspace/src/sbg_ros_driver/config/sbg_device_udp_default.yaml" />
+  	<rosparam command="load" file="/home/ubuntu/Poseidon/src/workspace/launch/sbg_device_udp_default.yaml" />
   </node>
 </launch>

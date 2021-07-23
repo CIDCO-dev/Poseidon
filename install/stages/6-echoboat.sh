@@ -18,5 +18,5 @@ echo "Download sbg driver"
 git clone https://github.com/SBG-Systems/sbg_ros_driver.git
 sudo adduser $USER dialout
 
-cd /home/ubuntu/Poseidon/sec/workspace
+cd /home/ubuntu/Poseidon/src/workspace
 catkin_make -j1

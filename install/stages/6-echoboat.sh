@@ -3,7 +3,7 @@
 cd /home/ubuntu/Poseidon/src/workspace/src/
 
 echo "Download mavros"
-sudo apt install ros-noetic-mavros ros-noetic-mavros-extras -y
+sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msg -y
 
 
 echo "Download VLP-16 driver"

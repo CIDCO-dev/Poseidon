@@ -19,6 +19,8 @@
 
 <include file="/home/ubuntu/Poseidon/src/workspace/launch/nodelet_manager.launch"/>
 
+<include file="/home/ubuntu/Poseidon/src/workspace/launch/px4.launch"/>
+
 <?ignore
 <node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
 ?>

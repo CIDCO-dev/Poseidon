@@ -3,14 +3,14 @@
         <!-- example launch script for PX4 based FCU's -->
 
         <arg name="fcu_url" default="/dev/ttyACM0:57600" />
-        <arg name="gcs_url" default="" />
+        <arg name="gcs_url" default="udp://@"/>
         <arg name="tgt_system" default="1" />
         <arg name="tgt_component" default="1" />
         <arg name="log_output" default="screen" />
         <arg name="fcu_protocol" default="v2.0" />
-        <arg name="respawn_mavros" default="false" />
+        <arg name="respawn_mavros" default="true" />
 
-        <include file="/home/ubuntu/Poseidon/src/workspace/launch/node.launch">
+        <include file="/home/ubuntu/Poseidon/src/workspace/launch/mavros.launch">
                 <arg name="pluginlists_yaml" value="/home/ubuntu/Poseidon/src/workspace/launch/px4_pluginlists.yaml" />
                 <arg name="config_yaml" value="/home/ubuntu/Poseidon/src/workspace/launch/px4_config.yaml" />
 

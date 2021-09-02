@@ -5,7 +5,7 @@ confWithRos: false
 
 # Udp configuration
 ipConf:
-  ipAddress: "192.168.0.156"              # Ip address of the device.
+  ipAddress: "10.0.0.2"              # Ip address of the device.
   out_port: 1234                    # Output port of the device.
   in_port: 5678                     # Inport of the device.
 

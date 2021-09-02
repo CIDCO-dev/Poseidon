@@ -12,4 +12,4 @@
 
 ~/Poseidon/install/stages/6-echoboat.sh
 
-~/Poseidon/install/stages/install_geographiclib_dataset.sh
+sudo ~/Poseidon/install/stages/install_geographiclib_dataset.sh

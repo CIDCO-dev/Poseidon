@@ -2,6 +2,12 @@
 Changelog for package gps_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.3.2 (2020-05-25)
+------------------
+
+0.3.1 (2020-03-05)
+------------------
+
 0.3.0 (2019-10-03)
 ------------------
 * Switching order of commands to make catkin happy

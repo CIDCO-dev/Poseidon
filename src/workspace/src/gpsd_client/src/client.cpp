@@ -85,8 +85,13 @@ class GPSDClient {
       if (p == NULL)
         return;
 
-      if (!p->online)
+#if GPSD_API_MAJOR_VERSION >= 9
+      if (!p->online.tv_sec && !p->online.tv_nsec) {
+#else
+      if (!p->online) {
+#endif
         return;
+      }
 
       process_data_gps(p);
       process_data_navsat(p);
@@ -153,7 +158,11 @@ class GPSDClient {
           status.status |= 18; // same here
 #endif
 
+#if GPSD_API_MAJOR_VERSION >= 9
+        fix.time = (double)(p->fix.time.tv_sec) + (double)(p->fix.time.tv_nsec) / 1000000.;
+#else
         fix.time = p->fix.time;
+#endif
         fix.latitude = p->fix.latitude;
         fix.longitude = p->fix.longitude;
         fix.altitude = p->fix.altitude;
@@ -175,7 +184,11 @@ class GPSDClient {
         fix.gdop = p->gdop;
 #endif
 
+#if GPSD_API_MAJOR_VERSION < 8
         fix.err = p->epe;
+#else
+        fix.err = p->fix.eph;
+#endif
         fix.err_vert = p->fix.epv;
         fix.err_track = p->fix.epd;
         fix.err_speed = p->fix.eps;
@@ -184,7 +197,7 @@ class GPSDClient {
 
         /* TODO: attitude */
       } else {
-      	status.status = -1; // STATUS_NO_FIX
+        status.status = -1; // STATUS_NO_FIX
       }
 
       fix.status = status;
@@ -197,10 +210,17 @@ class GPSDClient {
 
       /* TODO: Support SBAS and other GBAS. */
 
-      if (use_gps_time && !std::isnan(p->fix.time))
+#if GPSD_API_MAJOR_VERSION >= 9
+      if (use_gps_time && (p->online.tv_sec || p->online.tv_nsec)) {
+        fix->header.stamp = ros::Time(p->fix.time.tv_sec, p->fix.time.tv_nsec);
+#else
+      if (use_gps_time && !std::isnan(p->fix.time)) {
         fix->header.stamp = ros::Time(p->fix.time);
-      else
+#endif
+      }
+      else {
         fix->header.stamp = ros::Time::now();
+      }
 
       fix->header.frame_id = frame_id;
 

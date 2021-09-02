@@ -18,6 +18,7 @@
                 <param name="target_system_id" value="$(arg tgt_system)" />
                 <param name="target_component_id" value="$(arg tgt_component)" />
                 <param name="fcu_protocol" value="$(arg fcu_protocol)" />
+		<!-- <param name="/mavros/conn/timesync_rate" value="0.0"/> -->
 
                 <!-- load blacklist, config -->
                 <rosparam command="load" file="$(arg pluginlists_yaml)" />

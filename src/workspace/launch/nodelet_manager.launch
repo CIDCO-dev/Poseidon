@@ -3,7 +3,7 @@
 
 <launch>
 
-  <arg name="device_ip" default="192.168.0.208" />
+  <arg name="device_ip" default="10.0.0.3" />
   <arg name="frame_id" default="velodyne" />
   <arg name="manager" default="$(arg frame_id)_nodelet_manager" />
   <arg name="model" default="VLP16" />

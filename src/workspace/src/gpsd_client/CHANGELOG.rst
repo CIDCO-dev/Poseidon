@@ -2,6 +2,16 @@
 Changelog for package gpsd_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.3.2 (2020-05-25)
+------------------
+* Fix build with gpsd 3.20 (`#28 <https://github.com/swri-robotics/gps_umd/issues/28>`_)
+* Contributors: P. J. Reed
+
+0.3.1 (2020-03-05)
+------------------
+* Fix for gpsd-3.19 compatibility (`#26 <https://github.com/swri-robotics/gps_umd/issues/26>`_)
+* Contributors: P. J. Reed
+
 0.3.0 (2019-10-03)
 ------------------
 

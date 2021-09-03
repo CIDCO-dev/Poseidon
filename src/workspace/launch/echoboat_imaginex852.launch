@@ -17,11 +17,12 @@
 
 <include file="/home/ubuntu/Poseidon/src/workspace/launch/sbg_device.launch"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/launch/nodelet_manager.launch"/>
+<include file="/home/ubuntu/Poseidon/src/workspace/launch/VLP16_points.launch"/>
 
-<?ignore
+<include file="/home/ubuntu/Poseidon/src/workspace/launch/px4.launch"/>
+
 <node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
-?>
+
   
 
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
@@ -33,5 +34,7 @@
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/$(arg time_now)_all.bag" />
 
 </launch>

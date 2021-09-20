@@ -3,7 +3,11 @@ project(ins_piksi)
 
 add_definitions(-std=c++11 -Wall -g)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  sensor_msgs
+)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -18,17 +22,19 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}.cpp
-# )
-#add_executable(${PROJECT_NAME}_node nodes/${PROJECT_NAME}_node.cpp)
+add_library(${PROJECT_NAME}
+    src/${PROJECT_NAME}.cpp
+)
 
-#target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES} ${PROJECT_NAME}
-# )
-# target_link_libraries(${PROJECT_NAME}
-#   ${catkin_LIBRARIES}
-# )
+add_executable(${PROJECT_NAME}_node nodes/ins_piksi_node.cpp)
+
+target_link_libraries(${PROJECT_NAME}_node
+    ${catkin_LIBRARIES} ${PROJECT_NAME}
+)
+
+target_link_libraries(${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+)
 
 #############
 ## Testing ##

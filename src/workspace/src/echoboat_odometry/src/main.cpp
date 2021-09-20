@@ -13,8 +13,8 @@ void processGpsCallback(const sensor_msgs::NavSatFix & msg){
 	std::cout << "Got GPS data" << std::endl;
 }
 
-void processSBGCallback(const sbg_driver::SbgEkfNav * msg){
-
+void processSBGCallback(const sbg_driver::SbgEkfNav & msg){
+	std::cout << "Got EKF Nav data" << std::endl;
 }
 
 int main(int argc, char** argv){
@@ -22,7 +22,8 @@ int main(int argc, char** argv){
 
   ros::NodeHandle n;
   ros::Publisher odomPublisher = n.advertise<nav_msgs::Odometry>("odom", 50);
-  ros::Subscriber gpsSubscriber = n.subscribe("fix", 1000, processGpsCallback);
+  ros::Subscriber gpsSubscriber = n.subscribe("fix", 50, processGpsCallback);
+  ros::Subscriber sbgEkfSubscriber = n.subscribe("/sbg/ekf_nav", 50, processSBGCallback);
 
   tf2_ros::TransformBroadcaster odomBroadcaster;
 

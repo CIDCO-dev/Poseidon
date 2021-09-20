@@ -1,0 +1,6 @@
+[submodule "src/workspace/sbg_ros_driver"]
+	path = src/workspace/sbg_ros_driver
+	url = https://github.com/SBG-Systems/sbg_ros_driver
+[submodule "src/workspace/src/sbg_ros_driver"]
+	path = src/workspace/src/sbg_ros_driver
+	url = https://github.com/SBG-Systems/sbg_ros_driver

@@ -49,8 +49,15 @@ public:
 
 	    if(serial_port < 0) {
 	        ROS_ERROR_STREAM("Can't run Piksi.");
-	        return;
+	        exit(1);
 	    }
+
+        // align serial port with piksi datagrams
+        // do this for 2 seconds to clear buffer
+	    auto time_start = std::chrono::system_clock::now();
+        while( (std::chrono::system_clock::now() - time_start) < std::chrono::seconds{2} ) {
+            readUntilAlignedWithDatagrams();
+        }
 
         //create and open binary output file
         std::ofstream file;
@@ -61,10 +68,9 @@ public:
             ROS_ERROR_STREAM("Cannot open .sbp file on path: " << outputFilename);
             exit(1);
         } else {
-            // align serial port with piksi datagrams
-            readUntilAlignedWithDatagrams();
 
-            while(ros::ok()){ //read serial port and save in the file
+            while(ros::ok()){
+                //read a datagram from serial port and save in the file
                 readAndProcessOneDatagram(serial_port, file);
             }
 
@@ -74,7 +80,7 @@ public:
 
 	}
 
-	void processDatagram(SbpHeader & hdr, unsigned char * packet) {
+	virtual void processDatagram(SbpHeader & hdr, unsigned char * packet) {
 	    //This way can be be tested by overriding this method in a test node
 		/*
 		if(hdr.message_type == THE_PACKET_TYPE) {
@@ -193,9 +199,6 @@ protected:
             ROS_ERROR_STREAM("Error " << errno << " from tcsetattr: " << strerror(errno));
             return;
         }
-
-        usleep(10000); // sleep 10ms before flushing serial port buffer
-        tcflush(serial_port, TCIOFLUSH);
     }
 
     std::string datetime(){
@@ -210,7 +213,5 @@ protected:
 		return std::string(buffer);
 	}
 };
-
-
 
 #endif

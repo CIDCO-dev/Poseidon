@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(ins_piksi)
+project(gnss_mosaic_x5)
 
-add_definitions(-std=c++11 -Wall -g)
+add_definitions(-std=c++11 -Wall)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -16,25 +16,24 @@ catkin_package(
   DEPENDS system_lib
 )
 
-
 include_directories(
  include
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}
-    src/${PROJECT_NAME}.cpp
-)
+#add_library(${PROJECT_NAME}
+    #src/${PROJECT_NAME}.cpp
+#)
 
-add_executable(${PROJECT_NAME}_node nodes/ins_piksi_node.cpp)
+#add_executable(${PROJECT_NAME}_node nodes/${PROJECT_NAME}_node.cpp)
 
-target_link_libraries(${PROJECT_NAME}_node
-    ${catkin_LIBRARIES} ${PROJECT_NAME}
-)
+#target_link_libraries(${PROJECT_NAME}_node
+    #${catkin_LIBRARIES} ${PROJECT_NAME}
+#)
 
-target_link_libraries(${PROJECT_NAME}
-    ${catkin_LIBRARIES}
-)
+#target_link_libraries(${PROJECT_NAME}
+    #${catkin_LIBRARIES}
+#)
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
@@ -58,6 +57,6 @@ target_link_libraries(${PROJECT_NAME}
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
    find_package(rostest REQUIRED)
-   add_rostest_gtest(test_ins_piksi tests/ins_piksi_test.launch tests/test_ins_piksi_node.cpp)
-   target_link_libraries(test_ins_piksi ${catkin_LIBRARIES})
+   add_rostest_gtest(test_gnss_mosaic_x5 tests/gnss_mosaic_x5_test.launch tests/test_gnss_mosaic_x5_node.cpp)
+   target_link_libraries(test_gnss_mosaic_x5 ${catkin_LIBRARIES})
 endif()

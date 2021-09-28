@@ -1,0 +1,3 @@
+<launch>
+    <test test-name="test_gnss_mosaic_x5" pkg="gnss_mosaic_x5" type="test_gnss_mosaic_x5" time-limit="5000"/>
+</launch>

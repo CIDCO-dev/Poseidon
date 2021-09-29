@@ -13,7 +13,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp std_msgs sensor_msgs
-  DEPENDS system_lib
 )
 
 include_directories(
@@ -21,19 +20,19 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-#add_library(${PROJECT_NAME}
-    #src/${PROJECT_NAME}.cpp
-#)
+add_library(${PROJECT_NAME}
+    src/${PROJECT_NAME}.cpp
+)
 
-#add_executable(${PROJECT_NAME}_node nodes/${PROJECT_NAME}_node.cpp)
+add_executable(${PROJECT_NAME}_node nodes/${PROJECT_NAME}_node.cpp)
 
-#target_link_libraries(${PROJECT_NAME}_node
-    #${catkin_LIBRARIES} ${PROJECT_NAME}
-#)
+target_link_libraries(${PROJECT_NAME}_node
+    ${catkin_LIBRARIES} ${PROJECT_NAME}
+)
 
-#target_link_libraries(${PROJECT_NAME}
-    #${catkin_LIBRARIES}
-#)
+target_link_libraries(${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+)
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html

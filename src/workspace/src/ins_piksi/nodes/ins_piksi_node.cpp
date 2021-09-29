@@ -5,7 +5,7 @@
 int main(int argc,char** argv){
 	ros::init(argc, argv, "piksi");
 
-	if(argc != 3){
+	if(argc != 3) {
 	    ROS_ERROR_STREAM("ins_piksi logPath serialDevice");
 		exit(1);
 	}

@@ -10,7 +10,7 @@
 
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
-<node pkg="ins_piksi" name="ins_piksi" type="ins_piksi_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+<node pkg="gnss_mosaic_x5" name="gnss_mosaic_x5" type="gnss_mosaic_x5_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
 
 </launch>

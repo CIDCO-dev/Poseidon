@@ -60,7 +60,7 @@ class Imagenex852{
 	public:
 		Imagenex852(std::string devicePath) : devicePath(devicePath){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
-                        sonarTopicNed = node.advertise<geometry_msgs::PointStamped>("depth_ned", 1000);
+                        sonarTopicEnu = node.advertise<geometry_msgs::PointStamped>("depth_enu", 1000);
 
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 			ROS_INFO("Fetching sonar configuration...");
@@ -168,18 +168,17 @@ class Imagenex852{
 	        	        		geometry_msgs::PointStamped msg;
 
 			                	msg.header.seq=sequenceNumber++;
-                				msg.header.stamp=ros::Time::now();
 						msg.header.frame_id = "sonar";
 
 						try{
 							//Publish depth point measurement
-	        		        		msg.point.z = measureDepth(500);
+	        		        		msg.point.z = measureDepth(msg,500);
         	        				sonarTopic.publish(msg);
 
 							//Also publish in NED frame
-							msg.header.frame_id="sonar_ned";
+							msg.header.frame_id="sonar_enu";
 							msg.point.z = -1 * msg.point.z;
-							sonarTopicNed.publish(msg);
+							sonarTopicEnu.publish(msg);
 						}
 						catch(std::exception & e){
 							//ROS_ERROR already has been called. Lets sleep on this
@@ -221,7 +220,7 @@ class Imagenex852{
 			return totalRead;
 		}
 
-		double measureDepth(int dataPoints){
+		double measureDepth(geometry_msgs::PointStamped & msg,int dataPoints){
 			double depth = 0;
 
 			Imagenex852SwitchDataCommand cmd;
@@ -257,6 +256,8 @@ class Imagenex852{
 
 				if( (nbBytes = serialRead((uint8_t*)&hdr,sizeof(Imagenex852ReturnDataHeader))) == 12){
 
+					msg.header.stamp = ros::Time::now();
+					msg.header.stamp.nsec = delayNanoseconds; //Chop off sub-second values since the sonar trigger is clocked on the PPS...we may want to add a delay value though
 					//ROS_INFO("Read %d bytes header",nbBytes);
 
 					//ROS_INFO("%c%c%c",hdr.magic[0],hdr.magic[1],hdr.magic[2]);
@@ -307,11 +308,13 @@ class Imagenex852{
 
 		ros::NodeHandle		node;
 		ros::Publisher		sonarTopic;
-		ros::Publisher		sonarTopicNed;
+		ros::Publisher		sonarTopicEnu;
 		ros::ServiceClient	configurationClient;
 
 		std::string   		devicePath;
 		int deviceFile = -1;
+
+		uint32_t delayNanoseconds = 0; //FIXME: get from a ROS parameter
 
 		uint32_t sequenceNumber;
 };

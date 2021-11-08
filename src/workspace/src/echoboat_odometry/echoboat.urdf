@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot name="echoboat160">
+  <material name="yellow">
+    <color rgba="1 1 0 1"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+	<box size="1.71 0.8 0.4"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+  </link>
+</robot>

@@ -7,6 +7,7 @@ project(echoboat_odometry)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf2_ros
@@ -15,6 +16,9 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   sbg_driver
 )
+
+find_package(Eigen3 REQUIRED)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

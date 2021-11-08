@@ -154,10 +154,12 @@ public:
 		rapidjson::Document telemetry(rapidjson::kObjectType);
 
         if( !state.position.header.seq  &&  state.position.status.status < 0) {
-            //No fix
+            //If we don't have a fix, send an empty position array
             rapidjson::Value positionArray(rapidjson::Type::kArrayType);
             telemetry.AddMember("position", positionArray, telemetry.GetAllocator()); // empty position array
-        } else {
+        }
+	else {
+            // Else, send the whole position
             rapidjson::Value positionArray(rapidjson::Type::kArrayType);
             rapidjson::Value longitude(state.position.longitude);
             rapidjson::Value latitude(state.position.latitude);
@@ -181,7 +183,7 @@ public:
 
                 QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.imu.orientation,heading,pitch,roll);
 
-		        //hydrographers prefer heading from 0-360...
+		//hydrographers prefer heading from 0-360...
                 if(heading < 0) {
                     heading += 360.0;
                 }
@@ -212,7 +214,7 @@ public:
             telemetry.AddMember("depth", depthArray, telemetry.GetAllocator());
         }
 
-        if(!state.vitals.header) {
+        if(!state.vitals.header.seq) {
             rapidjson::Value vitalsArray(rapidjson::Type::kArrayType);
             telemetry.AddMember("vitals", vitalsArray, telemetry.GetAllocator()); // empty vitals array
         }
@@ -249,7 +251,7 @@ public:
     }
 
     void stateChanged(const state_controller_msg::State & state) {
-        uint64_t timestamp = (state.imu.header.stamp.sec * 1000000) + (state.imu.header.stamp.nsec/1000);
+        uint64_t timestamp = (state.stamp.sec * 1000000) + (state.stamp.nsec/1000);
         //TODO: maybe add our own header?
         if(timestamp - lastTimestamp > 200000){
             std::string jsonString;

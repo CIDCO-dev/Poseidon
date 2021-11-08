@@ -44,7 +44,8 @@ class HBV{
 
                 		raspberrypi_vitals_msg::sysinfo msg;
 
-				msg.header=++sequenceNumber;
+				msg.header.seq=++sequenceNumber;
+				msg.header.stamp=ros::ros::Time::now();
 
 //******************************CPU temps
 				ifstream fcputemp;

@@ -60,6 +60,8 @@ class Imagenex852{
 	public:
 		Imagenex852(std::string devicePath) : devicePath(devicePath){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
+                        sonarTopicNed = node.advertise<geometry_msgs::PointStamped>("depth_ned", 1000);
+
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 			ROS_INFO("Fetching sonar configuration...");
 			getConfiguration();
@@ -170,8 +172,14 @@ class Imagenex852{
 						msg.header.frame_id = "sonar";
 
 						try{
+							//Publish depth point measurement
 	        		        		msg.point.z = measureDepth(500);
         	        				sonarTopic.publish(msg);
+
+							//Also publish in NED frame
+							msg.header.frame_id="sonar_ned";
+							msg.point.z = -1 * msg.point.z;
+							sonarTopicNed.publish(msg);
 						}
 						catch(std::exception & e){
 							//ROS_ERROR already has been called. Lets sleep on this
@@ -299,6 +307,7 @@ class Imagenex852{
 
 		ros::NodeHandle		node;
 		ros::Publisher		sonarTopic;
+		ros::Publisher		sonarTopicNed;
 		ros::ServiceClient	configurationClient;
 
 		std::string   		devicePath;

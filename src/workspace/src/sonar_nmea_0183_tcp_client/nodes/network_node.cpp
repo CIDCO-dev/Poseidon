@@ -2,7 +2,7 @@
 #include "sonar_nmea_0183_tcp_client/sonar_nmea_0183_tcp_client.h"
 
 int main(int argc,char** argv){
-	ros::init(argc, argv, "sonar");
+	ros::init(argc, argv, "nmea_network");
 
 	std::string addr;
 	int port;
@@ -31,8 +31,8 @@ int main(int argc,char** argv){
 			port > 0 && port <= 65535
 		){
 			//TODO: get useDepth/usePOsition/useAttitude from parameters
-			Sonar sonar(argv[1],argv[2],true,true,true);
-			sonar.run();
+			NetworkNmeaClient nmea(argv[1],argv[2],true,true,true);
+			nmea.run();
 		}
 		else{
 			std::cerr << "Bad TCP port: " << port << std::endl;

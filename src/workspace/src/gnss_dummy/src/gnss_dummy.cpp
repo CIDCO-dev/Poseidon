@@ -14,6 +14,7 @@ void GNSS::message(uint32_t msgSequenceNumber,double longitude,double latitude){
 	msg.header.seq=msgSequenceNumber;
 	msg.header.stamp=ros::Time::now();
 	msg.status.service = 1;
+	msg.status.status = 1;
 	msg.header.stamp.nsec=0;
 	msg.longitude=longitude;
 	msg.latitude=latitude;

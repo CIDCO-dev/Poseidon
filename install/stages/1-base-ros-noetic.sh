@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "<*> disable auto-update"
+sudo systemctl stop unattended-upgrades
+
 echo "[+] Updating repositories"
 sudo apt update | tee log.txt
 

@@ -1,0 +1,38 @@
+<launch>
+
+<arg name="time_now" default="temp" />
+<arg name="gnssPortPath" value="/dev/ttyACM0"/>
+<arg name="gpsdIp" value="localhost"/>
+<arg name="gpsdPort" value="2947"/>
+
+<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
+
+
+<node pkg="imu_null" name="IMU" type="imu_null_node" output="screen"/>
+
+
+<node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
+
+<node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
+
+  
+
+<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+
+<node pkg="gnss_mosaic_x5" name="gnss_mosaic_x5" type="gnss_mosaic_x5_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_852_all.bag" />
+
+</launch>

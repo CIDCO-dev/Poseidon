@@ -25,12 +25,42 @@
   <script src="/leaflet/leaflet-heat.js"></script>
   <script src="/leaflet/leaflet.hotline.js"></script>
 
+<style>
+#overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0; 
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
+#overlay-text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 50px;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
+</style>
+
 </head>
 
 <body id="page-top">
 
   <!-- Page Wrapper -->
   <div id="wrapper">
+    <div id="overlay">
+	<div id="overlay-text">Loading...</div>
+    </div>
+
 
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -448,6 +478,9 @@ $( document ).ready(function() {
 
 	// Init websocket
 
+	//display overlay...
+	displayOverlay("Loading...");
+
 	socket = new WebSocket("ws://" + window.location.hostname +":9002");
 
 	socket.onmessage = function (event) {
@@ -464,11 +497,25 @@ $( document ).ready(function() {
   	};
 
 	socket.onopen = function(event){
+		hideOverlay();
+		//init display
         	getRecordingStatus();
 	};
 
+	socket.onerror = function(){
+		//display error div
+		displayOverlay("Error: Cannot connect to websocket");		
+	}
 });
+    function displayOverlay(msg){
+	document.getElementById("overlay-text").innerHTML=msg;
+	document.getElementById("overlay").style.display = "block";
+	
+    }
 
+    function hideOverlay(){
+        document.getElementById("overlay").style.display = "none";
+    }
 
     function processTelemetry(state){
        

@@ -68,9 +68,6 @@ typedef struct{
 }vtgData;
 
 
-
-
-
 class BaseNmeaClient{
 
 	private:
@@ -155,7 +152,6 @@ class BaseNmeaClient{
 			dbtData dbt;
 			
 			if(sscanf(s.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
-
 				//TODO: checksum
 				//process depth
 
@@ -177,7 +173,7 @@ class BaseNmeaClient{
 		bool extractVTG(std::string & s){
 			vtgData vtg;
 			
-			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,lf,K*%2x",&vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6){
+			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,%lf,K*%2x",&vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6){
 				std::cout << vtg.talkerId << "\n" << vtg.degreesDecimal << "\n" << vtg.degreesMagnetic << "\n" << vtg.speedKnots << "\n" << vtg.speedKmh << "\n" << vtg.checksum << "\n";
 				nav_msgs::Odometry msg;
 				msg.header.seq=++speedSequenceNumber;
@@ -207,7 +203,13 @@ class BaseNmeaClient{
 
 				if(ch == '\n'){
 					//Run through the array of handlers, stopping either at the end or when one returns true
-					for(long unsigned int i=0;i < (sizeof(handlers)/sizeof(handlers[0])) && !( (this->* handlers[i])(line) );i++);
+					//TODO: fix this for(long unsigned int i=0;i < (sizeof(handlers)/sizeof(handlers[0])) && !( (this->* handlers[i])(line) );i++);
+
+					if(!extractDBT(line)){
+						if(!extractGGA(line)){
+							extractVTG(line);
+						}
+					}
 
 					line = "";
 				}

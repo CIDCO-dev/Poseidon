@@ -1,4 +1,4 @@
-#include "imu_dummy/imu_dummy.h"
+#include "imu_null/imu_null.h"
 #include "../../utils/QuaternionUtils.h"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
@@ -8,9 +8,9 @@ void IMU::run(){
     msg.header.seq=++sequenceNumber;
     msg.header.stamp=ros::Time::now();
 
-    double heading = sin((double)sequenceNumber/(double)M_PI)*30;
-    double pitch   = cos((double)sequenceNumber/(double)M_PI)*20;
-    double roll    = sin((double)sequenceNumber/(double)M_PI)*10;
+    double heading = 0;
+    double pitch   = 0;
+    double roll    = 0;
 
     tf2::Quaternion q;
     q.setRPY(D2R(roll),D2R(pitch),D2R(heading));

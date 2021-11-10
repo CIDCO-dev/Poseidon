@@ -21,6 +21,7 @@
 #include "ros/ros.h"
 #include "geometry_msgs/PointStamped.h"
 #include "sensor_msgs/NavSatFix.h"
+#include "nav_msgs/Odometry.h"
 
 
 typedef struct{
@@ -57,7 +58,14 @@ typedef struct{
     unsigned int checksum;    
 }dbtData;
 
-
+typedef struct{
+    char talkerId[2];
+    double degreesDecimal;
+    double degreesMagnetic;
+    double speedKnots;
+    double speedKmh;
+    unsigned int checksum;    
+}vtgData;
 
 
 
@@ -67,11 +75,14 @@ class BaseNmeaClient{
 
 	private:
 		ros::NodeHandle node;
+		
 		ros::Publisher sonarTopic;
 		ros::Publisher gnssTopic;
+		ros::Publisher speedTopic;
 
 		uint32_t depthSequenceNumber = 0;
 		uint32_t gpsSequenceNumber = 0;
+		uint32_t speedSequenceNumber = 0;
                 
 		bool useDepth = true;
 		bool usePosition = false;
@@ -85,7 +96,8 @@ class BaseNmeaClient{
 
 		void initTopics(){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
-			gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);			
+			gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
+			speedTopic = node.advertise<nav_msgs::Odometry>("speed",1000);		
 		}
 		
 		bool extractGGA(std::string & s){   
@@ -163,7 +175,19 @@ class BaseNmeaClient{
 		}
 		
 		bool extractVTG(std::string & s){
-			//TODO
+			vtgData vtg;
+			
+			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,lf,K*%2x",&vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6){
+				std::cout << vtg.talkerId << "\n" << vtg.degreesDecimal << "\n" << vtg.degreesMagnetic << "\n" << vtg.speedKnots << "\n" << vtg.speedKmh << "\n" << vtg.checksum << "\n";
+				nav_msgs::Odometry msg;
+				msg.header.seq=++speedSequenceNumber;
+				msg.header.stamp=ros::Time::now();
+				msg.twist.twist.linear.y=vtg.speedKmh;
+				
+				speedTopic.publish(msg);
+				
+				return true;
+			}
 			return false;
 		}
 		

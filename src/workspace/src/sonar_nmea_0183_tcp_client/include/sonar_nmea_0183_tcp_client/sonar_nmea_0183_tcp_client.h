@@ -70,8 +70,8 @@ class BaseNmeaClient{
 		ros::Publisher sonarTopic;
 		ros::Publisher gnssTopic;
 
-		uint32_t depthSequenceNumber;
-		uint32_t gpsSequenceNumber;
+		uint32_t depthSequenceNumber = 0;
+		uint32_t gpsSequenceNumber = 0;
                 
 		bool useDepth = true;
 		bool usePosition = false;
@@ -88,57 +88,29 @@ class BaseNmeaClient{
 			gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);			
 		}
 		
-		bool extractGGA(std::string & s,ggaData & data){   
-		    
-			int c = sscanf(s.c_str(),"$%2sGGA,%lf,%lf,%1s,%lf,%1s,%d,%d,%lf,%lf,M,%lf,M,%d,%d*%2x",&data.talkerId,&data.utcTime,&data.latitude,&data.northOrSouth,&data.longitude,&data.eastOrWest,&data.quality,&data.nbSatellites,&data.hdop,&data.antennaAltitude,&data.geoidalSeparation,&data.dgpsAge,&data.dgpsStationId,&data.checksum);
-		       
-			if(c >= 8){
+		bool extractGGA(std::string & s){   
+			ggaData data;
+			
+			if(sscanf(s.c_str(),"$%2sGGA,%lf,%lf,%1s,%lf,%1s,%d,%d,%lf,%lf,M,%lf,M,%d,%d*%2x",&data.talkerId,&data.utcTime,&data.latitude,&data.northOrSouth,&data.longitude,&data.eastOrWest,&data.quality,&data.nbSatellites,&data.hdop,&data.antennaAltitude,&data.geoidalSeparation,&data.dgpsAge,&data.dgpsStationId,&data.checksum) >= 8){		
+				//TODO verify checksum
+				
+				sensor_msgs::NavSatFix msg;
+				msg.header.seq=++gpsSequenceNumber;
+				msg.header.stamp=ros::Time::now();
+								
 				int longDegrees =( (double)data.longitude / 100);
 				double longMinutes = (data.longitude - (longDegrees*100)) / (double)60;
 				double sign = (data.eastOrWest=='E')?1:-1;
 			
-				data.longitude = sign* (longDegrees + longMinutes );
+				msg.longitude = sign* (longDegrees + longMinutes );
 			
 				int latDegrees = (double)(data.latitude / 100);
 				double latMinutes = (data.latitude - (latDegrees*100)) / (double)60;
 				sign = (data.northOrSouth=='N')?1:-1;        
 
-				data.latitude  = sign * (latDegrees+latMinutes);
-
-				return true;
-		    	}
-		    
-			return false;
-		}		
-		
-		void processNmeaString(std::string & line){
-			dbtData dbt;    
-			ggaData gga;
-
-			//parse DBT strings such as $SDDBT,30.9,f,9.4,M,5.1,F*35
-			if(sscanf(line.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
-
-				//TODO: checksum
-				//process depth
-
-				geometry_msgs::PointStamped msg;
-
-				msg.header.seq=++depthSequenceNumber;
-				msg.header.stamp=ros::Time::now();
-
-				msg.point.z = dbt.depthMeters;
-
-				sonarTopic.publish(msg);
-			}
+				msg.latitude  = sign * (latDegrees+latMinutes);
                                                         
-			//parse GGA position strings
-			else if(extractGGA(line,gga)){
-				sensor_msgs::NavSatFix msg;
-                                                            
-				msg.header.seq=++gpsSequenceNumber;
-				msg.header.stamp=ros::Time::now();
-                                                        
-				switch(gga.quality){
+				switch(data.quality){
 					//No fix
 					case 0:
 						msg.status.status=-1;
@@ -155,24 +127,53 @@ class BaseNmeaClient{
 						break;
 				}
                                                         
-				msg.latitude  = gga.latitude;
-				msg.longitude = gga.longitude;
-				msg.altitude  = gga.antennaAltitude;
-                                                        
+				msg.altitude  = data.antennaAltitude;
 				msg.position_covariance_type= 0;
-
                                                             
-				gnssTopic.publish(msg);
-			}
-							
-			//TODO: parse attitude strings
+				gnssTopic.publish(msg);				
 
+				return true;
+		    	}
+		    
+			return false;
 		}		
+
+		//parse DBT strings such as $SDDBT,30.9,f,9.4,M,5.1,F*35		
+		bool extractDBT(std::string & s){
+			dbtData dbt;
+			
+			if(sscanf(s.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
+
+				//TODO: checksum
+				//process depth
+
+				geometry_msgs::PointStamped msg;
+
+				msg.header.seq=++depthSequenceNumber;
+				msg.header.stamp=ros::Time::now();
+
+				msg.point.z = dbt.depthMeters;
+
+				sonarTopic.publish(msg);
+				
+				return true;
+			}			
+			
+			return false;
+		}
+		
+		bool extractVTG(std::string & s){
+			//TODO
+			return false;
+		}
+		
 
 		void readStream(int & fileDescriptor){
 			//read char by char like a dumbass
 			char ch;
 			std::string line;
+			
+			bool (BaseNmeaClient::* handlers[4]) (std::string &) {&BaseNmeaClient::extractDBT,&BaseNmeaClient::extractGGA,&BaseNmeaClient::extractVTG}; // More handlers can be added here
 
 			//FIXME: Holy wasted-syscalls Batman, that's inefficient!
 			while(read(fileDescriptor,&ch,1)==1){
@@ -181,7 +182,9 @@ class BaseNmeaClient{
 				}
 
 				if(ch == '\n'){
-					processNmeaString(line);
+					//Run through the array of handlers, stopping either at the end or when one returns true
+					for(long unsigned int i=0;i < (sizeof(handlers)/sizeof(handlers[0])) && !( (this->* handlers[i])(line) );i++);
+
 					line = "";
 				}
 				else{
@@ -255,27 +258,25 @@ public:
 	}
 	
 	void run(){
-
 		initTopics();
 
-		int s = -1;
+		int fileDescriptor = -1;
 
 		try{
 			std::cout << "Opening NMEA device " << deviceFile << std::endl;
 
-			if((s = open(deviceFile.c_str(),O_RDWR))==-1){
+			if((fileDescriptor = open(deviceFile.c_str(),O_RDWR))==-1){
 				perror("open");
 				throw std::runtime_error("open");
 			}
 
-			readStream(s);
+			readStream(fileDescriptor);
 		}
 		catch(std::exception& e){
-			if(s != -1) close(s);
+			if(fileDescriptor != -1) close(fileDescriptor);
 
 			std::cerr << e.what() << std::endl;
 		}
-
 	}	
 	 
 private:

@@ -30,6 +30,6 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/$(arg time_now)_all.bag" />
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_nema_all.bag" />
 
 </launch>

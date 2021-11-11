@@ -33,5 +33,6 @@
 
 <node pkg="ins_piksi" name="ins_piksi" type="ins_piksi_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_piksi_852_all.bag" />
 
 </launch>

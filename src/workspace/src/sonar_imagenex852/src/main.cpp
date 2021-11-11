@@ -239,7 +239,7 @@ class Imagenex852{
 			cmd.masterSlave = 0x43    ;
 
 			cmd.profileMinimumRange =  0; //Min range in meters / 10
-			cmd.triggerControl = 0x00;
+			cmd.triggerControl = 0x03; //Trigger enabled on positive edge
 			cmd.dataPoints  = dataPoints/10;
 			cmd.profile     = 0;
 			cmd.switchDelay = 0;

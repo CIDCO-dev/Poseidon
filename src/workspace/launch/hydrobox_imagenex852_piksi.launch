@@ -10,15 +10,15 @@
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
-<node pkg="imu_null" name="IMU" type="imu_null_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="imu_null" name="IMU" type="imu_null_node" output="screen"/>
+
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
-<node pkg="gnss_mosaic_x5" name="gnss_mosaic_x5" type="gnss_mosaic_x5_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+<node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
 
-
-<node pkg="sonar_nmea_0183_tcp_client" type="nmea_device_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
- 
+  
 
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
 
@@ -30,6 +30,9 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/$(arg time_now)_all.bag" />
+
+<node pkg="ins_piksi" name="ins_piksi" type="ins_piksi_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_piksi_852_all.bag" />
 
 </launch>

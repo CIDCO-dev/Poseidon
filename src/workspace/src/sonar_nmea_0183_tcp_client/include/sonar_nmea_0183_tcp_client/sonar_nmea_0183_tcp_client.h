@@ -172,9 +172,10 @@ class BaseNmeaClient{
 		
 		bool extractVTG(std::string & s){
 			vtgData vtg;
-			
-			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,%lf,K*%2x",&vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6){
-				std::cout << vtg.talkerId << "\n" << vtg.degreesDecimal << "\n" << vtg.degreesMagnetic << "\n" << vtg.speedKnots << "\n" << vtg.speedKmh << "\n" << vtg.checksum << "\n";
+			//GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A
+
+			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,%lf,K,S*%2x",&vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6 ){
+
 				nav_msgs::Odometry msg;
 				msg.header.seq=++speedSequenceNumber;
 				msg.header.stamp=ros::Time::now();
@@ -184,6 +185,7 @@ class BaseNmeaClient{
 				
 				return true;
 			}
+			else{}
 			return false;
 		}
 		

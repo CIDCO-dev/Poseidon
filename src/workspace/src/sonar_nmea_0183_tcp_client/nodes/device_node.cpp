@@ -6,8 +6,8 @@ int main(int argc,char** argv){
 
 	std::string device;
 
-	//if no params present. use default values of 127.0.0.1:5000
-	if(!ros::param::get("device", device)){
+	//if no params present. use default values of /dev/sonar
+	if(!ros::param::get("/Sonar/device", device)){
 		device = "/dev/sonar";
 	}
 

@@ -4,6 +4,8 @@
 #include "../../utils/Constants.hpp"
 #include <cstdio>
 #include <numeric>
+#include <iostream>
+#include <fstream>
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
 
@@ -43,20 +45,11 @@ void Writer::init(){
  	       throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
         }
 
-	//Open speed file
-	std::string speedFileName = outputFolder + "/" + dateString + "_speed.txt";
-
-	speedOutputFile = fopen(speedFileName.c_str(),"a");
-
-        if(!speedOutputFile){
- 	       throw std::invalid_argument(std::string("Couldn't open speed log file ") + speedFileName);
-        }
 	
         
 	fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
 	fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
 	fprintf(sonarOutputFile,"Timestamp%sDepth\n",separator.c_str());
-	fprintf(speedOutputFile, "Timestamp%sSpeed\n", separator.c_str());
 
 
 }
@@ -65,12 +58,10 @@ void Writer::finalize(){
         if(gnssOutputFile)   fclose(gnssOutputFile);
         if(imuOutputFile)    fclose(imuOutputFile);
         if(sonarOutputFile)  fclose(sonarOutputFile);
-        if(speedOutputFile)  fclose(speedOutputFile);
 
 	gnssOutputFile  = NULL;
 	imuOutputFile   = NULL;
 	sonarOutputFile = NULL;
-	speedOutputFile = NULL;
 }
 
 void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
@@ -135,7 +126,7 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	
-	double threshold = 1.0;
+	double threshold = 0.2;
 	double current_speed = speed.twist.twist.linear.y;
 	if (kmh_Speed_list.size() < 120){
 		kmh_Speed_list.push_back(current_speed);
@@ -143,17 +134,15 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	else{
 		kmh_Speed_list.pop_front();
 		kmh_Speed_list.push_back(current_speed);
+		average_speed = std::accumulate(kmh_Speed_list.begin(),kmh_Speed_list.end(),average_speed) / 120;
 	}
-	average_speed = std::accumulate(kmh_Speed_list.begin(),kmh_Speed_list.end(),average_speed) / 120;
-	std::cout<<average_speed<<"\n";
-	
+
 	if (average_speed >= threshold){
-		//loggerEnabled=true;
-		fprintf(speedOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(speed.header.stamp.sec, speed.header.stamp.nsec).c_str(),separator.c_str(),current_speed);
-		
+		loggerEnabled=true;
+
 	}
 	else {
-		//loggerEnabled=false;
+		loggerEnabled=false;
 	}
 	
 }

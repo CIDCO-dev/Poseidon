@@ -56,7 +56,7 @@ private:
         FILE * gnssOutputFile  = NULL;
         FILE * imuOutputFile   = NULL;
         FILE * sonarOutputFile = NULL;
-		FILE * speedOutputFile = NULL;
+
         std::string outputFolder;
 
         std::string separator;

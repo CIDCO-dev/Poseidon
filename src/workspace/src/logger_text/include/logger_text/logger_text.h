@@ -6,6 +6,7 @@
 #include "sensor_msgs/Imu.h"
 #include "geometry_msgs/PointStamped.h"
 #include "geometry_msgs/TransformStamped.h"
+#include "nav_msgs/Odometry.h"
 
 #include <tf2_ros/transform_listener.h>
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
@@ -26,18 +27,20 @@
 
 class Writer{
 public:
-        Writer(std::string & outputFolder, std::string separator=";");
+    Writer(std::string & outputFolder, std::string separator=";");
 
-        ~Writer();
+    ~Writer();
 
-        void init();
+    void init();
 	void finalize();
 
-        void gnssCallback(const sensor_msgs::NavSatFix& gnss);
+    void gnssCallback(const sensor_msgs::NavSatFix& gnss);
 
-        void imuCallback(const sensor_msgs::Imu& imu);
+    void imuCallback(const sensor_msgs::Imu& imu);
 
-        void sonarCallback(const geometry_msgs::PointStamped& sonar);
+    void sonarCallback(const geometry_msgs::PointStamped& sonar);
+    
+    void speedCallback(const nav_msgs::Odometry& speed);
 
 
 	//Service callbacks
@@ -53,7 +56,7 @@ private:
         FILE * gnssOutputFile  = NULL;
         FILE * imuOutputFile   = NULL;
         FILE * sonarOutputFile = NULL;
-
+		FILE * speedOutputFile = NULL;
         std::string outputFolder;
 
         std::string separator;
@@ -64,6 +67,9 @@ private:
 	uint64_t lastGnssTimestamp = 0;
 	uint64_t lastImuTimestamp  = 0;
 	uint64_t lastSonarTimestamp= 0;
+	
+	std::list<double> kmh_Speed_list;
+	double average_speed = 0;
 };
 
 

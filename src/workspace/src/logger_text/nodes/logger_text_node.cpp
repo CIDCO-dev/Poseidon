@@ -22,6 +22,7 @@ int main(int argc, char **argv)
 		ros::Subscriber sub1 = n.subscribe("fix", 1000, &Writer::gnssCallback,&writer);
 		ros::Subscriber sub2 = n.subscribe("imu/data", 1000, &Writer::imuCallback,&writer);
 		ros::Subscriber sub3 = n.subscribe("depth", 1000, &Writer::sonarCallback,&writer);
+		ros::Subscriber sub4 = n.subscribe("speed", 1000, &Writer::speedCallback, &writer);
 
 		ros::ServiceServer getLoggingStatusService = n.advertiseService("get_logging_status", &Writer::getLoggingStatus,&writer);
 		ros::ServiceServer toggleLoggingService    = n.advertiseService("toggle_logging", &Writer::toggleLogging,&writer);

@@ -123,8 +123,17 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 }
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
+	double speed_threshold_kmh = 0.0;
+	if(ros::param::get("/logger_text/speed_threshold", speed_threshold_kmh)){
+		if(speed_threshold_kmh < 0 && speed_threshold_kmh > 100){
+			speed_threshold_kmh = 5.0;
+		}
+	}
+	else{
+		speed_threshold_kmh = 5.0;
+	}	
 	
-	double threshold = 0.2;
+	
 	double current_speed = speed.twist.twist.linear.y;
 	if (kmh_Speed_list.size() < 120){
 		kmh_Speed_list.push_back(current_speed);
@@ -133,15 +142,24 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 		kmh_Speed_list.pop_front();
 		kmh_Speed_list.push_back(current_speed);
 		average_speed = std::accumulate(kmh_Speed_list.begin(),kmh_Speed_list.end(),average_speed) / 120;
+		
+		logger_service::GetLoggingStatus::Request request;
+		logger_service::GetLoggingStatus::Response response;
+		
+		mtx.lock();
+		
+		bool isLogging = getLoggingStatus(request,response);
+		
+		if ( (average_speed > speed_threshold_kmh && !isLogging) || (average_speed < speed_threshold_kmh && isLogging)){
+			logger_service::ToggleLogging::Request toogleRequest;
+			logger_service::ToggleLogging::Response toogleResponse;
+			toggleLogging(toogleRequest, toogleResponse);
+		}
+		mtx.unlock();
 	}
 
-	if (average_speed >= threshold){
-		loggerEnabled=true;
+	
 
-	}
-	else {
-		loggerEnabled=false;
-	}
 	
 }
 

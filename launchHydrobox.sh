@@ -1,9 +1,6 @@
 #!/bin/bash
 
-source /opt/ros/noetic/setup.bash
-source /home/ubuntu/Poseidon/src/workspace/devel/setup.bash
-
-roslaunch /home/ubuntu/Poseidon/src/workspace/launch/hydrobox_imagenex852.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
-
-
-
+#/home/ubuntu/Poseidon/launchHydrobox-852-x52.sh
+#/home/ubuntu/Poseidon/launchHydrobox-nmea-x5.sh
+/home/ubuntu/Poseidon/launchHydrobox-852-piksi.sh
+#/home/ubuntu/Poseidon/launchHydrobox-nmea-piksi.sh

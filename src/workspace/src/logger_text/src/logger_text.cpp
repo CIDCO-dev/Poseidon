@@ -127,12 +127,12 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	if(ros::param::get("/logger_text/speed_threshold", speed_threshold_kmh)){
 		if(speed_threshold_kmh < 0 && speed_threshold_kmh > 100){
 			speed_threshold_kmh = 5.0;
-			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh")
+			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh");
 		}
 	}
 	else{
 		speed_threshold_kmh = 5.0;
-		ROS_INFO("speed threshold defaulting to 5 Kmh")
+		ROS_INFO("no speed threshold parameter set, defaulting to 5 Kmh");
 	}	
 	
 	
@@ -148,9 +148,9 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 		logger_service::GetLoggingStatus::Response response;
 		
 		bool isLogging = getLoggingStatus(request,response);
-		//isLogging is already on, speed is not the the triggering element of the logging
-		if ( (average_speed > speed_threshold_kmh && !isLogging) || (average_speed < speed_threshold_kmh && isLogging)){
+		if ( isLogging && ((average_speed > speed_threshold_kmh && response.status != true) || (average_speed < speed_threshold_kmh && response.status == true))){
 			logger_service::ToggleLogging::Request toogleRequest;
+			toogleRequest.loggingEnabled = true;
 			logger_service::ToggleLogging::Response toogleResponse;
 			toggleLogging(toogleRequest, toogleResponse);
 		}

@@ -137,13 +137,13 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	
 	
 	double current_speed = speed.twist.twist.linear.y;
-	if (kmh_Speed_list.size() < 10){
+	if (kmh_Speed_list.size() < 120){
 		kmh_Speed_list.push_back(current_speed);
 	}
 	else{
 		kmh_Speed_list.pop_front();
 		kmh_Speed_list.push_back(current_speed);
-		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 10;
+		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 120;
 		logger_service::GetLoggingStatus::Request request;
 		logger_service::GetLoggingStatus::Response response;
 		

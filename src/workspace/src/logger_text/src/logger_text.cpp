@@ -3,6 +3,7 @@
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
 #include <cstdio>
+#include <numeric>
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
 
@@ -42,10 +43,10 @@ void Writer::init(){
  	       throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
         }
 
+	
+        
 	fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
-
 	fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
-
 	fprintf(sonarOutputFile,"Timestamp%sDepth\n",separator.c_str());
 
 
@@ -119,6 +120,41 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 			lastImuTimestamp = timestamp;
 		}
 	}
+}
+
+void Writer::speedCallback(const nav_msgs::Odometry& speed){
+	double speed_threshold_kmh = 0.0;
+	if(ros::param::get("/logger_text/speed_threshold", speed_threshold_kmh)){
+		if(speed_threshold_kmh < 0 && speed_threshold_kmh > 100){
+			speed_threshold_kmh = 5.0;
+			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh");
+		}
+	}
+	else{
+		speed_threshold_kmh = 5.0;
+		ROS_INFO("no speed threshold parameter set, defaulting to 5 Kmh");
+	}	
+	
+	
+	double current_speed = speed.twist.twist.linear.y;
+	if (kmh_Speed_list.size() < 120){
+		kmh_Speed_list.push_back(current_speed);
+	}
+	else{
+		kmh_Speed_list.pop_front();
+		kmh_Speed_list.push_back(current_speed);
+		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 120;
+		logger_service::GetLoggingStatus::Request request;
+		logger_service::GetLoggingStatus::Response response;
+		
+		bool isLogging = getLoggingStatus(request,response);
+		if ( isLogging && ((average_speed > speed_threshold_kmh && response.status != true) || (average_speed < speed_threshold_kmh && response.status == true))){
+			logger_service::ToggleLogging::Request toogleRequest;
+			toogleRequest.loggingEnabled = true;
+			logger_service::ToggleLogging::Response toogleResponse;
+			toggleLogging(toogleRequest, toogleResponse);
+		}
+	}	
 }
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){

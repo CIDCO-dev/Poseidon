@@ -130,9 +130,10 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh");
 		}
 	}
-	else{
+	else if(speedCallbackFlag == false){
 		speed_threshold_kmh = 5.0;
 		ROS_INFO("no speed threshold parameter set, defaulting to 5 Kmh");
+		speedCallbackFlag = true;
 	}	
 	
 	
@@ -148,13 +149,21 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 		logger_service::GetLoggingStatus::Response response;
 		
 		bool isLogging = getLoggingStatus(request,response);
-		if ( isLogging && ((average_speed > speed_threshold_kmh && response.status != true) || (average_speed < speed_threshold_kmh && response.status == true))){
+		if ( isLogging && (average_speed > speed_threshold_kmh && response.status != true) ){
 			logger_service::ToggleLogging::Request toogleRequest;
 			toogleRequest.loggingEnabled = true;
 			logger_service::ToggleLogging::Response toogleResponse;
 			toggleLogging(toogleRequest, toogleResponse);
+			ROS_INFO("speed threshold reached, enabling logging");
 		}
-	}	
+		else if(isLogging && (average_speed < speed_threshold_kmh && response.status == true)){
+			logger_service::ToggleLogging::Request toogleRequest;
+			toogleRequest.loggingEnabled = false;
+			logger_service::ToggleLogging::Response toogleResponse;
+			toggleLogging(toogleRequest, toogleResponse);
+			ROS_INFO("speed below threshold, disabling logging");
+		}
+	}
 }
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){

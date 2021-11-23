@@ -70,6 +70,7 @@ private:
 	
 	std::list<double> kmh_Speed_list;
 	double average_speed = 0;
+	bool speedCallbackFlag = false;
 };
 
 

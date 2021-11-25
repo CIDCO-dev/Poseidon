@@ -54,9 +54,10 @@ public:
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
 	rapidjson::Document document;
-
         if(document.Parse(msg->get_payload().c_str()).HasParseError()){
         	//Not valid JSON
+        	ROS_ERROR("invalid json");
+        	std::cerr<<msg->get_payload().c_str()<<"\n";
                 return;
         }
 

@@ -23,6 +23,10 @@
 #include "sensor_msgs/NavSatFix.h"
 #include "nav_msgs/Odometry.h"
 
+//CIDCO
+#include "setting_msg/Setting.h"
+#include "setting_msg/ConfigurationService.h"
+
 
 typedef struct{
     char talkerId[2];
@@ -72,6 +76,7 @@ class BaseNmeaClient{
 
 	private:
 		ros::NodeHandle node;
+		ros::ServiceClient	configurationClient;
 		
 		ros::Publisher sonarTopic;
 		ros::Publisher gnssTopic;
@@ -88,7 +93,25 @@ class BaseNmeaClient{
 
 	public:
 		BaseNmeaClient(bool useDepth,bool usePosition,bool useAttitude) : useDepth(useDepth),usePosition(usePosition),useAttitude(useAttitude){
+		configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+			ROS_INFO("getting speed threshold configuration...");
+			getSpeedThreshold();
 
+		}
+		
+		void getSpeedThreshold(){
+			setting_msg::ConfigurationService srv;
+
+            srv.request.key = "speedThresholdKmh";
+
+            if(configurationClient.call(srv)){
+            	std::string tst = srv.response.value;
+            	std::cerr<<"speed threshold from config file : "<<tst<<"\n";
+                //return srv.response.value;
+            }/*
+            else{
+                return "";
+            }*/
 		}
 
 		void initTopics(){
@@ -105,8 +128,7 @@ class BaseNmeaClient{
 				
 				sensor_msgs::NavSatFix msg;
 				msg.header.seq=++gpsSequenceNumber;
-				msg.header.stamp=ros::Time::now();
-								
+				msg.header.stamp=ros::Time::now();			
 				int longDegrees =( (double)data.longitude / 100);
 				double longMinutes = (data.longitude - (longDegrees*100)) / (double)60;
 				double sign = (data.eastOrWest=='E')?1:-1;
@@ -185,7 +207,6 @@ class BaseNmeaClient{
 				
 				return true;
 			}
-			else{}
 			return false;
 		}
 		

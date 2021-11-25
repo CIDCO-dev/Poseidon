@@ -5,12 +5,35 @@
 #include <cstdio>
 #include <numeric>
 
-Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
 
+Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
+			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+			ROS_INFO("getting speed threshold configuration...");
+			getSpeedThresholdConfig();
 }
 
 Writer::~Writer(){
 	finalize();
+}
+
+void Writer::getSpeedThresholdConfig(){
+	setting_msg::ConfigurationService srv;
+
+    srv.request.key = "speedThresholdKmh";
+
+    if(configurationClient.call(srv)){
+    	std::string speedThresKmh = srv.response.value;
+    	std::cerr << "speed threshold from config file : "<< speedThresKmh << "\n";
+        speedThresholdKmh = stod(speedThresKmh);
+    }
+    else{
+    	ROS_WARN("no speed threshold define in config file, defaulting to 5 Kmh");
+        speedThresholdKmh = 5.0;
+    }
+}
+	
+double Writer::getSpeedThreshold(){
+	return speedThresholdKmh;
 }
 
 void Writer::init(){
@@ -123,45 +146,52 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 }
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
-	double speed_threshold_kmh = 0.0;
-	if(ros::param::get("/logger_text/speed_threshold", speed_threshold_kmh)){
-		if(speed_threshold_kmh < 0 && speed_threshold_kmh > 100){
-			speed_threshold_kmh = 5.0;
+	//double speed_threshold_kmh = 0.0;
+	bool automaticMode = true; //temporary
+	
+	if(automaticMode){
+		speedThresholdKmh = getSpeedThreshold();
+
+		if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
+			speedThresholdKmh = 5.0;
 			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh");
 		}
-	}
-	else if(speedCallbackFlag == false){
-		speed_threshold_kmh = 5.0;
-		ROS_INFO("no speed threshold parameter set, defaulting to 5 Kmh");
-		speedCallbackFlag = true;
-	}	
-	
-	
-	double current_speed = speed.twist.twist.linear.y;
-	if (kmh_Speed_list.size() < 120){
-		kmh_Speed_list.push_back(current_speed);
-	}
-	else{
-		kmh_Speed_list.pop_front();
-		kmh_Speed_list.push_back(current_speed);
-		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 120;
-		logger_service::GetLoggingStatus::Request request;
-		logger_service::GetLoggingStatus::Response response;
+		//speedCallbackFlag is to display only once the message
+		else if(speedThresholdKmh == 0.0){
+			speedThresholdKmh = 5.0;
+			ROS_INFO("speed threshold parameter set to Zero, defaulting to 5 Kmh");
+			//speedCallbackFlag = true;
+		}	
 		
-		bool isLogging = getLoggingStatus(request,response);
-		if ( isLogging && (average_speed > speed_threshold_kmh && response.status != true) ){
-			logger_service::ToggleLogging::Request toogleRequest;
-			toogleRequest.loggingEnabled = true;
-			logger_service::ToggleLogging::Response toogleResponse;
-			toggleLogging(toogleRequest, toogleResponse);
-			ROS_INFO("speed threshold reached, enabling logging");
+		
+		double current_speed = speed.twist.twist.linear.y;
+		//wait two mins before calculating the average speed
+		if (kmh_Speed_list.size() < 120){
+			kmh_Speed_list.push_back(current_speed);
 		}
-		else if(isLogging && (average_speed < speed_threshold_kmh && response.status == true)){
-			logger_service::ToggleLogging::Request toogleRequest;
-			toogleRequest.loggingEnabled = false;
-			logger_service::ToggleLogging::Response toogleResponse;
-			toggleLogging(toogleRequest, toogleResponse);
-			ROS_INFO("speed below threshold, disabling logging");
+		else{
+			kmh_Speed_list.pop_front();
+			kmh_Speed_list.push_back(current_speed);
+			average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 120;
+			logger_service::GetLoggingStatus::Request request;
+			logger_service::GetLoggingStatus::Response response;
+			
+			bool isLogging = getLoggingStatus(request,response);
+
+			if ( isLogging && (average_speed > speedThresholdKmh && response.status != true) ){
+				logger_service::ToggleLogging::Request toogleRequest;
+				toogleRequest.loggingEnabled = true;
+				logger_service::ToggleLogging::Response toogleResponse;
+				toggleLogging(toogleRequest, toogleResponse);
+				ROS_INFO("speed threshold reached, enabling logging");
+			}
+			else if(isLogging && (average_speed < speedThresholdKmh && response.status == true)){
+				logger_service::ToggleLogging::Request toogleRequest;
+				toogleRequest.loggingEnabled = false;
+				logger_service::ToggleLogging::Response toogleResponse;
+				toggleLogging(toogleRequest, toogleResponse);
+				ROS_INFO("speed below threshold, disabling logging");
+			}
 		}
 	}
 }

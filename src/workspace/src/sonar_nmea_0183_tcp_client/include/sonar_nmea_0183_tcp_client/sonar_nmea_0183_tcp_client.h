@@ -23,9 +23,6 @@
 #include "sensor_msgs/NavSatFix.h"
 #include "nav_msgs/Odometry.h"
 
-//CIDCO
-#include "setting_msg/Setting.h"
-#include "setting_msg/ConfigurationService.h"
 
 
 typedef struct{
@@ -76,7 +73,6 @@ class BaseNmeaClient{
 
 	private:
 		ros::NodeHandle node;
-		ros::ServiceClient	configurationClient;
 		
 		ros::Publisher sonarTopic;
 		ros::Publisher gnssTopic;
@@ -93,27 +89,9 @@ class BaseNmeaClient{
 
 	public:
 		BaseNmeaClient(bool useDepth,bool usePosition,bool useAttitude) : useDepth(useDepth),usePosition(usePosition),useAttitude(useAttitude){
-		configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
-			ROS_INFO("getting speed threshold configuration...");
-			getSpeedThreshold();
 
 		}
 		
-		void getSpeedThreshold(){
-			setting_msg::ConfigurationService srv;
-
-            srv.request.key = "speedThresholdKmh";
-
-            if(configurationClient.call(srv)){
-            	std::string tst = srv.response.value;
-            	std::cerr<<"speed threshold from config file : "<<tst<<"\n";
-                //return srv.response.value;
-            }/*
-            else{
-                return "";
-            }*/
-		}
-
 		void initTopics(){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
 			gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);

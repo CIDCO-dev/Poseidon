@@ -25,6 +25,10 @@
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
 
+//Config service
+#include "setting_msg/Setting.h"
+#include "setting_msg/ConfigurationService.h"
+
 class Writer{
 public:
     Writer(std::string & outputFolder, std::string separator=";");
@@ -42,6 +46,9 @@ public:
     
     void speedCallback(const nav_msgs::Odometry& speed);
 
+	void getSpeedThresholdConfig();
+	
+	double getSpeedThreshold();
 
 	//Service callbacks
 	bool getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response);
@@ -58,7 +65,6 @@ private:
         FILE * sonarOutputFile = NULL;
 
         std::string outputFolder;
-
         std::string separator;
 
 	tf2_ros::Buffer buffer;
@@ -70,7 +76,10 @@ private:
 	
 	std::list<double> kmh_Speed_list;
 	double average_speed = 0;
-	bool speedCallbackFlag = false;
+	//bool speedCallbackFlag = false;
+	double speedThresholdKmh = 0.0;
+	ros::NodeHandle node;
+	ros::ServiceClient	configurationClient;
 };
 
 

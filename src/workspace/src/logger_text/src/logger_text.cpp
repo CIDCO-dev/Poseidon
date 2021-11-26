@@ -146,7 +146,7 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 }
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
-	//double speed_threshold_kmh = 0.0;
+
 	bool automaticMode = true; //temporary
 	
 	if(automaticMode){
@@ -156,11 +156,9 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 			speedThresholdKmh = 5.0;
 			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh");
 		}
-		//speedCallbackFlag is to display only once the message
 		else if(speedThresholdKmh == 0.0){
 			speedThresholdKmh = 5.0;
 			ROS_INFO("speed threshold parameter set to Zero, defaulting to 5 Kmh");
-			//speedCallbackFlag = true;
 		}	
 		
 		

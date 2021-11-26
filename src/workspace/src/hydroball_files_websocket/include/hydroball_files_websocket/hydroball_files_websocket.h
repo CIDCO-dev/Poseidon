@@ -57,6 +57,8 @@ public:
     }
 
     void buildFileListStringstream(std::stringstream & ss) {
+    
+    	/*
         ss << "{";
 
 	    //list files and send it over websocket
@@ -80,6 +82,7 @@ public:
 
         ss << "]";
         ss << "}";
+        */
     }
 
     void sendFileList() {
@@ -121,8 +124,8 @@ public:
 		}
 	}
 
-
-        void on_messageOld(connection_hdl hdl, server::message_ptr msg) {
+	/*
+    void on_messageOld(connection_hdl hdl, server::message_ptr msg) {
 	std::string str;
 	std::string str1;
 	std::string add_lat;
@@ -182,7 +185,7 @@ public:
             }
 		ROS_INFO(str.c_str());
 		}
-	}
+	}*/
 
 
     void on_open(connection_hdl hdl) {

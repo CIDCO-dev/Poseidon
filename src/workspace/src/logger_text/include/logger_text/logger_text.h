@@ -79,6 +79,7 @@ private:
 	double speedThresholdKmh = 0.0;
 	ros::NodeHandle node;
 	ros::ServiceClient	configurationClient;
+	double defaultSpeedThreshold = 5.0;
 };
 
 

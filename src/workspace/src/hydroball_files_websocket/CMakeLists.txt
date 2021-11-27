@@ -7,7 +7,7 @@ project(hydroball_files_websocket)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-add_definitions(-std=c++11 -Wall -g)
+add_definitions(-std=c++17 -Wall -g)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)

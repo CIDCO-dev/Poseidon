@@ -12,8 +12,10 @@
 #include <string.h>
 #include <boost/lexical_cast.hpp>
 #include <mutex>
+#include <filesystem>
 
 #include "ros/ros.h"
+#include "ros/console.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -28,12 +30,13 @@ using websocketpp::connection_hdl;
 class ControlFiles {
 public:
     ControlFiles(std::string & logFolder): logFolder(logFolder) {
+    	ROS_INFO_STREAM("log folder: "<<logFolder);
         srv.init_asio();
         srv.set_reuse_addr(true);
-	srv.clear_access_channels(websocketpp::log::alevel::all);
+		srv.clear_access_channels(websocketpp::log::alevel::all);
         srv.set_open_handler(bind(&ControlFiles::on_open,this,std::placeholders::_1));
         srv.set_close_handler(bind(&ControlFiles::on_close,this,std::placeholders::_1));
-	srv.set_message_handler(bind(&ControlFiles::on_message,this,std::placeholders::_1,std::placeholders::_2));
+		srv.set_message_handler(bind(&ControlFiles::on_message,this,std::placeholders::_1,std::placeholders::_2));
     }
 
     void deleteFile(std::string & fileToDelete) {
@@ -44,21 +47,39 @@ public:
   		}
     }
 
-    void buildFileListJson(std::string & json) {
-        /*
-        document.AddMember("telemetry", telemetry, document.GetAllocator());
-        rapidjson::StringBuffer sb;
-        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
-        document.Accept(writer);
-        json = sb.GetString();
-        */
-        json = "TODO";
+    void buildFileListJson(rapidjson::Document & document) {
+    	//rapidjson::Document document;
+		document.SetObject();
+		rapidjson::Value filePaths(rapidjson::kArrayType);
+		rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+		
+    	//std::string path = "/home/ubuntu/Poseidon/www/webroot/record";
+		std::filesystem::path PATH = logFolder;
+		for(auto &dir_entry: std::filesystem::directory_iterator{PATH}){
+		    if(dir_entry.is_regular_file()){
+				rapidjson::Value PATH(rapidjson::kArrayType);
+				rapidjson::Value PATH2(rapidjson::kStringType);
+				char buffer[255];
+				int len = sprintf(buffer, "%s",dir_entry.path().filename().string().c_str()); // dynamically created string.
+				PATH2.SetString(buffer, len, document.GetAllocator());
+				PATH.PushBack(PATH2, allocator);
+				
+				std::string record = "record/" + dir_entry.path().filename().string();
+				len = sprintf(buffer, "%s",record.c_str());
+				PATH2.SetString(buffer, len, document.GetAllocator());
+				PATH.PushBack(PATH2, allocator);
+				
+				filePaths.PushBack(PATH, allocator);
+			}
+		}
+		document.AddMember("fileslist",filePaths,document.GetAllocator());
+        
         return;
     }
-
+	/*
     void buildFileListStringstream(std::stringstream & ss) {
-    
-    	/*
+    	
+    	
         ss << "{";
 
 	    //list files and send it over websocket
@@ -68,24 +89,47 @@ public:
 	    glob(glob_logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
 	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
 	    	std::string str = glob_result.gl_pathv[i];
+	    	//std::cout<<str<<"\n";
 		    if (i > 0) {ss << "," ;}
 
             ss << "[";
+            //std::cout<<ss<<"\n";
             str.erase (0,(logFolder.length()));
             ss << "\"" << str << "\"" ; //file name
             str = glob_result.gl_pathv[i];
             str.erase (0,(logFolder.length()-7));
+            std::cout<<str<<"\n\n";
             ss << "," ;
             ss << "\"" << str << "\"" ;
             ss << "]";
+            //std::cout<<ss<<"\n\n";
+            
         }
 
         ss << "]";
         ss << "}";
-        */
-    }
+        
+    }*/
 
     void sendFileList() {
+    	
+    	rapidjson::Document document;
+		document.SetObject();
+		
+		buildFileListJson(document);
+		
+		rapidjson::StringBuffer sb;
+		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+		document.Accept(writer);
+        std::string json = sb.GetString();
+        std::lock_guard<std::mutex> lock(mtx);
+        for (auto it : connections) {
+             srv.send(it,json,websocketpp::frame::opcode::text);
+        }
+
+		ROS_INFO_STREAM(json.c_str());
+		
+    	/*
         //Build JSON object to send to web interface
         std::stringstream ss;
 
@@ -98,6 +142,7 @@ public:
         }
 
 		ROS_INFO(toSend.c_str());
+		*/
     }
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
@@ -185,8 +230,8 @@ public:
             }
 		ROS_INFO(str.c_str());
 		}
-	}*/
-
+	}
+	*/
 
     void on_open(connection_hdl hdl) {
         std::lock_guard<std::mutex> lock(mtx);

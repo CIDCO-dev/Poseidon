@@ -23,7 +23,7 @@ void Writer::getSpeedThresholdConfig(){
 
     if(configurationClient.call(srv)){
     	std::string speedThresKmh = srv.response.value;
-    	std::cerr << "speed threshold from config file : "<< speedThresKmh << "\n";
+    	ROS_INFO_STREAM("speed threshold from config file : "<< speedThresKmh);
         speedThresholdKmh = stod(speedThresKmh);
     }
     else{
@@ -153,12 +153,14 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 		speedThresholdKmh = getSpeedThreshold();
 
 		if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
-			speedThresholdKmh = 5.0;
-			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh");
+			speedThresholdKmh = defaultSpeedThreshold;
+			std::string speed = std::to_string(speedThresholdKmh);
+			ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<<speed<<" Kmh");
 		}
 		else if(speedThresholdKmh == 0.0){
-			speedThresholdKmh = 5.0;
-			ROS_INFO("speed threshold parameter set to Zero, defaulting to 5 Kmh");
+			speedThresholdKmh = defaultSpeedThreshold;
+			std::string speed = std::to_string(speedThresholdKmh);
+			ROS_INFO_STREAM("speed threshold parameter set to Zero, defaulting to "<<speed<<" Kmh");
 		}	
 		
 		

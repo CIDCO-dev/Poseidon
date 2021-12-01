@@ -109,6 +109,8 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 
 	                QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,imu.orientation,heading,pitch,roll);
 
+			heading = 90 - heading;
+			
 			//Hydrographers prefer 0-360 degree RPY
 	                if(heading < 0) {
 	                    heading += 360.0;

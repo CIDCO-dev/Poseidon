@@ -172,10 +172,10 @@ class Imagenex852{
 
 						try{
 							//Publish depth point measurement
-	        		        		msg.point.z = measureDepth(msg,500);
+	        		        		msg.point.z = measureDepth(msg,0);
         	        				sonarTopic.publish(msg);
 
-							//Also publish in NED frame
+							//Also publish in ENU frame
 							msg.header.frame_id="sonar_enu";
 							msg.point.z = -1 * msg.point.z;
 							sonarTopicEnu.publish(msg);
@@ -240,8 +240,8 @@ class Imagenex852{
 
 			cmd.profileMinimumRange =  0; //Min range in meters / 10
 			cmd.triggerControl = 0x07; //Trigger enabled on positive edge
-			cmd.dataPoints  = dataPoints/10;
-			cmd.profile     = 0;
+			cmd.dataPoints  = (dataPoints>0) ? dataPoints/10 : 0;
+			cmd.profile     = (dataPoints > 0)? 0: 1;
 			cmd.switchDelay = 0;
 			cmd.frequency   = 0;
 			cmd.terminationByte = 0xFD;
@@ -256,6 +256,21 @@ class Imagenex852{
 
 				if( (nbBytes = serialRead((uint8_t*)&hdr,sizeof(Imagenex852ReturnDataHeader))) == 12){
 
+					//verify capabilities
+
+					if(! hdr.serialStatus & 0x01){
+						ROS_ERROR("Echosounder not detected");
+					}
+
+					//Verify that we support automatic trigger mode
+					if(! hdr.serialStatus & 0x04){
+						ROS_ERROR("Automatic trigger mode not supported. Pings will be unsynchronized");
+					}
+
+					if(hdr.serialStatus & 0x80){
+						ROS_ERROR("Character overrun detected");
+					}
+
 					msg.header.stamp = ros::Time::now();
 					msg.header.stamp.nsec = delayNanoseconds; //Chop off sub-second values since the sonar trigger is clocked on the PPS...we may want to add a delay value though
 					//ROS_INFO("Read %d bytes header",nbBytes);
@@ -267,25 +282,27 @@ class Imagenex852{
 
 						nbBytes = serialRead(echoData,dataPoints);
 
-						if(nbBytes == dataPoints){
-                                		        uint8_t terminationCharacter;
-
-                                		        do{
-                                                		serialRead(&terminationCharacter,sizeof(uint8_t));
-                                        		} while(terminationCharacter != 0xFC);
-
-                                        		uint16_t profileHigh = (hdr.profileRange[1] & 0x7E) >> 1;
-                                        		uint16_t profileLow  = ((hdr.profileRange[1] & 0x01) << 7) | (hdr.profileRange[0] & 0x7F);
-
-                                        		uint16_t depthCentimeters = (profileHigh << 8) | profileLow;
-
-                                        		depth = (double)depthCentimeters / (double) 100;
-						}
-						else{
+						if(nbBytes != dataPoints){
 							ROS_ERROR("Could not read datapoints ( %d bytes read)",nbBytes);
 							throw std::system_error();
 						}
+
+						//TODO: process datapoints
 					}
+
+					//Read termination character
+					uint8_t terminationCharacter;
+					do{
+						serialRead(&terminationCharacter,sizeof(uint8_t));
+					} while(terminationCharacter != 0xFC);
+
+
+					uint16_t profileHigh = (hdr.profileRange[1] & 0x7E) >> 1;
+					uint16_t profileLow  = ((hdr.profileRange[1] & 0x01) << 7) | (hdr.profileRange[0] & 0x7F);
+
+					uint16_t depthCentimeters = (profileHigh << 8) | profileLow;
+
+					depth = (double)depthCentimeters / (double) 100;
 				}
 				else{
 					ROS_ERROR("Cannot read return data header (%d bytes read)",nbBytes);

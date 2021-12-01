@@ -5,3 +5,4 @@ sonarAbsorbtion 20
 sonarPulseLength 120
 sonarRange 20
 sonarStartGain 16
+speedThresholdKmh 5

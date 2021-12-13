@@ -56,7 +56,7 @@ Description=Launch ROS on boot.
 
 [Service]
 Type=simple
-ExecStart=/home/ubuntu/Poseidon/launchHydrobox.sh
+ExecStart=/home/ubuntu/Poseidon/launchROSService.sh
 
 [Install]
 WantedBy=multi-user.target
@@ -64,4 +64,4 @@ EOF3'
 
 sudo chmod 755 /etc/systemd/system/ros.service
 sudo systemctl enable ros
-sudo systemctl start ros
+echo "sudo systemctl start ros"

@@ -184,7 +184,9 @@ public:
 
                 QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,state.imu.orientation,heading,pitch,roll);
 
-		//hydrographers prefer heading from 0-360...
+		//hydrographers prefer heading from 0-360 in NED frame
+		heading = 90-heading;
+
                 if(heading < 0) {
                     heading += 360.0;
                 }

@@ -1,0 +1,24 @@
+<launch>
+
+<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
+
+<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
+
+<node pkg="imu_dummy" name="IMU" type="imu_dummy_node" output="screen"/>
+
+<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" /> 
+
+<node pkg="sonar_dummy" type="sonar_dummy_node" name="Sonar" output="screen"/>
+
+<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
+
+<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" output="screen"/>
+
+<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)"/>
+
+
+
+</launch>

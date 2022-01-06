@@ -19,3 +19,54 @@ rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
 sh src/cartographer/scripts/install_abseil.sh
 catkin_make_isolated --install --use-ninja
 ```
+
+
+### Compile and run Posseidon on virtual machine
+```
+pre-requisite:
+ubuntu (ubuntu only) virtual machine
+ the username must be ubuntu ( optional but easier install)
+ instruction:
+>sudo apt install git
+>cd
+>git clone <posseidon repo>
+> cd Posseidon/install
+run these scripts:
+	~/Poseidon/install/stages/1-base-ros-noetic.sh
+	~/Poseidon/install/stages/2-x64.sh
+	~/Poseidon/install/stages/3-network.sh
+	~/Poseidon/install/stages/4-x64.sh
+	~/Poseidon/install/stages/5-finalize.sh
+
+example :
+>sh ~/Poseidon/install/stages/1-base-ros-noetic.sh
+
+source ros environement:
+>source /opt/ros/noetic/setup.bash
+
+optional, automatic sourcing ros environement:
+>echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+start new terminal or :
+>source ~/.bashrc
+
+
+changes to build poseidon on virtual machine:
+>cd ~/Poseidon/src/workspace
+>mv src/mavros-1.8.0/ src/.mavros-1.8.0/
+>mv src/raspberrypi_vitals src/.raspberrypi_vitals
+>mv src/echoboat_odometry/ src/.echoboat_odometry/
+
+build:
+>catkin_make
+source poseidon workspace:
+>source devel/setup.bash
+or
+>echo "source ~/Poseidon/src/workspace/devel/setup.bash" >> ~/.bashrc
+start new terminal or :
+>source ~/.bashrc
+
+launch test environement:
+>roslaunch launch/dummy_simulator_virtual-machine.launch
+
+start browser and navigate to localhost or 127.0.0.1
+```

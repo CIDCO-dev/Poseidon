@@ -1,5 +1,6 @@
 <launch>
-
+<arg name="sonarAddress" value="127.0.0.1"/>
+<arg name="sonarPort" value="8000"/>
 <arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
 <arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
 
@@ -11,7 +12,7 @@
 
 <node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" /> 
 
-<node pkg="sonar_dummy" type="sonar_dummy_node" name="Sonar" output="screen"/>
+<node pkg="sonar_nmea_0183_tcp_client" name="sonar" type="nmea_network_node" output="screen" args="$(arg sonarAddress) $(arg sonarPort)"/>
 
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 

@@ -175,6 +175,11 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 		if(!gnssOutputFile){
 			init();
 		}
+		else{
+			//We will clock the log rotation check on the GNSS data since it's usually the slowest at 1Hz, which is plenty
+			//TODO: we could throttle this if CPU usage becomes an issue
+			rotate();
+		}
 
 		uint64_t timestamp = TimeUtils::buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
 

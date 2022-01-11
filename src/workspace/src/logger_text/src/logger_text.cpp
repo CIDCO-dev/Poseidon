@@ -9,22 +9,27 @@
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 			ROS_INFO("getting speed threshold configuration...");
-			getSpeedThresholdConfig();
+			updateSpeedThreshold();
 }
 
 Writer::~Writer(){
 	finalize();
 }
 
-void Writer::getSpeedThresholdConfig(){
+void Writer::updateSpeedThreshold(){
 	setting_msg::ConfigurationService srv;
 
     srv.request.key = "speedThresholdKmh";
 
     if(configurationClient.call(srv)){
     	std::string speedThresKmh = srv.response.value;
-    	ROS_INFO_STREAM("speed threshold from config file : "<< speedThresKmh);
-        speedThresholdKmh = stod(speedThresKmh);
+    	ROS_INFO_STREAM("speed threshold from config file : " << speedThresKmh);
+        try{
+        	speedThresholdKmh = stod(speedThresKmh);
+        }
+        catch(std::invalid_argument &err){
+        	ROS_INFO_STREAM("speed threshold from config file is not written properly \n example : 4.4");
+        }
     }
     else{
     	ROS_WARN("no speed threshold define in config file, defaulting to 5 Kmh");
@@ -150,7 +155,6 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
 
 	bool automaticMode = true; //temporary
-	
 	if(automaticMode){
 		speedThresholdKmh = getSpeedThreshold();
 
@@ -159,40 +163,37 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 			std::string speed = std::to_string(speedThresholdKmh);
 			ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<<speed<<" Kmh");
 		}
-		else if(speedThresholdKmh == 0.0){
-			speedThresholdKmh = defaultSpeedThreshold;
-			std::string speed = std::to_string(speedThresholdKmh);
-			ROS_INFO_STREAM("speed threshold parameter set to Zero, defaulting to "<<speed<<" Kmh");
-		}	
-		
-		
+				
 		double current_speed = speed.twist.twist.linear.y;
+		std::cout<<current_speed<<"\n";
 		//wait two mins before calculating the average speed
-		if (kmh_Speed_list.size() < 120){
+		if (kmh_Speed_list.size() < 1){ //for testing purpuses set to 0 but should be 120
 			kmh_Speed_list.push_back(current_speed);
 		}
 		else{
 			kmh_Speed_list.pop_front();
 			kmh_Speed_list.push_back(current_speed);
-			average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 120;
+			average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 1; // should be divided by 120
 			logger_service::GetLoggingStatus::Request request;
 			logger_service::GetLoggingStatus::Response response;
 			
 			bool isLogging = getLoggingStatus(request,response);
 
 			if ( isLogging && (average_speed > speedThresholdKmh && response.status != true) ){
+				ROS_INFO("speed threshold reached, enabling logging");
 				logger_service::ToggleLogging::Request toogleRequest;
 				toogleRequest.loggingEnabled = true;
 				logger_service::ToggleLogging::Response toogleResponse;
 				toggleLogging(toogleRequest, toogleResponse);
-				ROS_INFO("speed threshold reached, enabling logging");
+				
 			}
 			else if(isLogging && (average_speed < speedThresholdKmh && response.status == true)){
+				ROS_INFO("speed below threshold, disabling logging");
 				logger_service::ToggleLogging::Request toogleRequest;
 				toogleRequest.loggingEnabled = false;
 				logger_service::ToggleLogging::Response toogleResponse;
 				toggleLogging(toogleRequest, toogleResponse);
-				ROS_INFO("speed below threshold, disabling logging");
+				
 			}
 		}
 	}

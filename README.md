@@ -66,6 +66,7 @@ start new terminal or :
 >source ~/.bashrc
 
 launch test environement:
+>python3 ~/Poseidon/src/workspace/src/sonar_nmea_0183_tcp_client/src/send_data.py
 >roslaunch launch/dummy_simulator_virtual-machine.launch
 
 start browser and navigate to localhost or 127.0.0.1

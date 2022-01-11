@@ -20,8 +20,8 @@ while True:
 		while True:
 			#data = connection.recv(16)
 			#print('received "%s"' % data)
-			data = 'GPVTG,82.0,T,77.7,M,2.4,N,20,K,S*3A'
-			data = bytes(data,'UTF-8')
+			data = '$GPVTG,82.0,T,77.7,M,2.4,N,9.0,K,S*3A\r\n'
+			data = bytes(data,encoding="raw_unicode_escape")
 			if data:
 				connection.sendall(data)
 			else:

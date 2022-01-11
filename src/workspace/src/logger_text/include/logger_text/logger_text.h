@@ -46,7 +46,7 @@ public:
     
     void speedCallback(const nav_msgs::Odometry& speed);
 
-	void getSpeedThresholdConfig();
+	void updateSpeedThreshold();
 	
 	double getSpeedThreshold();
 

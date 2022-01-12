@@ -171,22 +171,20 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 			kmh_Speed_list.push_back(current_speed);
 		}
 		else{
+			kmh_Speed_list.emplace_back(current_speed);
 			kmh_Speed_list.pop_front();
-			kmh_Speed_list.push_back(current_speed);
-			average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 5; // should be divided by 120
+			
+			average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), 0) / 5.0; // should be divided by 120
 			logger_service::GetLoggingStatus::Request request;
 			logger_service::GetLoggingStatus::Response response;
-			
-			bool isLogging = getLoggingStatus(request,response);
 
-			if ( isLogging && (average_speed > speedThresholdKmh && response.status != true) ){
+			bool isLogging = getLoggingStatus(request,response);
+			if ( isLogging && (average_speed > speedThresholdKmh && response.status == false) ){
 				ROS_INFO("speed threshold reached, enabling logging");
 				logger_service::ToggleLogging::Request toogleRequest;
 				toogleRequest.loggingEnabled = true;
 				logger_service::ToggleLogging::Response toogleResponse;
 				toggleLogging(toogleRequest, toogleResponse);
-				
-				
 			}
 			else if(isLogging && (average_speed < speedThresholdKmh && response.status == true)){
 				ROS_INFO("speed below threshold, disabling logging");
@@ -221,31 +219,23 @@ bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,lo
 bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
 	//std::thread::id thread_id = std::this_thread::get_id();
 	//std::cout<<"thread_id: "<<thread_id<<"\n";
-	mtx.lock();
+	
 	if(bootstrappedGnssTime){
-		if(!loggerEnabled && request.loggingEnabled){
+		mtx.lock();
+		if(!loggerEnabled && request.loggingEnabled){	
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
-			mtx.unlock();
-			//std::cout<<"closing thread_id: "<<thread_id<<"\n";
 		}
 		else if(loggerEnabled && !request.loggingEnabled){
 			//shutting down logging, finalize logfiles
 			loggerEnabled=false;
 			finalize();
-			mtx.unlock();
-			//std::cout<<"closing thread_id: "<<thread_id<<"\n";
 		}
-
-		//just in case something weird happen and make sure we don't get in a dead lock
 		mtx.unlock();
-		//std::cout<<"closing thread_id: "<<thread_id<<"\n";
+		//std::cout<<"unlocking thread_id: "<<thread_id<<"\n";
 		response.loggingStatus=loggerEnabled;
 		return true;
 	}
-	
-	mtx.unlock();
-	//std::cout<<"closing thread_id: "<<thread_id<<"\n";
 	return false;
 }

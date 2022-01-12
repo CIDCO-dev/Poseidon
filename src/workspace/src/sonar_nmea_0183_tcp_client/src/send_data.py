@@ -28,22 +28,19 @@ while True:
 			data2 = bytes(data2,encoding="raw_unicode_escape")
 			if data:
 				time.sleep(1)
-				connection.sendall(data)
 				x += 1
 				if x < 10 :
-					connection.sendall(data)
+					connection.sendall(data2)
+					print('$GPVTG,82.0,T,77.7,M,2.4,N,1.0,K,S*3A\r\n')
 				elif x > 20:
 					x = 0
-				else:
-					connection.sendall(data2)
+					print("reset")
+				elif x > 10:
+					connection.sendall(data)
+					print('$GPVTG,82.0,T,77.7,M,2.4,N,9.0,K,S*3A\r\n')
 				
 			else:
 				break
 	finally:
 		connection.close()
-"""	
-				#GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A
-				data = 'GPVTG,82.0,T,77.7,M,2.4,N,20,K,S*3A'
-				data = bytes(data,'UTF-8')
-				tcp_socket.sendall(data)
-"""
+

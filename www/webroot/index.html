@@ -155,12 +155,17 @@
                         Stop Recording
                 </a>
 		</div>
-		OFF
-		<label class="switch"> 
-	  		<input type="checkbox" checked>
-	  		<span class="slider round"></span>
-		</label>
-		ON
+		<div class="float-right d-inline">
+			<div id="automaticMode">
+				<span class="text">automatic mode</span>
+			</div>
+			<span class="text">OFF</span>
+			<label class="switch" onclick="toggle()">
+		  		<input id="toggleButton" type="checkbox" checked> <!-- remove "checked" to have automatic mode off upon start -->
+		  		<span class="slider"></span>
+			</label>
+			<span class="text">ON</span>
+		</div>
 	  </div>
           </li>
           </ul>
@@ -636,7 +641,15 @@ $( document ).ready(function() {
         $("#btnStopRecording").removeClass("d-inline").addClass("d-none");
         $("#recordingStatus").removeClass("d-block").addClass("d-none");
   }
-  
+  function toggle(){
+  	var toggle = document.getElementById("toggleButton").checked;
+  	if(toggle){
+		console.log("true");
+	}
+	else{
+		console.log("false");
+	}
+  }
   function startAutomaticMode(){
 	var cmd = { command : "startAutomaticMode"};
 	socket.send(JSON.stringify(cmd));

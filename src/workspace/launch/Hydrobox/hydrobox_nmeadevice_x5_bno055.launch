@@ -10,7 +10,12 @@
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
-<node pkg="imu_null" name="IMU" type="imu_null_node" output="screen" respawn="true" respawn_delay="1"/>
+<node ns="imu" name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" respawn="true" respawn_delay="2" output="screen">
+        <param name="device" type="string" value="/dev/i2c-1"/>
+        <param name="address" type="int" value="40"/> <!-- 0x28 == 40 is the default for BNO055 -->
+        <param name="frame_id" type="string" value="imu"/>
+	<param name="calibrationFile" type="string" value="/home/ubuntu/Poseidon/calibration.dat" />
+</node>
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
@@ -30,6 +35,6 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/$(arg time_now)_all.bag" />
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_nema_all.bag" />
 
 </launch>

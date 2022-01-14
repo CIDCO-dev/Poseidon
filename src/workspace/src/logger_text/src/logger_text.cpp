@@ -4,7 +4,7 @@
 #include "../../utils/Constants.hpp"
 #include <cstdio>
 #include <numeric>
-#include <thread>
+//#include <thread>
 
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){

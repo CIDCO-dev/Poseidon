@@ -160,8 +160,8 @@
 				<span class="text">automatic mode</span>
 			</div>
 			<span class="text">OFF</span>
-			<label class="switch" onclick="toggle()">
-		  		<input id="toggleButton" type="checkbox" checked> <!-- remove "checked" to have automatic mode off upon start -->
+			<label class="switch">
+		  		<input type="checkbox" id="toggleButton" onclick="toggle()" checked> <!-- remove "checked" to have automatic mode off upon start -->
 		  		<span class="slider"></span>
 			</label>
 			<span class="text">ON</span>
@@ -642,12 +642,17 @@ $( document ).ready(function() {
         $("#recordingStatus").removeClass("d-block").addClass("d-none");
   }
   function toggle(){
-  	var toggle = document.getElementById("toggleButton").checked;
-  	if(toggle){
-		console.log("true");
+  	var isActive = $('#toggleButton').prop('checked');
+  	if(isActive){
+  		console.log("isActive");
+		$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
+		$("#btnStopRecording").removeClass("d-inline").addClass("d-none");
+		startAutomaticMode();
 	}
-	else{
-		console.log("false");
+	else if (!isActive) {
+		console.log("!isActive");
+		$("#btnStartRecording").removeClass("d-none").addClass("d-inline");
+		stopAutomaticMode();
 	}
   }
   function startAutomaticMode(){

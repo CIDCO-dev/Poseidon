@@ -102,15 +102,6 @@ public:
                                 ROS_ERROR("Error while calling ToggleLogging service");
                         }
                 }
-        	else if(command.compare("startAutomaticMode")==0){
-        		std::cout<<"automatic mode on \n";
-                }
-                else if(command.compare("stopAutomaticMode")==0){
-                	std::cout<<"automatic mode off \n";
-                }
-                else{
-                	ROS_ERROR("Unknown command");
-                }
         }
         else{
         	//no command found. ignore
@@ -127,7 +118,8 @@ public:
         std::lock_guard<std::mutex> lock(mtx);
         connections.erase(hdl);
     }
-
+	void sendRecordingMode(connection_hdl & hdl, bool automaticMode){
+	}
     void sendRecordingStatus(connection_hdl & hdl, bool isRecording){
 	rapidjson::Document document;
 	document.SetObject();

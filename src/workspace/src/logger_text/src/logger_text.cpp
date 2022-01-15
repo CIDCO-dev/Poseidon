@@ -231,9 +231,10 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 			loggerEnabled=false;
 			finalize();
 		}
-		mtx.unlock();
+		
 		//std::cout<<"unlocking thread_id: "<<thread_id<<"\n";
 		response.loggingStatus=loggerEnabled;
+		mtx.unlock();
 		return true;
 	}
 	return false;

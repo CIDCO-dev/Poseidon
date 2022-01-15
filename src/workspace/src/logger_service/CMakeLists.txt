@@ -57,6 +57,7 @@ add_service_files(
    FILES
    ToggleLogging.srv
    GetLoggingStatus.srv
+   #SetLoggingMode.srv
 #   Service2.srv
  )
 

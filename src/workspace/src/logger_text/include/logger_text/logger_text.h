@@ -49,7 +49,9 @@ public:
 	void updateSpeedThreshold();
 	
 	double getSpeedThreshold();
-
+	
+	void configurationCallBack(const setting_msg::Setting &setting);
+	
 	//Service callbacks
 	bool getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response);
 
@@ -80,6 +82,7 @@ private:
 	ros::NodeHandle node;
 	ros::ServiceClient	configurationClient;
 	double defaultSpeedThreshold = 5.0;
+	int loggingMode = 1;
 };
 
 

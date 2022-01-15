@@ -239,3 +239,20 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 	}
 	return false;
 }
+
+void Writer::configurationCallBack(const setting_msg::Setting &setting){
+	if(setting.key == "loggingMode"){
+		ROS_INFO_STREAM(setting.key << " : "<<setting.value<<"\n");
+		mtx.lock();
+		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
+			this->loggingMode = stoi(setting.value);
+		}
+		else{
+			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n");
+		}
+	}
+	else{
+	
+	}
+	mtx.unlock();
+}

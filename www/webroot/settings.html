@@ -31,9 +31,8 @@ function processConfig(config){
 		if(item.key == "loggingMode"){
 			endNewHTML += '<div class="form-group row"><label class="col-lg-2 col-form-label" for="' + item.key +'">'+ item.key + '</label><div class="col-lg-10"><select id="'+ item.key  + '" name="logginModeSelector" class="dropdownright configurationField"></div>';
 		
-			//validation ?
+			//add validation ?
 			var mode = Number(item.value);
-			console.log(typeof(mode))
 			switch(mode){
 				case 1:
 					endNewHTML += '<option value="1" selected>always</option><option value="3">manual</option><option value="3">speed based</option></select></div></div>';

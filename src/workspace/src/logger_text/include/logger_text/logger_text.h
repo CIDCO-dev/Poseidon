@@ -24,6 +24,8 @@
 
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
+#include "logger_service/GetLoggingMode.h"
+#include "logger_service/SetLoggingMode.h"
 
 //Config service
 #include "setting_msg/Setting.h"
@@ -56,7 +58,10 @@ public:
 	bool getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response);
 
 	bool toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response);
-
+	
+	bool getLoggingMode(logger_service::GetLoggingMode::Request &request, logger_service::GetLoggingMode::Response &response);
+	
+	bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response);
 private:
 	std::mutex mtx;
 	bool loggerEnabled = false;

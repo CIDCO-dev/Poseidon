@@ -19,7 +19,12 @@ rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
 sh src/cartographer/scripts/install_abseil.sh
 catkin_make_isolated --install --use-ninja
 ```
-
+###Logging mode
+```
+always ON : 1
+Manual : 2
+Speed based : 3
+```
 
 ### Compile and run Posseidon on virtual machine
 ```
@@ -71,3 +76,4 @@ launch test environement:
 
 start browser and navigate to localhost or 127.0.0.1
 ```
+

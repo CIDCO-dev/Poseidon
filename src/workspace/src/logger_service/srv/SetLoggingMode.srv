@@ -1,2 +1,2 @@
-int loggingMode
-
+int32 loggingMode
+---

@@ -154,9 +154,14 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 }
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
-
-	bool automaticMode = true; //temporary
-	if(automaticMode){
+	
+	//probably not the most efficient way
+	logger_service::GetLoggingMode::Request modeReq;
+	logger_service::GetLoggingMode::Response modeRes;
+	getLoggingMode(modeReq,modeRes);
+	int mode = modeRes.loggingMode;
+	
+	if(mode == 3){
 		speedThresholdKmh = getSpeedThreshold();
 
 		if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
@@ -210,7 +215,7 @@ void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 }
 
 bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){
-	response.status = bootstrappedGnssTime && loggerEnabled;
+	response.status = this->bootstrappedGnssTime && this->loggerEnabled;
 	return true;
 }
 
@@ -245,14 +250,25 @@ void Writer::configurationCallBack(const setting_msg::Setting &setting){
 		ROS_INFO_STREAM(setting.key << " : "<<setting.value<<"\n");
 		mtx.lock();
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
-			this->loggingMode = stoi(setting.value);
+			this->loggingMode = stoi(setting.value); //add error handling
 		}
 		else{
-			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n");
+			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n"<<"defaulting to a : always ON");
+			this->loggingMode = 1;
 		}
 	}
 	else{
 	
 	}
 	mtx.unlock();
+}
+
+bool Writer::getLoggingMode(logger_service::GetLoggingMode::Request & req,logger_service::GetLoggingMode::Response & response){
+	response.loggingMode = this->loggingMode;
+	return true;
+}
+
+bool Writer::setLoggingMode(logger_service::SetLoggingMode::Request & req,logger_service::SetLoggingMode::Response & response){
+	this->loggingMode = req.loggingMode;
+	return true;
 }

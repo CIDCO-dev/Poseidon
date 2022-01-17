@@ -9,8 +9,7 @@ int main(int argc,char ** argv){
     TelemetryServer server;
     uint16_t port = 9002;
     std::thread t(std::bind(&TelemetryServer::run,&server, port));
-
-
+	
 	ros::spin(); // loop until shutdown or ctrl-c
 
 	server.stop(); // stop the server

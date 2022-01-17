@@ -28,8 +28,8 @@ int main(int argc, char **argv)
 		ros::ServiceServer getLoggingStatusService = n.advertiseService("get_logging_status", &Writer::getLoggingStatus,&writer);
 		ros::ServiceServer toggleLoggingService = n.advertiseService("toggle_logging", &Writer::toggleLogging,&writer);
 		
-		ros::ServiceServer getLoggingModeService = n.advertiseService("get_logging_mode", &Writer::getLoggingStatus,&writer);
-		ros::ServiceServer setLoggingModeService = n.advertiseService("set_logging_mode", &Writer::toggleLogging,&writer);
+		ros::ServiceServer getLoggingModeService = n.advertiseService("get_logging_mode", &Writer::getLoggingMode,&writer);
+		ros::ServiceServer setLoggingModeService = n.advertiseService("set_logging_mode", &Writer::setLoggingMode,&writer);
 		
 		ros::spin();
 	}

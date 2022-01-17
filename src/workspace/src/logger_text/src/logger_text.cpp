@@ -161,45 +161,44 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	getLoggingMode(modeReq,modeRes);
 	int mode = modeRes.loggingMode;
 	
-	if(mode == 3){
-		speedThresholdKmh = getSpeedThreshold();
+	speedThresholdKmh = getSpeedThreshold();
 
-		if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
-			speedThresholdKmh = defaultSpeedThreshold;
-			std::string speed = std::to_string(speedThresholdKmh);
-			ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<<speed<<" Kmh");
-		}
-				
-		double current_speed = speed.twist.twist.linear.y;
-		//wait two mins before calculating the average speed
-		if (kmh_Speed_list.size() < 5){ //for testing purpuses set to 0 but should be 120
-			kmh_Speed_list.push_back(current_speed);
-		}
-		else{
-			kmh_Speed_list.pop_front();
-			kmh_Speed_list.push_back(current_speed);
-			average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), 0) / 5.0; // should be divided by 120
-			logger_service::GetLoggingStatus::Request request;
-			logger_service::GetLoggingStatus::Response response;
+	if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
+		speedThresholdKmh = defaultSpeedThreshold;
+		std::string speed = std::to_string(speedThresholdKmh);
+		ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<<speed<<" Kmh");
+	}
+			
+	double current_speed = speed.twist.twist.linear.y;
+	//wait two mins before calculating the average speed
+	if (kmh_Speed_list.size() < 5){ //for testing purpuses set to 0 but should be 120
+		kmh_Speed_list.push_back(current_speed);
+	}
+	else{
+		kmh_Speed_list.pop_front();
+		kmh_Speed_list.push_back(current_speed);
+		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), 0) / 5.0; // should be divided by 120
+		logger_service::GetLoggingStatus::Request request;
+		logger_service::GetLoggingStatus::Response response;
 
-			bool isLogging = getLoggingStatus(request,response);
-			if ( isLogging && (average_speed > speedThresholdKmh && response.status == false) ){
-				ROS_INFO("speed threshold reached, enabling logging");
-				logger_service::ToggleLogging::Request toogleRequest;
-				toogleRequest.loggingEnabled = true;
-				logger_service::ToggleLogging::Response toogleResponse;
-				toggleLogging(toogleRequest, toogleResponse);
-			}
-			else if(isLogging && (average_speed < speedThresholdKmh && response.status == true)){
-				ROS_INFO("speed below threshold, disabling logging");
-				logger_service::ToggleLogging::Request toogleRequest;
-				toogleRequest.loggingEnabled = false;
-				logger_service::ToggleLogging::Response toogleResponse;
-				toggleLogging(toogleRequest, toogleResponse);
-				
-			}
+		bool isLogging = getLoggingStatus(request,response);
+		if ( mode == 3 && (average_speed > speedThresholdKmh && response.status == false) ){
+			ROS_INFO("speed threshold reached, enabling logging");
+			logger_service::ToggleLogging::Request toggleRequest;
+			toggleRequest.loggingEnabled = true;
+			logger_service::ToggleLogging::Response toggleResponse;
+			toggleLogging(toggleRequest, toggleResponse);
+		}
+		else if(mode == 3 && (average_speed < speedThresholdKmh && response.status == true)){
+			ROS_INFO("speed below threshold, disabling logging");
+			logger_service::ToggleLogging::Request toggleRequest;
+			toggleRequest.loggingEnabled = false;
+			logger_service::ToggleLogging::Response toggleResponse;
+			toggleLogging(toggleRequest, toggleResponse);
+			
 		}
 	}
+
 }
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
@@ -250,17 +249,37 @@ void Writer::configurationCallBack(const setting_msg::Setting &setting){
 		ROS_INFO_STREAM(setting.key << " : "<<setting.value<<"\n");
 		mtx.lock();
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
-			this->loggingMode = stoi(setting.value); //add error handling
+			try{
+				this->loggingMode = stoi(setting.value); //add error handling
+			}
+			catch(std::invalid_argument &err){
+        		ROS_ERROR("logging mode should be an integer 1-2-3 \n error catch in : Writer::configurationCallBack()");
+        		this->loggingMode = 1;
+        	}
+			logger_service::GetLoggingStatus::Request request;
+			logger_service::GetLoggingStatus::Response response;
+			bool isLogging = getLoggingStatus(request,response);
+			if (setting.value == "1" && response.status == false){ 
+				ROS_INFO("Logging set to always ON");
+				logger_service::ToggleLogging::Request toggleRequest;
+				toggleRequest.loggingEnabled = true;
+				logger_service::ToggleLogging::Response toggleResponse;
+				toggleLogging(toggleRequest, toggleResponse);
+				ROS_INFO_STREAM(toggleResponse.loggingStatus << "Writer::configurationCallBack() \n");
+				
+			}
+			//speed based logging mode is triggered by Writer::speedCallback
+			//manual logging mode is triggered by setting.html or index.html ? havent finish implementation...
 		}
 		else{
 			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n"<<"defaulting to a : always ON");
 			this->loggingMode = 1;
 		}
+	mtx.unlock();
 	}
 	else{
 	
-	}
-	mtx.unlock();
+	}	
 }
 
 bool Writer::getLoggingMode(logger_service::GetLoggingMode::Request & req,logger_service::GetLoggingMode::Response & response){

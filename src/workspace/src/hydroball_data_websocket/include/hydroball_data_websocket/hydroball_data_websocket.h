@@ -30,6 +30,8 @@
 
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
+#include "logger_service/GetLoggingMode.h"
+#include "logger_service/SetLoggingMode.h"
 
 #include "../../utils/QuaternionUtils.h"
 
@@ -50,6 +52,8 @@ public:
         stateTopic = n.subscribe("state", 1000, &TelemetryServer::stateChanged,this);
 	getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
 	toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
+	getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
+	setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
     }
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
@@ -102,7 +106,17 @@ public:
                                 ROS_ERROR("Error while calling ToggleLogging service");
                         }
                 }
-        }
+                else if(command.compare("getLoggingMode") == 0){
+                	logger_service::GetLoggingMode whatMode;
+					getLoggingModeServiceClient.call(whatMode);
+					int mode = whatMode.response.loggingMode;
+					sendLoggingMode(hdl, mode);
+					std::cout<<"data websocket line 114, getLoggingMode: "<< mode << "\n";
+                }
+                else if(command.compare("setLoggingMode") == 0){
+                	std::cout<<"get wrecked ! \n";
+        		}
+        }	
         else{
         	//no command found. ignore
                 ROS_ERROR("No command found");
@@ -118,7 +132,19 @@ public:
         std::lock_guard<std::mutex> lock(mtx);
         connections.erase(hdl);
     }
-	void sendRecordingMode(connection_hdl & hdl, bool automaticMode){
+	void sendLoggingMode(connection_hdl & hdl, int loggingMode){
+		rapidjson::Document document;
+		document.SetObject();
+		rapidjson::Value LoggingMode(rapidjson::Type::kObjectType);
+		LoggingMode.AddMember("the_mode_is",loggingMode,document.GetAllocator());
+		document.AddMember("loggingMode",LoggingMode,document.GetAllocator());
+		
+		rapidjson::StringBuffer sb;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+        document.Accept(writer);
+        std::string jsonString = sb.GetString();
+        std::cout<<"cout: " << jsonString << "\n";
+        srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
 	}
     void sendRecordingStatus(connection_hdl & hdl, bool isRecording){
 	rapidjson::Document document;
@@ -309,7 +335,9 @@ private:
     ros::Subscriber stateTopic;
     ros::ServiceClient getLoggingStatusService;
     ros::ServiceClient toggleLoggingService;
-
+	ros::ServiceClient getLoggingModeServiceClient;
+	ros::ServiceClient setLoggingModeServiceClient;
+	
     tf2_ros::Buffer buffer;
     tf2_ros::TransformListener transformListener;
 

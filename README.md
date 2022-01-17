@@ -57,9 +57,7 @@ start new terminal or :
 
 changes to build poseidon on virtual machine:
 >cd ~/Poseidon/src/workspace
->mv src/mavros-1.8.0/ src/.mavros-1.8.0/
->mv src/raspberrypi_vitals src/.raspberrypi_vitals
->mv src/echoboat_odometry/ src/.echoboat_odometry/
+>catkin_make -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;echoboat_odometry;raspberrypi_vitals"
 
 build:
 >catkin_make

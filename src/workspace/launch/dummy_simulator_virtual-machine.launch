@@ -21,5 +21,4 @@
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)"/>
 
 
-
 </launch>

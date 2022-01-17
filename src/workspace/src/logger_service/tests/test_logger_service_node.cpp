@@ -7,7 +7,8 @@
 
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
-
+#include "logger_service/GetLoggingMode.h"
+#include "logger_service/SetLoggingMode.h"
 
 class LoggerTextTestSuite : public ::testing::Test {
   //in case we want some setup, teardown
@@ -16,9 +17,12 @@ class LoggerTextTestSuite : public ::testing::Test {
     LoggerTextTestSuite() {
     }
     ~LoggerTextTestSuite() {}
+  	
 };
 
 bool logging = false;
+int loggingMode = 1;
+
 bool toggleLoggingCallback(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
     logging = !logging;
     return true;
@@ -29,6 +33,16 @@ bool getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_ser
     response.status = logging;
     return true;
 }
+bool getLoggingMode(logger_service::GetLoggingMode::Request &request, logger_service::GetLoggingMode::Response &response){
+	response.loggingMode = loggingMode;
+	return true;
+}
+	
+bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response){
+	loggingMode = request.loggingMode;
+	return true;
+}
+
 
 TEST(LoggerTextTestSuite, testToggle) {
 
@@ -37,13 +51,19 @@ TEST(LoggerTextTestSuite, testToggle) {
     // setup service servers
     ros::ServiceServer getLoggingStatusServiceServer = n.advertiseService("get_logging_status", getLoggingStatus);
     ros::ServiceServer toggleLoggingServiceServer    = n.advertiseService("toggle_logging", toggleLoggingCallback);
+    
+	ros::ServiceServer getLoggingModeService = n.advertiseService("get_logging_mode", getLoggingMode);
+	ros::ServiceServer setLoggingModeService = n.advertiseService("set_logging_mode", setLoggingMode);
 
     ASSERT_FALSE(logging) << "logging should not be enabled";
-
+	ASSERT_TRUE(loggingMode) <<"logging mode is set to 1 : always ON";
     // setup service clients
     ros::ServiceClient getLoggingStatusServiceClient = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
     ros::ServiceClient toggleLoggingServiceClient = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
-
+	
+	ros::ServiceClient getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
+	ros::ServiceClient setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+	
     // toggle to enable logging
     logger_service::ToggleLogging toggle;
     toggle.request.loggingEnabled = true;

@@ -42,18 +42,18 @@ using websocketpp::connection_hdl;
 class TelemetryServer {
 public:
     TelemetryServer(): transformListener(buffer){
-        srv.init_asio();
-        srv.set_reuse_addr(true);
-	srv.clear_access_channels(websocketpp::log::alevel::all);  //remove cout logging
+		srv.init_asio();
+		srv.set_reuse_addr(true);
+		srv.clear_access_channels(websocketpp::log::alevel::all);  //remove cout logging
 
-        srv.set_open_handler(bind(&TelemetryServer::on_open,this,std::placeholders::_1));
-        srv.set_close_handler(bind(&TelemetryServer::on_close,this,std::placeholders::_1));
-	srv.set_message_handler(bind(&TelemetryServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
-        stateTopic = n.subscribe("state", 1000, &TelemetryServer::stateChanged,this);
-	getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
-	toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
-	getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
-	setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+		srv.set_open_handler(bind(&TelemetryServer::on_open,this,std::placeholders::_1));
+		srv.set_close_handler(bind(&TelemetryServer::on_close,this,std::placeholders::_1));
+		srv.set_message_handler(bind(&TelemetryServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
+		stateTopic = n.subscribe("state", 1000, &TelemetryServer::stateChanged,this);
+		getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
+		toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
+		getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
+		setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
     }
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
@@ -67,19 +67,27 @@ public:
         if(document.HasMember("command") && document["command"].IsString()){
         	//get command
                 std::string command = document["command"].GetString();
-
-                if(command.compare("getLoggingStatus")==0){
-			bool isRecording = getRecordingStatus();
-                	sendRecordingStatus(hdl,isRecording);
+								  //getLoggingStatus
+                if(command.compare("getLoggingInfo")==0){
+					bool isRecording = getRecordingStatus();
+					logger_service::GetLoggingMode whatIsMode;
+					getLoggingModeServiceClient.call(whatIsMode);
+					int mode = whatIsMode.response.loggingMode;
+                	//sendRecordingStatus(hdl,isRecording);
+                	sendRecordingInfo(hdl,isRecording, mode);
                 }
                 else if(command.compare("startLogging")==0){
-			logger_service::ToggleLogging toggle;
+					logger_service::ToggleLogging toggle;
 
-			toggle.request.loggingEnabled = true;
+					toggle.request.loggingEnabled = true;
 
-			if(toggleLoggingService.call(toggle)){
-				if(toggle.response.loggingStatus){
-                			sendRecordingStatus(hdl,true);
+					if(toggleLoggingService.call(toggle)){
+						if(toggle.response.loggingStatus){
+                			logger_service::GetLoggingMode whatIsMode;
+							getLoggingModeServiceClient.call(whatIsMode);
+							int mode = whatIsMode.response.loggingMode;
+				        	//sendRecordingStatus(hdl,isRecording);
+				        	sendRecordingInfo(hdl,true, mode);
 				}
 				else{
 					ROS_ERROR("Failed at enabling logging");
@@ -96,7 +104,11 @@ public:
 
                         if(toggleLoggingService.call(toggle)){
                                 if(!toggle.response.loggingStatus){
-                                        sendRecordingStatus(hdl,false);
+                                        logger_service::GetLoggingMode whatIsMode;
+										getLoggingModeServiceClient.call(whatIsMode);
+										int mode = whatIsMode.response.loggingMode;
+										//sendRecordingStatus(hdl,isRecording);
+										sendRecordingInfo(hdl,false, mode);
                                 }
                                 else{
                                         ROS_ERROR("Failed at disabling logging");
@@ -110,8 +122,8 @@ public:
                 	logger_service::GetLoggingMode whatMode;
 					getLoggingModeServiceClient.call(whatMode);
 					int mode = whatMode.response.loggingMode;
-					sendLoggingMode(hdl, mode);
-					std::cout<<"data websocket line 114, getLoggingMode: "<< mode << "\n";
+					std::cout<<"delete me ! data websocket line 114, getLoggingMode: "<< mode << "\n";
+					//sendLoggingMode(hdl, mode);	
                 }
                 else if(command.compare("setLoggingMode") == 0){
                 	std::cout<<"get wrecked ! \n";
@@ -132,6 +144,25 @@ public:
         std::lock_guard<std::mutex> lock(mtx);
         connections.erase(hdl);
     }
+    
+    void sendRecordingInfo(connection_hdl & hdl,bool isRecording, int loggingMode){
+    	rapidjson::Document document;
+		document.SetObject();
+		rapidjson::Value recordingStatus(rapidjson::Type::kObjectType);
+		recordingStatus.AddMember("status",isRecording,document.GetAllocator());
+		document.AddMember("recordingInfo",recordingStatus,document.GetAllocator());
+		rapidjson::Value LoggingMode(rapidjson::Type::kObjectType);
+		LoggingMode.AddMember("the_mode_is",loggingMode,document.GetAllocator());
+		document.AddMember("loggingMode",LoggingMode,document.GetAllocator());
+		
+        rapidjson::StringBuffer sb;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+        document.Accept(writer);
+        std::string jsonString = sb.GetString();
+        std::cout<<"dataWebsocket sendRecordingInfo L.151: " << jsonString << "\n";
+        srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
+    }
+    /*
 	void sendLoggingMode(connection_hdl & hdl, int loggingMode){
 		rapidjson::Document document;
 		document.SetObject();
@@ -162,7 +193,7 @@ public:
 
         srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
     }
-
+	*/
     bool getRecordingStatus(){
 	logger_service::GetLoggingStatus status;
 

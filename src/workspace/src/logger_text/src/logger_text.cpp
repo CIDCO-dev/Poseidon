@@ -215,6 +215,7 @@ void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 
 bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){
 	response.status = this->bootstrappedGnssTime && this->loggerEnabled;
+	ROS_INFO_STREAM("logger_text -> getLoggingStatus : " << response.status);
 	return true;
 }
 
@@ -222,7 +223,7 @@ bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,lo
 bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
 	//std::thread::id thread_id = std::this_thread::get_id();
 	//std::cout<<"thread_id: "<<thread_id<<"\n";
-	ROS_INFO("logger_toggle");
+
 	if(bootstrappedGnssTime){
 		mtx.lock();
 		if(!loggerEnabled && request.loggingEnabled){	
@@ -246,15 +247,24 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 
 void Writer::configurationCallBack(const setting_msg::Setting &setting){
 	if(setting.key == "loggingMode"){
-		ROS_INFO_STREAM(setting.key << " : "<<setting.value<<"\n");
-		mtx.lock();
+		ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+		
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{
-				this->loggingMode = stoi(setting.value); //add error handling
+				mtx.lock();
+				int mode = stoi(setting.value);
+				logger_service::SetLoggingMode newMode;
+				newMode.request.loggingMode = mode;
+				setLoggingMode(newMode.request, newMode.response);
+				mtx.unlock();
 			}
 			catch(std::invalid_argument &err){
-        		ROS_ERROR("logging mode should be an integer 1-2-3 \n error catch in : Writer::configurationCallBack()");
-        		this->loggingMode = 1;
+				mtx.lock();
+        		ROS_INFO("logging mode should be an integer 1-2-3 \n error catch in : Writer::configurationCallBack()");
+        		logger_service::SetLoggingMode defaultMode;
+				defaultMode.request.loggingMode = 1;
+				setLoggingMode(defaultMode.request, defaultMode.response);
+				mtx.unlock();
         	}
 			logger_service::GetLoggingStatus::Request request;
 			logger_service::GetLoggingStatus::Response response;
@@ -265,20 +275,18 @@ void Writer::configurationCallBack(const setting_msg::Setting &setting){
 				toggleRequest.loggingEnabled = true;
 				logger_service::ToggleLogging::Response toggleResponse;
 				toggleLogging(toggleRequest, toggleResponse);
-				ROS_INFO_STREAM(toggleResponse.loggingStatus << "Writer::configurationCallBack() \n");
+				ROS_INFO_STREAM(toggleResponse.loggingStatus << "  Writer::configurationCallBack() \n");
 				
 			}
-			//speed based logging mode is triggered by Writer::speedCallback
-			//manual logging mode is triggered by setting.html or index.html ? havent finish implementation...
 		}
 		else{
 			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n"<<"defaulting to a : always ON");
 			this->loggingMode = 1;
 		}
-	mtx.unlock();
+	
 	}
 	else{
-	
+
 	}	
 }
 

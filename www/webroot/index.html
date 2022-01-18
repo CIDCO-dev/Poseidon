@@ -494,20 +494,30 @@ $( document ).ready(function() {
                 	processTelemetry(msg.telemetry);
         	}
         	else if(msg.recordingStatus){
-                	console.log(msg);
-                	processRecordingStatus(msg.recordingStatus);
+                	console.log("recording status event");
+                	//processRecordingStatus(msg.recordingStatus);
         	}
+        	/*
         	else if(msg.loggingMode){
         		var mode = msg.loggingMode;
-        		displayLoggingMode(mode.the_mode_is);
+        		console.log("loggingMode event")
+        		//displayLoggingMode(mode.the_mode_is);
         	}
+        	*/
+        	else if(msg.recordingInfo){
+        		var isLogging = msg.recordingInfo.status;
+        		var mode = msg.loggingMode.the_mode_is;
+        		processRecordingInfo(isLogging, mode);
+        	}
+        	
   	};
 
 	socket.onopen = function(event){
 		hideOverlay();
 		//init display
-        	getRecordingStatus();
-        	getLoggingMode();
+        	//getRecordingStatus();
+        	//getLoggingMode();
+        getLoggingInfo();
 	};
 
 	socket.onerror = function(){
@@ -600,6 +610,7 @@ $( document ).ready(function() {
 	headingGauge.value = (state.attitude[0]);
 			
   }
+  /*
   function setLoggingMode(){
   	//var cmd = {command : "setLoggingMode"};
 	//socket.send(JSON.stringify(cmd));
@@ -608,6 +619,7 @@ $( document ).ready(function() {
   	var cmd = {command : "getLoggingMode"};
 	socket.send(JSON.stringify(cmd));
   }
+  
   function displayLoggingMode(mode){
   	//console.log(typeof(mode));
   	//console.log(mode);
@@ -627,11 +639,60 @@ $( document ).ready(function() {
   		$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
   	}
   }
+  */
+  function getLoggingInfo(){
+  	var cmd = {command : "getLoggingInfo"};
+	socket.send(JSON.stringify(cmd));
+  }
+  /*
   function getRecordingStatus(){
   	var cmd = {command : "getLoggingStatus"};
 	socket.send(JSON.stringify(cmd));
   }
-
+  */
+  function processRecordingInfo(isLogging, mode){
+  /*
+  	console.log("processRecordingInfo")
+  	console.log(isLogging)
+  	console.log(mode)
+  */
+  	if(mode == "1"){
+  		hideLoggingButton();
+  		if(isLogging){
+  			console.log("logging mode 1 : always ON");
+  			showRecording();
+  		}
+  		else{
+  			showNotRecording();
+  			$("#systemStatusText").text("System is not logging and it should be");
+  		}
+  		
+  	}
+  	else if(mode == "2"){
+  		if(isLogging){
+  			console.log("logging mode 2 : manual , isLogging");
+  			showRecordingButton();
+  			showRecording();
+  		}
+  		else{
+  		console.log("logging mode 2 : manual , is not logging");
+  		showNotRecording();
+  		showNotRecordingButton();
+  		}
+  	}
+  	else if(mode == "3"){
+  		hideLoggingButton();
+  		if(isLogging){
+  			console.log("logging mode 3 : speed based , isLogging");
+	  		showRecording();
+  		}
+  		else{
+  			console.log("logging mode 3 : speed based , is not Logging");
+	  		showNotRecording();
+  		}
+  	}
+  }
+  /*
   function processRecordingStatus(recordingStatus){
 	if(recordingStatus.status){
 		//currently recording
@@ -642,7 +703,7 @@ $( document ).ready(function() {
 		showNotRecording();
 	}	
   }
-
+  */
   function startRecording(){
 	var cmd = { command : "startLogging"};
 	socket.send(JSON.stringify(cmd));
@@ -653,18 +714,25 @@ $( document ).ready(function() {
         socket.send(JSON.stringify(cmd));
   }
 
-  function showRecording(){
-        $("#btnStartRecording").removeClass("d-inline").addClass("d-none");
-        $("#btnStopRecording").removeClass("d-none").addClass("d-inline");
-        $("#recordingStatus").removeClass("d-none").addClass("d-block");
+  function showRecording(){ 
+    $("#recordingStatus").removeClass("d-none").addClass("d-block");
   }
 
   function showNotRecording(){
-        $("#btnStartRecording").removeClass("d-none").addClass("d-inline");
-        $("#btnStopRecording").removeClass("d-inline").addClass("d-none");
-        $("#recordingStatus").removeClass("d-block").addClass("d-none");
+    $("#recordingStatus").removeClass("d-block").addClass("d-none");
   }
-
+  function showRecordingButton(){
+  	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
+    $("#btnStopRecording").removeClass("d-none").addClass("d-inline");
+  }
+  function showNotRecordingButton(){
+  	$("#btnStartRecording").removeClass("d-none").addClass("d-inline");
+    $("#btnStopRecording").removeClass("d-inline").addClass("d-none");
+  }
+  function hideLoggingButton(){
+  	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
+  	$("#btnStopRecording").removeClass("d-inline").addClass("d-none");
+  }
   </script>
 
 </html>

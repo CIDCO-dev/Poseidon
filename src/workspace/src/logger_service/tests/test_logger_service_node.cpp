@@ -21,9 +21,9 @@ class LoggerTextTestSuite : public ::testing::Test {
 };
 
 bool logging = false;
-int loggingMode = 1;
 
 bool toggleLoggingCallback(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
+	ROS_INFO("test-toggle");
     logging = !logging;
     return true;
 }
@@ -33,6 +33,7 @@ bool getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_ser
     response.status = logging;
     return true;
 }
+/*
 bool getLoggingMode(logger_service::GetLoggingMode::Request &request, logger_service::GetLoggingMode::Response &response){
 	response.loggingMode = loggingMode;
 	return true;
@@ -41,28 +42,22 @@ bool getLoggingMode(logger_service::GetLoggingMode::Request &request, logger_ser
 bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response){
 	loggingMode = request.loggingMode;
 	return true;
-}
 
+}
+*/
 
 TEST(LoggerTextTestSuite, testToggle) {
 
     ros::NodeHandle n;
 
     // setup service servers
-    ros::ServiceServer getLoggingStatusServiceServer = n.advertiseService("get_logging_status", getLoggingStatus);
-    ros::ServiceServer toggleLoggingServiceServer    = n.advertiseService("toggle_logging", toggleLoggingCallback);
+    ros::ServiceServer getLoggingStatusServiceServer = n.advertiseService("get_logging_status_local", getLoggingStatus);
+    ros::ServiceServer toggleLoggingServiceServer    = n.advertiseService("toggle_logging_local", toggleLoggingCallback);
     
-	ros::ServiceServer getLoggingModeService = n.advertiseService("get_logging_mode", getLoggingMode);
-	ros::ServiceServer setLoggingModeService = n.advertiseService("set_logging_mode", setLoggingMode);
-
     ASSERT_FALSE(logging) << "logging should not be enabled";
-	ASSERT_TRUE(loggingMode) <<"logging mode is set to 1 : always ON";
     // setup service clients
-    ros::ServiceClient getLoggingStatusServiceClient = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
-    ros::ServiceClient toggleLoggingServiceClient = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
-	
-	ros::ServiceClient getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
-	ros::ServiceClient setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+    ros::ServiceClient getLoggingStatusServiceClient = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status_local");
+    ros::ServiceClient toggleLoggingServiceClient = n.serviceClient<logger_service::ToggleLogging>("toggle_logging_local");
 	
     // toggle to enable logging
     logger_service::ToggleLogging toggle;
@@ -87,6 +82,26 @@ TEST(LoggerTextTestSuite, testToggle) {
 
     getLoggingStatusServiceClient.call(status);
     ASSERT_FALSE(status.response.status) << "logging status was not changed after disable toggle";
+    
+    //Using the service server in node logger_text_node.cpp
+    ros::ServiceClient getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
+	ros::ServiceClient setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+	
+	logger_service::SetLoggingMode newMode;
+	newMode.request.loggingMode = 3;
+	setLoggingModeServiceClient.call(newMode);
+	sleep(2);
+	logger_service::GetLoggingMode whatIsMode;
+	getLoggingModeServiceClient.call(whatIsMode);
+	sleep(2);
+	ASSERT_TRUE(whatIsMode.response.loggingMode == 3);
+	
+	newMode.request.loggingMode = 1;
+	setLoggingModeServiceClient.call(newMode);
+	sleep(2);
+	getLoggingModeServiceClient.call(whatIsMode);
+	sleep(2);
+	ASSERT_TRUE(whatIsMode.response.loggingMode == 1);
 }
 
 int main(int argc, char **argv) {

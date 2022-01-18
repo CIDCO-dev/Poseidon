@@ -222,7 +222,7 @@ bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,lo
 bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
 	//std::thread::id thread_id = std::this_thread::get_id();
 	//std::cout<<"thread_id: "<<thread_id<<"\n";
-	
+	ROS_INFO("logger_toggle");
 	if(bootstrappedGnssTime){
 		mtx.lock();
 		if(!loggerEnabled && request.loggingEnabled){	

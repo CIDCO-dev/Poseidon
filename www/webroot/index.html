@@ -160,7 +160,7 @@
 		        <div class="row align-items-center">
 		            <div class="col mr-2">
 		                <div class="text-lg font-weight-bold text-warning text-uppercase mb-1"> logging mode</div>
-		                	<div id="mode-widget" class="h5 mb-0 font-weight-bold text-info"> mode </div>
+		                	<div id="modeWidget" class="h5 mb-0 font-weight-bold text-info"> mode </div>
 		            </div>
 		            <div class="col-auto">
 		                <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -555,7 +555,7 @@ $( document ).ready(function() {
             $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
             $("#gnssLongitudeValue").text(state.position[0].toFixed(8));
             $("#gnssLatitudeValue").text(state.position[1].toFixed(8));
-	    $("#gnssStatusText").text("");
+	    	$("#gnssStatusText").text("");
         }
         else{
             $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
@@ -569,14 +569,14 @@ $( document ).ready(function() {
             $("#imuHeadingValue").text(state.attitude[0].toFixed(3));
             $("#imuPitchValue").text(state.attitude[1].toFixed(3));
             $("#imuRollValue").text(state.attitude[2].toFixed(3));
-	    $("#imuStatusText").text("");
+	    	$("#imuStatusText").text("");
         }
         else{
             $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
             $("#imuHeadingValue").text("");
             $("#imuPitchValue").text("");
             $("#imuRollValue").text("");        
-	    $("#imuStatusText").text("No IMU Data");
+	    	$("#imuStatusText").text("No IMU Data");
         }
         
         if(state.depth.length){
@@ -633,47 +633,39 @@ $( document ).ready(function() {
 	console.log(mode);
   	if(mode == "1"){
   		hideLoggingButton();
-  		$("#mode-widget").text("always ON");
+  		$("#modeWidget").text("always ON");
   		if(isLogging){
   			//console.log("logging mode 1 : always ON");
-  			$("#mode-widget").removeClass("text-danger text-success").addClass("text-success");
   			showRecording();
   		}
   		else{
   			showNotRecording();
-  			$("#mode-widget").removeClass("text-danger text-success").addClass("text-danger");
-  			//getLoggingInfo();
-  			alert("System is not logging and it should be");
   		}
   		
   	}
   	else if(mode == "2"){
-  		$("#mode-widget").text("manual");
+  		$("#modeWidget").text("manual");
   		if(isLogging){
   			//console.log("logging mode 2 : manual , isLogging");
   			showRecordingButton();
   			showRecording();
-  			$("#mode-widget").removeClass("text-danger text-success").addClass("text-success");
   		}
   		else{
   		//console.log("logging mode 2 : manual , is not logging");
   		showNotRecording();
   		showNotRecordingButton();
-  		$("#mode-widget").removeClass("text-danger text-success").addClass("text-danger");
   		}
   	}
   	else if(mode == "3"){
   		hideLoggingButton();
-  		$("#mode-widget").text("speed based");
+  		$("#modeWidget").text("speed based");
   		if(isLogging){
   			//console.log("logging mode 3 : speed based , isLogging");
 	  		showRecording();
-	  		$("#mode-widget").removeClass("text-danger text-success").addClass("text-success");
   		}
   		else{
   			//console.log("logging mode 3 : speed based , is not Logging");
 	  		showNotRecording();
-	  		$("#mode-widget").removeClass("text-danger text-info text-warning text-success").addClass("text-danger");
   		}
   	}
   }
@@ -690,10 +682,14 @@ $( document ).ready(function() {
 
   function showRecording(){ 
     $("#recordingStatus").removeClass("d-none alert-danger").addClass("d-block alert-success");
+    $("#recordingStatus").text("The system is currently recording data");
+    $("#modeWidget").removeClass("text-danger text-success").addClass("text-success");
   }
 
   function showNotRecording(){
     $("#recordingStatus").removeClass("d-none alert-success").addClass("d-block alert-danger");
+    $("#recordingStatus").text("The system is not recording data")
+    $("#modeWidget").removeClass("text-danger text-success").addClass("text-danger");
   }
   function showRecordingButton(){
   	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");

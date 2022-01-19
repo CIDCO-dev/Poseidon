@@ -15,12 +15,6 @@ Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(o
 			getLoggingMode(modeReq,modeRes);
 			int mode = modeRes.loggingMode;
 			ROS_INFO_STREAM("Logging mode set to : "<< mode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
-			if(mode == 1){
-				logger_service::ToggleLogging::Request toggleRequest;
-				toggleRequest.loggingEnabled = true;
-				logger_service::ToggleLogging::Response toggleResponse;
-				toggleLogging(toggleRequest, toggleResponse);
-			}
 				
 			
 }

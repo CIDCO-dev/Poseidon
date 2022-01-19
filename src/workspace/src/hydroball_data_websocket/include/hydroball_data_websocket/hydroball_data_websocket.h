@@ -70,10 +70,8 @@ public:
 								  //getLoggingStatus
                 if(command.compare("getLoggingInfo")==0){
 					bool isRecording = getRecordingStatus();
-					logger_service::GetLoggingMode whatIsMode;
-					getLoggingModeServiceClient.call(whatIsMode);
-					int mode = whatIsMode.response.loggingMode;
-                	sendRecordingInfo(hdl,isRecording, mode);
+					int loggingMode = getLoggingMode();
+                	sendRecordingInfo(hdl,isRecording, loggingMode);
                 }
                 else if(command.compare("startLogging")==0){
 					logger_service::ToggleLogging toggle;
@@ -82,10 +80,8 @@ public:
 
 					if(toggleLoggingService.call(toggle)){
 						if(toggle.response.loggingStatus){
-                			logger_service::GetLoggingMode whatIsMode;
-							getLoggingModeServiceClient.call(whatIsMode);
-							int mode = whatIsMode.response.loggingMode;
-				        	sendRecordingInfo(hdl,true, mode);
+                			int loggingMode = getLoggingMode();
+				        	sendRecordingInfo(hdl,true, loggingMode);
 				}
 				else{
 					ROS_ERROR("Failed at enabling logging");
@@ -102,10 +98,8 @@ public:
 
                         if(toggleLoggingService.call(toggle)){
                                 if(!toggle.response.loggingStatus){
-                                        logger_service::GetLoggingMode whatIsMode;
-										getLoggingModeServiceClient.call(whatIsMode);
-										int mode = whatIsMode.response.loggingMode;
-										sendRecordingInfo(hdl,false, mode);
+                                        int loggingMode = getLoggingMode();
+										sendRecordingInfo(hdl,false, loggingMode);
                                 }
                                 else{
                                         ROS_ERROR("Failed at disabling logging");
@@ -186,6 +180,15 @@ public:
         srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
     }
 	*/
+	
+	int getLoggingMode(){
+		logger_service::GetLoggingMode mode;
+		if(!getLoggingModeServiceClient.call(mode)){
+			ROS_ERROR("Error while calling GetLoggingMode service");
+		}
+		return  mode.response.loggingMode;
+	}
+	
     bool getRecordingStatus(){
 	logger_service::GetLoggingStatus status;
 
@@ -305,10 +308,20 @@ public:
         if(timestamp - lastTimestamp > 200000){
             std::string jsonString;
             convertState2json(state, jsonString);
-
-            std::lock_guard<std::mutex> lock(mtx);
+			
+			bool isLogging = getRecordingStatus();
+			int loggingMode = getLoggingMode();
+			
+			if(loggingMode == 1 && !isLogging){
+				logger_service::ToggleLogging toggle;
+				toggle.request.loggingEnabled = true;
+				toggleLoggingService.call(toggle);
+			}
+			
+            //std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
                  srv.send(it,jsonString,websocketpp::frame::opcode::text);
+                 sendRecordingInfo(it,isLogging, loggingMode);
             }
 
             lastTimestamp = timestamp;

@@ -73,7 +73,6 @@ public:
 					logger_service::GetLoggingMode whatIsMode;
 					getLoggingModeServiceClient.call(whatIsMode);
 					int mode = whatIsMode.response.loggingMode;
-                	//sendRecordingStatus(hdl,isRecording);
                 	sendRecordingInfo(hdl,isRecording, mode);
                 }
                 else if(command.compare("startLogging")==0){
@@ -86,7 +85,6 @@ public:
                 			logger_service::GetLoggingMode whatIsMode;
 							getLoggingModeServiceClient.call(whatIsMode);
 							int mode = whatIsMode.response.loggingMode;
-				        	//sendRecordingStatus(hdl,isRecording);
 				        	sendRecordingInfo(hdl,true, mode);
 				}
 				else{
@@ -107,7 +105,6 @@ public:
                                         logger_service::GetLoggingMode whatIsMode;
 										getLoggingModeServiceClient.call(whatIsMode);
 										int mode = whatIsMode.response.loggingMode;
-										//sendRecordingStatus(hdl,isRecording);
 										sendRecordingInfo(hdl,false, mode);
                                 }
                                 else{
@@ -118,16 +115,11 @@ public:
                                 ROS_ERROR("Error while calling ToggleLogging service");
                         }
                 }
-                else if(command.compare("getLoggingMode") == 0){
-                	logger_service::GetLoggingMode whatMode;
-					getLoggingModeServiceClient.call(whatMode);
-					int mode = whatMode.response.loggingMode;
-					std::cout<<"delete me ! data websocket line 114, getLoggingMode: "<< mode << "\n";
-					//sendLoggingMode(hdl, mode);	
-                }
+                /*
                 else if(command.compare("setLoggingMode") == 0){
                 	std::cout<<"get wrecked ! \n";
         		}
+        		*/
         }	
         else{
         	//no command found. ignore
@@ -159,10 +151,10 @@ public:
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
         document.Accept(writer);
         std::string jsonString = sb.GetString();
-        std::cout<<"dataWebsocket sendRecordingInfo L.151: " << jsonString << "\n";
         srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
     }
     /*
+    //use sendLoggingInfo() instead
 	void sendLoggingMode(connection_hdl & hdl, int loggingMode){
 		rapidjson::Document document;
 		document.SetObject();

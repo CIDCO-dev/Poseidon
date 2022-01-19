@@ -9,8 +9,20 @@
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
-			ROS_INFO("getting speed threshold configuration...");
 			updateSpeedThreshold();
+			logger_service::GetLoggingMode::Request modeReq;
+			logger_service::GetLoggingMode::Response modeRes;
+			getLoggingMode(modeReq,modeRes);
+			int mode = modeRes.loggingMode;
+			ROS_INFO_STREAM("Logging mode set to : "<< mode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
+			if(mode == 1){
+				logger_service::ToggleLogging::Request toggleRequest;
+				toggleRequest.loggingEnabled = true;
+				logger_service::ToggleLogging::Response toggleResponse;
+				toggleLogging(toggleRequest, toggleResponse);
+			}
+				
+			
 }
 
 Writer::~Writer(){
@@ -24,7 +36,7 @@ void Writer::updateSpeedThreshold(){
 
     if(configurationClient.call(srv)){
     	std::string speedThresKmh = srv.response.value;
-    	ROS_INFO_STREAM("speed threshold from config file : " << speedThresKmh);
+    	//ROS_INFO_STREAM("speed threshold from config file : " << speedThresKmh);
         try{
         	speedThresholdKmh = stod(speedThresKmh);
         }
@@ -95,6 +107,7 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){
 		bootstrappedGnssTime = true;
+		
 	}
 
 	if(bootstrappedGnssTime && loggerEnabled){
@@ -155,7 +168,6 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	
-	//probably not the most efficient way
 	logger_service::GetLoggingMode::Request modeReq;
 	logger_service::GetLoggingMode::Response modeRes;
 	getLoggingMode(modeReq,modeRes);
@@ -215,7 +227,6 @@ void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 
 bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){
 	response.status = this->bootstrappedGnssTime && this->loggerEnabled;
-	ROS_INFO_STREAM("logger_text -> getLoggingStatus : " << response.status);
 	return true;
 }
 
@@ -246,9 +257,8 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 }
 
 void Writer::configurationCallBack(const setting_msg::Setting &setting){
-	if(setting.key == "loggingMode"){
-		ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
-		
+	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	if(setting.key == "loggingMode"){		
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{
 				mtx.lock();
@@ -269,19 +279,23 @@ void Writer::configurationCallBack(const setting_msg::Setting &setting){
 			logger_service::GetLoggingStatus::Request request;
 			logger_service::GetLoggingStatus::Response response;
 			bool isLogging = getLoggingStatus(request,response);
-			if (setting.value == "1" && response.status == false){ 
+			if (setting.value == "1" && response.status != true){ 
 				ROS_INFO("Logging set to always ON");
 				logger_service::ToggleLogging::Request toggleRequest;
 				toggleRequest.loggingEnabled = true;
 				logger_service::ToggleLogging::Response toggleResponse;
 				toggleLogging(toggleRequest, toggleResponse);
-				ROS_INFO_STREAM(toggleResponse.loggingStatus << "  Writer::configurationCallBack() \n");
+				//ROS_INFO_STREAM(toggleResponse.loggingStatus << "  Writer::configurationCallBack() \n");
 				
 			}
 		}
 		else{
 			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n"<<"defaulting to a : always ON");
-			this->loggingMode = 1;
+			mtx.lock();
+			logger_service::SetLoggingMode defaultMode;
+			defaultMode.request.loggingMode = 1;
+			setLoggingMode(defaultMode.request, defaultMode.response);
+			mtx.unlock();
 		}
 	
 	}
@@ -296,6 +310,6 @@ bool Writer::getLoggingMode(logger_service::GetLoggingMode::Request & req,logger
 }
 
 bool Writer::setLoggingMode(logger_service::SetLoggingMode::Request & req,logger_service::SetLoggingMode::Response & response){
-	this->loggingMode = req.loggingMode;
+	loggingMode = req.loggingMode;
 	return true;
 }

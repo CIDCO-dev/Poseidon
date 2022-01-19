@@ -245,10 +245,6 @@ public:
 			setting_msg::Setting setting;
 			setting.key   =i->first;
 			setting.value =i->second;
-			if(setting.key == "logginMode"){
-				ROS_INFO("HYDROBALL CONFIG WEBSOCKET broadcastConfiguration()");
-				ROS_INFO_STREAM(setting.key << " : " << setting.value);
-			}
 			configTopic.publish(setting);
 		}
 	}

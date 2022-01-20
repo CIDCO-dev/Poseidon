@@ -74,4 +74,38 @@ launch test environement:
 
 start browser and navigate to localhost or 127.0.0.1
 ```
+###unit test
+some of these test needs to be repair, some require the physical equipement
+```
+catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;
+imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"
 
+```
+
+tests that needs to be investigated because they are failing:
+```
+tf/tests/tf_unittest.cpp
+setting_msg/tests/test_zero_imu_offset_service.cpp
+state_controller/tests/test_get_state_service.cpp
+hydroball_files_websocket/tests/test_hydroball_files_websocket.cpp
+ins_piksi
+raspberrypi_vitals_msg
+setting_msg/tests/test_get_configuration.cpp
+state_controller
+sonar_nmea_0183_tcp_client
+hydroball_files_websocket
+hydroball_config_websocket
+
+```
+
+node with no test:
+```
+raspberry_vitals_msg
+gnss_zed_f9p
+gps_common
+gpsd_client
+logger_binary
+state_controller_msg
+logger_text
+polygonal_survey_planner
+```

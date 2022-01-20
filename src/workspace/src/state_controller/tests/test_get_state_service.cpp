@@ -111,7 +111,7 @@ TEST(GetStateServiceTestSuite, testGetState) {
 
 	// publish vitals
 	raspberrypi_vitals_msg::sysinfo vitalMsg;
-	vitalMsg.header = 1;
+	//vitalMsg.header = 1; //header is of Header type object
     vitalMsg.cputemp = Get_State_Test::test_cputemp;
     vitalMsg.cpuload = Get_State_Test::test_cpuload;
     vitalMsg.freeram = Get_State_Test::test_freeram;

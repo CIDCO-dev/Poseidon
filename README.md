@@ -34,7 +34,11 @@ ubuntu (ubuntu only) virtual machine
  instruction:
 >sudo apt install git
 >cd
+<<<<<<< HEAD
 >git clone <psseidon repo>
+=======
+>git clone <poseidon repo>
+>>>>>>> master
 > cd Poseidon/install
 run these scripts:
 	~/Poseidon/install/stages/1-base-ros-noetic.sh
@@ -76,6 +80,7 @@ start browser and navigate to localhost or 127.0.0.1
 ```
 ###unit test
 some of these test needs to be repaired, some require the physical equipement
+
 ```
 catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;
 imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"

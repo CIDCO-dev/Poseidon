@@ -19,7 +19,7 @@ U-Boot> reset
 example:
 auto eth0
 iface eth0 inet dhcp
-up ./synclogfiles.sh
+up ./sync_logfiles.sh
 
 2) put script in : /etc/network/if-up.d
 

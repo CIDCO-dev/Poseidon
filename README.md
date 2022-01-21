@@ -26,7 +26,7 @@ Manual : 2
 Speed based : 3
 ```
 
-### Compile and run Posseidon on virtual machine
+### Compile and run Poseidon on virtual machine
 ```
 pre-requisite:
 ubuntu (ubuntu only) virtual machine
@@ -34,8 +34,8 @@ ubuntu (ubuntu only) virtual machine
  instruction:
 >sudo apt install git
 >cd
->git clone <posseidon repo>
-> cd Posseidon/install
+>git clone <psseidon repo>
+> cd Poseidon/install
 run these scripts:
 	~/Poseidon/install/stages/1-base-ros-noetic.sh
 	~/Poseidon/install/stages/2-x64.sh
@@ -75,7 +75,7 @@ launch test environement:
 start browser and navigate to localhost or 127.0.0.1
 ```
 ###unit test
-some of these test needs to be repair, some require the physical equipement
+some of these test needs to be repaired, some require the physical equipement
 ```
 catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;
 imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"

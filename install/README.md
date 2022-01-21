@@ -1,4 +1,4 @@
-#Install instructions for Raspberry Pi:
+###Install instructions for Raspberry Pi:
 
 Edit UBoot before running the install scripts:
 
@@ -13,13 +13,13 @@ U-Boot> saveenv
 U-Boot> reset
 
 ----
-#automatic script launch upon new up network interface
+###automatic script launch upon new up network interface
 
 1) modify : /etc/network/interfaces
 example:
 auto eth0
 iface eth0 inet dhcp
-up ./synclogfiles.sh
+up ./sync_logfiles.sh
 
 2) put script in : /etc/network/if-up.d
 
@@ -27,7 +27,7 @@ up ./synclogfiles.sh
 chmod +x logfiles.sh
 
 ---
-#rsync passwordless connection
+###rsync passwordless connection
 ssh-keygen
 ssh-copy-id -i path/key.pub user@server
 ssh-add path/private_key

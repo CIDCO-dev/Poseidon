@@ -26,7 +26,7 @@ Manual : 2
 Speed based : 3
 ```
 
-### Compile and run Posseidon on virtual machine
+### Compile and run Poseidon on virtual machine
 ```
 pre-requisite:
 ubuntu (ubuntu only) virtual machine
@@ -34,8 +34,8 @@ ubuntu (ubuntu only) virtual machine
  instruction:
 >sudo apt install git
 >cd
->git clone <posseidon repo>
-> cd Posseidon/install
+>git clone <poseidon repo>
+> cd Poseidon/install
 run these scripts:
 	~/Poseidon/install/stages/1-base-ros-noetic.sh
 	~/Poseidon/install/stages/2-x64.sh

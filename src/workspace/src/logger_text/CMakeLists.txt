@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(logger_text)
 
-add_definitions(-std=c++11 -Wall -g)
+add_definitions(-std=c++17 -Wall -g)
 
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs)
 
@@ -42,8 +42,12 @@ include_directories(
    PATTERN ".svn" EXCLUDE
  )
 
-# if(CATKIN_ENABLE_TESTING)
-#    find_package(rostest REQUIRED)
-#    add_rostest_gtest(test_logger_text_node tests/logger_node_test.launch tests/test_logger_text_node.cpp)
-#    target_link_libraries(test_logger_text_node ${PROJECT_NAME})
-# endif()
+#############
+## Testing ##
+#############
+
+if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+    add_rostest_gtest(test_logger_text_node tests/logger_text_node_test.launch tests/test_logger_text_node.cpp)
+    target_link_libraries(test_logger_text_node ${PROJECT_NAME})
+endif()

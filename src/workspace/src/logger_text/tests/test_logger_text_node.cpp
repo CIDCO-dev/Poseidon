@@ -58,7 +58,7 @@ TEST(LoggerTextTestSuite, testGeneratingFiles) {
     getLoggingStatusServiceClient.call(status);
     ASSERT_FALSE(status.response.status) << "logging status was not changed after enable toggle";
     sleep(10); 
-    
+    writer.finalize();
     
     int numberOfFiles = 0;
     std::filesystem::path PATH = outPath;

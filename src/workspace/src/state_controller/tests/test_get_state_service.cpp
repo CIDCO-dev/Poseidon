@@ -48,6 +48,7 @@ public:
     static constexpr double epsilon = 1e-12;
 };
 
+/*
 void printAllTopics() {
     ros::master::V_TopicInfo topic_infos;
     ros::master::getTopics(topic_infos);
@@ -58,7 +59,7 @@ void printAllTopics() {
         //std::cout << topic_infos[i].name << std::endl;
     }
 }
-
+*/
 TEST(GetStateServiceTestSuite, testGetState) {
 
     ros::NodeHandle nh;
@@ -111,7 +112,8 @@ TEST(GetStateServiceTestSuite, testGetState) {
 
 	// publish vitals
 	raspberrypi_vitals_msg::sysinfo vitalMsg;
-	//vitalMsg.header = 1; //header is of Header type object
+	vitalMsg.header.seq = 1;
+	vitalMsg.header.stamp=ros::Time::now();
     vitalMsg.cputemp = Get_State_Test::test_cputemp;
     vitalMsg.cpuload = Get_State_Test::test_cpuload;
     vitalMsg.freeram = Get_State_Test::test_freeram;

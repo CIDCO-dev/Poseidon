@@ -4,7 +4,7 @@
 #include "../../utils/Constants.hpp"
 #include <cstdio>
 #include <numeric>
-//#include <thread>
+#include <thread>
 
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
@@ -88,6 +88,7 @@ void Writer::init(){
 }
 
 void Writer::finalize(){
+
         if(gnssOutputFile)   fclose(gnssOutputFile);
         if(imuOutputFile)    fclose(imuOutputFile);
         if(sonarOutputFile)  fclose(sonarOutputFile);
@@ -227,7 +228,7 @@ bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,lo
 
 bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
 	//std::thread::id thread_id = std::this_thread::get_id();
-	//std::cout<<"thread_id: "<<thread_id<<"\n";
+	//ROS_WARN_STREAM("thread_id: "<<thread_id);
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
@@ -242,9 +243,10 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 			finalize();
 		}
 		
-		//std::cout<<"unlocking thread_id: "<<thread_id<<"\n";
+		
 		response.loggingStatus=loggerEnabled;
 		mtx.unlock();
+		//ROS_WARN_STREAM("unlocking thread_id: "<<thread_id);
 		return true;
 	}
 	return false;

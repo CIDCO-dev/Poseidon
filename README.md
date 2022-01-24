@@ -92,25 +92,20 @@ tests that needs to be investigated because they are failing:
 tf/tests/tf_unittest.cpp
 setting_msg/tests/test_zero_imu_offset_service.cpp
 state_controller/tests/test_get_state_service.cpp
-hydroball_files_websocket/tests/test_hydroball_files_websocket.cpp
 ins_piksi
-raspberrypi_vitals_msg
 setting_msg/tests/test_get_configuration.cpp
 state_controller
 sonar_nmea_0183_tcp_client
-hydroball_files_websocket
-hydroball_config_websocket
-
 ```
 
 node with no test:
 ```
+hydroball_files_websocket
+hydroball_config_websocket
 raspberry_vitals_msg
 gnss_zed_f9p
 gps_common
 gpsd_client
 logger_binary
 state_controller_msg
-logger_text
-polygonal_survey_planner
 ```

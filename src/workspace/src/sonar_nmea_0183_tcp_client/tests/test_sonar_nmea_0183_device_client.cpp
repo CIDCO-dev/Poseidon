@@ -6,46 +6,68 @@
 #include <boost/process/extend.hpp>
 #include <iostream>
 
-
-TEST(nmeaDeviceTest, testSerialDevice) {
-	/*
-	//virtual serial port -> sudo apt install socat
-	user should be in dialout group
-	nmea_device_node listen on /dev/sonar
-	sudo ln -s /home/ubuntu/sonar /dev/sonar
-	sudo chown -h :dialout /dev/sonar
-	once programm started : cat /home/ubuntu/sonar
-	*/
-	
-	int nb_message = 0;
-	std::string device;
-	boost::process::ipstream output;
-	std::string cmd = "socat -d -d pty,raw,echo=0,link=/home/ubuntu/sonar pty,raw,echo=0,link=/home/ubuntu/pty"; 
-	boost::process::child virtDev(cmd);
-	std::vector<std::string> devices;
-	std::this_thread::sleep_for(std::chrono::seconds(1));
-	while(virtDev.running()){
-		//std::cout<<"running \n";
+class virtualSerialPort{
+	public:
+		virtualSerialPort(std::string Slave, std::string Master){
+			this->slave = Slave;
+			this->master = Master;
+		}
+		~virtualSerialPort(){}
 		
-		std::ofstream outfile ("/home/ubuntu/pty",std::ofstream::binary);
 		
-		if(outfile.is_open()){
-		
-			outfile << "test\n";
+		boost::process::child init(){
+		/*
+		//virtual serial port -> sudo apt install socat
+		user should be in dialout group
+		nmea_device_node listen on /dev/sonar
+		sudo ln -s /home/ubuntu/sonar /dev/sonar
+		sudo chown -h :dialout /dev/sonar
+		once programm started : cat /home/ubuntu/sonar
+		*/
+			//TODO , handle errors
+			std::string cmd = "socat -d -d pty,raw,echo=0,link="+ this->slave + " pty,raw,echo=0,link=" + this->master;
+			boost::process::child virtDev(cmd);
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			nb_message++;
-			if(nb_message == 10){
-				outfile.close();
-				virtDev.terminate();
-				std::cout<<"terminated \n";
+			return virtDev;
+		}
+		
+		void write(std::string message){
+			//TODO , handle errors
+			std::ofstream outfile (this->master, std::ofstream::binary);
+			if(outfile.is_open()){
+				outfile << message << "\r\n";
+			}
+			else{
+				std::cerr<<"cannot open master";
 			}
 		}
-		else{
-			std::cerr<<"cannot open virtual port";
+		
+		void close(boost::process::child &virtDev){
+			virtDev.terminate();
 		}
+		
+		
+	private:
+		std::string slave;
+		std::string master;
+		//boost::process::child virtDev;
+};
+
+
+
+
+TEST(nmeaDeviceTest, testSerialDevice) {
 	
+	virtualSerialPort nmeaDevice("/home/ubuntu/sonar", "/home/ubuntu/pty");
+	auto sonar = nmeaDevice.init();
+	while(sonar.running()){
+		for(int i = 0; i<10; i++){
+			nmeaDevice.write("test");
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+		nmeaDevice.close(sonar);
 	}
-	
+
 	ASSERT_TRUE(true);
 }
 

@@ -19,7 +19,7 @@ rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
 sh src/cartographer/scripts/install_abseil.sh
 catkin_make_isolated --install --use-ninja
 ```
-###Logging mode
+### Logging mode
 ```
 always ON : 1
 Manual : 2
@@ -78,7 +78,7 @@ launch test environement:
 
 start browser and navigate to localhost or 127.0.0.1
 ```
-###unit test
+### unit test
 some of these tests needs to be repaired, some requires the physical equipement
 
 ```

@@ -209,9 +209,9 @@ include_directories(
 
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_sonar_nmea_0183_tcp_client tests/test_sonar_nmea_0183_tcp_client.cpp)
-target_link_libraries(test_sonar_nmea_0183_tcp_client sonar_nmea_0183_tcp_client  ${sonar_nmea_0183_tcp_client_LIBRARIES})
-add_dependencies(test_sonar_nmea_0183_tcp_client ${catkin_EXPORTED_TARGETS})
+catkin_add_gtest(test_sonar_nmea_0183_device_client tests/test_sonar_nmea_0183_device_client.cpp)
+target_link_libraries(test_sonar_nmea_0183_device_client sonar_nmea_0183_tcp_client ${sonar_nmea_0183_tcp_client_LIBRARIES})
+add_dependencies(test_sonar_nmea_0183_device_client ${catkin_EXPORTED_TARGETS}) #? ${catkin_LIBRARIES}
 
 endif()
 

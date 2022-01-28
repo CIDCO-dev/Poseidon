@@ -2,7 +2,7 @@
 <package format="2">
   <name>sonar_nmea_0183_tcp_client</name>
   <version>0.0.1</version>
-  <description>Reads a NMEA 0183 sonar data stream through a TCP port</description>
+  <description>Reads a NMEA 0183 sonar data stream</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

@@ -97,7 +97,7 @@ class BaseNmeaClient{
 			gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
 			speedTopic = node.advertise<nav_msgs::Odometry>("speed",1000);		
 		}
-		
+		//$GPGGA,133818.75,0100.0000,N,00300.0180,E,1,14,3.1,-13.0,M,-45.3,M,,*52'
 		bool extractGGA(std::string & s){   
 			ggaData data;
 			

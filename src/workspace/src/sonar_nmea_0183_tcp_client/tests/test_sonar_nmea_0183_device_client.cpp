@@ -1,5 +1,8 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
+#include "sensor_msgs/NavSatFix.h"
+#include "nav_msgs/Odometry.h"
+#include "geometry_msgs/PointStamped.h"
 
 #include <thread>
 #include <boost/process.hpp>
@@ -17,16 +20,18 @@ class virtualSerialPort{
 		
 		boost::process::child init(){
 		/*
-		//virtual serial port -> sudo apt install socat
+		socat should be installed -> sudo apt install socat
 		user should be in dialout group
 		nmea_device_node listen on /dev/sonar
-		sudo ln -s /home/ubuntu/sonar /dev/sonar
-		sudo chown -h :dialout /dev/sonar
-		once programm started : cat /home/ubuntu/sonar
+		$sudo ln -s /home/ubuntu/sonar /dev/sonar
+		$sudo chown -h :dialout /dev/sonar
+		once socat command launched : cat /home/ubuntu/sonar
+		echo test > /home/ubuntu/pty
 		*/
-			//TODO , handle errors
+			//simpliest command
+			//socat -d -d pty,raw,echo=0 pty,raw,echo=0
 			std::string cmd = "socat -d -d pty,raw,echo=0,link="+ this->slave + " pty,raw,echo=0,link=" + this->master;
-			boost::process::child virtDev(cmd);
+			boost::process::child virtDev(cmd); //TODO , handle errors
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			return virtDev;
 		}
@@ -44,45 +49,86 @@ class virtualSerialPort{
 		
 		void close(boost::process::child &virtDev){
 			virtDev.terminate();
+			//delete master and slave file ?
 		}
 		
 		
 	private:
 		std::string slave;
 		std::string master;
-		//boost::process::child virtDev;
 };
 
 
+class counter{
+	public:
+		counter(int init){ this-> count = init;}
+		~counter(){}
+		void increment(){ count++; }
+		int getCount(){return this->count; }
+	
+	private:
+		int count;
+};
 
+counter fixCounter(0);
+counter depthCounter(0);
+counter speedCounter(0);
+
+void fixReceived(const sensor_msgs::NavSatFix& gnss){
+	fixCounter.increment();
+}
+void depthReceived(const geometry_msgs::PointStamped& sonar){
+	depthCounter.increment();
+}
+void speedReceived(const nav_msgs::Odometry& speed){
+	speedCounter.increment();
+}
 
 TEST(nmeaDeviceTest, testSerialDevice) {
+
+	ros::NodeHandle n;
+
+	ros::Subscriber sub1 = n.subscribe("fix", 10,fixReceived);
+	//ros::Subscriber sub2 = n.subscribe("imu/data", 10, &counter::increment, &imuCounter);
+	ros::Subscriber sub3 = n.subscribe("depth", 10, depthReceived);
+	ros::Subscriber sub4 = n.subscribe("speed", 10, speedReceived);
 	
 	virtualSerialPort nmeaDevice("/home/ubuntu/sonar", "/home/ubuntu/pty");
 	auto sonar = nmeaDevice.init();
 	while(sonar.running()){
 		for(int i = 0; i<10; i++){
-			nmeaDevice.write("test");
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			sleep(1);
+			nmeaDevice.write("$GPGGA,133818.75,0100.0000,N,00300.0180,E,1,14,3.1,-13.0,M,-45.3,M,,*52");// fix
+			sleep(1);
+			nmeaDevice.write("$SDDBT,30.9,f,9.4,M,5.1,F*35"); // depth
+			sleep(1);
+			nmeaDevice.write("$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A"); //speed
+			sleep(1);
 		}
 		nmeaDevice.close(sonar);
 	}
-
-	ASSERT_TRUE(true);
+	sleep(1);
+	//ROS_ERROR_STREAM("fix count : "<< fixCounter.getCount()<<"\n");
+	//ROS_ERROR_STREAM("depth count : "<< depthCounter.getCount()<<"\n");
+	//ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
+	
+	ASSERT_TRUE(fixCounter.getCount() == 10);
+	ASSERT_TRUE(speedCounter.getCount() == 10);
+	ASSERT_TRUE(depthCounter.getCount() == 10);
 }
 
 int main(int argc, char **argv) {
 
-    //ros::init(argc, argv, "TestNmeaDevices");
+    ros::init(argc, argv, "TestNmeaDevices");
 
     testing::InitGoogleTest(&argc, argv);
 
-    //std::thread t([]{ros::spin();}); // let ros spin in its own thread
+    std::thread t([]{ros::spin();}); // let ros spin in its own thread
 
     auto res = RUN_ALL_TESTS();
 
-    //ros::shutdown(); // this will cause the ros::spin() to return
-    //t.join();
+    ros::shutdown(); // this will cause the ros::spin() to return
+    t.join();
 
     return res;
 }

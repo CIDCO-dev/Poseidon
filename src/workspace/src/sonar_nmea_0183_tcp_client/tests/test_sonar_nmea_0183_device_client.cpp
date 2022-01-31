@@ -40,10 +40,14 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 	ros::NodeHandle n;
 
 	ros::Subscriber sub1 = n.subscribe("fix", 10,fixReceived);
-	//ros::Subscriber sub2 = n.subscribe("imu/data", 10, &counter::increment, &imuCounter);
 	ros::Subscriber sub3 = n.subscribe("depth", 10, depthReceived);
 	ros::Subscriber sub4 = n.subscribe("speed", 10, speedReceived);
 	
+	/*
+	nmea_device_node listen on /dev/sonar
+	$sudo ln -s /home/ubuntu/sonar /dev/sonar
+	$sudo chown -h :dialout /dev/sonar
+	*/
 	virtualSerialPort nmeaDevice("/home/ubuntu/sonar", "/home/ubuntu/pty");
 	auto sonar = nmeaDevice.init();
 	while(sonar.running()){

@@ -34,12 +34,7 @@ ubuntu (ubuntu only) virtual machine
  instruction:
 >sudo apt install git
 >cd
-<<<<<<< HEAD
->git clone <psseidon repo>
-=======
 >git clone <poseidon repo>
->>>>>>> master
-> cd Poseidon/install
 run these scripts:
 	~/Poseidon/install/stages/1-base-ros-noetic.sh
 	~/Poseidon/install/stages/2-x64.sh
@@ -97,7 +92,6 @@ setting_msg/tests/test_get_configuration.cpp
 
 node without test:
 ```
-sonar_nmea_0183_tcp_client
 hydroball_files_websocket
 hydroball_config_websocket
 raspberry_vitals_msg

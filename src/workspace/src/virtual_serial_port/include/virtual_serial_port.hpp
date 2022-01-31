@@ -15,11 +15,8 @@ class virtualSerialPort{
 		/*
 		socat should be installed -> sudo apt install socat
 		user should be in dialout group
-		nmea_device_node listen on /dev/sonar
-		$sudo ln -s /home/ubuntu/sonar /dev/sonar
-		$sudo chown -h :dialout /dev/sonar
-		once socat command launched : cat /home/ubuntu/sonar
-		echo test > /home/ubuntu/pty
+		once socat command launched : cat SLAVE
+		echo test > MASTER
 		*/
 			//simpliest command
 			//socat -d -d pty,raw,echo=0 pty,raw,echo=0

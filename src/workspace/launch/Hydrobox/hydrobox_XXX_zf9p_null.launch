@@ -1,7 +1,7 @@
 <launch>
 
 <arg name="time_now" default="temp" />
-<!--<arg name="gnssPortPath" value="/dev/ttyACM0"/>-->
+<arg name="gnssPortPath" value="/dev/ttyACM0"/>
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>
 

@@ -295,6 +295,8 @@ class ZEDF9P{
 													
 													//read checksum
 													ubx_checksum checksum;
+													checksum.ck_a = hdr.length + 6;
+													checksum.ck_b = hdr.length + 7;
 													n = read(serial_port, &checksum, sizeof(ubx_checksum));
 													if(n == sizeof(ubx_checksum)){
 														

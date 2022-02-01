@@ -178,7 +178,7 @@ class ZEDF9P{
 				ck_a += payload[i];
 				ck_b += ck_a; 
 			}
-			ROS_INFO_STREAM((int)ck_a << (int)ck_b);
+			ROS_INFO_STREAM((int)ck_a << " " << (int)ck_b);
 			ROS_INFO_STREAM("should be:  " << (int)checksum->ck_a << " " << (int)checksum->ck_b);
 			return checksum->ck_a == ck_a && checksum->ck_b == ck_b;
 		}
@@ -296,8 +296,8 @@ class ZEDF9P{
 													
 													//read checksum
 													ubx_checksum checksum;
-													checksum.ck_a = hdr.length + 6;
-													checksum.ck_b = hdr.length + 7;
+													checksum.ck_a = 98;
+													checksum.ck_b = 99;
 													n = read(serial_port, &checksum, sizeof(ubx_checksum));
 													if(n == sizeof(ubx_checksum)){
 														

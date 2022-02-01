@@ -13,7 +13,7 @@ sudo systemctl enable NetworkManager.service | tee -a log.txt
 echo "Creating WiFi hotspot"
 sudo nmcli dev wifi hotspot ifname wlan0 ssid Hydro-B password "cidco1234" | tee -a log.txt
 sudo nmcli con modify Hotspot autoconnect yes
-sudo nmcli con modify Hotspot ipv4.addresses 192.168.1.1/24,192.168.1.1
+sudo nmcli con modify Hotspot ipv4.addresses 192.168.100.1/24,192.168.100.1
 sudo nmcli con reload
 sudo service network-manager restart
 

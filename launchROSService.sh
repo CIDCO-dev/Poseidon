@@ -42,6 +42,8 @@ source /home/ubuntu/Poseidon/src/workspace/devel/setup.bash
 # Hydroblock configuration with nmea sonar and X5 and bno055
 #roslaunch /home/ubuntu/Poseidon/src/workspace/launch/Hydrobox/hydrobox_nmeadevice_x5_bno055.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
 
+# Hydroblock configuration with nmea sonar and ZED-F9P and bno055
+#roslaunch /home/ubuntu/Poseidon/src/workspace/launch/Hydrobox/hydrobox_nmeadevice_ZED-F9P_bno055.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
 
 ########################
 #      Simulator       #
@@ -51,4 +53,11 @@ source /home/ubuntu/Poseidon/src/workspace/devel/setup.bash
 #roslaunch  /home/ubuntu/Poseidon/src/workspace/launch/Simulator/lowrance_simulator.launch
 
 # Dummy simulator
-roslaunch /home/ubuntu/Poseidon/src/workspace/launch/Simulator/dummy_simulator.launch
+#roslaunch /home/ubuntu/Poseidon/src/workspace/launch/Simulator/dummy_simulator.launch
+
+########################
+#    Configuration     #
+########################
+
+# Dummy simulator
+#roslaunch /home/ubuntu/Poseidon/src/workspace/launch/Configuration/Config_ZED-F9P.launch

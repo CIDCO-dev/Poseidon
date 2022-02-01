@@ -178,8 +178,8 @@ class ZEDF9P{
 				ck_a += payload[i];
 				ck_b += ck_a; 
 			}
-			ROS_INFO_STREAM(ck_a << ck_b);
-			ROS_INFO_STREAM("should be" << checksum->ck_a << " " << ck_b);
+			ROS_INFO_STREAM((int)ck_a << (int)ck_b);
+			ROS_INFO_STREAM("should be:  " << (int)checksum->ck_a << " " << (int)checksum->ck_b);
 			return checksum->ck_a == ck_a && checksum->ck_b == ck_b;
 		}
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){

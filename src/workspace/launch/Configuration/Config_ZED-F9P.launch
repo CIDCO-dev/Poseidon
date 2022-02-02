@@ -2,7 +2,7 @@
 
 <arg name="gnssPortPath" value="/dev/ttyACM0"/>
 
-<node pkg="gnss_zed_f9p_config" name="GPS" type="gnss_zed_f9p_config" output="screen" respawn="true" respawn_delay="1" args="$(arg gnssPortPath)"/>
+<node pkg="gnss_zed_f9p_config" name="GPS" type="gnss_zed_f9p_config_node" output="screen" respawn="false" respawn_delay="1" args="$(arg gnssPortPath)"/>
 
 
 

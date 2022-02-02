@@ -19,7 +19,7 @@
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
-<node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+<node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
 
 <node pkg="sonar_nmea_0183_tcp_client" type="nmea_device_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>

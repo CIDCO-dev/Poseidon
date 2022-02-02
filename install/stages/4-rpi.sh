@@ -31,14 +31,11 @@ EOF2'
 
 sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.target.wants/
 
-sudo bash -c 'cat << EOF3 > /etc/cron.d/uart
-@reboot stty -F /dev/ttyAMA0 ispeed 38400
-EOF3'
-
 echo "[+] Install PPS"
 sudo apt-get install pps-tools -y | tee -a log.txt
 
 sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
+sudo bash -c 'echo "dtoverlay=uart0" >> /boot/firmware/config.txt'
 sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
 
 echo "[+] Config I2C speed"
@@ -65,3 +62,19 @@ EOF3'
 sudo chmod 755 /etc/systemd/system/ros.service
 sudo systemctl enable ros
 echo "sudo systemctl start ros"
+
+echo "[+] Adding Uart config on boot"
+sudo bash -c 'cat << EOF3 > /etc/systemd/system/uart.service
+[Unit]
+Description=Launch Uart config on boot.
+
+[Service]
+Type=simple
+ExecStart=/home/ubuntu/Poseidon/service/uart_on_boot.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF3'
+
+sudo chmod 755 /etc/systemd/system/uart.service
+sudo systemctl enable uart

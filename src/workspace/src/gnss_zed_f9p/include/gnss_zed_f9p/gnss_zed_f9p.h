@@ -296,11 +296,11 @@ class ZEDF9P{
 													
 													//read checksum
 													ubx_checksum checksum;
-													checksum.ck_a = 98;
-													checksum.ck_b = 99;
+													checksum.ck_a = (uint8_t)98;
+													checksum.ck_b = (uint8_t)99;
 													n = read(serial_port, &checksum, sizeof(ubx_checksum));
 													if(n == sizeof(ubx_checksum)){
-														
+														ROS_INFO_STREAM(hdr.length);
 														//process frame
 														processFrame(&hdr, payload, &checksum);
 													}

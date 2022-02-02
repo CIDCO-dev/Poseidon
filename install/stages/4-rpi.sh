@@ -70,7 +70,7 @@ Description=Launch Uart config on boot.
 
 [Service]
 Type=simple
-ExecStart=/home/ubuntu/Poseidon/install/stages/rpi/uart_on_boot.sh
+ExecStart=/home/ubuntu/Poseidon/service/uart_on_boot.sh
 
 [Install]
 WantedBy=multi-user.target

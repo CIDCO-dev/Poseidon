@@ -1,7 +1,11 @@
 <launch>
-
+	
+	<arg name="gnssPortPath" value="/dev/ttyACM0"/>
+	<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+	
 	<!-- the node launching order matters -->
 	<test test-name="test_zf9p" pkg="gnss_zed_f9p" type="test_gnss_zed_f9p" />
+	<node pkg="gnss_zed_f9p" name="gnss_zf9p" type="gnss_zed_f9p_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 	
 	
 	

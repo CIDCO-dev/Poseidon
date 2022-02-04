@@ -178,7 +178,7 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 			
 	double current_speed = speed.twist.twist.linear.y;
 	//wait two mins before calculating the average speed
-	if (kmh_Speed_list.size() < 5){ //for testing purpuses set to 0 but should be 120
+	if (kmh_Speed_list.size() < 5){ //for testing purpuses set to 5 but should be 120
 		kmh_Speed_list.push_back(current_speed);
 	}
 	else{

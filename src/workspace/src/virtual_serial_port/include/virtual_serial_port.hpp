@@ -1,6 +1,8 @@
 #ifndef virtual_serial_port
 #define virtual_serial_port
 
+#include <boost/process.hpp>
+#include <boost/process/extend.hpp>
 
 class virtualSerialPort{
 	public:

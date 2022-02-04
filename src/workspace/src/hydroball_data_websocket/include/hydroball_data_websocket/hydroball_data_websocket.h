@@ -317,7 +317,7 @@ public:
 				toggle.request.loggingEnabled = true;
 				toggleLoggingService.call(toggle);
 			}
-			
+			//FIXME seems to cause deadlock situations
             //std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
                  srv.send(it,jsonString,websocketpp::frame::opcode::text);

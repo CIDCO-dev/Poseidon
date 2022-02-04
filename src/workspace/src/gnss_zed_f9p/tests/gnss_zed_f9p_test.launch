@@ -1,0 +1,8 @@
+<launch>
+
+	<!-- the node launching order matters -->
+	<test test-name="test_zf9p" pkg="gnss_zed_f9p" type="test_gnss_zed_f9p" />
+	
+	
+	
+</launch>

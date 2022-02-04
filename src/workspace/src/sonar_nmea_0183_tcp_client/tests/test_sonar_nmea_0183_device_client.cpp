@@ -5,8 +5,6 @@
 #include "geometry_msgs/PointStamped.h"
 
 #include <thread>
-#include <boost/process.hpp>
-#include <boost/process/extend.hpp>
 #include <iostream>
 #include "virtual_serial_port.hpp"
 

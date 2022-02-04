@@ -170,17 +170,16 @@ class ZEDF9P{
 		bool validateChecksum(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
 			uint8_t ck_a = 0;
 			uint8_t ck_b = 0;
+
 			for( unsigned int i = 0; i<sizeof(ubx_header);i++){
-				ck_a += ((uint8_t*) hdr)[i];
-				ck_b += ck_a; 
+				ck_a += ((uint8_t*) hdr)[i] & 0xFF;
+				ck_b += ck_a & 0xFF; 
 			}
-			for( unsigned int i = 0; i<sizeof(hdr->length);i++){
-				ck_a += payload[i];
-				ck_b += ck_a; 
+			for( unsigned int i = 0; i<hdr->length;i++){
+				ck_a += payload[i] & 0xFF;
+				ck_b += ck_a & 0xFF; 
 			}
-			ROS_INFO_STREAM((int)ck_a << " " << (int)ck_b);
-			ROS_INFO_STREAM("should be:  " << (int)checksum->ck_a << " " << (int)checksum->ck_b);
-			return checksum->ck_a == ck_a && checksum->ck_b == ck_b;
+			return (uint8_t)checksum->ck_a == (uint8_t)ck_a && (uint8_t)checksum->ck_b == (uint8_t)ck_b;
 		}
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
 			//TODO verify checksum
@@ -191,7 +190,9 @@ class ZEDF9P{
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
 					ubx_nav_pvt* pvt = (ubx_nav_pvt*) payload;
+
 					double speedKmh = (double) pvt->groundSpeed * (3.6/1000.0);
+					ROS_INFO_STREAM("speed kmh: " << speedKmh);
 					nav_msgs::Odometry msg;
 					msg.header.seq=++speedSequenceNumber;
 					msg.header.stamp=ros::Time::now();
@@ -296,11 +297,8 @@ class ZEDF9P{
 													
 													//read checksum
 													ubx_checksum checksum;
-													checksum.ck_a = (uint8_t)98;
-													checksum.ck_b = (uint8_t)99;
 													n = read(serial_port, &checksum, sizeof(ubx_checksum));
 													if(n == sizeof(ubx_checksum)){
-														ROS_INFO_STREAM(hdr.length);
 														//process frame
 														processFrame(&hdr, payload, &checksum);
 													}

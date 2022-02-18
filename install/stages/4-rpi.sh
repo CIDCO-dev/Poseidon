@@ -50,7 +50,7 @@ echo "[+] Adding roslaunch on boot"
 sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service
 [Unit]
 Description=Launch ROS on boot.
-before=gpsd.service
+Before=gpsd.service
 
 [Service]
 Type=simple
@@ -68,7 +68,7 @@ echo "[+] Adding Uart config on boot"
 sudo bash -c 'cat << EOF3 > /etc/systemd/system/uart.service
 [Unit]
 Description=Launch Uart config on boot.
-after=gpsd.service
+After=gpsd.service
 
 [Service]
 Type=simple

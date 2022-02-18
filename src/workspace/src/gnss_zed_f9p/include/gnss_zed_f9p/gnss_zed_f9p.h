@@ -147,7 +147,8 @@ class ZEDF9P{
 
 		ZEDF9P(std::string & outputFolder, std::string & serialport): outputFolder(outputFolder), serialport(serialport){
 			gnssSubscriber = n.subscribe("fix", 1000, &ZEDF9P::gnssCallback,this);
-			speedPublisher = n.advertise<nav_msgs::Odometry>("speed",1000);		
+			speedPublisher = n.advertise<nav_msgs::Odometry>("speed",1000);
+			ROS_ERROR("node launched");	
 		}
 
 		std::string datetime(){
@@ -184,11 +185,12 @@ class ZEDF9P{
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
 			//TODO verify checksum
 			//TODO process , hdr
-			
+			ROS_ERROR("process frame");
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
+					ROS_ERROR("packet UBX-NAV-PVT");
 					ubx_nav_pvt* pvt = (ubx_nav_pvt*) payload;
 
 					double speedKmh = (double) pvt->groundSpeed * (3.6/1000.0);
@@ -281,6 +283,7 @@ class ZEDF9P{
 							int n = read(serial_port, &read_buf, size);
 							if (n == 1){
 								if (read_buf[0] == 0xb5){
+									ROS_ERROR("0xb5 received");
 									n = read(serial_port, &read_buf, size);
 									if(n == 1){
 										if (read_buf[0] == 0x62){
@@ -306,12 +309,15 @@ class ZEDF9P{
 													}
 												}
 												else{//read error
+													ROS_ERROR("payload not read properly");
 												}
 											}
 											else{//read error
+												ROS_ERROR("not enough bytes to read ubx header");
 											}
 										}
 										else{//read error
+											ROS_ERROR("0x62 not read properly");
 										}
 									}
 									else{
@@ -319,6 +325,7 @@ class ZEDF9P{
 									}
 					        	}
 					        	else{//read error
+					        		ROS_ERROR("0xb5 not read properly");
 					        	}
 					        }
 					        else{

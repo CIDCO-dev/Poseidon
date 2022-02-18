@@ -249,6 +249,7 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 		//ROS_WARN_STREAM("unlocking thread_id: "<<thread_id);
 		return true;
 	}
+	ROS_WARN("Cannot toggle logger because no gpsfix");
 	return false;
 }
 

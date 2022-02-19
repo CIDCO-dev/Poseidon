@@ -49,6 +49,7 @@ TEST(virtualZf9pTest, testZf9pUbxSpeed) {
 	/*
 	zf9p node listen on /dev/ttyAMA0
 	$sudo ln -s /home/ubuntu/zf9p /dev/ttyAMA0
+	$sudo ln -s /dev/pts/0 /home/ubuntu/zf9p
 	$sudo chown -h :dialout /dev/ttyAMA0
 	*/
 	//ubx.nav-pvt
@@ -63,7 +64,7 @@ TEST(virtualZf9pTest, testZf9pUbxSpeed) {
 	
 	ROS_ERROR_STREAM("MSG SIZE:  "<< msg.size());
 	std::string message (msg.begin(), msg.end());
-		
+	
 	virtualSerialPort virtualZedFf9p("/home/ubuntu/zf9p", "/home/ubuntu/pty");
 	auto zf9p = virtualZedFf9p.init();
 	while(zf9p.running()){

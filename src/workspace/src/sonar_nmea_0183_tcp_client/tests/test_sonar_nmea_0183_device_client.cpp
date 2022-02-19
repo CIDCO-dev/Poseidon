@@ -42,8 +42,9 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 	ros::Subscriber sub4 = n.subscribe("speed", 10, speedReceived);
 	
 	/*
-	nmea_device_node listen on /dev/sonar
+	nmea_device_node listen on /dev/sonar by default
 	$sudo ln -s /home/ubuntu/sonar /dev/sonar
+	$sudo ln -s /dev/pts/0 /home/ubuntu/sonar
 	$sudo chown -h :dialout /dev/sonar
 	*/
 	virtualSerialPort nmeaDevice("/home/ubuntu/sonar", "/home/ubuntu/pty");
@@ -61,9 +62,9 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 		nmeaDevice.close(sonar);
 	}
 	sleep(1);
-	//ROS_ERROR_STREAM("fix count : "<< fixCounter.getCount()<<"\n");
-	//ROS_ERROR_STREAM("depth count : "<< depthCounter.getCount()<<"\n");
-	//ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
+	ROS_ERROR_STREAM("fix count : "<< fixCounter.getCount()<<"\n");
+	ROS_ERROR_STREAM("depth count : "<< depthCounter.getCount()<<"\n");
+	ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
 	
 	ASSERT_TRUE(fixCounter.getCount() == 10);
 	ASSERT_TRUE(speedCounter.getCount() == 10);

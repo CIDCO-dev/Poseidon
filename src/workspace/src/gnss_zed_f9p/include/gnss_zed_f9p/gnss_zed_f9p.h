@@ -184,12 +184,11 @@ class ZEDF9P{
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
 			//TODO verify checksum
 			//TODO process , hdr
-			//ROS_ERROR("zf9p process frame"); //delete me
+			ROS_DEBUG("zf9p process frame"); //delete me
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
-				if(hdr->msgClass == 0x01){
-					ROS_DEBUG_STREAM("packet ID : " << hdr-<id);
-				}
+				ROS_DEBUG_STREAM("message classe : " << hdr->msgClass);
+				ROS_DEBUG_STREAM("packet ID : " << hdr->id);
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
 					ROS_ERROR("zf9p packet UBX-NAV-PVT");
@@ -313,11 +312,11 @@ class ZEDF9P{
 													}
 												}
 												else{//read error
-													//ROS_ERROR("payload not read properly");
+													ROS_ERROR("payload not read properly");
 												}
 											}
 											else{//read error
-												//ROS_ERROR("not enough bytes to read ubx header");
+												ROS_ERROR("not enough bytes to read ubx header");
 											}
 										}
 										else{//read error

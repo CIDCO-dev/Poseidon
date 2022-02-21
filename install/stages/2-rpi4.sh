@@ -10,11 +10,6 @@ sudo apt-get install network-manager -y | tee -a log.txt
 sudo systemctl start NetworkManager.service | tee -a log.txt
 sudo systemctl enable NetworkManager.service | tee -a log.txt
 
-echo "Rename the RPI WIFI Module at boot"
-sudo bash -c 'cat << EOF1 > /etc/udev/rules.d/70-persistent-net.rules
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="brcmfmac", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="HotspotWlat"
-EOF1'
-
 echo "Creating WiFi hotspot"
 sudo nmcli dev wifi hotspot ifname wlan1 ssid Hydro-B password "cidco1234" | tee -a log.txt
 sudo nmcli con modify Hotspot autoconnect yes

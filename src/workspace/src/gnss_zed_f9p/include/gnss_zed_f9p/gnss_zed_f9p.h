@@ -187,8 +187,8 @@ class ZEDF9P{
 			ROS_DEBUG("zf9p process frame"); //delete me
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
-				ROS_DEBUG_STREAM("message classe : " << hdr->msgClass);
-				ROS_DEBUG_STREAM("packet ID : " << hdr->id);
+				//ROS_DEBUG_STREAM("message classe : " << hdr->msgClass);
+				//ROS_DEBUG_STREAM("packet ID : " << hdr->id);
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
 					ROS_ERROR("zf9p packet UBX-NAV-PVT");
@@ -294,11 +294,14 @@ class ZEDF9P{
 											//read header
 											ubx_header hdr;
 											n = read(serial_port, &hdr, sizeof(ubx_header));
+												ROS_DEBUG_STREAM("message classe : " << hdr.msgClass);
+												ROS_DEBUG_STREAM("packet ID : " << hdr.id);
 											if( n == sizeof(ubx_header)){
 											
 												//read payload
 												uint8_t *payload = (uint8_t*) malloc(hdr.length);
 												n = read(serial_port, payload, hdr.length);
+												ROS_DEBUG_STREAM("payload length : " << hdr.length <<"read : "<<n);
 												if(n == hdr.length){
 													
 													//read checksum

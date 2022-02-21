@@ -23,5 +23,3 @@ cd /home/ubuntu/Poseidon/src/workspace/src/
 echo "Download mavros"
 sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msgs ros-noetic-control-toolbox -y
 
-echo "Download sbg driver"
-sudo apt-get install ros-noetic-sbg-driver -y

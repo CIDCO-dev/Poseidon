@@ -184,9 +184,12 @@ class ZEDF9P{
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
 			//TODO verify checksum
 			//TODO process , hdr
-			ROS_ERROR("zf9p process frame"); //delete me
+			//ROS_ERROR("zf9p process frame"); //delete me
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
+				if(hdr->msgClass == 0x01){
+					ROS_DEBUG_STREAM("packet ID : " << hdr-<id);
+				}
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
 					ROS_ERROR("zf9p packet UBX-NAV-PVT");
@@ -282,9 +285,9 @@ class ZEDF9P{
 							//read sync characters
 							int n = read(serial_port, &read_buf, size);
 							if (n == 1){
-								ROS_ERROR("zf9p first byte is 0xb5 and got :%p",read_buf[0]); //delete me
+								//ROS_ERROR("zf9p first byte is 0xb5 and got :%p",read_buf[0]); //delete me
 								if (read_buf[0] == 0xb5){
-									ROS_ERROR("0xb5 received"); //delete me
+									//ROS_ERROR("0xb5 received"); //delete me
 									n = read(serial_port, &read_buf, size);
 									if(n == 1){
 										if (read_buf[0] == 0x62){
@@ -310,15 +313,15 @@ class ZEDF9P{
 													}
 												}
 												else{//read error
-													ROS_ERROR("payload not read properly");
+													//ROS_ERROR("payload not read properly");
 												}
 											}
 											else{//read error
-												ROS_ERROR("not enough bytes to read ubx header");
+												//ROS_ERROR("not enough bytes to read ubx header");
 											}
 										}
 										else{//read error
-											ROS_ERROR("0x62 not read properly");
+											//ROS_ERROR("0x62 not read properly");
 										}
 									}
 									else{
@@ -326,7 +329,7 @@ class ZEDF9P{
 									}
 					        	}
 					        	else{//read error
-					        		ROS_ERROR("0xb5 not read properly");
+					        		//ROS_ERROR("0xb5 not read properly");
 					        	}
 					        }
 					        else{//read error

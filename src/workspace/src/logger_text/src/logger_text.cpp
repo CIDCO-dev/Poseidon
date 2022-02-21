@@ -162,7 +162,7 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 }
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
-	
+	ROS_DEBUG_STREAM("logger speedCallback");
 	logger_service::GetLoggingMode::Request modeReq;
 	logger_service::GetLoggingMode::Response modeRes;
 	getLoggingMode(modeReq,modeRes);
@@ -177,6 +177,7 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	}
 			
 	double current_speed = speed.twist.twist.linear.y;
+	ROS_DEBUG_STREAM("current speed : " << current_speed); 
 	//wait two mins before calculating the average speed
 	if (kmh_Speed_list.size() < 5){ //for testing purpuses set to 5 but should be 120
 		kmh_Speed_list.push_back(current_speed);
@@ -254,7 +255,7 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 }
 
 void Writer::configurationCallBack(const setting_msg::Setting &setting){
-	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	ROS_DEBUG_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
 	if(setting.key == "loggingMode"){		
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{
@@ -267,7 +268,7 @@ void Writer::configurationCallBack(const setting_msg::Setting &setting){
 			}
 			catch(std::invalid_argument &err){
 				mtx.lock();
-        		ROS_INFO("logging mode should be an integer 1-2-3 \n error catch in : Writer::configurationCallBack()");
+        		ROS_ERROR("logging mode should be an integer 1-2-3 \n error catch in : Writer::configurationCallBack()");
         		logger_service::SetLoggingMode defaultMode;
 				defaultMode.request.loggingMode = 1;
 				setLoggingMode(defaultMode.request, defaultMode.response);

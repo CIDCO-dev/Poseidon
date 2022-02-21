@@ -15,19 +15,8 @@ sudo bash -c 'cat << EOF1 > /etc/udev/rules.d/70-persistent-net.rules
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="brcmfmac", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="HotspotWlat"
 EOF1'
 
-sudo lshw -c network -xml > /home/ubuntu/ethernet.xml
-
-sudo rm /home/ubuntu/ethernet.xml
-
-#have to detect the corect interface name if rpi wifi module
-
-echo "Rename the RPI WIFI Module during the session"
-sudo ip link set wlan1 down
-sudo ip link set wlan1 name HotspotWlat
-sudo ip link set HotspotWlat up
-
 echo "Creating WiFi hotspot"
-sudo nmcli dev wifi hotspot ifname HotspotWlat ssid Hydro-B password "cidco1234" | tee -a log.txt
+sudo nmcli dev wifi hotspot ifname wlan1 ssid Hydro-B password "cidco1234" | tee -a log.txt
 sudo nmcli con modify Hotspot autoconnect yes
 sudo nmcli con modify Hotspot ipv4.addresses 192.168.100.1/24,192.168.100.1
 sudo nmcli con reload

@@ -179,13 +179,13 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	double current_speed = speed.twist.twist.linear.y;
 	ROS_DEBUG_STREAM("current speed : " << current_speed); 
 	//wait two mins before calculating the average speed
-	if (kmh_Speed_list.size() < 5){ //for testing purpuses set to 5 but should be 120
+	if (kmh_Speed_list.size() < 120){
 		kmh_Speed_list.push_back(current_speed);
 	}
 	else{
 		kmh_Speed_list.pop_front();
 		kmh_Speed_list.push_back(current_speed);
-		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), 0) / 5.0; // should be divided by 120
+		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), 0) / 120.0;
 		logger_service::GetLoggingStatus::Request request;
 		logger_service::GetLoggingStatus::Response response;
 

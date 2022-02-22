@@ -187,15 +187,12 @@ class ZEDF9P{
 			ROS_DEBUG("zf9p process frame"); //delete me
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
-				//ROS_INFO_STREAM("message classe : " << hdr->msgClass);
-				//ROS_INFO_STREAM("packet ID : " << hdr->id);
+
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
-					ROS_ERROR("zf9p packet UBX-NAV-PVT");
 					ubx_nav_pvt* pvt = (ubx_nav_pvt*) payload;
 
 					double speedKmh = (double) pvt->groundSpeed * (3.6/1000.0);
-					ROS_INFO_STREAM("speed kmh: " << speedKmh);
 					nav_msgs::Odometry msg;
 					msg.header.seq=++speedSequenceNumber;
 					msg.header.stamp=ros::Time::now();
@@ -319,7 +316,7 @@ class ZEDF9P{
 												}
 											}
 											else{//read error
-												ROS_ERROR("not enough bytes to read ubx header");
+												//ROS_ERROR("not enough bytes to read ubx header");
 											}
 										}
 										else{//read error

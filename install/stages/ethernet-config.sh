@@ -25,8 +25,10 @@ network:
     wifis:
         wlan0:
             dhcp4: true
-            access-point:
+            access-points:
                 "Phyl0":
                     password: "4012401240124012"
 
 EOF2'
+
+sudo netplan apply

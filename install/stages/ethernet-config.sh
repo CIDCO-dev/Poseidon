@@ -21,7 +21,7 @@ Help()
    echo
    echo "Command line exemple."
    echo "ethernet-config.sh -help"
-   echo "ethernet-config.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass -eth_2nd_ip "
+   echo "ethernet-config.sh hotspot_if hotspot_ssid hotspot_pass wifi_if wifi_ssid wifi_pass eth_2nd_ip "
    echo "ethernet-config.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' '192.168.2.101'"
    
 }

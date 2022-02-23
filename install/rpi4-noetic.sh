@@ -6,7 +6,7 @@
 Help()
 {
    # Display Help
-   echo "Ethernet and Wifi Configuration script."
+   echo "Install script for Raspberry 4 with ubuntu 20."
    echo
    echo "Syntax: rpi4-noetic.sh [options]"
    echo "options:"
@@ -18,11 +18,16 @@ Help()
    echo "[wifi_ssid]      Wifi SSID.                        $wf_ssid"
    echo "[wifi_pass]      Wifi Password.                    $wf_pass"
    echo "[eth_2nd_ip]     Wired ethernet second ip address. $snd_ip"
+   echo "[rtc]            Enable Hardware RTC and disable Software RTC"
    echo
    echo "Command line exemple."
    echo "rpi4-noetic.sh -help"
+   echo "For Software RTC"
    echo "rpi4-noetic.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass -eth_2nd_ip "
    echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' '192.168.2.101'"
+   echo "For Hardware RTC"
+   echo "rpi4-noetic.sh hotspot_if hotspot_ssid hotspot_pass wifi_if wifi_ssid wifi_pass eth_2nd_ip rtc"
+   echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-1234' '192.168.2.101' 'rtc'"
    
 }
 
@@ -39,13 +44,20 @@ Config()
 
 ~/Poseidon/install/stages/4-rpi.sh
 
+if [ "$8" = 'rtc' ] || [ "$8" = 'RTC' ] 
+then
+  ~/Poseidon/install/stages/rtc.sh
+fi
+
 ~/Poseidon/install/stages/5-finalize.sh
 
 ~/Poseidon/install/stages/6-devices-rpi.sh
 
 ~/Poseidon/install/stages/build-rpi4.sh
 
-   
+echo "*********************************************************************"
+echo "*                        Reboot your device                         *"
+echo "*********************************************************************"   
 }
 
 

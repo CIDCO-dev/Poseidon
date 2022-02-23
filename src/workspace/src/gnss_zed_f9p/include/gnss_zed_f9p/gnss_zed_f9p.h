@@ -179,20 +179,21 @@ class ZEDF9P{
 				ck_a += payload[i] & 0xFF;
 				ck_b += ck_a & 0xFF; 
 			}
+			
 			return (uint8_t)checksum->ck_a == (uint8_t)ck_a && (uint8_t)checksum->ck_b == (uint8_t)ck_b;
 		}
+
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
 			//TODO verify checksum
 			//TODO process , hdr
-			ROS_DEBUG("zf9p process frame"); //delete me
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
 
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
 					ubx_nav_pvt* pvt = (ubx_nav_pvt*) payload;
-
 					double speedKmh = (double) pvt->groundSpeed * (3.6/1000.0);
+					//ROS_ERROR_STREAM("speed : "<< speedKmh);
 					nav_msgs::Odometry msg;
 					msg.header.seq=++speedSequenceNumber;
 					msg.header.stamp=ros::Time::now();
@@ -209,11 +210,11 @@ class ZEDF9P{
 				file.write((char*)hdr, sizeof(ubx_header));
 				file.write((char*)payload, hdr->length);
 				file.write((char*)checksum, sizeof(ubx_checksum));
+			
 			}
 			else{
 				ROS_ERROR("zf9p checksum error");
 			}
-			
 		}
 		
 		void run(){
@@ -257,8 +258,8 @@ class ZEDF9P{
 			}
 
 			//Init buffer
-			int size = 1;
-			char read_buf [size];
+			uint8_t size = 1;
+			uint8_t read_buf [size];
 
 			//Wait for GNSS fix to init system time
 			while(!bootstrappedGnssTime){
@@ -281,9 +282,8 @@ class ZEDF9P{
 							//read sync characters
 							int n = read(serial_port, &read_buf, size);
 							if (n == 1){
-								//ROS_ERROR("zf9p first byte is 0xb5 and got :%p",read_buf[0]); //delete me
+								//ROS_ERROR("zf9p first byte is 0xb5 and got :%x",read_buf[0]); //delete me
 								if (read_buf[0] == 0xb5){
-									//ROS_ERROR("0xb5 received"); //delete me
 									n = read(serial_port, &read_buf, size);
 									if(n == 1){
 										if (read_buf[0] == 0x62){
@@ -291,14 +291,12 @@ class ZEDF9P{
 											//read header
 											ubx_header hdr;
 											n = read(serial_port, &hdr, sizeof(ubx_header));
-												//ROS_DEBUG_STREAM("message classe : " << hdr.msgClass);
-												//ROS_DEBUG_STREAM("packet ID : " << hdr.id);
 											if( n == sizeof(ubx_header)){
 											
 												//read payload
 												uint8_t *payload = (uint8_t*) malloc(hdr.length);
 												n = read(serial_port, payload, hdr.length);
-												//ROS_DEBUG_STREAM("payload length : " << hdr.length <<"read : "<<n);
+												//ROS_ERROR_STREAM("payload length : " << hdr.length <<"  read : "<<n);
 												if(n == hdr.length){
 													
 													//read checksum
@@ -312,15 +310,15 @@ class ZEDF9P{
 													}
 												}
 												else{//read error
-													//ROS_ERROR("payload not read properly");
+													ROS_ERROR("payload not read properly");
 												}
 											}
 											else{//read error
-												//ROS_ERROR("not enough bytes to read ubx header");
+												ROS_ERROR("not enough bytes to read ubx header");
 											}
 										}
 										else{//read error
-											//ROS_ERROR("0x62 not read properly");
+											ROS_ERROR("0x62 not read properly");
 										}
 									}
 									else{

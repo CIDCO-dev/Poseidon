@@ -3,6 +3,7 @@
 
 #include <boost/process.hpp>
 #include <boost/process/extend.hpp>
+#include <stdio.h>
 
 class virtualSerialPort{
 	public:
@@ -22,7 +23,7 @@ class virtualSerialPort{
 		*/
 			//simpliest command
 			//socat -d -d pty,raw,echo=0 pty,raw,echo=0
-			std::string cmd = "socat -d -d pty,raw,echo=0,link="+ this->slave + " pty,raw,echo=0,link=" + this->master;
+			std::string cmd = "socat -d -d -x pty,raw,echo=0,link="+ this->slave + " pty,raw,echo=0,link=" + this->master;
 			boost::process::child virtDev(cmd); //TODO , handle errors
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			return virtDev;
@@ -37,6 +38,13 @@ class virtualSerialPort{
 			else{
 				std::cerr<<"cannot open master";
 			}
+		}
+		
+		void rawWrite(uint8_t message[100]){
+			
+			FILE *f = fopen((this->master).c_str(), "wb");
+			fwrite(message, sizeof(uint8_t), 100, f);
+			fclose(f);
 		}
 		
 		void close(boost::process::child &virtDev){

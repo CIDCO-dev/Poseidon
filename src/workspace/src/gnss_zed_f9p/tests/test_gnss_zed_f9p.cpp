@@ -52,45 +52,41 @@ TEST(virtualZf9pTest, testZf9pUbxSpeed) {
 	$sudo ln -s /dev/pts/0 /home/ubuntu/zf9p
 	$sudo chown -h :dialout /dev/ttyAMA0
 	*/
-	//ubx.nav-pvt
-	std::vector<uint8_t> msg = {181,98,01,07,00,64}; // header,  64 = payload length
-	for(int i=0; i<56; i++){
-		msg.push_back(97);
-	}
-	//0x2121 = 8481mm/s ~= 30Kmh
-	msg.push_back(21);
-	msg.push_back(21);
-	//TODO checksum
 	
-	ROS_ERROR_STREAM("MSG SIZE:  "<< msg.size());
-	std::string message (msg.begin(), msg.end());
+
+	//ubx.nav-pvt
+	uint8_t msg [100] = {181,98,01,07,64,0};
+	
+	
+	for(int i=6; i<100; i++){
+		msg[i] = 0;
+	}
+	msg[66] = 21;
+	msg[67] = 21;
+
+	uint8_t ck_a = 114;
+	uint8_t ck_b = 44;
+
+	msg[70] = ck_a;
+	msg[71] = ck_b;
 	
 	virtualSerialPort virtualZedFf9p("/home/ubuntu/zf9p", "/home/ubuntu/pty");
 	auto zf9p = virtualZedFf9p.init();
 	while(zf9p.running()){
 		for(int i = 0; i<10; i++){
-			sleep(1);
-			// ground speed at bytes 60-> !! = 8481mm/s ~= 30Kmh
-			virtualZedFf9p.write(message);
+			virtualZedFf9p.rawWrite(msg);
 			sleep(1);
 		}
 		virtualZedFf9p.close(zf9p);
 	}
-	
-	sleep(1);
-	//ROS_ERROR_STREAM("fix count : "<< fixCounter.getCount()<<"\n");
-	//ROS_ERROR_STREAM("depth count : "<< depthCounter.getCount()<<"\n");
-	ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
-	
-	ASSERT_TRUE(true);
-	//ASSERT_TRUE(fixCounter.getCount() == 10);
+	//ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
+	//ASSERT_TRUE(true);
 	ASSERT_TRUE(speedCounter.getCount() == 10);
-	//ASSERT_TRUE(depthCounter.getCount() == 10);
 }
 
 int main(int argc, char **argv) {
 
-    ros::init(argc, argv, "TestNmeaDevices");
+    ros::init(argc, argv, "testZf9p");
 
     testing::InitGoogleTest(&argc, argv);
 

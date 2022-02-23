@@ -208,6 +208,14 @@ class BaseNmeaClient{
 				
 				return true;
 			}
+			else if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,S*%2x",&dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.checksum) == 3 ){
+				geometry_msgs::PointStamped msg;
+				msg.header.seq=++depthSequenceNumber;
+				msg.header.stamp=ros::Time::now();
+				msg.point.z = dpt.depthMeters;
+				sonarTopic.publish(msg);
+				return true;
+			}
 			return false;
 		}
 		

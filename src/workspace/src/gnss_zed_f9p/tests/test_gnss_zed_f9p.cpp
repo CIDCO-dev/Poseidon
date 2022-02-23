@@ -1,8 +1,7 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
-//#include "sensor_msgs/NavSatFix.h"
 #include "nav_msgs/Odometry.h"
-//#include "geometry_msgs/PointStamped.h"
+
 
 #include <thread>
 #include <iostream>
@@ -22,17 +21,8 @@ class counter{
 		int count;
 };
 
-//counter fixCounter(0);
-//counter depthCounter(0);
 counter speedCounter(0);
-/*
-void fixReceived(const sensor_msgs::NavSatFix& gnss){
-	fixCounter.increment();
-}
-void depthReceived(const geometry_msgs::PointStamped& sonar){
-	depthCounter.increment();
-}
-*/
+
 void speedReceived(const nav_msgs::Odometry& speed){
 	speedCounter.increment();
 }
@@ -41,8 +31,6 @@ void speedReceived(const nav_msgs::Odometry& speed){
 TEST(virtualZf9pTest, testZf9pUbxSpeed) {
 	
 	ros::NodeHandle n;
-
-	//ros::Subscriber sub1 = n.subscribe("fix", 10,fixReceived);
 	ros::Subscriber sub2 = n.subscribe("speed", 10, speedReceived);
 	
 	
@@ -80,7 +68,6 @@ TEST(virtualZf9pTest, testZf9pUbxSpeed) {
 		virtualZedFf9p.close(zf9p);
 	}
 	//ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
-	//ASSERT_TRUE(true);
 	ASSERT_TRUE(speedCounter.getCount() == 10);
 }
 

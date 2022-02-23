@@ -95,7 +95,6 @@ node without test:
 hydroball_files_websocket
 hydroball_config_websocket
 raspberry_vitals_msg
-gnss_zed_f9p
 gps_common
 gpsd_client
 logger_binary

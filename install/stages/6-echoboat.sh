@@ -3,7 +3,7 @@
 cd /home/ubuntu/Poseidon/src/workspace/src/
 
 echo "Download mavros"
-sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msg -y
+sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msgs ros-noetic-control-toolbox -y
 
 
 echo "Download VLP-16 driver"
@@ -15,7 +15,8 @@ rosdep install --from-paths velodyne/ --ignore-src --rosdistro noetic -y
 
 
 echo "Download sbg driver"
-git clone https://github.com/SBG-Systems/sbg_ros_driver.git
+sudo apt-get install ros-noetic-sbg-driver
+
 sudo adduser $USER dialout
 
 sudo bash -c 'cat << EOF > /etc/udev/rules.d/99-usb-serial.rules

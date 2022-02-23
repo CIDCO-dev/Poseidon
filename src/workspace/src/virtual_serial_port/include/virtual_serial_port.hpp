@@ -23,7 +23,7 @@ class virtualSerialPort{
 		*/
 			//simpliest command
 			//socat -d -d pty,raw,echo=0 pty,raw,echo=0
-			std::string cmd = "socat -d -d -x pty,raw,echo=0,link="+ this->slave + " pty,raw,echo=0,link=" + this->master;
+			std::string cmd = "socat -d -d pty,raw,echo=0,link="+ this->slave + " pty,raw,echo=0,link=" + this->master;
 			boost::process::child virtDev(cmd); //TODO , handle errors
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			return virtDev;

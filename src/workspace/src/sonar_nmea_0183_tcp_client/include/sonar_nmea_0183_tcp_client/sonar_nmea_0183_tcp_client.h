@@ -68,6 +68,14 @@ typedef struct{
     unsigned int checksum;    
 }vtgData;
 
+typedef struct{
+    char talkerId[2];
+    double  depthMeters;
+    double  offsetMeters; 
+    double  maxRangeScale; // i guess it's meters
+    unsigned int checksum;    
+}dptData;
+
 
 class BaseNmeaClient{
 
@@ -186,6 +194,24 @@ class BaseNmeaClient{
 			return false;
 		}
 		
+		bool extractDPT(std::string & s){
+			dptData dpt;
+
+			//$INDPT,5.0,0.0,0.0*46\r\n
+			if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,%lf,S*%2x",&dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.maxRangeScale,&dpt.checksum) == 4 ){
+
+				geometry_msgs::PointStamped msg;
+				msg.header.seq=++depthSequenceNumber;
+				msg.header.stamp=ros::Time::now();
+				msg.point.z = dpt.depthMeters;
+				sonarTopic.publish(msg);
+				
+				return true;
+			}
+			return false;
+		}
+		
+		
 
 		void readStream(int & fileDescriptor){
 			//read char by char like a dumbass
@@ -206,7 +232,9 @@ class BaseNmeaClient{
 
 					if(!extractDBT(line)){
 						if(!extractGGA(line)){
-							extractVTG(line);
+							if(!extractVTG(line)){
+								extractDPT(line);
+							}
 						}
 					}
 

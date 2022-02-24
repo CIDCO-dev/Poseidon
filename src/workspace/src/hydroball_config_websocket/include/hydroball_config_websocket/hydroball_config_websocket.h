@@ -49,11 +49,11 @@ public:
 	ConfigurationServer(std::string & configFilePath): configFilePath(configFilePath) {
 		srv.init_asio();
 		srv.set_reuse_addr(true);
-		srv.clear_access_channels(websocketpp::log::alevel::all); 
+		srv.clear_access_channels(websocketpp::log::alevel::all);
 		srv.set_open_handler(bind(&ConfigurationServer::on_open,this,std::placeholders::_1));
 		srv.set_close_handler(bind(&ConfigurationServer::on_close,this,std::placeholders::_1));
 		srv.set_message_handler(bind(&ConfigurationServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
-
+		
 		configTopic     = n.advertise<setting_msg::Setting>("configuration", 1000);
 		configService   = n.advertiseService("get_configuration", &ConfigurationServer::getConfigurationService,this);
 		zeroImuService  = n.advertiseService("zero_imu_offsets", &ConfigurationServer::zeroImuOffsetService,this);
@@ -113,6 +113,7 @@ public:
 	}
 
 	void stop() {
+		
 	    websocketpp::lib::error_code ec_stop_listening;
 	    srv.stop_listening(ec_stop_listening);
 	    if(ec_stop_listening) {

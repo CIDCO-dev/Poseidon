@@ -7,7 +7,7 @@
 #include <thread>
 #include <iostream>
 #include "virtual_serial_port.hpp"
-
+#include "sonar_nmea_0183_tcp_client/sonar_nmea_0183_tcp_client.h"
 class counter{
 	public:
 		counter(int init){ this-> count = init;}
@@ -47,6 +47,7 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 	$sudo ln -s /dev/pts/0 /home/ubuntu/sonar
 	$sudo chown -h :dialout /dev/sonar
 	*/
+	
 	virtualSerialPort nmeaDevice("/home/ubuntu/sonar", "/home/ubuntu/pty");
 	auto sonar = nmeaDevice.init();
 	sleep(1);
@@ -59,10 +60,10 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 			nmeaDevice.write("$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A"); //speed
 			sleep(1);
 			//dpt >= 3
-			nmeaDevice.write("$INDPT,5.0,0.0,0.0*46"); // depth
+			nmeaDevice.write("$INDPT,5.0,0.0,0.0*40"); // depth
 			sleep(1);
 			//dpt <= 2
-			nmeaDevice.write("$INDPT,5.0,0.0*46"); // depth
+			nmeaDevice.write("$INDPT,5.0,0.0*42"); // depth
 			sleep(1);
 		}
 		nmeaDevice.close(sonar);

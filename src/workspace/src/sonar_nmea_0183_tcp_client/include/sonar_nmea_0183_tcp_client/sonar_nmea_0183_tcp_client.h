@@ -100,6 +100,34 @@ class BaseNmeaClient{
 
 		}
 		
+		bool validateChecksum(std::string &s){
+			std::string toBeTallied = s.substr(s.find("$")+1, s.find("*")-1);
+			std::string chksum = s.substr(s.find("*")+1, s.find("*")+2);
+			uint8_t msb = chksum.at(0);
+			uint8_t lsb = chksum.at(1);
+			uint8_t ans = 0;
+			uint8_t checksum = 0;
+			for(int i=0; i<toBeTallied.size(); i++){
+				checksum ^= toBeTallied.at(i);
+			}
+			
+			if(msb >= '0' && msb <= '9') msb = msb - '0';
+			else if(msb >='A' && msb <='F') msb = msb -'A'+10;
+			else return false;
+			msb = msb << 4;
+			
+			if(lsb >= '0' && lsb <= '9') lsb = lsb - '0';
+			else if(lsb >='A' && lsb <='F') lsb = lsb -'A'+10;
+			else return false;
+			ans = msb + lsb;
+			if(checksum == ans){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		
 		void initTopics(){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
 			gnssTopic  = node.advertise<sensor_msgs::NavSatFix>("fix", 1000);
@@ -111,45 +139,49 @@ class BaseNmeaClient{
 			
 			if(sscanf(s.c_str(),"$%2sGGA,%lf,%lf,%1s,%lf,%1s,%d,%d,%lf,%lf,M,%lf,M,%d,%d*%2x",&data.talkerId,&data.utcTime,&data.latitude,&data.northOrSouth,&data.longitude,&data.eastOrWest,&data.quality,&data.nbSatellites,&data.hdop,&data.antennaAltitude,&data.geoidalSeparation,&data.dgpsAge,&data.dgpsStationId,&data.checksum) >= 8){		
 				//TODO verify checksum
+				if(validateChecksum(s)){
+					sensor_msgs::NavSatFix msg;
+					msg.header.seq=++gpsSequenceNumber;
+					msg.header.stamp=ros::Time::now();			
+					int longDegrees =( (double)data.longitude / 100);
+					double longMinutes = (data.longitude - (longDegrees*100)) / (double)60;
+					double sign = (data.eastOrWest=='E')?1:-1;
 				
-				sensor_msgs::NavSatFix msg;
-				msg.header.seq=++gpsSequenceNumber;
-				msg.header.stamp=ros::Time::now();			
-				int longDegrees =( (double)data.longitude / 100);
-				double longMinutes = (data.longitude - (longDegrees*100)) / (double)60;
-				double sign = (data.eastOrWest=='E')?1:-1;
-			
-				msg.longitude = sign* (longDegrees + longMinutes );
-			
-				int latDegrees = (double)(data.latitude / 100);
-				double latMinutes = (data.latitude - (latDegrees*100)) / (double)60;
-				sign = (data.northOrSouth=='N')?1:-1;        
+					msg.longitude = sign* (longDegrees + longMinutes );
+				
+					int latDegrees = (double)(data.latitude / 100);
+					double latMinutes = (data.latitude - (latDegrees*100)) / (double)60;
+					sign = (data.northOrSouth=='N')?1:-1;        
 
-				msg.latitude  = sign * (latDegrees+latMinutes);
-                                                        
-				switch(data.quality){
-					//No fix
-					case 0:
-						msg.status.status=-1;
-						break;
-                                                            
-					//GPS Fix
-					case 1:
-						msg.status.status=0;
-						break;
-                                                                
-						//DGPS
-					case 2:
-						msg.status.status=2;
-						break;
-				}
-                                                        
-				msg.altitude  = data.antennaAltitude;
-				msg.position_covariance_type= 0;
-                                                            
-				gnssTopic.publish(msg);				
+					msg.latitude  = sign * (latDegrees+latMinutes);
+		                                                    
+					switch(data.quality){
+						//No fix
+						case 0:
+							msg.status.status=-1;
+							break;
+		                                                        
+						//GPS Fix
+						case 1:
+							msg.status.status=0;
+							break;
+		                                                            
+							//DGPS
+						case 2:
+							msg.status.status=2;
+							break;
+					}
+		                                                    
+					msg.altitude  = data.antennaAltitude;
+					msg.position_covariance_type= 0;
+		                                                        
+					gnssTopic.publish(msg);				
 
-				return true;
+					return true;
+					}
+					else{
+						ROS_ERROR("checksum error");
+					}
 		    	}
 		    
 			return false;
@@ -162,17 +194,21 @@ class BaseNmeaClient{
 			if(sscanf(s.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
 				//TODO: checksum
 				//process depth
+				if(validateChecksum(s)){
+					geometry_msgs::PointStamped msg;
 
-				geometry_msgs::PointStamped msg;
+					msg.header.seq=++depthSequenceNumber;
+					msg.header.stamp=ros::Time::now();
 
-				msg.header.seq=++depthSequenceNumber;
-				msg.header.stamp=ros::Time::now();
+					msg.point.z = dbt.depthMeters;
 
-				msg.point.z = dbt.depthMeters;
-
-				sonarTopic.publish(msg);
+					sonarTopic.publish(msg);
 				
 				return true;
+				}
+				else{
+					ROS_ERROR("checksum error");
+				}
 			}			
 			
 			return false;
@@ -182,14 +218,19 @@ class BaseNmeaClient{
 			vtgData vtg;
 			//$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A\r\n
 			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,%lf,K,S*%2x",&vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6 ){
-
-				nav_msgs::Odometry msg;
-				msg.header.seq=++speedSequenceNumber;
-				msg.header.stamp=ros::Time::now();
-				msg.twist.twist.linear.y=vtg.speedKmh;
-				speedTopic.publish(msg);
 				
-				return true;
+				if(validateChecksum(s)){
+					nav_msgs::Odometry msg;
+					msg.header.seq=++speedSequenceNumber;
+					msg.header.stamp=ros::Time::now();
+					msg.twist.twist.linear.y=vtg.speedKmh;
+					speedTopic.publish(msg);
+					
+					return true;
+				}
+				else{
+					ROS_ERROR("checksum error");
+				}
 			}
 			return false;
 		}
@@ -199,22 +240,31 @@ class BaseNmeaClient{
 
 			//$INDPT,5.0,0.0,0.0*46\r\n
 			if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,%lf,S*%2x",&dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.maxRangeScale,&dpt.checksum) == 4 ){
-
-				geometry_msgs::PointStamped msg;
-				msg.header.seq=++depthSequenceNumber;
-				msg.header.stamp=ros::Time::now();
-				msg.point.z = dpt.depthMeters;
-				sonarTopic.publish(msg);
-				
-				return true;
+				if(validateChecksum(s)){
+					geometry_msgs::PointStamped msg;
+					msg.header.seq=++depthSequenceNumber;
+					msg.header.stamp=ros::Time::now();
+					msg.point.z = dpt.depthMeters;
+					sonarTopic.publish(msg);
+					return true;
+				}
+				else{
+					ROS_ERROR("checksum error");
+				}
 			}
+			
 			else if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,S*%2x",&dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.checksum) == 3 ){
-				geometry_msgs::PointStamped msg;
-				msg.header.seq=++depthSequenceNumber;
-				msg.header.stamp=ros::Time::now();
-				msg.point.z = dpt.depthMeters;
-				sonarTopic.publish(msg);
-				return true;
+				if(validateChecksum(s)){
+					geometry_msgs::PointStamped msg;
+					msg.header.seq=++depthSequenceNumber;
+					msg.header.stamp=ros::Time::now();
+					msg.point.z = dpt.depthMeters;
+					sonarTopic.publish(msg);
+					return true;
+				}
+				else{
+					ROS_ERROR("checksum error");
+				}
 			}
 			return false;
 		}

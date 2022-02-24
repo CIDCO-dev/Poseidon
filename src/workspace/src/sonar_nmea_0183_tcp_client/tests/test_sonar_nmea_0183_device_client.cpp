@@ -47,7 +47,7 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 	$sudo ln -s /dev/pts/0 /home/ubuntu/sonar
 	$sudo chown -h :dialout /dev/sonar
 	*/
-	
+
 	virtualSerialPort nmeaDevice("/home/ubuntu/sonar", "/home/ubuntu/pty");
 	auto sonar = nmeaDevice.init();
 	sleep(1);
@@ -77,6 +77,20 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 	ASSERT_TRUE(depthCounter.getCount() == 15);
 }
 
+
+TEST(nmeaDeviceTest, checksum) {
+	
+	std::string device = "/dev/sonar";
+	
+	DeviceNmeaClient nmea(device, false, false, false);
+	//nmea.run();
+	std::string s = "$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A";
+	
+	ASSERT_TRUE(nmea.validateChecksum(s));
+	
+	s = "$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*FF";
+	ASSERT_FALSE(nmea.validateChecksum(s));
+}
 int main(int argc, char **argv) {
 
     ros::init(argc, argv, "TestNmeaDevices");

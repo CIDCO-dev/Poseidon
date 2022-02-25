@@ -100,17 +100,19 @@ class BaseNmeaClient{
 
 		}
 		
-		bool validateChecksum(std::string &s){
-			std::string toBeTallied = s.substr(s.find("$")+1, s.find("*")-1);
-			std::string chksum = s.substr(s.find("*")+1, s.find("*")+2);
-			uint8_t msb = chksum.at(0);
-			uint8_t lsb = chksum.at(1);
-			uint8_t ans = 0;
-			uint8_t checksum = 0;
-			for(int i=0; i<toBeTallied.size(); i++){
-				checksum ^= toBeTallied.at(i);
-			}
+		static uint8_t computeChecksum(std::string &data){
 			
+			uint8_t checksum = 0;
+			for(int i=0; i<data.size(); i++){
+				checksum ^= data.at(i);
+			}
+			return checksum;
+		}
+		
+		static uint8_t str2checksum(std::string checksumByte){
+			uint8_t msb = checksumByte.at(0);
+			uint8_t lsb = checksumByte.at(1);
+
 			if(msb >= '0' && msb <= '9') msb = msb - '0';
 			else if(msb >='A' && msb <='F') msb = msb -'A'+10;
 			else return false;
@@ -119,8 +121,17 @@ class BaseNmeaClient{
 			if(lsb >= '0' && lsb <= '9') lsb = lsb - '0';
 			else if(lsb >='A' && lsb <='F') lsb = lsb -'A'+10;
 			else return false;
-			ans = msb + lsb;
-			if(checksum == ans){
+			
+			return msb + lsb;
+		}
+		static bool validateChecksum(std::string &s){
+			std::string bytes = s.substr(s.find("$")+1, s.find("*")-1);
+			uint8_t checksum = computeChecksum(bytes);
+			
+			std::string checksumByte = s.substr(s.find("*")+1, s.find("*")+2);
+			uint8_t controlByte = str2checksum(checksumByte);
+			
+			if(checksum == controlByte){
 				return true;
 			}
 			else{

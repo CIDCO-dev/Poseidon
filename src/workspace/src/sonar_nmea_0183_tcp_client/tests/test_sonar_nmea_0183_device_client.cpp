@@ -68,9 +68,10 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 		}
 		nmeaDevice.close(sonar);
 	}
-	//ROS_ERROR_STREAM("fix count : "<< fixCounter.getCount()<<"\n");
-	//ROS_ERROR_STREAM("depth count : "<< depthCounter.getCount()<<"\n");
-	//ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
+	
+	ROS_INFO_STREAM("fix count : "<< fixCounter.getCount()<<"\n");
+	ROS_INFO_STREAM("depth count : "<< depthCounter.getCount()<<"\n");
+	ROS_INFO_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
 	
 	ASSERT_TRUE(fixCounter.getCount() == 5);
 	ASSERT_TRUE(speedCounter.getCount() == 5);
@@ -80,16 +81,12 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 
 TEST(nmeaDeviceTest, checksum) {
 	
-	std::string device = "/dev/sonar";
-	
-	DeviceNmeaClient nmea(device, false, false, false);
-	//nmea.run();
 	std::string s = "$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A";
 	
-	ASSERT_TRUE(nmea.validateChecksum(s));
+	ASSERT_TRUE(BaseNmeaClient::validateChecksum(s));
 	
 	s = "$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*FF";
-	ASSERT_FALSE(nmea.validateChecksum(s));
+	ASSERT_FALSE(BaseNmeaClient::validateChecksum(s));
 }
 int main(int argc, char **argv) {
 

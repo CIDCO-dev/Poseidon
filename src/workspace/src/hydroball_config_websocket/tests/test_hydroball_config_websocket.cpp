@@ -62,6 +62,11 @@ TEST(configWebsocket, configInit) {
 	ASSERT_TRUE(true);
 }
 
+TEST(configWebsocket, ImuTransform) {
+	ROS_ERROR("IMU transform unit test not done");
+	ASSERT_FALSE(true);
+}
+
 int main(int argc, char** argv) {
     
     ros::init(argc, argv, "configWebsocket");

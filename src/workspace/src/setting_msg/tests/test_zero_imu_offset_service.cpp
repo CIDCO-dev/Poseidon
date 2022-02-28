@@ -115,7 +115,7 @@ TEST(ZeroImuOffsetTestSuite, testZeroImuOffset) {
 	testRoll -= expectedRollOffset;
 	
     tf2::Quaternion q;
-    q.setRPY(D2R(testRoll),D2R(testPitch),D2R(testHeading));
+    q.setRPY(D2R(testRoll),D2R(testPitch),D2R(expectedHeadingOffset));
     imuMsg.orientation = tf2::toMsg(q);
     imuPublisher.publish(imuMsg);
 
@@ -133,7 +133,7 @@ TEST(ZeroImuOffsetTestSuite, testZeroImuOffset) {
     ASSERT_NEAR(expectedPitchOffset, -testPitch, epsilon) << "zero_imu_offsets service didn't set negative of pitch";
     ASSERT_NEAR(expectedRollOffset, -testRoll, epsilon) << "zero_imu_offsets service didn't set negative of roll";
     
-    ASSERT_FALSE(true) << "The test needs to be verified by a math expert";
+    ASSERT_FALSE(true) << "The test needs to be verified by a math expert but should be good";
 }
 
 

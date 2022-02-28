@@ -63,8 +63,7 @@ TEST(configWebsocket, configInit) {
 }
 
 TEST(configWebsocket, ImuTransform) {
-	ROS_ERROR("IMU transform unit test not done");
-	ASSERT_FALSE(true);
+	ASSERT_FALSE(true) << "broadcastImuTransform() and saveConfigutation() unit tests not done";
 }
 
 int main(int argc, char** argv) {

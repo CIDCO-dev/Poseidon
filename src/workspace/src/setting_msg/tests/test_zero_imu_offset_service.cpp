@@ -97,11 +97,23 @@ TEST(ZeroImuOffsetTestSuite, testZeroImuOffset) {
     std::mt19937 e2(rd());
     std::uniform_real_distribution<> dist(0,1);
 
-    // change state in state controller with a new attitude
-    double testRoll = dist(e2) * 15; // between 1 and 15
-    double testPitch = dist(e2) * 15 + 15; // between 15 and 30
-    double testHeading = dist(e2) * 15 + 30; // between 30 and 45
+    std::map<std::string,std::string> configurationAfterTest;
+    readConfigurationFromFile(configFileOnTestPath, configurationAfterTest);
 
+    double expectedHeadingOffset = std::stod(configurationAfterTest["headingOffset"]);
+    double expectedPitchOffset = std::stod(configurationAfterTest["pitchOffset"]);
+    double expectedRollOffset = std::stod(configurationAfterTest["rollOffset"]);
+    
+    // 7th decimal error
+    double testRoll = dist(e2) /1000000;
+    double testPitch = dist(e2) /1000000;
+    double testHeading = dist(e2) /1000000; 
+	
+	// introducing an error at the 7th decimal
+	testHeading -= expectedHeadingOffset;
+	testPitch -= expectedPitchOffset;
+	testRoll -= expectedRollOffset;
+	
     tf2::Quaternion q;
     q.setRPY(D2R(testRoll),D2R(testPitch),D2R(testHeading));
     imuMsg.orientation = tf2::toMsg(q);
@@ -109,25 +121,19 @@ TEST(ZeroImuOffsetTestSuite, testZeroImuOffset) {
 
     sleep(2); // give enough time for StateController's state to be updated
 
-
     // register client service
     ros::ServiceClient zeroImuOffsetClient = nh.serviceClient<setting_msg::ImuOffsetService>("zero_imu_offsets");
 
     setting_msg::ImuOffsetService srv;
     zeroImuOffsetClient.call(srv);
     //ASSERT_TRUE() << "zero_imu_offsets service call returned false";
-    
-    std::map<std::string,std::string> configurationAfterTest;
-    readConfigurationFromFile(configFileOnTestPath, configurationAfterTest);
-
-    double expectedHeadingOffset = std::stod(configurationAfterTest["headingOffset"]);
-    double expectedPitchOffset = std::stod(configurationAfterTest["pitchOffset"]);
-    double expectedRollOffset = std::stod(configurationAfterTest["rollOffset"]);
-
+	
     double epsilon = 1e-6; //currently file is written up to 6 digits
     ASSERT_NEAR(expectedHeadingOffset, -testHeading, epsilon) << "zero_imu_offsets service didn't set negative of heading";
     ASSERT_NEAR(expectedPitchOffset, -testPitch, epsilon) << "zero_imu_offsets service didn't set negative of pitch";
     ASSERT_NEAR(expectedRollOffset, -testRoll, epsilon) << "zero_imu_offsets service didn't set negative of roll";
+    
+    ASSERT_FALSE(true) << "The test needs to be verified by a math expert";
 }
 
 

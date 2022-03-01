@@ -245,7 +245,6 @@ public:
 			setting_msg::Setting setting;
 			setting.key   =i->first;
 			setting.value =i->second;
-
 			configTopic.publish(setting);
 		}
 	}

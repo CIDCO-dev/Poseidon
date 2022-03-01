@@ -27,7 +27,6 @@ int main(int argc,char** argv){
 		useAttitude = false;
 	}
 	
-	//TODO: get useDepth/usePOsition/useAttitude from parameters
 	DeviceNmeaClient nmea(device,useDepth,usePosition,useAttitude);
 	nmea.run();
 }

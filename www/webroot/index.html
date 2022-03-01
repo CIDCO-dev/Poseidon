@@ -17,6 +17,7 @@
 
   <link href="js/Chart.min.css" rel="stylesheet">
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  
 
   <link rel="stylesheet" href="/leaflet/gh-pages.css" />
 
@@ -154,6 +155,18 @@
                         Stop Recording
                 </a>
 		</div>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="border-right-warning float-right d-inline">
+		        <div class="row align-items-center">
+		            <div class="col mr-2">
+		                <div class="text-lg font-weight-bold text-warning text-uppercase mb-1"> logging mode</div>
+		                	<div id="modeWidget" class="h5 mb-0 font-weight-bold text-info"> mode </div>
+		            </div>
+		            <div class="col-auto">
+		                <i class="fas fa-comments fa-2x text-gray-300"></i>
+		            </div>
+		        </div>
+    	</div>
 	  </div>
           </li>
           </ul>
@@ -487,20 +500,22 @@ $( document ).ready(function() {
 	socket.onmessage = function (event) {
         	//console.log(event.data);
         	var msg = JSON.parse(event.data);
-
+        	
         	if(msg.telemetry){
                 	processTelemetry(msg.telemetry);
         	}
-        	else if(msg.recordingStatus){
-                	console.log(msg);
-                	processRecordingStatus(msg.recordingStatus);
+        	else if(msg.recordingInfo){
+        		var isLogging = msg.recordingInfo.status;
+        		var mode = msg.loggingMode.the_mode_is;
+        		processRecordingInfo(isLogging, mode);
         	}
+        	
   	};
 
 	socket.onopen = function(event){
 		hideOverlay();
 		//init display
-        	getRecordingStatus();
+        getLoggingInfo();
 	};
 
 	socket.onerror = function(){
@@ -508,6 +523,8 @@ $( document ).ready(function() {
 		console.log("Error: Cannot connect to websocket")
 		displayOverlay();		
 	}
+	
+	
 });
 
 
@@ -538,7 +555,7 @@ $( document ).ready(function() {
             $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
             $("#gnssLongitudeValue").text(state.position[0].toFixed(8));
             $("#gnssLatitudeValue").text(state.position[1].toFixed(8));
-	    $("#gnssStatusText").text("");
+	    	$("#gnssStatusText").text("");
         }
         else{
             $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
@@ -552,14 +569,14 @@ $( document ).ready(function() {
             $("#imuHeadingValue").text(state.attitude[0].toFixed(3));
             $("#imuPitchValue").text(state.attitude[1].toFixed(3));
             $("#imuRollValue").text(state.attitude[2].toFixed(3));
-	    $("#imuStatusText").text("");
+	    	$("#imuStatusText").text("");
         }
         else{
             $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
             $("#imuHeadingValue").text("");
             $("#imuPitchValue").text("");
             $("#imuRollValue").text("");        
-	    $("#imuStatusText").text("No IMU Data");
+	    	$("#imuStatusText").text("No IMU Data");
         }
         
         if(state.depth.length){
@@ -591,21 +608,66 @@ $( document ).ready(function() {
 	headingGauge.value = (state.attitude[0]);
 			
   }
-
+  /*
+  function setLoggingMode(){
+  	//var cmd = {command : "setLoggingMode"};
+	//socket.send(JSON.stringify(cmd));
+  }
+  function getLoggingMode(){
+  	var cmd = {command : "getLoggingMode"};
+	socket.send(JSON.stringify(cmd));
+  }
+  */
+  function getLoggingInfo(){
+  	var cmd = {command : "getLoggingInfo"};
+	socket.send(JSON.stringify(cmd));
+  }
+  /*
   function getRecordingStatus(){
   	var cmd = {command : "getLoggingStatus"};
 	socket.send(JSON.stringify(cmd));
   }
-
-  function processRecordingStatus(recordingStatus){
-	if(recordingStatus.status){
-		//currently recording
-		showRecording();
-	}
-	else{
-		//Not recording
-		showNotRecording();
-	}	
+  */
+  function processRecordingInfo(isLogging, mode){
+	console.log(isLogging);
+	console.log(mode);
+  	if(mode == "1"){
+  		hideLoggingButton();
+  		$("#modeWidget").text("always ON");
+  		if(isLogging){
+  			//console.log("logging mode 1 : always ON");
+  			showRecording();
+  		}
+  		else{
+  			showNotRecording();
+  		}
+  		
+  	}
+  	else if(mode == "2"){
+  		$("#modeWidget").text("manual");
+  		if(isLogging){
+  			//console.log("logging mode 2 : manual , isLogging");
+  			showRecordingButton();
+  			showRecording();
+  		}
+  		else{
+  		//console.log("logging mode 2 : manual , is not logging");
+  		showNotRecording();
+  		showNotRecordingButton();
+  		}
+  	}
+  	else if(mode == "3"){
+  		hideLoggingButton();
+  		$("#modeWidget").text("speed based");
+  		if(isLogging){
+  			//console.log("logging mode 3 : speed based , isLogging");
+	  		showRecording();
+  		}
+  		else{
+  			//console.log("logging mode 3 : speed based , is not Logging");
+	  		showNotRecording();
+  		}
+  	}
   }
 
   function startRecording(){
@@ -618,16 +680,28 @@ $( document ).ready(function() {
         socket.send(JSON.stringify(cmd));
   }
 
-  function showRecording(){
-        $("#btnStartRecording").removeClass("d-inline").addClass("d-none");
-        $("#btnStopRecording").removeClass("d-none").addClass("d-inline");
-        $("#recordingStatus").removeClass("d-none").addClass("d-block");
+  function showRecording(){ 
+    $("#recordingStatus").removeClass("d-none alert-danger").addClass("d-block alert-success");
+    $("#recordingStatus").text("The system is currently recording data");
+    $("#modeWidget").removeClass("text-danger text-success").addClass("text-success");
   }
 
   function showNotRecording(){
-        $("#btnStartRecording").removeClass("d-none").addClass("d-inline");
-        $("#btnStopRecording").removeClass("d-inline").addClass("d-none");
-        $("#recordingStatus").removeClass("d-block").addClass("d-none");
+    $("#recordingStatus").removeClass("d-none alert-success").addClass("d-block alert-danger");
+    $("#recordingStatus").text("The system is not recording data")
+    $("#modeWidget").removeClass("text-danger text-success").addClass("text-danger");
+  }
+  function showRecordingButton(){
+  	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
+    $("#btnStopRecording").removeClass("d-none").addClass("d-inline");
+  }
+  function showNotRecordingButton(){
+  	$("#btnStartRecording").removeClass("d-none").addClass("d-inline");
+    $("#btnStopRecording").removeClass("d-inline").addClass("d-none");
+  }
+  function hideLoggingButton(){
+  	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
+  	$("#btnStopRecording").removeClass("d-inline").addClass("d-none");
   }
   </script>
 

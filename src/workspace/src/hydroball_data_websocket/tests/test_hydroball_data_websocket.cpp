@@ -233,7 +233,8 @@ TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
         state.depth.point.z = HydroBallDataWebSocketTest::testDepth;
 
         // vitals
-        state.vitals.header = 1;
+        state.vitals.header.seq = 1;
+        state.vitals.header.stamp=ros::Time::now();
         state.vitals.cputemp = HydroBallDataWebSocketTest::test_cputemp;
         state.vitals.cpuload = HydroBallDataWebSocketTest::test_cpuload;
         state.vitals.freeram = HydroBallDataWebSocketTest::test_freeram;

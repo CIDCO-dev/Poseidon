@@ -1,0 +1,8 @@
+<launch>
+
+	<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" />
+	<test pkg="logger_text" test-name="logger_text" type="test_logger_text_node"/>
+	
+	
+	
+</launch>

@@ -30,6 +30,8 @@
 
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
+#include "logger_service/GetLoggingMode.h"
+#include "logger_service/SetLoggingMode.h"
 
 #include "../../utils/QuaternionUtils.h"
 
@@ -40,42 +42,46 @@ using websocketpp::connection_hdl;
 class TelemetryServer {
 public:
     TelemetryServer(): transformListener(buffer){
-        srv.init_asio();
-        srv.set_reuse_addr(true);
-	srv.clear_access_channels(websocketpp::log::alevel::all);  //remove cout logging
+		srv.init_asio();
+		srv.set_reuse_addr(true);
+		srv.clear_access_channels(websocketpp::log::alevel::all);  //remove cout logging
 
-        srv.set_open_handler(bind(&TelemetryServer::on_open,this,std::placeholders::_1));
-        srv.set_close_handler(bind(&TelemetryServer::on_close,this,std::placeholders::_1));
-	srv.set_message_handler(bind(&TelemetryServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
-        stateTopic = n.subscribe("state", 1000, &TelemetryServer::stateChanged,this);
-	getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
-	toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
+		srv.set_open_handler(bind(&TelemetryServer::on_open,this,std::placeholders::_1));
+		srv.set_close_handler(bind(&TelemetryServer::on_close,this,std::placeholders::_1));
+		srv.set_message_handler(bind(&TelemetryServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
+		stateTopic = n.subscribe("state", 1000, &TelemetryServer::stateChanged,this);
+		getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
+		toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
+		getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
+		setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
     }
 
     void on_message(connection_hdl hdl, server::message_ptr msg) {
 	rapidjson::Document document;
-
         if(document.Parse(msg->get_payload().c_str()).HasParseError()){
         	//Not valid JSON
+        	ROS_ERROR("invalid json : %s",msg->get_payload().c_str() );
                 return;
         }
 
         if(document.HasMember("command") && document["command"].IsString()){
         	//get command
                 std::string command = document["command"].GetString();
-
-                if(command.compare("getLoggingStatus")==0){
-			bool isRecording = getRecordingStatus();
-                	sendRecordingStatus(hdl,isRecording);
+								  //getLoggingStatus
+                if(command.compare("getLoggingInfo")==0){
+					bool isRecording = getRecordingStatus();
+					int loggingMode = getLoggingMode();
+                	sendRecordingInfo(hdl,isRecording, loggingMode);
                 }
                 else if(command.compare("startLogging")==0){
-			logger_service::ToggleLogging toggle;
+					logger_service::ToggleLogging toggle;
 
-			toggle.request.loggingEnabled = true;
+					toggle.request.loggingEnabled = true;
 
-			if(toggleLoggingService.call(toggle)){
-				if(toggle.response.loggingStatus){
-                			sendRecordingStatus(hdl,true);
+					if(toggleLoggingService.call(toggle)){
+						if(toggle.response.loggingStatus){
+                			int loggingMode = getLoggingMode();
+				        	sendRecordingInfo(hdl,true, loggingMode);
 				}
 				else{
 					ROS_ERROR("Failed at enabling logging");
@@ -92,7 +98,8 @@ public:
 
                         if(toggleLoggingService.call(toggle)){
                                 if(!toggle.response.loggingStatus){
-                                        sendRecordingStatus(hdl,false);
+                                        int loggingMode = getLoggingMode();
+										sendRecordingInfo(hdl,false, loggingMode);
                                 }
                                 else{
                                         ROS_ERROR("Failed at disabling logging");
@@ -102,10 +109,12 @@ public:
                                 ROS_ERROR("Error while calling ToggleLogging service");
                         }
                 }
-                else{
-                	ROS_ERROR("Unknown command");
-                }
-        }
+                /*
+                else if(command.compare("setLoggingMode") == 0){
+                	std::cout<<"get wrecked ! \n";
+        		}
+        		*/
+        }	
         else{
         	//no command found. ignore
                 ROS_ERROR("No command found");
@@ -121,7 +130,39 @@ public:
         std::lock_guard<std::mutex> lock(mtx);
         connections.erase(hdl);
     }
-
+    
+    void sendRecordingInfo(connection_hdl & hdl,bool isRecording, int loggingMode){
+    	rapidjson::Document document;
+		document.SetObject();
+		rapidjson::Value recordingStatus(rapidjson::Type::kObjectType);
+		recordingStatus.AddMember("status",isRecording,document.GetAllocator());
+		document.AddMember("recordingInfo",recordingStatus,document.GetAllocator());
+		rapidjson::Value LoggingMode(rapidjson::Type::kObjectType);
+		LoggingMode.AddMember("the_mode_is",loggingMode,document.GetAllocator());
+		document.AddMember("loggingMode",LoggingMode,document.GetAllocator());
+		
+        rapidjson::StringBuffer sb;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+        document.Accept(writer);
+        std::string jsonString = sb.GetString();
+        srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
+    }
+    /*
+    //use sendLoggingInfo() instead
+	void sendLoggingMode(connection_hdl & hdl, int loggingMode){
+		rapidjson::Document document;
+		document.SetObject();
+		rapidjson::Value LoggingMode(rapidjson::Type::kObjectType);
+		LoggingMode.AddMember("the_mode_is",loggingMode,document.GetAllocator());
+		document.AddMember("loggingMode",LoggingMode,document.GetAllocator());
+		
+		rapidjson::StringBuffer sb;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+        document.Accept(writer);
+        std::string jsonString = sb.GetString();
+        std::cout<<"cout: " << jsonString << "\n";
+        srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
+	}
     void sendRecordingStatus(connection_hdl & hdl, bool isRecording){
 	rapidjson::Document document;
 	document.SetObject();
@@ -138,7 +179,16 @@ public:
 
         srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
     }
-
+	*/
+	
+	int getLoggingMode(){
+		logger_service::GetLoggingMode mode;
+		if(!getLoggingModeServiceClient.call(mode)){
+			ROS_ERROR("Error while calling GetLoggingMode service");
+		}
+		return  mode.response.loggingMode;
+	}
+	
     bool getRecordingStatus(){
 	logger_service::GetLoggingStatus status;
 
@@ -258,10 +308,21 @@ public:
         if(timestamp - lastTimestamp > 200000){
             std::string jsonString;
             convertState2json(state, jsonString);
-
+			
+			bool isLogging = getRecordingStatus();
+			int loggingMode = getLoggingMode();
+			
+			if(loggingMode == 1 && !isLogging){
+				logger_service::ToggleLogging toggle;
+				toggle.request.loggingEnabled = true;
+				toggleLoggingService.call(toggle);
+				isLogging = getRecordingStatus();
+				loggingMode = getLoggingMode();
+			}
             std::lock_guard<std::mutex> lock(mtx);
             for (auto it : connections) {
                  srv.send(it,jsonString,websocketpp::frame::opcode::text);
+                 sendRecordingInfo(it,isLogging, loggingMode);
             }
 
             lastTimestamp = timestamp;
@@ -311,7 +372,9 @@ private:
     ros::Subscriber stateTopic;
     ros::ServiceClient getLoggingStatusService;
     ros::ServiceClient toggleLoggingService;
-
+	ros::ServiceClient getLoggingModeServiceClient;
+	ros::ServiceClient setLoggingModeServiceClient;
+	
     tf2_ros::Buffer buffer;
     tf2_ros::TransformListener transformListener;
 

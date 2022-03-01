@@ -3,7 +3,7 @@ project(gnss_zed_f9p)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-add_definitions(-std=c++11 -Wall -g)
+add_definitions(-std=c++17 -Wall -g)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   sensor_msgs
+  virtual_serial_port
 )
 
 ## System dependencies are found with CMake's conventions
@@ -199,10 +200,11 @@ include_directories(
 #############
 ## Testing ##
 #############
-
-## Add gtest based cpp test target and link libraries
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
-
+if(CATKIN_ENABLE_TESTING)
+find_package(rostest REQUIRED)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
+add_rostest_gtest(test_gnss_zed_f9p tests/gnss_zed_f9p_test.launch tests/test_gnss_zed_f9p.cpp) #tests/gnss_zed_f9p_test.launch
+target_link_libraries(test_gnss_zed_f9p gnss_zed_f9p ${gnss_zed_f9p_LIBRARIES})
+add_dependencies(test_gnss_zed_f9p ${catkin_EXPORTED_TARGETS}) #? ${catkin_LIBRARIES}
+endif()
 

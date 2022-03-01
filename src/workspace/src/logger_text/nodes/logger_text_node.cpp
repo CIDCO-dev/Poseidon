@@ -23,10 +23,14 @@ int main(int argc, char **argv)
 		ros::Subscriber sub2 = n.subscribe("imu/data", 1000, &Writer::imuCallback,&writer);
 		ros::Subscriber sub3 = n.subscribe("depth", 1000, &Writer::sonarCallback,&writer);
 		ros::Subscriber sub4 = n.subscribe("speed", 1000, &Writer::speedCallback, &writer);
-
+		ros::Subscriber sub5 = n.subscribe("configuration", 1000, &Writer::configurationCallBack, &writer);
+		
 		ros::ServiceServer getLoggingStatusService = n.advertiseService("get_logging_status", &Writer::getLoggingStatus,&writer);
-		ros::ServiceServer toggleLoggingService    = n.advertiseService("toggle_logging", &Writer::toggleLogging,&writer);
-
+		ros::ServiceServer toggleLoggingService = n.advertiseService("toggle_logging", &Writer::toggleLogging,&writer);
+		
+		ros::ServiceServer getLoggingModeService = n.advertiseService("get_logging_mode", &Writer::getLoggingMode,&writer);
+		ros::ServiceServer setLoggingModeService = n.advertiseService("set_logging_mode", &Writer::setLoggingMode,&writer);
+		
 		ros::spin();
 	}
 	catch(std::exception & e){

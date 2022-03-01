@@ -1,5 +1,13 @@
 <launch>
 
-    <test test-name="test_logger_text_node" pkg="logger_text" type="test_logger_text_node" />
+	<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
 
+	<!-- the node launching order matters -->
+	<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" /> 
+	
+	<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
+	
+	<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
+	
+	<test test-name="test_logger_service_node" pkg="logger_service" type="test_logger_service_node" />
 </launch>

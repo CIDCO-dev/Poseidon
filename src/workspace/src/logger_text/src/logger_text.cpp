@@ -4,13 +4,48 @@
 #include "../../utils/Constants.hpp"
 #include <cstdio>
 #include <numeric>
+#include <thread>
+
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
-
+			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+			updateSpeedThreshold();
+			logger_service::GetLoggingMode::Request modeReq;
+			logger_service::GetLoggingMode::Response modeRes;
+			getLoggingMode(modeReq,modeRes);
+			int mode = modeRes.loggingMode;
+			ROS_INFO_STREAM("Logging mode set to : "<< mode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
+				
+			
 }
 
 Writer::~Writer(){
 	finalize();
+}
+
+void Writer::updateSpeedThreshold(){
+	setting_msg::ConfigurationService srv;
+
+    srv.request.key = "speedThresholdKmh";
+
+    if(configurationClient.call(srv)){
+    	std::string speedThresKmh = srv.response.value;
+    	//ROS_INFO_STREAM("speed threshold from config file : " << speedThresKmh);
+        try{
+        	speedThresholdKmh = stod(speedThresKmh);
+        }
+        catch(std::invalid_argument &err){
+        	ROS_INFO_STREAM("speed threshold from config file is not written properly \n example : 4.4");
+        }
+    }
+    else{
+    	ROS_WARN("no speed threshold define in config file, defaulting to 5 Kmh");
+        speedThresholdKmh = 5.0;
+    }
+}
+	
+double Writer::getSpeedThreshold(){
+	return speedThresholdKmh;
 }
 
 void Writer::init(){
@@ -53,6 +88,7 @@ void Writer::init(){
 }
 
 void Writer::finalize(){
+
         if(gnssOutputFile)   fclose(gnssOutputFile);
         if(imuOutputFile)    fclose(imuOutputFile);
         if(sonarOutputFile)  fclose(sonarOutputFile);
@@ -66,6 +102,7 @@ void Writer::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){
 		bootstrappedGnssTime = true;
+		
 	}
 
 	if(bootstrappedGnssTime && loggerEnabled){
@@ -125,38 +162,51 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 }
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
-	double speed_threshold_kmh = 0.0;
-	if(ros::param::get("/logger_text/speed_threshold", speed_threshold_kmh)){
-		if(speed_threshold_kmh < 0 && speed_threshold_kmh > 100){
-			speed_threshold_kmh = 5.0;
-			ROS_ERROR("invalid speed threshold, defaulting to 5 Kmh");
-		}
+	ROS_DEBUG_STREAM("logger speedCallback");
+	logger_service::GetLoggingMode::Request modeReq;
+	logger_service::GetLoggingMode::Response modeRes;
+	getLoggingMode(modeReq,modeRes);
+	int mode = modeRes.loggingMode;
+	
+	speedThresholdKmh = getSpeedThreshold();
+
+	if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
+		speedThresholdKmh = defaultSpeedThreshold;
+		std::string speed = std::to_string(speedThresholdKmh);
+		ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<<speed<<" Kmh");
 	}
-	else{
-		speed_threshold_kmh = 5.0;
-		ROS_INFO("no speed threshold parameter set, defaulting to 5 Kmh");
-	}	
-	
-	
+			
 	double current_speed = speed.twist.twist.linear.y;
+	ROS_DEBUG_STREAM("current speed : " << current_speed); 
+	//wait two mins before calculating the average speed
 	if (kmh_Speed_list.size() < 120){
 		kmh_Speed_list.push_back(current_speed);
 	}
 	else{
 		kmh_Speed_list.pop_front();
 		kmh_Speed_list.push_back(current_speed);
-		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), average_speed) / 120;
+		average_speed = std::accumulate(kmh_Speed_list.begin(), kmh_Speed_list.end(), 0) / 120.0;
 		logger_service::GetLoggingStatus::Request request;
 		logger_service::GetLoggingStatus::Response response;
-		
+
 		bool isLogging = getLoggingStatus(request,response);
-		if ( isLogging && ((average_speed > speed_threshold_kmh && response.status != true) || (average_speed < speed_threshold_kmh && response.status == true))){
-			logger_service::ToggleLogging::Request toogleRequest;
-			toogleRequest.loggingEnabled = true;
-			logger_service::ToggleLogging::Response toogleResponse;
-			toggleLogging(toogleRequest, toogleResponse);
+		if ( mode == 3 && (average_speed > speedThresholdKmh && response.status == false) ){
+			ROS_INFO("speed threshold reached, enabling logging");
+			logger_service::ToggleLogging::Request toggleRequest;
+			toggleRequest.loggingEnabled = true;
+			logger_service::ToggleLogging::Response toggleResponse;
+			toggleLogging(toggleRequest, toggleResponse);
 		}
-	}	
+		else if(mode == 3 && (average_speed < speedThresholdKmh && response.status == true)){
+			ROS_INFO("speed below threshold, disabling logging");
+			logger_service::ToggleLogging::Request toggleRequest;
+			toggleRequest.loggingEnabled = false;
+			logger_service::ToggleLogging::Response toggleResponse;
+			toggleLogging(toggleRequest, toggleResponse);
+			
+		}
+	}
+
 }
 
 void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
@@ -172,16 +222,18 @@ void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 }
 
 bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){
-	response.status = bootstrappedGnssTime && loggerEnabled;
+	response.status = this->bootstrappedGnssTime && this->loggerEnabled;
 	return true;
 }
 
 
 bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
-	mtx.lock();
+	//std::thread::id thread_id = std::this_thread::get_id();
+	//ROS_WARN_STREAM("thread_id: "<<thread_id);
 
 	if(bootstrappedGnssTime){
-		if(!loggerEnabled && request.loggingEnabled){
+		mtx.lock();
+		if(!loggerEnabled && request.loggingEnabled){	
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
@@ -191,12 +243,71 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 			loggerEnabled=false;
 			finalize();
 		}
-
-		mtx.unlock();
-
+		
+		
 		response.loggingStatus=loggerEnabled;
+		mtx.unlock();
+		//ROS_WARN_STREAM("unlocking thread_id: "<<thread_id);
 		return true;
 	}
-
+	ROS_WARN("Cannot toggle logger because no gpsfix");
 	return false;
+}
+
+void Writer::configurationCallBack(const setting_msg::Setting &setting){
+	ROS_DEBUG_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	if(setting.key == "loggingMode"){		
+		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
+			try{
+				mtx.lock();
+				int mode = stoi(setting.value);
+				logger_service::SetLoggingMode newMode;
+				newMode.request.loggingMode = mode;
+				setLoggingMode(newMode.request, newMode.response);
+				mtx.unlock();
+			}
+			catch(std::invalid_argument &err){
+				mtx.lock();
+        		ROS_ERROR("logging mode should be an integer 1-2-3 \n error catch in : Writer::configurationCallBack()");
+        		logger_service::SetLoggingMode defaultMode;
+				defaultMode.request.loggingMode = 1;
+				setLoggingMode(defaultMode.request, defaultMode.response);
+				mtx.unlock();
+        	}
+			logger_service::GetLoggingStatus::Request request;
+			logger_service::GetLoggingStatus::Response response;
+			bool isLogging = getLoggingStatus(request,response);
+			if (setting.value == "1" && response.status != true){ 
+				ROS_INFO("Logging set to always ON");
+				logger_service::ToggleLogging::Request toggleRequest;
+				toggleRequest.loggingEnabled = true;
+				logger_service::ToggleLogging::Response toggleResponse;
+				toggleLogging(toggleRequest, toggleResponse);
+				//ROS_INFO_STREAM(toggleResponse.loggingStatus << "  Writer::configurationCallBack() \n");
+				
+			}
+		}
+		else{
+			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n"<<"defaulting to a : always ON");
+			mtx.lock();
+			logger_service::SetLoggingMode defaultMode;
+			defaultMode.request.loggingMode = 1;
+			setLoggingMode(defaultMode.request, defaultMode.response);
+			mtx.unlock();
+		}
+	
+	}
+	else{
+
+	}	
+}
+
+bool Writer::getLoggingMode(logger_service::GetLoggingMode::Request & req,logger_service::GetLoggingMode::Response & response){
+	response.loggingMode = this->loggingMode;
+	return true;
+}
+
+bool Writer::setLoggingMode(logger_service::SetLoggingMode::Request & req,logger_service::SetLoggingMode::Response & response){
+	loggingMode = req.loggingMode;
+	return true;
 }

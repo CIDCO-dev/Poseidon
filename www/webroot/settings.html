@@ -25,11 +25,35 @@ function processConfig(config){
 
 	form.innerHTML='';
 	var newHTML='';
+	var endNewHTML='';
 
 	config.forEach(function (item,index){
-		newHTML += '<div class="form-group row"> <label class="col-lg-2 col-form-label" for="' + item.key +'">' + item.key + '</label> <div class="col-lg-10"> <input id="'+ item.key  + '" class="form-control text-right configurationField" type="text" value="' + item.value + '"/> </div></div>';
-	});	
-
+		if(item.key == "loggingMode"){
+			endNewHTML += '<div class="form-group row"><label class="col-lg-2 col-form-label" for="' + item.key +'">'+ item.key + '</label><div class="col-lg-10"><select id="'+ item.key  + '" name="logginModeSelector" class="dropdownright configurationField"></div>';
+		
+			var mode = Number(item.value);
+			switch(mode){
+				case 1:
+					endNewHTML += '<option value="1" selected>always</option><option value="2">manual</option><option value="3">speed based</option></select></div></div>';
+					break;
+				case 2:
+					endNewHTML += '<option value="1">always</option><option value="2" selected>manual</option><option value="3">speed based</option></select></div></div>';
+					break;
+				case 3:
+					endNewHTML += '<option value="1">always</option><option value="2">manual</option><option value="3" selected>speed based</option></select></div></div>';
+					break;
+				default:
+					alert("Erreur ! Logging mode read from configuration file is :" + mode);
+					endNewHTML += '<option value="1" selected>always ON</option><option value="2">manual</option><option value="3">speed based</option></select></div></div>';
+					break;
+			}	
+		}
+		else{
+			newHTML += '<div class="form-group row"> <label class="col-lg-2 col-form-label" for="' + item.key +'">' + item.key + '</label> <div class="col-lg-10"> <input id="'+ item.key  + '" class="form-control text-right configurationField" type="text" value="' + item.value + '"/> </div></div>';
+			}
+	
+	});
+	newHTML += endNewHTML;
 	form.innerHTML = newHTML;
 }
 
@@ -55,6 +79,7 @@ function saveConfig() {
 
 	console.log(cmd);
 	socket.send(JSON.stringify(cmd));
+	
 }
 
 //******************************
@@ -234,10 +259,11 @@ socket.onopen = function( event ){
 
 		</div>
 	      </form>
-
+	      		
 	      <br/>
-              <br/>
-
+          <br/>
+              
+		
 	      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendcfg">Save Configuration</button>
 
             </div>

@@ -1,0 +1,10 @@
+<launch>
+
+	<!-- the node launching order matters -->
+	<test test-name="test_sonar_nmea_device_node" pkg="sonar_nmea_0183_tcp_client" type="test_sonar_nmea_0183_device_client" />
+	<node pkg="sonar_nmea_0183_tcp_client" type="nmea_device_node" name="Sonar" output="screen" respawn="true" respawn_delay="1">
+	</node>
+	
+	
+	
+</launch>

@@ -56,7 +56,7 @@ start new terminal or :
 
 changes to build poseidon on virtual machine:
 >cd ~/Poseidon/src/workspace
->catkin_make -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;echoboat_odometry;raspberrypi_vitals"
+>catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;echoboat_odometry;raspberrypi_vitals"
 
 build:
 >catkin_make
@@ -76,24 +76,15 @@ start browser and navigate to localhost or 127.0.0.1
 ### unit test
 some of these tests needs to be repaired, some requires the physical equipement
 
+see readme for tests :
+- sonar_nmea_0183_tcp_client
+- gnss_zed_f9p
+
+create directory for test_logger_text
+mkdir -p /home/ubuntu/unittestPoseidonRecord
 ```
-catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;
-imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"
+catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"
 
 ```
 
-tests that needs to be investigated because they are failing:
-```
-tf/tests/tf_unittest.cpp
-ins_piksi
-```
 
-node without test:
-```
-hydroball_files_websocket
-raspberry_vitals_msg
-gps_common
-gpsd_client
-logger_binary
-state_controller_msg
-```

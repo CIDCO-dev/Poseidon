@@ -68,7 +68,7 @@ TEST(virtualZf9pTest, testZf9pUbxSpeed) {
 		virtualZedFf9p.close(zf9p);
 	}
 	//ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
-	ASSERT_TRUE(speedCounter.getCount() == 10);
+	ASSERT_TRUE(speedCounter.getCount() == 10) << "speed count: " << speedCounter.getCount() ;
 }
 /*
 technically previous test is covering checksum

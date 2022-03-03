@@ -68,14 +68,14 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 		}
 		nmeaDevice.close(sonar);
 	}
-	
+	/*
 	ROS_INFO_STREAM("fix count : "<< fixCounter.getCount()<<"\n");
 	ROS_INFO_STREAM("depth count : "<< depthCounter.getCount()<<"\n");
 	ROS_INFO_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
-	
-	ASSERT_TRUE(fixCounter.getCount() == 5);
-	ASSERT_TRUE(speedCounter.getCount() == 5);
-	ASSERT_TRUE(depthCounter.getCount() == 15);
+	*/
+	ASSERT_TRUE(fixCounter.getCount() == 5)<< "fix count : "<< fixCounter.getCount()<<"\n";
+	ASSERT_TRUE(speedCounter.getCount() == 5) << "speed count : "<< speedCounter.getCount()<<"\n";
+	ASSERT_TRUE(depthCounter.getCount() == 15)<< "speed count : " << speedCounter.getCount()<<"\n";
 }
 
 

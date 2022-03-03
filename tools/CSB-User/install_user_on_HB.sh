@@ -27,6 +27,8 @@ Command()
 {
 ssh-keygen -t rsa -b 4096 -C "$uname@csb.cidco.ca"
 
+echo "SSH key to be implemented on the webserver"
+cat /home/ubuntu/.ssh/id_rsa.pub
    
 }
 

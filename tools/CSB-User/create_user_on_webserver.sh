@@ -30,21 +30,54 @@ Help()
 Command()
 {
 echo "Add user and create home directory"
-sudo adduser $uname -d $home -g $group -m
+sudo adduser --home $home/ --ingroup $group --disabled-login $uname
 
-sudo chmod 0700 $home.ssh/
-sudo chmod 0700 $home
+
 echo "Integrate ssh key in the system"
-sudo echo "$key" > $home.ssh/authorized_keys
-sudo chown -R $uname:$group $home.ssh/ 
+sudo mkdir $home/.ssh/
+echo "Add SSH autorisation"
+echo "$key" | sudo tee -a $home/.ssh/authorized_keys
+sudo chown -R $uname:$group $home/.ssh/ 
+
+sudo mkdir -p $home/dev
+cd $home/dev/
+sudo mknod -m 666 null c 1 3
+sudo mknod -m 666 tty c 5 0
+sudo mknod -m 666 zero c 1 5
+sudo mknod -m 666 random c 1 8
+
+sudo mkdir -p $home/bin
+sudo cp /bin/bash $home/bin/bash
+
+
+sudo chown root:root $home/
+sudo chmod 755 $home/
+
+sudo mkdir -p $home/lib/x86_64-linux-gnu
+sudo mkdir -p $home/lib64
+sudo cp /lib64/ld-linux-x86-64.so.2 $home/lib64/
+sudo cp /lib/x86_64-linux-gnu/{libtinfo.so.6,libdl.so.2,libc.so.6} $home/lib/x86_64-linux-gnu/
+sudo mkdir -p $home/etc
+sudo cp -f /etc/passwd $home/etc/
+sudo cp -f /etc/group $home/etc/
+
+
 echo "Lock the user in the home directory"
-sudo echo > /etc/ssh/sshd_config
-sudo echo "Match User $uname" > /etc/ssh/sshd_config
-sudo echo "ChrootDirectory $home" > /etc/ssh/sshd_config
-sudo echo "ForceCommand internal-sftp" > /etc/ssh/sshd_config
-sudo echo "AllowTcpForwarding no" > /etc/ssh/sshd_config
-sudo echo "X11Forwarding no" > /etc/ssh/sshd_config  
-sudo echo > /etc/ssh/sshd_config
+sudo echo | sudo tee -a /etc/ssh/sshd_config
+sudo echo "Match User $uname" | sudo tee -a /etc/ssh/sshd_config
+sudo echo "	ChrootDirectory $home" | sudo tee -a /etc/ssh/sshd_config
+#sudo echo "	ForceCommand internal-sftp" | sudo tee -a /etc/ssh/sshd_config
+sudo echo "	AllowTcpForwarding no" | sudo tee -a /etc/ssh/sshd_config
+sudo echo "	X11Forwarding no" | sudo tee -a /etc/ssh/sshd_config  
+sudo echo | sudo tee -a /etc/ssh/sshd_config
+
+
+sudo chmod 0700 $home/.ssh/
+
+sudo systemctl restart sshd
+
+sudo mkdir -p $home/data
+sudo chown $uname:$group $home/data
 }
 
 
@@ -56,8 +89,9 @@ else
   uname=$1
   group=$2
   home=$3
+  key=$4
   
-  if [ ! -z "$uname" ] && [ ! -z "$group" ] && [ ! -z "$home" ]
+  if [ ! -z "$uname" ] && [ ! -z "$group" ] && [ ! -z "$home" ] && [ ! -z "$key" ]
   then
     Command
     exit

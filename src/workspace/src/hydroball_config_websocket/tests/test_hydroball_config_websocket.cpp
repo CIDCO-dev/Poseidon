@@ -78,6 +78,5 @@ int main(int argc, char** argv) {
     
     ros::shutdown(); // this will cause the ros::spin() to return
     t.join();
-      
     return res;
 }

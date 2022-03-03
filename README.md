@@ -85,15 +85,12 @@ imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_du
 tests that needs to be investigated because they are failing:
 ```
 tf/tests/tf_unittest.cpp
-setting_msg/tests/test_zero_imu_offset_service.cpp
 ins_piksi
-setting_msg/tests/test_get_configuration.cpp
 ```
 
 node without test:
 ```
 hydroball_files_websocket
-hydroball_config_websocket
 raspberry_vitals_msg
 gps_common
 gpsd_client

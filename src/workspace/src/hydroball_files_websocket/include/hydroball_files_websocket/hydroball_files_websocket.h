@@ -24,7 +24,7 @@
 #include <websocketpp/server.hpp>
 
 typedef websocketpp::server<websocketpp::config::asio> server;
-//std::mutex mtx;
+
 using websocketpp::connection_hdl;
 
 class ControlFiles {
@@ -124,10 +124,11 @@ public:
         std::string json = sb.GetString();
         std::lock_guard<std::mutex> lock(mtx);
         for (auto it : connections) {
-             srv.send(it,json,websocketpp::frame::opcode::text);
+             srv.send(it,json.c_str(),websocketpp::frame::opcode::text);             
         }
 
-		ROS_INFO_STREAM(json.c_str());
+		//ROS_ERROR_STREAM("sendFileList()\n" << json.c_str());
+		
 		
     	/*
         //Build JSON object to send to web interface

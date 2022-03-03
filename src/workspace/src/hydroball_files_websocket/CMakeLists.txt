@@ -210,13 +210,10 @@ include_directories(
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_hydroball_files_websocket tests/test_hydroball_files_websocket.cpp)
+add_rostest_gtest(test_hydroball_files_websocket tests/file_websocket.launch tests/test_hydroball_files_websocket.cpp)
 target_link_libraries(test_hydroball_files_websocket hydroball_files_websocket  ${hydroball_files_websocket_LIBRARIES})
 add_dependencies(test_hydroball_files_websocket ${catkin_EXPORTED_TARGETS})
 
 endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
 
 

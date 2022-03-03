@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 
+
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
 class connection_metadata {
@@ -57,7 +58,7 @@ public:
 
     void on_message(websocketpp::connection_hdl, client::message_ptr msg) {
         if (msg->get_opcode() == websocketpp::frame::opcode::text) {
-            m_messages.push_back("<< " + msg->get_payload());
+            m_messages.push_back(msg->get_payload());
         } else {
             m_messages.push_back("<< " + websocketpp::utility::to_hex(msg->get_payload()));
         }
@@ -270,14 +271,36 @@ TEST(FileWebsocket, buildFileList) {
     endpoint.connect(uri);
     sleep(1);
     connection_metadata::ptr metadata = endpoint.get_metadata(0);
-    ROS_ERROR_STREAM(*metadata);
+    //ROS_ERROR_STREAM(*metadata);
     
     //test
+    int check = 0;
+    //the array made by buildFileList() in files_websocket is not ordered
+    std::map<std::string,int> originalFiles = {{"file3.txt", 1}, {"file2.txt", 2}, {"file1.txt",3}}; 
+    int indice = 0;
     server.sendFileList();
     sleep(1);
     std::string json = endpoint.get_json(0,0);
-    ROS_ERROR_STREAM(json);
-    
+    //ROS_ERROR_STREAM(json);
+    rapidjson::Document document;
+    document.Parse(json.c_str());
+    if(document.IsObject()){ ROS_INFO_STREAM("is object ");}
+	if(!document.HasParseError()){
+		ROS_INFO_STREAM("doc is valid json ");
+	}
+	if(document.HasMember("fileslist") && document["fileslist"].IsArray()){
+		const rapidjson::Value& a = document["fileslist"];
+		for (rapidjson::SizeType i = 0; i < a.Size(); i++){
+			const rapidjson::Value& a2 = a[i];
+			auto result = originalFiles.find(a2[0].GetString());
+			if(a2[0].GetString() == result->first){
+				check++;
+			}
+			indice++;
+		}
+	}
+	ROS_ERROR_STREAM(check);
+    ASSERT_TRUE(check == 3);
     //close connection
     int ID;
     int close_code = websocketpp::close::status::normal;
@@ -293,7 +316,7 @@ TEST(FileWebsocket, buildFileList) {
 }
 
 TEST(FileWebsocket, deleteFile) {
-	ASSERT_FALSE(false) << " no tests for deleteFile()";
+	ASSERT_FALSE(true) << " no tests for deleteFile()";
 }
 
 int main(int argc, char** argv) {

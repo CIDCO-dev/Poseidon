@@ -78,6 +78,10 @@ public:
     void record_sent_message(std::string message) {
         m_messages.push_back(">> " + message);
     }
+    
+    std::vector<std::string> get_messages(){
+    	return m_messages;
+    }
 
     friend std::ostream & operator<< (std::ostream & out, connection_metadata const & data);
 private:
@@ -224,6 +228,21 @@ public:
             return metadata_it->second;
         }
     }
+    
+    std::string get_json(int id, int message_id){
+    	con_list::const_iterator metadata_it = m_connection_list.find(id);
+    	if (metadata_it == m_connection_list.end()) {
+            return "error";
+        }
+        else {
+        	connection_metadata::ptr con = metadata_it->second;
+        	connection_metadata *obj = con.get();
+        	std::vector<std::string> messages = obj->get_messages();
+        	std::string json = messages[message_id];
+        	return json;
+        }
+    }
+    
 private:
     typedef std::map<int,connection_metadata::ptr> con_list;
 
@@ -255,12 +274,9 @@ TEST(FileWebsocket, buildFileList) {
     
     //test
     server.sendFileList();
-    sleep(2);
-    metadata = endpoint.get_metadata(0);
-    ROS_ERROR_STREAM(*metadata);
-    //std::string json = endpoint.get_json(0,0);
-    //ROS_ERROR("OK2");
-    //ROS_ERROR_STREAM(json);
+    sleep(1);
+    std::string json = endpoint.get_json(0,0);
+    ROS_ERROR_STREAM(json);
     
     //close connection
     int ID;

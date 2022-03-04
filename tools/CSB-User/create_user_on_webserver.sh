@@ -30,51 +30,16 @@ Help()
 Command()
 {
 echo "Add user and create home directory"
-sudo adduser --home $home/ --ingroup $group --disabled-login $uname
+sudo useradd -m -s /bin/bash -d $home/ -G $group $uname
 
 
 echo "Integrate ssh key in the system"
 sudo mkdir $home/.ssh/
 echo "Add SSH autorisation"
-echo "$key" | sudo tee -a $home/.ssh/authorized_keys
+echo "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command="/bin/nc localhost 873" $key" | sudo tee -a $home/.ssh/authorized_keys
 sudo chown -R $uname:$group $home/.ssh/ 
 
-sudo mkdir -p $home/dev
-cd $home/dev/
-sudo mknod -m 666 null c 1 3
-sudo mknod -m 666 tty c 5 0
-sudo mknod -m 666 zero c 1 5
-sudo mknod -m 666 random c 1 8
-
-sudo mkdir -p $home/bin
-sudo cp /bin/bash $home/bin/bash
-
-
-sudo chown root:root $home/
-sudo chmod 755 $home/
-
-sudo mkdir -p $home/lib/x86_64-linux-gnu
-sudo mkdir -p $home/lib64
-sudo cp /lib64/ld-linux-x86-64.so.2 $home/lib64/
-sudo cp /lib/x86_64-linux-gnu/{libtinfo.so.6,libdl.so.2,libc.so.6} $home/lib/x86_64-linux-gnu/
-sudo mkdir -p $home/etc
-sudo cp -f /etc/passwd $home/etc/
-sudo cp -f /etc/group $home/etc/
-
-
-echo "Lock the user in the home directory"
-sudo echo | sudo tee -a /etc/ssh/sshd_config
-sudo echo "Match User $uname" | sudo tee -a /etc/ssh/sshd_config
-sudo echo "	ChrootDirectory $home" | sudo tee -a /etc/ssh/sshd_config
-#sudo echo "	ForceCommand internal-sftp" | sudo tee -a /etc/ssh/sshd_config
-sudo echo "	AllowTcpForwarding no" | sudo tee -a /etc/ssh/sshd_config
-sudo echo "	X11Forwarding no" | sudo tee -a /etc/ssh/sshd_config  
-sudo echo | sudo tee -a /etc/ssh/sshd_config
-
-
 sudo chmod 0700 $home/.ssh/
-
-sudo systemctl restart sshd
 
 sudo mkdir -p $home/data
 sudo chown $uname:$group $home/data

@@ -27,6 +27,7 @@ Help()
 Command()
 {
 
+rsync -az -P --exclude 'bin' --exclude 'etc' --exclude 'dev' --exclude 'lib' --exclude 'lib64' --exclude '.ssh' --exclude '.profile' --exclude '.bashrc' --exclude 'bash_logout' --remove-source-files csbclient@csb.cidco.ca/csb/ /data/csb
 
    
 }

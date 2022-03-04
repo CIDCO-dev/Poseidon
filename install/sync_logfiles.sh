@@ -1,11 +1,12 @@
 #!/bin/sh
 
-DESTINATION_PATH="example/path"
-SERVER="hostname_or_ip"
-USER="Posseidon"
-FILES_LOCATION="~/Poseidon/www/webroot/record"
-PASSWORD_LESS="poseidon"
-KEEP_ORIGINAL_FILES=true
+
+DESTINATION_PATH="destination_Path"
+SERVER="hostname or ip"
+USER="HB_XX"
+FILES_LOCATION="/home/ubuntu/Poseidon/www/webroot/record/" # without the lsat '/' it will transfer the folder instead of files
+PASSWORD_LESS="test"
+KEEP_ORIGINAL_FILES=false # set to true for testing purposes
 
 if $KEEP_ORIGINAL_FILES; then
 	REMOVE_SOURCE_FILES=""

@@ -1,0 +1,6 @@
+setSBFOutput, Stream1, USB1
+setSBFOutput, Stream1, , MeasEpoch+MeasExtra+GEORawL1+GPSNav+GPSIon+GPSUtc+GLONav+GLOTime+GALNav+GALIon+GALUtc+GALGstGps+GEONav+PVTGeodetic+ExtEvent+DiffCorrIn+ReceiverSetup+Commands+Comment+BDSNav+QZSNav+Meas3Ranges+BDSIon+BDSUtc
+setSBFOutput, Stream1, , , sec1
+setNMEAOutput, Stream1, COM1
+setNMEAOutput, Stream1, , DTM+GBS+GGA+GLL+GNS+GRS+GSA+GST+GSV+HDT+RMC+ROT+VTG+ZDA+HRP+LLQ+RBP+RBV+RBD+AVR+GGK+GFA+GGQ+LLK+GMP
+setNMEAOutput, Stream1, , , sec1

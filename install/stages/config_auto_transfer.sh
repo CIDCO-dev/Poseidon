@@ -6,6 +6,6 @@ if [ $# -eq 0 ]; then
 fi
 
 sudo chmod 711 /home/ubuntu/Poseidon/install/sync_logfiles.sh
-echo "* * * * * /home/ubuntu/Poseidon/install/sync_logfiles.sh" | sudo tee ubuntu
+echo "@hourly /home/ubuntu/Poseidon/install/sync_logfiles.sh" | sudo tee ubuntu
 crontab ubuntu
 ssh-keygen -t rsa -N "" -f $@

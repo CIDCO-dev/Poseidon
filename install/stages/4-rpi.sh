@@ -46,11 +46,34 @@ sudo bash -c 'cat << EOF2 > /boot/firmware/cmdline.txt
 net.ifnames=0 dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
 EOF2'
 
+
+
+echo "[+] Adding Hardware RTC on boot"
+sudo bash -c 'cat << EOF4 > /etc/systemd/system/hwrtc.service
+[Unit]
+Description=Synchronise System clock to hardware RTC
+DefaultDependencies=no
+After=systemd-modules-load.service
+Before=systemd-journald.service time-sync.target sysinit.target shutdown.target
+Conflicts=shutdown.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/hwclock --hctosys --utc --noadjfile
+RestrictRealtime=yes
+
+[Install]
+WantedBy=sysinit.target
+EOF4'
+sudo chmod 755 /etc/systemd/system/hwrtc.service
+sudo systemctl enable hwrtc
+
 echo "[+] Adding roslaunch on boot"
 sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service
 [Unit]
 Description=Launch ROS on boot.
-After=gpsd.service
+After=gpsd.service hwrtc.service
 
 [Service]
 Type=simple
@@ -65,7 +88,7 @@ sudo systemctl enable ros
 echo "sudo systemctl start ros"
 
 echo "[+] Adding Uart config on boot"
-sudo bash -c 'cat << EOF3 > /etc/systemd/system/uart.service
+sudo bash -c 'cat << EOF5 > /etc/systemd/system/uart.service
 [Unit]
 Description=Launch Uart config on boot.
 Before=gpsd.service
@@ -76,7 +99,9 @@ ExecStart=/home/ubuntu/Poseidon/service/uart_on_boot.sh
 
 [Install]
 WantedBy=multi-user.target
-EOF3'
+EOF5'
 
 sudo chmod 755 /etc/systemd/system/uart.service
 sudo systemctl enable uart
+
+

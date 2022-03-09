@@ -36,7 +36,7 @@ sudo useradd -m -s /bin/bash -d $home/ -G $group $uname
 echo "Integrate ssh key in the system"
 sudo mkdir $home/.ssh/
 echo "Add SSH autorisation"
-echo "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command="/bin/nc localhost 873" $key" | sudo tee -a $home/.ssh/authorized_keys
+echo "$key" | sudo tee -a $home/.ssh/authorized_keys
 sudo chown -R $uname:$group $home/.ssh/ 
 
 sudo chmod 0700 $home/.ssh/

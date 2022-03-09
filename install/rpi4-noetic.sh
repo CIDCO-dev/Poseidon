@@ -44,10 +44,7 @@ Config()
 
 ~/Poseidon/install/stages/4-rpi.sh
 
-if [ "$8" = 'rtc' ] || [ "$8" = 'RTC' ] 
-then
-  ~/Poseidon/install/stages/rtc.sh
-fi
+~/Poseidon/install/stages/rtc.sh
 
 ~/Poseidon/install/stages/5-finalize.sh
 

@@ -1,12 +1,11 @@
 #!/bin/sh
 
-
-DESTINATION_PATH="path"
-SERVER="ip / hostname"
-USER="HB_XX"
+USER=$1
+DESTINATION_PATH=$2
+SERVER=$3
+RSA_KEY_FILENAME=$4 # path = /home/ubuntu/.ssh/
 FILES_LOCATION="/home/ubuntu/Poseidon/www/webroot/record/" # without the last '/' it will transfer the folder instead of files
-RSA_KEY_FILENAME="Private Key" # path = /home/ubuntu/.ssh/
-KEEP_ORIGINAL_FILES=false # set to true for testing purposes
+KEEP_ORIGINAL_FILES=true # set to true for testing purposes
 
 if $KEEP_ORIGINAL_FILES; then
 	REMOVE_SOURCE_FILES=""

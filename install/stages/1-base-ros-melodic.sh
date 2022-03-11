@@ -25,7 +25,7 @@ curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE
 sudo apt-get update | tee -a log.txt
 
 #sudo apt install ros-kinetic-ros-base g++ -y >> log.txt
-sudo apt install ros-melodic-ros-base ros-melodic-tf2-geometry-msgs g++ -y | tee -a log.txt
+sudo apt install ros-melodic-ros-base ros-melodic-tf2-geometry-msgs g++ ros-melodic-mavros -y | tee -a log.txt
 
 echo "[+] Initializing ROS dependencies"
 rosdep init | tee -a log.txt

@@ -1,0 +1,9 @@
+headingOffset 0
+loggingMode 1
+pitchOffset 0
+rollOffset 0
+sonarAbsorbtion 20
+sonarPulseLength 120
+sonarRange 20
+sonarStartGain 16
+speedThresholdKmh 6.0

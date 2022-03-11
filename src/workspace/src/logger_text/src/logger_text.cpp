@@ -255,7 +255,7 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 }
 
 void Writer::configurationCallBack(const setting_msg::Setting &setting){
-	ROS_DEBUG_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
 	if(setting.key == "loggingMode"){		
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{

@@ -101,7 +101,7 @@ TEST(ZeroImuOffsetTestSuite, testZeroImuOffset) {
     double testRoll = dist(e2) * 15; // between 1 and 15
     double testPitch = dist(e2) * 15 + 15; // between 15 and 30
     double testHeading = dist(e2) * 15 + 30; // between 30 and 45
-
+	
     tf2::Quaternion q;
     q.setRPY(D2R(testRoll),D2R(testPitch),D2R(testHeading));
     imuMsg.orientation = tf2::toMsg(q);
@@ -114,8 +114,8 @@ TEST(ZeroImuOffsetTestSuite, testZeroImuOffset) {
     ros::ServiceClient zeroImuOffsetClient = nh.serviceClient<setting_msg::ImuOffsetService>("zero_imu_offsets");
 
     setting_msg::ImuOffsetService srv;
-    zeroImuOffsetClient.call(srv);
-    //ASSERT_TRUE() << "zero_imu_offsets service call returned false";
+    
+    ASSERT_TRUE(zeroImuOffsetClient.call(srv)) << "zero_imu_offsets service call returned false";
     
     std::map<std::string,std::string> configurationAfterTest;
     readConfigurationFromFile(configFileOnTestPath, configurationAfterTest);
@@ -123,8 +123,9 @@ TEST(ZeroImuOffsetTestSuite, testZeroImuOffset) {
     double expectedHeadingOffset = std::stod(configurationAfterTest["headingOffset"]);
     double expectedPitchOffset = std::stod(configurationAfterTest["pitchOffset"]);
     double expectedRollOffset = std::stod(configurationAfterTest["rollOffset"]);
-
+	
     double epsilon = 1e-6; //currently file is written up to 6 digits
+    
     ASSERT_NEAR(expectedHeadingOffset, -testHeading, epsilon) << "zero_imu_offsets service didn't set negative of heading";
     ASSERT_NEAR(expectedPitchOffset, -testPitch, epsilon) << "zero_imu_offsets service didn't set negative of pitch";
     ASSERT_NEAR(expectedRollOffset, -testRoll, epsilon) << "zero_imu_offsets service didn't set negative of roll";

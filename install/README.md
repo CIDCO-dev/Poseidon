@@ -30,7 +30,6 @@ chmod +x logfiles.sh
 ###rsync passwordless connection
 ssh-keygen
 ssh-copy-id -i path/key.pub user@server
-ssh-add path/private_key
 ssh user@server
 logout
 

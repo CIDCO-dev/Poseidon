@@ -1,167 +1,326 @@
-/*
-#include <gnss_dummy/gnss_dummy.h>
 #include <ros/ros.h>
 #include <gtest/gtest.h>
-
-
 #include <thread>
 #include <chrono>
+#include "hydroball_files_websocket/hydroball_files_websocket.h"
 
-class AnyMessage
-{
-};
-typedef boost::shared_ptr<AnyMessage> AnyMessagePtr;
-typedef boost::shared_ptr<AnyMessage const> AnyMessageConstPtr;
+#include <websocketpp/config/asio_no_tls_client.hpp>
+#include <websocketpp/client.hpp>
 
-namespace ros
-{
-namespace message_traits
-{
+#include <websocketpp/common/thread.hpp>
+#include <websocketpp/common/memory.hpp>
 
-template<>
-struct MD5Sum<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
+#include <cstdlib>
+#include <iostream>
+#include <map>
+#include <string>
+#include <sstream>
 
-template<>
-struct DataType<AnyMessage>
-{
-  static const char* value() { return "*"; }
-  static const char* value(const AnyMessage&) { return "*"; }
-};
 
-template<>
-struct Definition<AnyMessage>
-{
-};
+typedef websocketpp::client<websocketpp::config::asio_client> client;
 
-}
+class connection_metadata {
+public:
+    typedef websocketpp::lib::shared_ptr<connection_metadata> ptr;
 
-namespace serialization
-{
-template<>
-struct Serializer<AnyMessage>
-{
-  template<typename Stream, typename T>
-  static void allInOne(Stream s, T t)
-  {
-  }
+    connection_metadata(int id, websocketpp::connection_hdl hdl, std::string uri)
+      : m_id(id)
+      , m_hdl(hdl)
+      , m_status("Connecting")
+      , m_uri(uri)
+      , m_server("N/A")
+    {}
 
-  ROS_DECLARE_ALLINONE_SERIALIZER;
-};
-}
-}
+    void on_open(client * c, websocketpp::connection_hdl hdl) {
+        m_status = "Open";
 
-struct AnyHelper
-{
-  AnyHelper()
-  : count(0)
-  {
-  }
-  void cb(const AnyMessageConstPtr& msg)
-  {
-    ++count;
-  }
-
-  uint32_t count;
-};
-
-class MyTestSuite : public ::testing::Test {
-  public:
-    MyTestSuite() {
+        client::connection_ptr con = c->get_con_from_hdl(hdl);
+        m_server = con->get_response_header("Server");
     }
-    ~MyTestSuite() {}
+
+    void on_fail(client * c, websocketpp::connection_hdl hdl) {
+        m_status = "Failed";
+
+        client::connection_ptr con = c->get_con_from_hdl(hdl);
+        m_server = con->get_response_header("Server");
+        m_error_reason = con->get_ec().message();
+    }
+    
+    void on_close(client * c, websocketpp::connection_hdl hdl) {
+        m_status = "Closed";
+        client::connection_ptr con = c->get_con_from_hdl(hdl);
+        std::stringstream s;
+        s << "close code: " << con->get_remote_close_code() << " (" 
+          << websocketpp::close::status::get_string(con->get_remote_close_code()) 
+          << "), close reason: " << con->get_remote_close_reason();
+        m_error_reason = s.str();
+    }
+
+    void on_message(websocketpp::connection_hdl, client::message_ptr msg) {
+        if (msg->get_opcode() == websocketpp::frame::opcode::text) {
+            m_messages.push_back(msg->get_payload());
+        } else {
+            m_messages.push_back("<< " + websocketpp::utility::to_hex(msg->get_payload()));
+        }
+    }
+
+    websocketpp::connection_hdl get_hdl() const {
+        return m_hdl;
+    }
+    
+    int get_id() const {
+        return m_id;
+    }
+    
+    std::string get_status() const {
+        return m_status;
+    }
+
+    void record_sent_message(std::string message) {
+        m_messages.push_back(">> " + message);
+    }
+    
+    std::vector<std::string> get_messages(){
+    	return m_messages;
+    }
+
+    friend std::ostream & operator<< (std::ostream & out, connection_metadata const & data);
+private:
+    int m_id;
+    websocketpp::connection_hdl m_hdl;
+    std::string m_status;
+    std::string m_uri;
+    std::string m_server;
+    std::string m_error_reason;
+    std::vector<std::string> m_messages;
 };
 
-TEST_F(MyTestSuite, ellipsoidalHeight_low) {
-  GNSS gnss;
-  int initial_value = 1;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be it's initial value plus 5";
+std::ostream & operator<< (std::ostream & out, connection_metadata const & data) {
+    out << "> URI: " << data.m_uri << "\n"
+        << "> Status: " << data.m_status << "\n"
+        << "> Remote Server: " << (data.m_server.empty() ? "None Specified" : data.m_server) << "\n"
+        << "> Error/close reason: " << (data.m_error_reason.empty() ? "N/A" : data.m_error_reason) << "\n";
+    out << "> Messages Processed: (" << data.m_messages.size() << ") \n";
+
+    std::vector<std::string>::const_iterator it;
+    for (it = data.m_messages.begin(); it != data.m_messages.end(); ++it) {
+        out << *it << "\n";
+    }
+
+    return out;
 }
 
-TEST_F(MyTestSuite, ellipsoidalHeight_high) {
-  GNSS gnss;
-  int initial_value = 49;
-  double value = gnss.ellipsoidalHeight(initial_value);
-  ASSERT_EQ(value, sin(initial_value*42+100)*10) << "Value should be 0";
+class websocket_endpoint {
+public:
+    websocket_endpoint () : m_next_id(0) {
+        m_endpoint.clear_access_channels(websocketpp::log::alevel::all);
+        m_endpoint.clear_error_channels(websocketpp::log::elevel::all);
+
+        m_endpoint.init_asio();
+        m_endpoint.start_perpetual();
+
+        m_thread = websocketpp::lib::make_shared<websocketpp::lib::thread>(&client::run, &m_endpoint);
+    }
+
+    ~websocket_endpoint() {
+        m_endpoint.stop_perpetual();
+        
+        for (con_list::const_iterator it = m_connection_list.begin(); it != m_connection_list.end(); ++it) {
+            if (it->second->get_status() != "Open") {
+                // Only close open connections
+                continue;
+            }
+            
+            std::cout << "> Closing connection " << it->second->get_id() << std::endl;
+            
+            websocketpp::lib::error_code ec;
+            m_endpoint.close(it->second->get_hdl(), websocketpp::close::status::going_away, "", ec);
+            if (ec) {
+                std::cout << "> Error closing connection " << it->second->get_id() << ": "  
+                          << ec.message() << std::endl;
+            }
+        }
+        
+        m_thread->join();
+    }
+
+    int connect(std::string const & uri) {
+        websocketpp::lib::error_code ec;
+
+        client::connection_ptr con = m_endpoint.get_connection(uri, ec);
+
+        if (ec) {
+            std::cout << "> Connect initialization error: " << ec.message() << std::endl;
+            return -1;
+        }
+
+        int new_id = m_next_id++;
+        connection_metadata::ptr metadata_ptr = websocketpp::lib::make_shared<connection_metadata>(new_id, con->get_handle(), uri);
+        m_connection_list[new_id] = metadata_ptr;
+
+        con->set_open_handler(websocketpp::lib::bind(
+            &connection_metadata::on_open,
+            metadata_ptr,
+            &m_endpoint,
+            websocketpp::lib::placeholders::_1
+        ));
+        con->set_fail_handler(websocketpp::lib::bind(
+            &connection_metadata::on_fail,
+            metadata_ptr,
+            &m_endpoint,
+            websocketpp::lib::placeholders::_1
+        ));
+        con->set_close_handler(websocketpp::lib::bind(
+            &connection_metadata::on_close,
+            metadata_ptr,
+            &m_endpoint,
+            websocketpp::lib::placeholders::_1
+        ));
+        con->set_message_handler(websocketpp::lib::bind(
+            &connection_metadata::on_message,
+            metadata_ptr,
+            websocketpp::lib::placeholders::_1,
+            websocketpp::lib::placeholders::_2
+        ));
+
+        m_endpoint.connect(con);
+
+        return new_id;
+    }
+
+    void close(int id, websocketpp::close::status::value code, std::string reason) {
+        websocketpp::lib::error_code ec;
+        
+        con_list::iterator metadata_it = m_connection_list.find(id);
+        if (metadata_it == m_connection_list.end()) {
+            std::cout << "> No connection found with id " << id << std::endl;
+            return;
+        }
+        
+        m_endpoint.close(metadata_it->second->get_hdl(), code, reason, ec);
+        if (ec) {
+            std::cout << "> Error initiating close: " << ec.message() << std::endl;
+        }
+    }
+
+    void send(int id, std::string message) {
+        websocketpp::lib::error_code ec;
+        
+        con_list::iterator metadata_it = m_connection_list.find(id);
+        if (metadata_it == m_connection_list.end()) {
+            std::cout << "> No connection found with id " << id << std::endl;
+            return;
+        }
+        
+        m_endpoint.send(metadata_it->second->get_hdl(), message, websocketpp::frame::opcode::text, ec);
+        if (ec) {
+            std::cout << "> Error sending message: " << ec.message() << std::endl;
+            return;
+        }
+        
+        metadata_it->second->record_sent_message(message);
+    }
+
+    connection_metadata::ptr get_metadata(int id) const {
+        con_list::const_iterator metadata_it = m_connection_list.find(id);
+        if (metadata_it == m_connection_list.end()) {
+            return connection_metadata::ptr();
+        } else {
+            return metadata_it->second;
+        }
+    }
+    
+    std::string get_json(int id, int message_id){
+    	con_list::const_iterator metadata_it = m_connection_list.find(id);
+    	if (metadata_it == m_connection_list.end()) {
+            return "error";
+        }
+        else {
+        	connection_metadata::ptr con = metadata_it->second;
+        	connection_metadata *obj = con.get();
+        	std::vector<std::string> messages = obj->get_messages();
+        	std::string json = messages[message_id];
+        	return json;
+        }
+    }
+    
+private:
+    typedef std::map<int,connection_metadata::ptr> con_list;
+
+    client m_endpoint;
+    websocketpp::lib::shared_ptr<websocketpp::lib::thread> m_thread;
+
+    con_list m_connection_list;
+    int m_next_id;
+};
+
+
+
+
+TEST(FileWebsocket, buildFileList) {
+	
+	//start server
+	std::string fileLocation = "/home/ubuntu/Poseidon/src/workspace/src/hydroball_files_websocket/tests/testFolder";
+	ControlFiles server(fileLocation);
+    uint16_t port = 9003;
+    std::thread t(&ControlFiles::run,&server, port);
+    
+    //start client
+    websocket_endpoint endpoint;
+    std::string uri = "ws://localhost:9003";
+    endpoint.connect(uri);
+    sleep(1);
+    connection_metadata::ptr metadata = endpoint.get_metadata(0);
+    //ROS_ERROR_STREAM(*metadata);
+    
+    //test
+    int check = 0;
+    //the array made by buildFileList() in files_websocket is not ordered
+    std::map<std::string,int> originalFiles = {{"file3.txt", 1}, {"file2.txt", 2}, {"file1.txt",3}}; 
+    int indice = 0;
+    server.sendFileList();
+    sleep(1);
+    std::string json = endpoint.get_json(0,0);
+    //ROS_ERROR_STREAM(json);
+    rapidjson::Document document;
+    document.Parse(json.c_str());
+    if(document.IsObject()){ ROS_INFO_STREAM("is object ");}
+	if(!document.HasParseError()){
+		ROS_INFO_STREAM("doc is valid json ");
+	}
+	if(document.HasMember("fileslist") && document["fileslist"].IsArray()){
+		const rapidjson::Value& a = document["fileslist"];
+		for (rapidjson::SizeType i = 0; i < a.Size(); i++){
+			const rapidjson::Value& a2 = a[i];
+			auto result = originalFiles.find(a2[0].GetString());
+			if(a2[0].GetString() == result->first){
+				check++;
+			}
+			indice++;
+		}
+	}
+	ROS_ERROR_STREAM(check);
+    ASSERT_TRUE(check == 3);
+    //close connection
+    int ID;
+    int close_code = websocketpp::close::status::normal;
+    std::string reason;
+    endpoint.close(ID, close_code, reason);
+
+
+	sleep(1);
+    //close all
+    server.stop(); // stop the server
+	t.join(); // join the thread before returning from node
+	ASSERT_TRUE(true);
 }
 
-
-
-
-void gnssCallbacklatmin(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_GE(gnss.latitude, -90);
+TEST(FileWebsocket, deleteFile) {
+	ASSERT_FALSE(true) << " no tests for deleteFile()";
 }
-void gnssCallbacklongmin(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_GE(gnss.longitude, -180);
-}
-void gnssCallbacklatmax(const sensor_msgs::NavSatFix& gnss)
-{
-  EXPECT_LE(gnss.latitude, 90);
-}
-void gnssCallbacklongmax(const sensor_msgs::NavSatFix& gnss)
-{
-   EXPECT_LE(gnss.longitude, 180);
-}
-
-
-TEST_F(MyTestSuite, pub_lat_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmin);
-  }
-TEST_F(MyTestSuite, pub_long_min)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmin);
-  }
-
-TEST_F(MyTestSuite, pub_lat_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklatmax);
-  }
-TEST_F(MyTestSuite, pub_long_max)
-{
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbacklongmax);
-  }
-
-void gnssCallbackvalue1(const sensor_msgs::NavSatFix& gnss)
-{
-   ASSERT_EQ(gnss.header.seq, 12);
-   ASSERT_EQ(gnss.longitude, 49.00);
-   ASSERT_EQ(gnss.latitude, 60.00);
-
-}
-
-
-TEST_F(MyTestSuite, pub_value1) {
-  GNSS gnss;
-  ros::NodeHandle nh;
-  AnyHelper h;
-  ros::Subscriber sub1 = nh.subscribe("fix", 1000, gnssCallbackvalue1);
-  int sequenceNumber= 12;
-  double longitude = 49.00;
-  double latitude = 60.00;
-  gnss.message(sequenceNumber, longitude, latitude);
-
-}
-
-*/
 
 int main(int argc, char** argv) {
-    return 0;
-    /*
+    
     ros::init(argc, argv, "TestNode");
 
     testing::InitGoogleTest(&argc, argv);
@@ -173,5 +332,4 @@ int main(int argc, char** argv) {
     ros::shutdown();
 
     return res;
-    */
 }

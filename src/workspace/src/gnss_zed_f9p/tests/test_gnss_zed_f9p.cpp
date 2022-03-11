@@ -8,7 +8,7 @@
 #include "virtual_serial_port.hpp"
 #include <vector>
 #include <stdio.h>
-
+#include "gnss_zed_f9p/gnss_zed_f9p.h"
 
 class counter{
 	public:
@@ -68,9 +68,19 @@ TEST(virtualZf9pTest, testZf9pUbxSpeed) {
 		virtualZedFf9p.close(zf9p);
 	}
 	//ROS_ERROR_STREAM("speed count : "<< speedCounter.getCount()<<"\n");
-	ASSERT_TRUE(speedCounter.getCount() == 10);
+	ASSERT_TRUE(speedCounter.getCount() == 10) << "speed count: " << speedCounter.getCount() ;
 }
+/*
+technically previous test is covering checksum
+but for better diagnostic it could be useful
+TEST(virtualZf9pTest, checksum) {
+	
+	ZEDF9P zedf9p("/home/ubuntu/Poseidon/www/webroot/record/" , /dev/pts/0);
+	zedf9p.validateChecksum();
+	
 
+}
+*/
 int main(int argc, char **argv) {
 
     ros::init(argc, argv, "testZf9p");

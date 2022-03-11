@@ -1,0 +1,5 @@
+<launch>
+
+<test test-name="test_hydroball_config_websocket" pkg="hydroball_config_websocket" type="test_hydroball_config_websocket" />
+
+</launch>

@@ -214,7 +214,9 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_hydroball_config_websocket tests/test_hydroball_config_websocket.cpp)
+#find_package(rostest REQUIRED)
+#find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
+add_rostest_gtest(test_hydroball_config_websocket tests/config_websocket.launch tests/test_hydroball_config_websocket.cpp)
 target_link_libraries(test_hydroball_config_websocket hydroball_config_websocket  ${hydroball_config_websocket_LIBRARIES})
 add_dependencies(test_hydroball_config_websocket ${catkin_EXPORTED_TARGETS})
 

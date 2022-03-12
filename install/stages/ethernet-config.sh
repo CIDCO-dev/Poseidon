@@ -68,6 +68,12 @@ network:
             set-name: eth0
             addresses:
               - '$snd_ip'/24
+        usb0:
+            dhcp4: true
+            optional: true
+            match:
+                name: usb0
+            set-name: usb0
 EOF2'
 
 sudo netplan apply

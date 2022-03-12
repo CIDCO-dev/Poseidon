@@ -6,17 +6,18 @@
 Help()
 {
    # Display Help
-   echo "Download Files From Webserver script."
+   echo "Upload Files To Webserver script."
    echo
-   echo "Syntax: install_user_on_HB.sh [options]"
+   echo "Syntax: upload_files_to_webserver.sh [options]"
    echo "options:"
    echo "help or h        Print this Help.                  "    
    echo "[name]           CSB User Name"
+   echo "[source]         CSB Source Directoru"
    echo
    echo "Command line exemple."
-   echo "install_user_on_HB.sh -help"
-   echo "install_user_on_HB.sh name "
-   echo "install_user_on_HB.sh 'CSB1234"
+   echo "upload_files_to_webserver.sh -help"
+   echo "upload_files_to_webserver.sh name source"
+   echo "upload_files_to_webserver.sh 'csb1234' '/home/ubuntu/Poseidon/www/webroot/record'"
    
 }
 
@@ -25,13 +26,9 @@ Help()
 ############################################################
 Command()
 {
-ssh-keygen -t rsa -b 4096 
 
-echo "SSH key to be implemented on the webserver"
-echo
-cat /home/ubuntu/.ssh/id_rsa.pub
-echo
-echo   
+rsync -e "ssh" --remove-source-files --partial -z --compress-level=9 -a -H -v --stats $source/*.* $user@csb.cidco.ca:/csb/$user/data
+   
 }
 
 
@@ -40,9 +37,10 @@ then
   Help
   exit
 else 
-  uname=$1
- 
-  if [ ! -z "$uname" ] 
+  user=$1
+  source=$2
+  
+  if [ ! -z "$webadd" ] && [ ! -z "$dest" ]
   then
     Command
     exit

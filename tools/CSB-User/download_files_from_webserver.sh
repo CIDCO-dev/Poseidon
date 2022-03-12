@@ -11,7 +11,7 @@ Help()
    echo "Syntax: download_files_from_webserver.sh [options]"
    echo "options:"
    echo "help or h        Print this Help.                  "    
-   echo "[webserver]      Webserver address.                "
+   echo "[server]         Destination Server address.                "
    echo "[destination]    File Destination.                 "
    echo
    echo "Command line exemple."
@@ -27,8 +27,7 @@ Help()
 Command()
 {
 
-rsync -az -P --exclude 'bin' --exclude 'etc' --exclude 'dev' --exclude 'lib' --exclude 'lib64' --exclude '.ssh' --exclude '.profile' --exclude '.bashrc' --exclude 'bash_logout' --remove-source-files csbclient@csb.cidco.ca/csb/ /data/csb
-
+rsync -e "ssh" --remove-source-files --partial -z --compress-level=9 -a -H -v --stats csb0001@csb.cidco.ca:/csb/csb0001/data/*.* csb@$server:/csb/csb0001/data/*.* 
    
 }
 
@@ -38,7 +37,7 @@ then
   Help
   exit
 else 
-  webadd=$1
+  server=$1
   dest=$2
   
   if [ ! -z "$webadd" ] && [ ! -z "$dest" ]

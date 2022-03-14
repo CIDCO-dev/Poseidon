@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   virtual_serial_port
+  setting_msg
 )
 
 ## System dependencies are found with CMake's conventions

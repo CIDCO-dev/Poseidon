@@ -41,7 +41,7 @@ void Writer::updateSpeedThreshold(){
         speedThresholdKmh = 5.0;
     }
 }
-	
+
 double Writer::getSpeedThreshold(){
 	return speedThresholdKmh;
 }
@@ -157,6 +157,7 @@ void Writer::rotate(){
 		ros::Time currentTime = ros::Time::now();
 
 		if(currentTime.toSec() - lastRotationTime.toSec() > logRotationIntervalSeconds){
+			ROS_INFO("Rotating logs");
 			//close (if need be), then reopen files.
 			finalize();
 			init();

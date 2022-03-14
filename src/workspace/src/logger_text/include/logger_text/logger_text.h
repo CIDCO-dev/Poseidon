@@ -71,7 +71,7 @@ private:
 	bool bootstrappedGnssTime = false;
 
 	ros::Time lastRotationTime;
-	int logRotationIntervalSeconds = 60; //1h //TODO: make this a parameter 
+	int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter 
 
 	//TODO: make this a parameter?
 	std::string tmpLoggingFolder = "/tmp";

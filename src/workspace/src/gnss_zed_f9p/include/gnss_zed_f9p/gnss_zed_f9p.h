@@ -127,6 +127,13 @@ typedef struct{
 class ZEDF9P{
 	private:
 	 	std::string outputFolder;
+		std::string tmpFolder = "/tmp"; //TODO: make a parameter?
+		std::string outputFileName;
+
+		ros::Time lastRotationTime;
+		int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter
+
+
 		std::string serialport;
 
 		std_msgs::String result;
@@ -216,7 +223,36 @@ class ZEDF9P{
 				ROS_ERROR("zf9p checksum error");
 			}
 		}
+
+		void initLogFile(){
+			if(!file.is_open()){
+	                        outputFileName = std::string(datetime()) + std::string(".ubx");
+				std::string outputFilePath = tmpFolder + "/" + outputFileName;
+        	                file.open(outputFilePath.c_str(),std::ios::app|std::ios::out|std::ios::binary);
+				lastRotationTime = ros::Time::now();
+			}
+		}
 		
+		void finalizeLogFile(){
+			if(file.is_open()){
+				file.close();
+				std::string oldPath = tmpFolder + "/" + outputFileName;
+				std::string newPath = outputFolder + "/" + outputFileName;
+				rename(oldPath.c_str(),newPath.c_str());
+			}
+		}
+
+		void rotateLogFile(){
+	                ros::Time currentTime = ros::Time::now();
+
+        	        if(currentTime.toSec() - lastRotationTime.toSec() > logRotationIntervalSeconds){
+                	        //ROS_INFO("Rotating logs");
+                        	//close (if need be), then reopen files.
+				finalizeLogFile();
+				initLogFile();
+			}
+		}
+
 		void run(){
 			//serial port opening
 			int serial_port = open(serialport.c_str(), O_RDWR);// | O_NOCTTY);
@@ -267,9 +303,9 @@ class ZEDF9P{
 				ros::spinOnce();
 			}
 
+			//FIXME: superflous with new rotate()
 			//open file
-			std::string outputFilename = outputFolder + std::string(datetime()) + std::string(".ubx");
-			file.open(outputFilename.c_str(),std::ios::app|std::ios::out|std::ios::binary);
+			initLogFile();
 
 			if(file) {
 						
@@ -278,7 +314,8 @@ class ZEDF9P{
        		                int n = read(serial_port, &read_buf, size);
 							file.write(read_buf, size);
 						*/
-						
+					rotateLogFile();
+
 							//read sync characters
 							int n = read(serial_port, &read_buf, size);
 							if (n == 1){
@@ -287,18 +324,19 @@ class ZEDF9P{
 									n = read(serial_port, &read_buf, size);
 									if(n == 1){
 										if (read_buf[0] == 0x62){
-										
+
 											//read header
 											ubx_header hdr;
 											n = read(serial_port, &hdr, sizeof(ubx_header));
+
 											if( n == sizeof(ubx_header)){
-											
+
 												//read payload
 												uint8_t *payload = (uint8_t*) malloc(hdr.length);
 												n = read(serial_port, payload, hdr.length);
 												//ROS_ERROR_STREAM("payload length : " << hdr.length <<"  read : "<<n);
 												if(n == hdr.length){
-													
+
 													//read checksum
 													ubx_checksum checksum;
 													n = read(serial_port, &checksum, sizeof(ubx_checksum));

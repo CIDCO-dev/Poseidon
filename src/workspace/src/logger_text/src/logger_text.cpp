@@ -10,15 +10,35 @@
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 	updateSpeedThreshold();
-	logger_service::GetLoggingMode::Request modeReq;
-	logger_service::GetLoggingMode::Response modeRes;
-	getLoggingMode(modeReq,modeRes);
-	int mode = modeRes.loggingMode;
-	ROS_INFO_STREAM("Logging mode set to : "<< mode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
+	updateLoggingMode();
+	ROS_INFO_STREAM("Logging mode set to : "<< loggingMode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
 }
 
 Writer::~Writer(){
 	finalize();
+}
+
+void Writer::updateLoggingMode(){
+	setting_msg::ConfigurationService srv;
+
+    srv.request.key = "loggingMode";
+    if(configurationClient.call(srv)){
+    	std::string strLoggingMode = srv.response.value;
+        try{
+        	loggingMode = stod(strLoggingMode);
+        	if(loggingMode != 1 && loggingMode != 2 && loggingMode != 3){
+        		ROS_ERROR("not a valid logging mode, valid mode are:\n always on  = 1 \n manual = 2 \n speed based = 3");
+        	}
+        }
+        catch(std::invalid_argument &err){
+        	ROS_INFO_STREAM("logging mode from config file is not written properly \n example : 1");
+        }
+    }
+    else{
+    	ROS_WARN("no logging mode define in config file, defaulting to Always on");
+        loggingMode = 1;
+    }
+    
 }
 
 void Writer::updateSpeedThreshold(){
@@ -325,7 +345,7 @@ bool Writer::toggleLogging(logger_service::ToggleLogging::Request & request,logg
 }
 
 void Writer::configurationCallBack(const setting_msg::Setting &setting){
-	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
 	if(setting.key == "loggingMode"){
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{

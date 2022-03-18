@@ -27,7 +27,7 @@ void Writer::updateLoggingMode(){
         try{
         	loggingMode = stod(strLoggingMode);
         	if(loggingMode != 1 && loggingMode != 2 && loggingMode != 3){
-        		ROS_ERROR("not a valid logging mode, switching to always ON \nvalid mode are:\n always on  = 1 \n manual = 2 \n speed based = 3");
+        		ROS_ERROR("Invalid logging mode, defaulting to Always On (1) \nValid modes are:\n Always On (1) \n Manual (2) \n Speed-Based (3)");
         		loggingMode = 1;
         	}
         }

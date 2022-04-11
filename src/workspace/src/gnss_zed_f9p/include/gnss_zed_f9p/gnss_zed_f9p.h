@@ -356,7 +356,7 @@ class ZEDF9P{
 											}
 										}
 										else{//read error
-											ROS_ERROR("0x62 not read properly");
+											ROS_ERROR("0x62 not read properly: %x",read_buf[0]);
 										}
 									}
 									else{

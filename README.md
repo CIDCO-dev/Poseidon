@@ -74,7 +74,6 @@ launch test environement:
 start browser and navigate to localhost or 127.0.0.1
 ```
 ### unit test
-some of these tests needs to be repaired, some requires the physical equipement
 
 see readme for tests :
 - sonar_nmea_0183_tcp_client

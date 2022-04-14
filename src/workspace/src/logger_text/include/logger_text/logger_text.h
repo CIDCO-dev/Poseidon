@@ -41,6 +41,7 @@ public:
 	void init();
 	void finalize();
 	void rotate();
+	void updateLoggingMode();
 
 	/* topic callbacks */
 	void gnssCallback(const sensor_msgs::NavSatFix& gnss);

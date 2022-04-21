@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>Bilge_Pump_msg</name>
+  <name>bilge_pump_msg</name>
   <version>0.0.0</version>
   <description>Bilge pump package</description>
 

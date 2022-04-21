@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <package format="2">
   <name>bilge_pump</name>
   <version>0.0.1</version>
@@ -8,11 +9,9 @@
   <license>BSD</license>
  
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>bilge_pump_msg</build_depend>
   
   <depend>rospy</depend>
 
 
-  <exec_depend>bilge_pump_msg</exec_depend>
   
 </package>

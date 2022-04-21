@@ -3,9 +3,13 @@ project(bilge_pump)
 
 find_package(catkin REQUIRED COMPONENTS rospy)
 
+#catkin_python_setup() needed if there is need to  import python modules
+	#needs to call setup.py file
 
 catkin_package(
-  CATKIN_DEPENDS bilge_pump_msg rospy
+  LIBRARIES bilge_pump
+  CATKIN_DEPENDS rospy
+
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -13,14 +17,11 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 
 
-catkin_install_python(PROGRAMS src/Bilge_Pump.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+catkin_install_python(PROGRAMS src/bilge_pump.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(TARGETS listener talker
+install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
-install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(Bilge_Pump_msg)
+project(bilge_pump_msg)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -104,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES catarob_msg
-  CATKIN_DEPENDS std_msgs message_runtime 
+  CATKIN_DEPENDS std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -207,18 +207,18 @@ catkin_package(
 #add_executable(catarob_control src/main.cpp)
 #target_link_libraries(catarob_control ${catkin_LIBRARIES} -lwiringPi -lrt)
 
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-You have no unread notifications
+#Footer
+#© 2022 GitHub, Inc.
+#Footer navigation
+#Terms
+#Privacy
+#Security
+#Status
+#Docs
+#Contact GitHub
+#Pricing
+#API
+#Training
+#Blog
+#About
+#You have no unread notifications

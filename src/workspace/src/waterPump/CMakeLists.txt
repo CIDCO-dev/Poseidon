@@ -108,7 +108,9 @@ catkin_package(
 #  CATKIN_DEPENDS geometry_msgs rospy std_msgs
 #  DEPENDS system_lib
 )
-
+catkin_install_python(PROGRAMS scripts/bilge_pump.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 ###########
 ## Build ##
 ###########

@@ -10,6 +10,8 @@ project(bilge_pump_msg)
 find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
+  rospy
+
 )
 
 ## System dependencies are found with CMake's conventions
@@ -207,18 +209,3 @@ catkin_package(
 #add_executable(catarob_control src/main.cpp)
 #target_link_libraries(catarob_control ${catkin_LIBRARIES} -lwiringPi -lrt)
 
-#Footer
-#© 2022 GitHub, Inc.
-#Footer navigation
-#Terms
-#Privacy
-#Security
-#Status
-#Docs
-#Contact GitHub
-#Pricing
-#API
-#Training
-#Blog
-#About
-#You have no unread notifications

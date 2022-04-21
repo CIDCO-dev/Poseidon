@@ -1,2 +1,2 @@
 Header header
-int8 waterIntruded
+int8 status

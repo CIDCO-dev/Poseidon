@@ -5,6 +5,7 @@ add_definitions(-std=c++17 -Wall -g)
 
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
 find_package(OpenCV 4 REQUIRED)
+find_package(REQUIRED CONFIG NAMES exiv2)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
@@ -25,7 +26,7 @@ include_directories(
  add_executable(${PROJECT_NAME}_node nodes/${PROJECT_NAME}_node.cpp)
 
  target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES} ${OpenCV_LIBS}
+   ${catkin_LIBRARIES} ${OpenCV_LIBS} exiv2
    # ${PROJECT_NAME}
  )
  #[[

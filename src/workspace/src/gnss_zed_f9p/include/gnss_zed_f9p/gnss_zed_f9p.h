@@ -223,7 +223,7 @@ class ZEDF9P{
 				if(hdr->msgClass == 0x01 && hdr->id ==0x07){
 					//extract ground speed and publish it
 					ubx_nav_pvt* pvt = (ubx_nav_pvt*) payload;
-					double speedKmh = (double) bswap_32(pvt->groundSpeed) * (3.6/1000.0);
+					double speedKmh = (double) pvt->groundSpeed * (3.6/1000.0);
 
 					//ROS_ERROR_STREAM("speed : "<< speedKmh);
 					nav_msgs::Odometry msg;
@@ -233,7 +233,8 @@ class ZEDF9P{
 					speedPublisher.publish(msg);
 				}
 				else if(hdr->msgClass == 0x02 && hdr->id == 0x15){
-					ROS_INFO("Got GNSS observation packet");
+					//Cool beans
+					//ROS_INFO("Got GNSS observation packet");
 				}
 
 				//write frame to bin file
@@ -259,7 +260,7 @@ class ZEDF9P{
 				lastRotationTime = ros::Time::now();
 			}
 		}
-		
+
 		void finalizeLogFile(){
 			if(file.is_open()){
 				file.close();
@@ -285,6 +286,7 @@ class ZEDF9P{
 			int serial_port = open(serialport.c_str(), O_RDWR);// | O_NOCTTY);
 			struct termios tty;
 			memset(&tty, 0, sizeof tty);
+
 			//serialport config
 			if(tcgetattr(serial_port, &tty) != 0) {
     				printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
@@ -335,7 +337,7 @@ class ZEDF9P{
 			initLogFile();
 
 			if(file) {
-						
+
 		                while(ros::ok()){ //read serial port and save in the file
 					rotateLogFile();
 
@@ -357,8 +359,8 @@ class ZEDF9P{
 										//Fix endianness
 										//We received the data in little-endian, but the raspberry pi uses big endian
 										//hdr.length = bswap_16(hdr.length);
-										
-										ROS_INFO("Payload size: %d",hdr.length);
+
+										//ROS_INFO("Payload size: %d",hdr.length);
 
 										//read payload
 										uint8_t *payload = (uint8_t*) malloc(hdr.length);

@@ -27,7 +27,7 @@ Help()
 Command()
 {
 
-rsync -e "ssh" --remove-source-files --partial -z --compress-level=9 -a -H -v --stats $source/*.* $user@csb.cidco.ca:/csb/$user/data
+rsync -e "ssh" --remove-source-files -z --compress-level=9 -a -H -v --stats $source/*.* $user@csb.cidco.ca:/csb/$user/data
    
 }
 

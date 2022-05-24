@@ -3,6 +3,8 @@
 <arg name="sonarPort" value="8000"/>
 <arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
 <arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+<arg name="imagesPath" value="/home/ubuntu/test"/>
+
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
 
@@ -12,7 +14,7 @@
 
 <node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" /> 
 
-<node pkg="sonar_nmea_0183_tcp_client" name="sonar" type="nmea_network_node" output="screen" args="$(arg sonarAddress) $(arg sonarPort)"/>
+<!--<node pkg="sonar_nmea_0183_tcp_client" name="sonar" type="nmea_network_node" output="screen" args="$(arg sonarAddress) $(arg sonarPort)"/>-->
 
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 
@@ -20,5 +22,6 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" output="screen"/>
 
+<node pkg="video_recorder" name="Video_recorder" type="video_recorder_node" output="screen" args="$(arg imagesPath)" /> 
 
 </launch>

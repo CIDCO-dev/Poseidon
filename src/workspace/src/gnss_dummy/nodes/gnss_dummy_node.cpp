@@ -4,11 +4,11 @@
 int main(int argc,char** argv){
 	ros::init(argc, argv, "gnss");
 	GNSS gnss;
-	ros::Rate loop_rate( 1 );
+	ros::Rate loop_rate(1);
 	while(ros::ok()){
 		gnss.talk();
 		ros::spinOnce();
-                loop_rate.sleep();
+        loop_rate.sleep();
 	}
 	return 0;
 }

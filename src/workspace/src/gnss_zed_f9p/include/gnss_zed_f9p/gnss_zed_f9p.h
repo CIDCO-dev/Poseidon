@@ -12,7 +12,7 @@
 #include <std_msgs/String.h>
 #include <sensor_msgs/NavSatFix.h>
 
-
+#include <byteswap.h>
 #include <fcntl.h>   // Contains file controls like O_RDWR
 #include <errno.h>   // Error integer and strerror() function
 #include <termios.h> // Contains POSIX terminal control definitions
@@ -74,7 +74,7 @@ typedef struct {
 typedef struct{
 	uint8_t msgClass;
 	uint8_t  id;
-    uint16_t length; //little endian
+	uint16_t length; //little endian
 }ubx_header;
 #pragma pack()
 
@@ -150,6 +150,8 @@ class ZEDF9P{
                 ros::Subscriber gnssSubscriber;
                 ros::Publisher speedPublisher;
 
+
+
 	public:
 
 		ZEDF9P(std::string & outputFolder, std::string & serialport): outputFolder(outputFolder), serialport(serialport){
@@ -174,6 +176,28 @@ class ZEDF9P{
 				bootstrappedGnssTime = true;
 			}
 		}
+
+                int serialRead(int deviceFile,uint8_t * buf,unsigned int sz){
+                        unsigned int totalRead = 0;
+
+                        while(totalRead < sz){
+                                unsigned int bytesRead = read(deviceFile,& (buf[totalRead]),sz - totalRead);
+
+                                if(bytesRead > 0){
+                                        totalRead += bytesRead;
+                                }
+                                else if(bytesRead == 0){
+                                        //File end
+                                        return bytesRead;
+                                }
+                                else{
+                                        return -1;
+                                }
+                        }
+
+                        return totalRead;
+                }
+
 		bool validateChecksum(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
 			uint8_t ck_a = 0;
 			uint8_t ck_b = 0;
@@ -186,7 +210,7 @@ class ZEDF9P{
 				ck_a += payload[i] & 0xFF;
 				ck_b += ck_a & 0xFF; 
 			}
-			
+
 			return (uint8_t)checksum->ck_a == (uint8_t)ck_a && (uint8_t)checksum->ck_b == (uint8_t)ck_b;
 		}
 
@@ -200,24 +224,28 @@ class ZEDF9P{
 					//extract ground speed and publish it
 					ubx_nav_pvt* pvt = (ubx_nav_pvt*) payload;
 					double speedKmh = (double) pvt->groundSpeed * (3.6/1000.0);
+
 					//ROS_ERROR_STREAM("speed : "<< speedKmh);
 					nav_msgs::Odometry msg;
 					msg.header.seq=++speedSequenceNumber;
 					msg.header.stamp=ros::Time::now();
 					msg.twist.twist.linear.y= speedKmh;
 					speedPublisher.publish(msg);
-					
 				}
-				
-				
-				
+				else if(hdr->msgClass == 0x02 && hdr->id == 0x15){
+					//Cool beans
+					//ROS_INFO("Got GNSS observation packet");
+				}
+
 				//write frame to bin file
-				uint16_t sync = 0xb562;
-				file.write((char*)&sync, sizeof(uint16_t));
+				uint8_t sync[2];
+				sync[0] = 0xb5;
+				sync[1] = 0x62;
+
+				file.write((char*)sync, sizeof(uint16_t));
 				file.write((char*)hdr, sizeof(ubx_header));
 				file.write((char*)payload, hdr->length);
 				file.write((char*)checksum, sizeof(ubx_checksum));
-			
 			}
 			else{
 				ROS_ERROR("zf9p checksum error");
@@ -232,7 +260,7 @@ class ZEDF9P{
 				lastRotationTime = ros::Time::now();
 			}
 		}
-		
+
 		void finalizeLogFile(){
 			if(file.is_open()){
 				file.close();
@@ -246,7 +274,7 @@ class ZEDF9P{
 	                ros::Time currentTime = ros::Time::now();
 
         	        if(currentTime.toSec() - lastRotationTime.toSec() > logRotationIntervalSeconds){
-                	        //ROS_INFO("Rotating logs");
+                	        ROS_INFO("Rotating GNSS UBX logs");
                         	//close (if need be), then reopen files.
 				finalizeLogFile();
 				initLogFile();
@@ -258,6 +286,7 @@ class ZEDF9P{
 			int serial_port = open(serialport.c_str(), O_RDWR);// | O_NOCTTY);
 			struct termios tty;
 			memset(&tty, 0, sizeof tty);
+
 			//serialport config
 			if(tcgetattr(serial_port, &tty) != 0) {
     				printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
@@ -308,68 +337,72 @@ class ZEDF9P{
 			initLogFile();
 
 			if(file) {
-						
+
 		                while(ros::ok()){ //read serial port and save in the file
-		                /*
-       		                int n = read(serial_port, &read_buf, size);
-							file.write(read_buf, size);
-						*/
 					rotateLogFile();
 
-							//read sync characters
-							int n = read(serial_port, &read_buf, size);
-							if (n == 1){
-								//ROS_ERROR("zf9p first byte is 0xb5 and got :%x",read_buf[0]); //delete me
-								if (read_buf[0] == 0xb5){
-									n = read(serial_port, &read_buf, size);
-									if(n == 1){
-										if (read_buf[0] == 0x62){
+					//read sync characters
+					int n = serialRead(serial_port, (unsigned char*)&read_buf, size);
 
-											//read header
-											ubx_header hdr;
-											n = read(serial_port, &hdr, sizeof(ubx_header));
+					if (n == 1){
+						//ROS_ERROR("zf9p first byte is 0xb5 and got :%x",read_buf[0]); //delete me
+						if (read_buf[0] == 0xb5){
+							n = serialRead(serial_port, (unsigned char*)&read_buf, size);
+							if(n == 1){
+								if (read_buf[0] == 0x62){
 
-											if( n == sizeof(ubx_header)){
+									//read header
+									ubx_header hdr;
+									n = serialRead(serial_port, (unsigned char*)&hdr, sizeof(ubx_header));
 
-												//read payload
-												uint8_t *payload = (uint8_t*) malloc(hdr.length);
-												n = read(serial_port, payload, hdr.length);
-												//ROS_ERROR_STREAM("payload length : " << hdr.length <<"  read : "<<n);
-												if(n == hdr.length){
+									if( n == sizeof(ubx_header)){
+										//Fix endianness
+										//We received the data in little-endian, but the raspberry pi uses big endian
+										//hdr.length = bswap_16(hdr.length);
 
-													//read checksum
-													ubx_checksum checksum;
-													n = read(serial_port, &checksum, sizeof(ubx_checksum));
-													if(n == sizeof(ubx_checksum)){
-														//process frame
-														processFrame(&hdr, payload, &checksum);
-													}
-													else{//read error
-													}
-												}
-												else{//read error
-													ROS_ERROR("payload not read properly");
-												}
+										//ROS_INFO("Payload size: %d",hdr.length);
+
+										//read payload
+										uint8_t *payload = (uint8_t*) malloc(hdr.length);
+										n = serialRead(serial_port, (unsigned char *) payload, hdr.length);
+										if(n == hdr.length){
+
+											//read checksum
+											ubx_checksum checksum;
+											n = serialRead(serial_port, (unsigned char*) &checksum, sizeof(ubx_checksum));
+											if(n == sizeof(ubx_checksum)){
+												//process frame
+												processFrame(&hdr, payload, &checksum);
 											}
 											else{//read error
-												ROS_ERROR("not enough bytes to read ubx header");
+												ROS_ERROR("Error while reading checksum: %d bytes of %d read",n,hdr.length);
 											}
 										}
 										else{//read error
-											ROS_ERROR("0x62 not read properly: %x",read_buf[0]);
+											ROS_ERROR("payload not read properly: %d bytes of %d read", n,hdr.length);
 										}
 									}
-									else{
-										//read error , discard packet
+									else{//read error
+										ROS_ERROR("not enough bytes to read ubx header");
 									}
-					        	}
-					        	else{//read error
-					        		//ROS_ERROR("0xb5 not read properly");
-					        	}
+								}
+								else{//read error
+									//ROS_ERROR("0x62 not read properly: %x",read_buf[0]);
+								}
+							}
+							else{
+								//read error , discard packet
+							}
 					        }
 					        else{//read error
+					        	//ROS_ERROR("0xb5 not read properly: %x", read_buf[0]);
 					        }
-						}
+				        }
+					else{//read error
+
+					}
+				}//while
+
 				//cleanup
 		                close(serial_port);
 	        	        file.close();

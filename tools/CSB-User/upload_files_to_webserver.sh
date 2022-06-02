@@ -40,7 +40,7 @@ else
   user=$1
   source=$2
   
-  if [ ! -z "$webadd" ] && [ ! -z "$dest" ]
+  if [ ! -z "$user" ] && [ ! -z "$source" ]
   then
     Command
     exit

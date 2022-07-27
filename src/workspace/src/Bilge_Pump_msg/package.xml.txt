@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>Bridge_pump_msg</name>
+  <name>Bilge_Pump_msg</name>
   <version>0.0.0</version>
-  <description>Bridge pump package</description>
+  <description>Bilge pump package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

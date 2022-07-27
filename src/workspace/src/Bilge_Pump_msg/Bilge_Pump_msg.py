@@ -1,16 +1,11 @@
 '''
 # Copyright 2022 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 @Jacob Bellavance
-
 '''
-#serialPort = open("/dev/ttyUSB0", "w")
 import sys
 import serial
 import os
 import time
-
-
-#serialPort.write("gpio write 1\r")
 
 
 if (len(sys.argv) < 1):

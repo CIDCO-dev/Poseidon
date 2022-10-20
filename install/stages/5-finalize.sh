@@ -1,6 +1,10 @@
 #!/bin/bash
 echo "[+] install opencv"
 sudo apt-get install libopencv-dev -y | tee -a log.txt
+
+echo "[+] install exiv2"
+sudo apt-get install libexiv2-dev -y | tee -a log.txt
+
 echo "[+] Configuring Inertial Sense SDK"
 cd ~/Poseidon/src/workspace/src/inertial_sense_ros/
 mkdir lib

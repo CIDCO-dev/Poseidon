@@ -65,11 +65,10 @@ source poseidon workspace:
 ```
 source devel/setup.bash
 ```
-```
 or
 ```
 echo "source ~/Poseidon/src/workspace/devel/setup.bash" >> ~/.bashrc
-
+```
 start new terminal or :
 ```
 source ~/.bashrc

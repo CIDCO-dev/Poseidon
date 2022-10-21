@@ -1,0 +1,3 @@
+[submodule "src/workspace/src/velodyne"]
+	path = src/workspace/src/velodyne
+	url = https://github.com/ros-drivers/velodyne.git

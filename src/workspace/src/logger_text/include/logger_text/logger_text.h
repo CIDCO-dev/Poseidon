@@ -4,6 +4,7 @@
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/Imu.h"
+#include "sensor_msgs/PointCloud2.h"
 #include "geometry_msgs/PointStamped.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "nav_msgs/Odometry.h"
@@ -48,7 +49,8 @@ public:
 	void imuCallback(const sensor_msgs::Imu& imu);
 	void sonarCallback(const geometry_msgs::PointStamped& sonar);
 	void speedCallback(const nav_msgs::Odometry& speed);
-
+	void lidarCallBack(const sensor_msgs::PointCloud2& lidar);
+	
 	/* speed trigger methods */
 	void updateSpeedThreshold();
 	double getSpeedThreshold();
@@ -80,13 +82,15 @@ private:
 	std::string gnssFileName;
 	std::string imuFileName;
 	std::string sonarFileName;
+	std::string lidarFileName;
 
-        FILE * gnssOutputFile  = NULL;
-        FILE * imuOutputFile   = NULL;
-        FILE * sonarOutputFile = NULL;
-
-        std::string outputFolder;
-        std::string separator;
+    FILE * gnssOutputFile  = NULL;
+    FILE * imuOutputFile   = NULL;
+    FILE * sonarOutputFile = NULL;
+	FILE * lidarOutputFile = NULL;
+	
+    std::string outputFolder;
+    std::string separator;
 
 	tf2_ros::Buffer buffer;
 	tf2_ros::TransformListener transformListener;
@@ -94,11 +98,11 @@ private:
 	uint64_t lastGnssTimestamp = 0;
 	uint64_t lastImuTimestamp  = 0;
 	uint64_t lastSonarTimestamp= 0;
+	uint64_t lastLidarTimestamp= 0;
 
 	int loggingMode = 1;
 
 	/* Speed-triggered logging mode */
-	
 	std::list<double> kmh_Speed_list;
 	double average_speed = 0;
 	double speedThresholdKmh = 0.0;

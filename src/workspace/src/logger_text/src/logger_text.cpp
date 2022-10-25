@@ -77,7 +77,7 @@ void Writer::init(){
 		fileRotationMutex.lock();
 
 		//Make sure the files are not already opened...
-		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile){
+		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile && !lidarOutputFile){
 
 			std::string dateString = TimeUtils::getStringDate();
 
@@ -100,10 +100,10 @@ void Writer::init(){
 
 			imuOutputFile = fopen(imuFilePath.c_str(),"a");
 
-        		if(!imuOutputFile){
-				fileRotationMutex.unlock();
-		        	throw std::invalid_argument(std::string("Couldn't open IMU log file ") + imuFileName);
-        		}
+    		if(!imuOutputFile){
+			fileRotationMutex.unlock();
+	        	throw std::invalid_argument(std::string("Couldn't open IMU log file ") + imuFileName);
+    		}
 
 			//Open sonar file
 			sonarFileName = dateString + "_sonar.txt";
@@ -112,14 +112,30 @@ void Writer::init(){
 
 			sonarOutputFile = fopen(sonarFilePath.c_str(),"a");
 
-		        if(!sonarOutputFile){
-				fileRotationMutex.unlock();
-				throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
-		        }
+	        if(!sonarOutputFile){
+			fileRotationMutex.unlock();
+			throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
+	        }
+			
+			//Open lidar file
+			lidarFileName = dateString + "_lidar.txt";
 
-			fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
+			std::string lidarFilePath = tmpLoggingFolder + "/" + lidarFileName;
+
+			lidarOutputFile = fopen(lidarFilePath.c_str(),"a");
+
+	        if(!lidarOutputFile){
+			fileRotationMutex.unlock();
+			throw std::invalid_argument(std::string("Couldn't open lidar log file ") + lidarFileName);
+	        }
+	        
+	        
+			
+			fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",
+									separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
 			fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
 			fprintf(sonarOutputFile,"Timestamp%sDepth\n",separator.c_str());
+			fprintf(lidarOutputFile,"Timestamp%sPoints\n",separator.c_str());
 		}
 
 		lastRotationTime = ros::Time::now();
@@ -151,7 +167,7 @@ void Writer::finalize(){
 		fclose(imuOutputFile);
 		imuOutputFile = NULL;
 
-                //move
+		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + imuFileName;
 		std::string newPath = outputFolder + "/" + imuFileName;
 		rename(oldPath.c_str(),newPath.c_str());
@@ -167,7 +183,18 @@ void Writer::finalize(){
 		std::string newPath = outputFolder + "/" + sonarFileName;
 		rename(oldPath.c_str(),newPath.c_str());
 	}
+	
+	if(lidarOutputFile){
+		//close
+		fclose(lidarOutputFile);
+		lidarOutputFile = NULL;
 
+		//move
+		std::string oldPath = tmpLoggingFolder + "/"  + lidarFileName;
+		std::string newPath = outputFolder + "/" + lidarFileName;
+		rename(oldPath.c_str(),newPath.c_str());
+	}
+	
 	fileRotationMutex.unlock();
 }
 
@@ -253,7 +280,6 @@ void Writer::imuCallback(const sensor_msgs::Imu& imu){
 }
 
 void Writer::speedCallback(const nav_msgs::Odometry& speed){
-	ROS_DEBUG_STREAM("logger speedCallback");
 	logger_service::GetLoggingMode::Request modeReq;
 	logger_service::GetLoggingMode::Response modeRes;
 	getLoggingMode(modeReq,modeRes);
@@ -268,7 +294,7 @@ void Writer::speedCallback(const nav_msgs::Odometry& speed){
 	}
 
 	double current_speed = speed.twist.twist.linear.y;
-	ROS_DEBUG_STREAM("current speed : " << current_speed);
+	//ROS_DEBUG_STREAM("current speed : " << current_speed);
 
 	// wait two mins before calculating the average speed
 	// TODO: this assumes 1 speed measrement per second (VTG, binary, etc). this may be false with some GNSS devices
@@ -311,6 +337,39 @@ void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 		if(timestamp > lastSonarTimestamp){
 			fprintf(sonarOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec).c_str(),separator.c_str(),sonar.point.z);
 			lastSonarTimestamp = timestamp;
+		}
+	}
+}
+
+void Writer::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
+	ROS_INFO_STREAM("lidar callback : " << lidar.data.size() << "\n" );
+	
+	// 2D structure of the point cloud.
+	uint32_t height = lidar.height;
+	uint32_t width = lidar.height;
+	
+	
+	bool is_bigendian = lidar.is_bigendian;
+	std::vector<uint8_t> data = lidar.data;
+	/*
+	if (lidar.is_dense){
+		ROS_INFO_STREAM("cloud is dense \n");
+	}
+	if (height == 1){
+		ROS_INFO_STREAM("cloud is unordered \n");
+	}
+	*/
+	
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
+		
+		if(timestamp > lastLidarTimestamp){
+			fprintf(lidarOutputFile,"%s%d%d\n",TimeUtils::getTimestampString(lidar.header.stamp.sec, lidar.header.stamp.nsec).c_str());
+			lastLidarTimestamp = timestamp;
+			for(auto const& p : data){
+    			fprintf(lidarOutputFile,"%d ", p);
+    		}
+    		fprintf(lidarOutputFile,"\n\n");
 		}
 	}
 }
@@ -381,7 +440,7 @@ void Writer::configurationCallBack(const setting_msg::Setting &setting){
 			}
 		}
 		else{
-			ROS_ERROR_STREAM("loggingModeCallBack error"<< setting.key << " is different than 1,2,3 \n"<<"defaulting to a : always ON");
+			ROS_ERROR_STREAM("loggingModeCallBack error "<< setting.key << " is different than 1,2,3 \n"<<"defaulting to: always ON");
 			mtx.lock();
 			logger_service::SetLoggingMode defaultMode;
 			defaultMode.request.loggingMode = 1;

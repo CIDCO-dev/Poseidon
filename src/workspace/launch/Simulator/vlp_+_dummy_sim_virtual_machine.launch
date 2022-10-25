@@ -1,3 +1,4 @@
+<!-- -*- mode: XML -*- -->
 <launch>
 <arg name="sonarAddress" value="127.0.0.1"/>
 <arg name="sonarPort" value="8000"/>

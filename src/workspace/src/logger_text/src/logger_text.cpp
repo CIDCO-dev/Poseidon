@@ -5,7 +5,8 @@
 #include <cstdio>
 #include <numeric>
 #include <thread>
-
+#include "sensor_msgs/point_cloud_conversion.h"
+#include "sensor_msgs/PointCloud.h"
 
 Writer::Writer(std::string & outputFolder, std::string separator):outputFolder(outputFolder),separator(separator),transformListener(buffer){
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
@@ -344,34 +345,25 @@ void Writer::sonarCallback(const geometry_msgs::PointStamped& sonar){
 void Writer::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 	ROS_INFO_STREAM("lidar callback : " << lidar.data.size() << "\n" );
 	
-	// 2D structure of the point cloud.
-	uint32_t height = lidar.height;
-	uint32_t width = lidar.height;
+	sensor_msgs::PointCloud lidarXYZ;
+	sensor_msgs::convertPointCloud2ToPointCloud(lidar, lidarXYZ);
 	
+	std::vector<geometry_msgs::Point32> data = lidarXYZ.points;
 	
-	bool is_bigendian = lidar.is_bigendian;
-	std::vector<uint8_t> data = lidar.data;
-	/*
-	if (lidar.is_dense){
-		ROS_INFO_STREAM("cloud is dense \n");
-	}
-	if (height == 1){
-		ROS_INFO_STREAM("cloud is unordered \n");
-	}
-	*/
 	
 	if(bootstrappedGnssTime && loggerEnabled){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
 		
 		if(timestamp > lastLidarTimestamp){
-			fprintf(lidarOutputFile,"%s%d%d\n",TimeUtils::getTimestampString(lidar.header.stamp.sec, lidar.header.stamp.nsec).c_str());
+			fprintf(lidarOutputFile,"%s%s",TimeUtils::getTimestampString(lidar.header.stamp.sec, lidar.header.stamp.nsec).c_str(), separator.c_str());
 			lastLidarTimestamp = timestamp;
-			for(auto const& p : data){
-    			fprintf(lidarOutputFile,"%d ", p);
+			for(auto const& point : data){
+    			fprintf(lidarOutputFile,"%f %f %f%s", point.x, point.y, point.z, separator.c_str());
     		}
-    		fprintf(lidarOutputFile,"\n\n");
+    		fprintf(lidarOutputFile,"\n");
 		}
 	}
+	
 }
 
 bool Writer::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){

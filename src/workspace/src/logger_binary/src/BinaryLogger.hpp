@@ -9,24 +9,26 @@
 #include <geometry_msgs/PointStamped.h>
 #include "../../utils/timestamp.h"
 #include "types.h"
+#include "sensor_msgs/point_cloud_conversion.h"
+#include "sensor_msgs/PointCloud.h"
+#include "sensor_msgs/PointCloud2.h"
 
 /* The BinaryLogger class creates a binary file with GPS, IMU and echosounder data */
 class BinaryLogger{
 public:
-        BinaryLogger(){
-                positionSubscriber = n.subscribe("fix", 50, &BinaryLogger::processPositionCallback,this);
-                attitudeSubscriber = n.subscribe("/imu/data", 50, &BinaryLogger::processAttitudeCallback,this);
-                depthSubscriber = n.subscribe("depth", 50, &BinaryLogger::processDepthCallback,this);
+        BinaryLogger(std::string & logPath):outputFilePath(logPath){
+                positionSubscriber = n.subscribe("fix", 1000, &BinaryLogger::processPositionCallback,this);
+                attitudeSubscriber = n.subscribe("/imu/data", 1000, &BinaryLogger::processAttitudeCallback,this);
+                depthSubscriber = n.subscribe("depth", 1000, &BinaryLogger::processDepthCallback,this);
+				lidarSubscriber = n.subscribe("velodyne_points", 1000, &BinaryLogger::processLidarCallback, this);
 
-                //open output file
-                if(!n.getParam("binaryOutputFile",outputFilePath)){
-                        outputFilePath="/"; //Hail Satan!
-                }
 
                 outputFileName = TimeUtils::getStringDate() + std::string(".log");
 
                 outputFile.open(outputFilePath + "/" + outputFileName,std::ios::binary|std::ios::trunc);
-
+				
+				ROS_INFO("Logging binary data to %s", outputFilePath.c_str());
+				
                 if(!outputFile.good()){
                         throw std::invalid_argument("Couldn't open binary log file");
                 }
@@ -90,7 +92,7 @@ public:
         void processDepthCallback(const geometry_msgs::PointStamped & msg){
                 PacketHeader hdr;
                 hdr.packetType=PACKET_DEPTH;
-                hdr.packetSize=sizeof(AttitudePacket);
+                hdr.packetSize=sizeof(DepthPacket);
                 hdr.packetTimestamp=TimeUtils::buildTimeStamp(msg.header.stamp.sec,msg.header.stamp.nsec);
 
                 DepthPacket packet;
@@ -102,7 +104,32 @@ public:
                 outputFile.write((char*)&hdr,sizeof(PacketHeader));
                 outputFile.write((char*)&packet,sizeof(DepthPacket));
         }
+		
+		void processLidarCallback(const sensor_msgs::PointCloud2& lidar){
+			
+			sensor_msgs::PointCloud lidarXYZ;
+			sensor_msgs::convertPointCloud2ToPointCloud(lidar, lidarXYZ);
+			
+			std::vector<geometry_msgs::Point32> data = lidarXYZ.points;
+			
+			PacketHeader hdr;
+            hdr.packetType=PACKET_LIDAR;
+            hdr.packetSize=sizeof(LidarPacket) * data.size();
+            hdr.packetTimestamp=TimeUtils::buildTimeStamp(lidar.header.stamp.sec,lidar.header.stamp.nsec);
 
+            outputFile.write((char*)&hdr,sizeof(PacketHeader));
+            
+            for(auto const& point : data){
+            	LidarPacket packet;
+            	packet.laser_x = point.x;
+            	packet.laser_y = point.y;
+            	packet.laser_z = point.z;
+            	
+            	outputFile.write((char*)&packet, sizeof(LidarPacket));
+            }
+            
+		}
+		
         void run(){
                 //Check for incoming messages @ 10Hz
                 ros::Rate r(10.0);
@@ -118,7 +145,8 @@ private:
         ros::Subscriber positionSubscriber;
         ros::Subscriber attitudeSubscriber;
         ros::Subscriber depthSubscriber;
-
+		ros::Subscriber lidarSubscriber;
+		
         std::string  outputFilePath;
         std::string  outputFileName;
         std::ofstream outputFile;

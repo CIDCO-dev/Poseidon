@@ -5,6 +5,7 @@
 #define PACKET_POSITION 1
 #define PACKET_ATTITUDE 2
 #define PACKET_DEPTH    3
+#define PACKET_LIDAR    4
 
 
 /* Packet structs */
@@ -85,4 +86,12 @@ typedef struct {
         double depth_y;
         double depth_z;
 } DepthPacket;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct {
+	double laser_x;
+	double laser_y;
+	double laser_z;
+} LidarPacket;
 #pragma pack()

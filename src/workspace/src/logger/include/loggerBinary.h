@@ -23,7 +23,6 @@ class LoggerBinary : public LoggerBase{
 		void lidarCallBack(const sensor_msgs::PointCloud2& lidar);
 	
 	private:
-		uint64_t lastTimestamp = 0;
 				
 		// log files
 		std::string  outputFilePath;

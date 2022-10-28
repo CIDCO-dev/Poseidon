@@ -20,14 +20,6 @@ class LoggerText : public LoggerBase{
 		void lidarCallBack(const sensor_msgs::PointCloud2& lidar);
 	
 	private:
-		/*
-		// log rotation
-		std::mutex fileRotationMutex;
-		ros::Time lastRotationTime;
-		int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter 
-		//TODO: make this a parameter?
-		std::string tmpLoggingFolder = "/tmp";
-		*/
 		
 		// log files
 		std::string gnssFileName;

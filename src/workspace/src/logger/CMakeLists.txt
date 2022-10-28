@@ -60,15 +60,13 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} )
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-#if(CATKIN_ENABLE_TESTING)
-#find_package(rostest REQUIRED)
-#find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
-#add_rostest_gtest(test_sonar_nmea_0183_device_client tests/sonar_nmea_0183_test.launch tests/test_sonar_nmea_0183_device_client.cpp)
-#target_link_libraries(test_sonar_nmea_0183_device_client sonar_nmea_0183_tcp_client ${sonar_nmea_0183_tcp_client_LIBRARIES})
-#add_dependencies(test_sonar_nmea_0183_device_client ${catkin_EXPORTED_TARGETS}) #? ${catkin_LIBRARIES}
+# Add gtest based cpp test target and link libraries
+if(CATKIN_ENABLE_TESTING)
+	find_package(rostest REQUIRED)
+    add_rostest_gtest(test_logger_text_node tests/logger_text_node_test.launch tests/test_logger_text_node.cpp)
+    target_link_libraries(test_logger_text_node ${PROJECT_NAME})
+	#add_dependencies(test_sonar_nmea_0183_device_client ${catkin_EXPORTED_TARGETS}) #? ${catkin_LIBRARIES}
+endif()
 
-#endif()
-
-## Add folders to be run by python nosetests
+# Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

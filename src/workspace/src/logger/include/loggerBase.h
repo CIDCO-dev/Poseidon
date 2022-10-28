@@ -46,30 +46,28 @@ class LoggerBase{
 		virtual void init()=0;
 		virtual void finalize()=0;
 		virtual void rotate()=0;
-		void updateLoggingMode();
+		
+		/* Tranformers */
+		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
 		
 		/* topic callbacks */
 		virtual void gnssCallback(const sensor_msgs::NavSatFix& gnss)=0;
 		virtual void imuCallback(const sensor_msgs::Imu& imu)=0;
 		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
 		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
-		void speedCallback(const nav_msgs::Odometry& speed);
-		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
+		void configurationCallBack(const setting_msg::Setting &setting);
 		
-		/* speed trigger methods */
+		/* Speed based logging */
 		void updateSpeedThreshold();
 		double getSpeedThreshold();
-
-		void configurationCallBack(const setting_msg::Setting &setting);
-
+		void speedCallback(const nav_msgs::Odometry& speed);
+		
 		//Service callbacks
 		bool getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response);
-
 		bool toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response);
-
 		bool getLoggingMode(logger_service::GetLoggingMode::Request &request, logger_service::GetLoggingMode::Response &response);
-
 		bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response);
+		void updateLoggingMode();
 		
 	protected:
 		// ros
@@ -88,12 +86,11 @@ class LoggerBase{
 		std::mutex fileRotationMutex;
 		ros::Time lastRotationTime;
 		int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter 
-		//TODO: make this a parameter?
-		std::string tmpLoggingFolder = "/tmp";
-		uint64_t lastGnssTimestamp = 0;
-		uint64_t lastImuTimestamp  = 0;
-		uint64_t lastSonarTimestamp= 0;
-		uint64_t lastLidarTimestamp= 0;
+		std::string tmpLoggingFolder = "/tmp"; //TODO: make this a parameter?
+		uint64_t lastGnssTimestamp =  0;
+		uint64_t lastImuTimestamp  =  0;
+		uint64_t lastSonarTimestamp = 0;
+		uint64_t lastLidarTimestamp = 0;
 
 		// Speed-triggered logging mode 
 		std::list<double> kmhSpeedList;

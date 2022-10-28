@@ -1,6 +1,5 @@
 #include "ros/ros.h"
 #include "loggerText.h"
-#include "../../utils/timestamp.h"
 
 int main(int argc, char **argv)
 {

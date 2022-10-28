@@ -1,14 +1,6 @@
 #include "loggerBase.h"
-//#include "../../utils/timestamp.h"
-//#include "../../utils/QuaternionUtils.h"
-//#include "../../utils/Constants.hpp"
-#include <cstdio>
-//#include <numeric>
-#include <thread>
-//#include "sensor_msgs/point_cloud_conversion.h"
-//#include "sensor_msgs/PointCloud.h"
 
-LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder){
+LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
 	
 	gnssSubscriber = node.subscribe("fix", 1000, &LoggerBase::gnssCallback, this);
 	imuSubscriber = node.subscribe("imu/data", 1000, &LoggerBase::imuCallback, this);
@@ -172,3 +164,70 @@ bool LoggerBase::setLoggingMode(logger_service::SetLoggingMode::Request & req,lo
 	loggingMode = req.loggingMode;
 	return true;
 }
+
+void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
+	logger_service::GetLoggingMode::Request modeReq;
+	logger_service::GetLoggingMode::Response modeRes;
+	getLoggingMode(modeReq,modeRes);
+	int mode = modeRes.loggingMode;
+
+	speedThresholdKmh = getSpeedThreshold();
+
+	if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
+		speedThresholdKmh = defaultSpeedThreshold;
+		std::string speed = std::to_string(speedThresholdKmh);
+		ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<<speed<<" Kmh");
+	}
+
+	double current_speed = speed.twist.twist.linear.y;
+	//ROS_DEBUG_STREAM("current speed : " << current_speed);
+
+	// wait two mins before calculating the average speed
+	// TODO: this assumes 1 speed measrement per second (VTG, binary, etc). this may be false with some GNSS devices
+	if (kmhSpeedList.size() < 120){
+		kmhSpeedList.push_back(current_speed);
+	}
+
+	// Else, add the speed reading to the queue, compute the average,
+	// and enable/disable logging if using a speed-based logging trigger
+	else{
+		kmhSpeedList.pop_front();
+		kmhSpeedList.push_back(current_speed);
+		averageSpeed = std::accumulate(kmhSpeedList.begin(), kmhSpeedList.end(), 0) / 120.0;
+		logger_service::GetLoggingStatus::Request request;
+		logger_service::GetLoggingStatus::Response response;
+
+		bool isLogging = getLoggingStatus(request,response);
+		if ( mode == 3 && (averageSpeed > speedThresholdKmh && response.status == false) ){
+			//ROS_INFO("speed threshold reached, enabling logging");
+			logger_service::ToggleLogging::Request toggleRequest;
+			toggleRequest.loggingEnabled = true;
+			logger_service::ToggleLogging::Response toggleResponse;
+			toggleLogging(toggleRequest, toggleResponse);
+		}
+		else if(mode == 3 && (averageSpeed < speedThresholdKmh && response.status == true)){
+			//ROS_INFO("speed below threshold, disabling logging");
+			logger_service::ToggleLogging::Request toggleRequest;
+			toggleRequest.loggingEnabled = false;
+			logger_service::ToggleLogging::Response toggleResponse;
+			toggleLogging(toggleRequest, toggleResponse);
+		}
+	}
+
+}
+
+void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading){
+	
+	geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
+
+	QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,imu.orientation,heading,pitch,roll);
+
+	heading = 90 - heading;
+
+	//Hydrographers prefer 0-360 degree RPY
+	if(heading < 0) {
+		heading += 360.0;
+	}
+	
+}
+

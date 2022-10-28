@@ -1,34 +1,40 @@
 #ifndef logger_base
 #define logger_base
 
+//Ros
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/Imu.h"
 #include "sensor_msgs/PointCloud2.h"
+#include "sensor_msgs/point_cloud_conversion.h"
+#include "sensor_msgs/PointCloud.h"
 #include "geometry_msgs/PointStamped.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "nav_msgs/Odometry.h"
-
 #include "std_msgs/String.h"
-#include <iostream>
-//#include <string>
-//#include <sstream>
-//#include <stdint.h>
-//#include <stdlib.h>
-//#include <inttypes.h>
-//#include <fstream>
-#include <mutex>
-//#include <cstdio>
+#include <tf2_ros/transform_listener.h>
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
+//C++ std lib
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <numeric>
+
+//Logger service Poseidon
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
 #include "logger_service/GetLoggingMode.h"
 #include "logger_service/SetLoggingMode.h"
 
-//Config service
+//Config service Poseidon
 #include "setting_msg/Setting.h"
 #include "setting_msg/ConfigurationService.h"
 
+//Poseidon utils
+#include "../../utils/timestamp.h"
+#include "../../utils/QuaternionUtils.h"
+#include "../../utils/Constants.hpp"
 
 class LoggerBase{
 	
@@ -39,15 +45,16 @@ class LoggerBase{
 		/* log management methods */
 		virtual void init()=0;
 		virtual void finalize()=0;
-		void rotate();
+		virtual void rotate()=0;
 		void updateLoggingMode();
 		
 		/* topic callbacks */
 		virtual void gnssCallback(const sensor_msgs::NavSatFix& gnss)=0;
 		virtual void imuCallback(const sensor_msgs::Imu& imu)=0;
 		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
-		virtual void speedCallback(const nav_msgs::Odometry& speed)=0;
 		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
+		void speedCallback(const nav_msgs::Odometry& speed);
+		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
 		
 		/* speed trigger methods */
 		void updateSpeedThreshold();
@@ -76,12 +83,27 @@ class LoggerBase{
 		std::mutex mtx;
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
+		
+		// log rotation
+		std::mutex fileRotationMutex;
+		ros::Time lastRotationTime;
+		int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter 
+		//TODO: make this a parameter?
+		std::string tmpLoggingFolder = "/tmp";
+		uint64_t lastGnssTimestamp = 0;
+		uint64_t lastImuTimestamp  = 0;
+		uint64_t lastSonarTimestamp= 0;
+		uint64_t lastLidarTimestamp= 0;
 
 		// Speed-triggered logging mode 
 		std::list<double> kmhSpeedList;
 		double averageSpeed = 0;
 		double speedThresholdKmh = 0.0;
 		double defaultSpeedThreshold = 5.0;
+		
+		// Imu transform
+		tf2_ros::Buffer buffer;
+		tf2_ros::TransformListener transformListener;
 		
 		ros::Subscriber gnssSubscriber ;
 		ros::Subscriber imuSubscriber ;

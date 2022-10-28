@@ -55,10 +55,10 @@ typedef struct{
 
 } PositionPacket;
 #pragma pack()
-
+/*
 #pragma pack(1)
 typedef struct{
-        /* Orientation quaternion */
+        // Orientation quaternion 
         double orientation_w;
         double orientation_x;
         double orientation_y;
@@ -77,6 +77,17 @@ typedef struct{
         double linear_acceleration_z;
 
         double linear_acceleration_covariance[9];
+} AttitudePacket;
+#pragma pack()
+*/
+
+#pragma pack(1)
+typedef struct{
+        // Orientation quaternion 
+        double heading;
+        double pitch;
+        double roll;
+
 } AttitudePacket;
 #pragma pack()
 

@@ -1,8 +1,6 @@
 #ifndef logger_text
 #define logger_text
 #include "loggerBase.h"
-#include <tf2_ros/transform_listener.h>
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 class LoggerText : public LoggerBase{
 	public:
@@ -22,16 +20,14 @@ class LoggerText : public LoggerBase{
 		void lidarCallBack(const sensor_msgs::PointCloud2& lidar);
 	
 	private:
+		/*
 		// log rotation
 		std::mutex fileRotationMutex;
 		ros::Time lastRotationTime;
 		int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter 
 		//TODO: make this a parameter?
 		std::string tmpLoggingFolder = "/tmp";
-		uint64_t lastGnssTimestamp = 0;
-		uint64_t lastImuTimestamp  = 0;
-		uint64_t lastSonarTimestamp= 0;
-		uint64_t lastLidarTimestamp= 0;
+		*/
 		
 		// log files
 		std::string gnssFileName;
@@ -43,10 +39,6 @@ class LoggerText : public LoggerBase{
 		FILE * imuOutputFile   = NULL;
 		FILE * sonarOutputFile = NULL;
 		FILE * lidarOutputFile = NULL;
-		
-		// georef
-		tf2_ros::Buffer buffer;
-		tf2_ros::TransformListener transformListener;
 		
 		std::string separator;	
 };

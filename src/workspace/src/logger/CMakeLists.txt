@@ -23,31 +23,20 @@ include_directories(
  ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
- 
- add_library(${PROJECT_NAME}
-   src/loggerBase.cpp src/loggerText.cpp
- )
+## Declare a C++ library 
+add_library(${PROJECT_NAME} src/loggerBase.cpp 
+							src/loggerText.cpp 
+							src/loggerBinary.cpp)
 
-
+# executables
 add_executable(logger_text_node nodes/logger_text_node.cpp)
-#add_executable(logger_binary_node nodes/logger_binary_node.cpp)
+add_executable(logger_binary_node nodes/logger_binary_node.cpp)
 
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(logger_text_node
-   ${catkin_LIBRARIES} ${PROJECT_NAME}
- )
-
-# target_link_libraries(logger_binary_node
-#   ${catkin_LIBRARIES} ${PROJECT_NAME}
-# )
-
- target_link_libraries(${PROJECT_NAME}
-   ${catkin_LIBRARIES}
- )
-
-
+target_link_libraries(logger_text_node ${catkin_LIBRARIES} ${PROJECT_NAME} )
+target_link_libraries(logger_binary_node ${catkin_LIBRARIES} ${PROJECT_NAME} )
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} )
 
 #############
 ## Install ##

@@ -5,6 +5,7 @@
 #define PACKET_POSITION 1
 #define PACKET_ATTITUDE 2
 #define PACKET_DEPTH    3
+#define PACKET_LIDAR    4
 
 
 /* Packet structs */
@@ -54,10 +55,10 @@ typedef struct{
 
 } PositionPacket;
 #pragma pack()
-
+/*
 #pragma pack(1)
 typedef struct{
-        /* Orientation quaternion */
+        // Orientation quaternion 
         double orientation_w;
         double orientation_x;
         double orientation_y;
@@ -78,6 +79,17 @@ typedef struct{
         double linear_acceleration_covariance[9];
 } AttitudePacket;
 #pragma pack()
+*/
+
+#pragma pack(1)
+typedef struct{
+        // Orientation quaternion 
+        double heading;
+        double pitch;
+        double roll;
+
+} AttitudePacket;
+#pragma pack()
 
 #pragma pack(1)
 typedef struct {
@@ -85,4 +97,12 @@ typedef struct {
         double depth_y;
         double depth_z;
 } DepthPacket;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct {
+	double laser_x;
+	double laser_y;
+	double laser_z;
+} LidarPacket;
 #pragma pack()

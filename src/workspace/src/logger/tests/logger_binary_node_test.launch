@@ -1,0 +1,6 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+
+	<test pkg="logger" test-name="logger_binary" type="test_logger_binary_node"/>
+	
+</launch>

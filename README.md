@@ -29,14 +29,14 @@ instruction:
 ```
 sudo apt install git
 cd
-git clone <poseidon repo>
+git clone --recursive <poseidon repo>
 ```
 run these scripts:
-	~/Poseidon/install/stages/1-base-ros-noetic.sh
-	~/Poseidon/install/stages/2-x64.sh
-	~/Poseidon/install/stages/3-network.sh
-	~/Poseidon/install/stages/4-x64.sh
-	~/Poseidon/install/stages/5-finalize.sh
+- ~/Poseidon/install/stages/1-base-ros-noetic.sh
+- ~/Poseidon/install/stages/2-x64.sh
+- ~/Poseidon/install/stages/3-network.sh
+- ~/Poseidon/install/stages/4-x64.sh
+- ~/Poseidon/install/stages/5-finalize.sh
 
 example :
 ```
@@ -65,11 +65,10 @@ source poseidon workspace:
 ```
 source devel/setup.bash
 ```
-```
 or
 ```
 echo "source ~/Poseidon/src/workspace/devel/setup.bash" >> ~/.bashrc
-
+```
 start new terminal or :
 ```
 source ~/.bashrc
@@ -95,7 +94,7 @@ mkdir -p /home/ubuntu/unittestPoseidonRecord
 
 run tests
 ```
-catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"
+catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"
 
 ```
 

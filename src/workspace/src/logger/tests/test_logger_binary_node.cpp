@@ -1,29 +1,21 @@
-#include <ros/ros.h>
-#include <gtest/gtest.h>
+#include "classes_for_tests.h"
 
-#include <fstream> 
-#include <filesystem>
-#include <unistd.h>
-#include "loggerText.h"
-
-#include "logger_service/GetLoggingStatus.h"
-#include "logger_service/ToggleLogging.h"
-#include "logger_service/GetLoggingMode.h"
-#include "logger_service/SetLoggingMode.h"
-
-class LoggerTextTestSuite : public ::testing::Test {
+class LoggerBinaryTestSuite : public ::testing::Test {
   public:
 
-    LoggerTextTestSuite() {}
-    ~LoggerTextTestSuite() {}
+    LoggerBinaryTestSuite() {}
+    ~LoggerBinaryTestSuite() {}
     
     protected:
-		ros::NodeHandle n;
-		ros::ServiceClient getLoggingStatusServiceClient;
-		ros::ServiceClient toggleLoggingServiceClient;
-		ros::ServiceClient GetLoggingModeServiceClient;
-		ros::ServiceClient SetLoggingModeServiceClient;
-		std::string outPath;
+    	ros::NodeHandle n;
+    	ros::ServiceClient getLoggingStatusServiceClient;
+    	ros::ServiceClient toggleLoggingServiceClient;
+    	ros::ServiceClient GetLoggingModeServiceClient;
+    	ros::ServiceClient SetLoggingModeServiceClient;
+    	std::string outPath;
+    	
+    	GnssSignalGenerator signalGnss;
+    	std::vector<double> gnssMessages;
     	
     	virtual void SetUp() override{
     		this->outPath = "/home/ubuntu/unittestPoseidonRecord";
@@ -32,6 +24,10 @@ class LoggerTextTestSuite : public ::testing::Test {
     		this->toggleLoggingServiceClient = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
     		this->GetLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
     		this->SetLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+    		for(double i = 2.0; i<12; i++){
+    			gnssMessages.push_back(i);
+    		}
+    		
     	}
     	
     	virtual void TearDown() override{
@@ -40,17 +36,18 @@ class LoggerTextTestSuite : public ::testing::Test {
   	
 };
 
-TEST_F(LoggerTextTestSuite, testGeneratingFiles) {
-
+TEST_F(LoggerBinaryTestSuite, testGeneratingFiles) {
+	
 	std::filesystem::create_directory(outPath);
-	LoggerText logger(outPath);
+	LoggerBinary logger(outPath);
 	
 	logger_service::GetLoggingStatus status;
     getLoggingStatusServiceClient.call(status);
     ASSERT_FALSE(status.response.status) << "logging should not be enabled";
 	
-	// wait for gnss dummy node
-	sleep(2);
+	// logger need fix to enable logging
+	signalGnss.publishMessage(0, 1.0, 1.0, 1.0);
+
     
 	// toggle to enable logging
     logger_service::ToggleLogging toggle;
@@ -86,50 +83,51 @@ TEST_F(LoggerTextTestSuite, testGeneratingFiles) {
     ASSERT_TRUE(toggle.response.loggingStatus) << "logging callback was not called by service server";
     getLoggingStatusServiceClient.call(status);
     ASSERT_TRUE(status.response.status) << "logging status was not changed after enable toggle";
+    
+    // send messages
+    for(auto const &i: gnssMessages){
+		signalGnss.publishMessage(0, i, i, i);
+		sleep(0.1);
+	}
     logger.finalize();
     
-    int numberOfFiles = 0;
+    std::ifstream file;
+    std::string filePath;
     std::filesystem::path PATH = outPath;
-    std::string gpsFile;
-		for(auto &dir_entry: std::filesystem::directory_iterator{PATH}){
-		    if(dir_entry.is_regular_file()){
-//		    	std::string temp = std::filesystem::canonical(dir_entry);
-//		    	if (temp.find("_gnss.txt")){
-//		    		gpsFile = temp;
-//		    	}
-		    	numberOfFiles++;
-		    }
-		}
-    
-    ASSERT_TRUE(numberOfFiles == 4);
-    
-    
-//    int numberOfLines = 0;
-//    std::string line;
-//    std::ifstream myfile(gpsFile);
-
-//    while (std::getline(myfile, line)){
-//    	numberOfLines++;
-//    }
-//    ROS_ERROR_STREAM ("Number of lines in text file: " << numberOfLines);
-//    ASSERT_TRUE(numberOfLines >=7); //on slower pc number of lines might be lower
-	
-    //clean folder
-    std::filesystem::path PATH2 = outPath;
-    for(auto &dir_entry: std::filesystem::directory_iterator{PATH2}){
+    for(auto &dir_entry: std::filesystem::directory_iterator{PATH}){
 	    if(dir_entry.is_regular_file()){
-		    numberOfFiles--;
-		    std::filesystem::remove(dir_entry);
+	    	std::string logFile = std::filesystem::canonical(dir_entry);
+	    	if (logFile.find(".log")){
+	    		filePath = logFile;
+	    	}
 	    }
 	}
-    ASSERT_TRUE(numberOfFiles == 0);
+    file.open(filePath, std::ios::out | std::ios::binary);
+    ASSERT_TRUE(file.is_open()) << "no file present : " << filePath;
+    file.close();
+    
+    // read file
+    PoseidonBinaryReaderTest reader(filePath);
+    reader.read();
+    //sleep(0.1);
+    ASSERT_TRUE(reader.getGnssMessagesCount() == gnssMessages.size()) << reader.getGnssMessagesCount() << "!=" << gnssMessages.size();
+    auto positions = reader.getPositions();
+    for(int i = 0; i<positions.size(); ++i){
+    	PositionPacket packet = positions.at(i);
+    	sleep(0.01);
+    	ASSERT_TRUE(packet.longitude == packet.latitude && packet.latitude == packet.altitude) << "1 parsing problem or binary logger problem for packet position: " << i;
+    	sleep(0.01);
+    	ASSERT_TRUE(packet.longitude == gnssMessages.at(i)) << "2 parsing problem or binary logger problem for packet position: " << i;
+    	sleep(0.01);
+    }
+    
     
 }
 
 
 int main(int argc, char **argv) {
 
-    ros::init(argc, argv, "TestLoggerText");
+    ros::init(argc, argv, "TestLoggerBinary");
 
     testing::InitGoogleTest(&argc, argv);
 

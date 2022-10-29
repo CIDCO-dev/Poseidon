@@ -66,4 +66,8 @@ if(CATKIN_ENABLE_TESTING)
 	find_package(rostest REQUIRED)
     add_rostest_gtest(test_logger_text_node tests/logger_text_node_test.launch tests/test_logger_text_node.cpp)
     target_link_libraries(test_logger_text_node ${PROJECT_NAME})
+    
+    add_rostest_gtest(test_logger_binary_node tests/logger_binary_node_test.launch tests/test_logger_binary_node.cpp)
+    target_link_libraries(test_logger_binary_node ${PROJECT_NAME})
+    
 endif()

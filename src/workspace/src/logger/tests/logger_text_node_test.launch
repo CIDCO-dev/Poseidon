@@ -1,3 +1,4 @@
+<!-- -*- mode: XML -*- -->
 <launch>
 
 	<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" />

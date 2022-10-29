@@ -21,9 +21,9 @@ void LoggerBinary::init(){
 
 			outputFileName = TimeUtils::getStringDate() + std::string(".log");
 
-            outputFile.open(outputFilePath + "/" + outputFileName,std::ios::binary|std::ios::trunc);
+            outputFile.open(outputFolder + "/" + outputFileName,std::ios::binary|std::ios::trunc);
 			
-			ROS_INFO("Logging binary data to %s", outputFilePath.c_str());
+			ROS_INFO("Logging binary data to %s", outputFolder.c_str());
 			
             if(!outputFile.good()){
 				throw std::invalid_argument("Couldn't open binary log file");
@@ -48,7 +48,7 @@ void LoggerBinary::finalize(){
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + outputFileName;
-		std::string newPath = outputFilePath + "/" + outputFileName;
+		std::string newPath = outputFolder + "/" + outputFileName;
 		rename(oldPath.c_str(),newPath.c_str());
 	}
 	

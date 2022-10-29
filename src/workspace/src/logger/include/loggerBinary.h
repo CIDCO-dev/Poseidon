@@ -25,7 +25,7 @@ class LoggerBinary : public LoggerBase{
 	private:
 				
 		// log files
-		std::string  outputFilePath;
+		//std::string  outputFilePath;
         std::string  outputFileName;
         std::ofstream outputFile;
 

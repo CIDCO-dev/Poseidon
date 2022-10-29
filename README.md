@@ -29,7 +29,7 @@ instruction:
 ```
 sudo apt install git
 cd
-git clone <poseidon repo>
+git clone --recursive <poseidon repo>
 ```
 run these scripts:
 - ~/Poseidon/install/stages/1-base-ros-noetic.sh

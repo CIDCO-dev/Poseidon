@@ -31,6 +31,7 @@ add_library(${PROJECT_NAME} src/loggerBase.cpp
 # executables
 add_executable(logger_text_node nodes/logger_text_node.cpp)
 add_executable(logger_binary_node nodes/logger_binary_node.cpp)
+add_executable(poseidonReader src/poseidon_reader.cpp)
 
 
 ## Specify libraries to link a library or executable target against
@@ -65,8 +66,4 @@ if(CATKIN_ENABLE_TESTING)
 	find_package(rostest REQUIRED)
     add_rostest_gtest(test_logger_text_node tests/logger_text_node_test.launch tests/test_logger_text_node.cpp)
     target_link_libraries(test_logger_text_node ${PROJECT_NAME})
-	#add_dependencies(test_sonar_nmea_0183_device_client ${catkin_EXPORTED_TARGETS}) #? ${catkin_LIBRARIES}
 endif()
-
-# Add folders to be run by python nosetests
-# catkin_add_nosetests(test)

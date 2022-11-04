@@ -21,7 +21,7 @@
   <arg name="rpm" default="600.0" />
   <arg name="gps_time" default="false" />
   <arg name="pcap_time" default="false" />
-  <arg name="cut_angle" default="-0.01" />
+  <arg name="cut_angle" default="-0.7854" />
   <arg name="timestamp_first_packet" default="false" />
   <arg name="laserscan_ring" default="-1" />
   <arg name="laserscan_resolution" default="0.007" />

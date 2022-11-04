@@ -10,9 +10,16 @@ On ROS Noetic:
 sudo apt-get install -y python3-wstool python3-rosdep ninja-build stow
 mkdir catkin_ws
 cd catkin_ws
-wstool init src<
+wstool init src
 wstool merge -t src https://raw.githubusercontent.com/cartographer-project/cartographer_ros/master/cartographer_ros.rosinstall
 wstool update -t src
+```
+according to : https://github.com/cartographer-project/cartographer_ros/issues/1726
+delete line 46 or the line containing`<depend>libabsl-dev</depend>`
+```
+sed -i '46d' filename
+```
+```
 sudo rosdep init
 rosdep update
 rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
@@ -59,7 +66,7 @@ source ~/.bashrc
 changes to build poseidon on virtual machine:
 ```
 cd ~/Poseidon/src/workspace
-catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;echoboat_odometry;raspberrypi_vitals"
+catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;raspberrypi_vitals"
 ```
 source poseidon workspace:
 ```
@@ -87,15 +94,17 @@ see readme for tests :
 - sonar_nmea_0183_tcp_client
 - gnss_zed_f9p
 
-create directory for test_logger_text
-```
-mkdir -p /home/ubuntu/unittestPoseidonRecord
-```
 
 run tests
 ```
 catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"
 
+```
+
+### Replay Echoboat Rosbag
+in poseidon workspace:
+```
+roslaunch launch/Echoboat/rosbag_replay.launch bag_filename:=rosbag.bag
 ```
 
 ### Logging mode

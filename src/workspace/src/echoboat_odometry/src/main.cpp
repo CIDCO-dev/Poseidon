@@ -34,15 +34,16 @@ void geo2ecef(Eigen::Vector3d & positionECEF, double latitude, double longitude,
 class GeoreferenceProvider{
 public:
 	GeoreferenceProvider(): ecefLocalOrigin(0,0,0){
-                odomPublisher=n.advertise<nav_msgs::Odometry>("odom", 50);
+	
+	odomPublisher=n.advertise<nav_msgs::Odometry>("odom", 50);
 
-		depthRepublisher = n.advertise<geometry_msgs::PointStamped>("depth_ned",50);
+	depthRepublisher = n.advertise<geometry_msgs::PointStamped>("depth_ned",50);
 
-                gpsSubscriber = n.subscribe("fix", 50, &GeoreferenceProvider::processGpsCallback,this);
-                //attitudeSubscriber = n.subscribe("/imu/pos_ecef", 50, &GeoreferenceProvider::processPositionCallback,this);
-		attitudeSubscriber = n.subscribe("/imu/data", 50, &GeoreferenceProvider::processAttitudeCallback,this);
-		lidarSubscriber = n.subscribe("/velodyne_points",100,&GeoreferenceProvider::processLidarCallback,this);
-		depthSubscriber = n.subscribe("/depth",100,&GeoreferenceProvider::processDepthCallback,this);
+	gpsSubscriber = n.subscribe("fix", 50, &GeoreferenceProvider::processGpsCallback,this);
+	//attitudeSubscriber = n.subscribe("/imu/pos_ecef", 50, &GeoreferenceProvider::processPositionCallback,this);
+	attitudeSubscriber = n.subscribe("/imu/data", 50, &GeoreferenceProvider::processAttitudeCallback,this);
+	lidarSubscriber = n.subscribe("/velodyne_points",100,&GeoreferenceProvider::processLidarCallback,this);
+	depthSubscriber = n.subscribe("/depth",100,&GeoreferenceProvider::processDepthCallback,this);
 
 	}
 
@@ -67,9 +68,9 @@ public:
 			//		cos(D2R(latitudeLocalOrigin))*cos(D2R(longitudeLocalOrigin)),cos(D2R(latitudeLocalOrigin))*sin(D2R(longitudeLocalOrigin)),sin(D2R(latitudeLocalOrigin));
 
 			//NED
-			ecef2local <<	-sin(D2R(latitudeLocalOrigin)) * cos(D2R(longitudeLocalOrigin)), -sin(D2R(latitudeLocalOrigin))*sin(D2R(longitudeLocalOrigin)),cos(D2R(latitudeLocalOrigin)),
-				   	-sin(D2R(longitudeLocalOrigin)) , cos(D2R(longitudeLocalOrigin)), 0,
-					-cos(D2R(latitudeLocalOrigin))*cos(D2R(longitudeLocalOrigin)), -cos(D2R(latitudeLocalOrigin))*sin(D2R(longitudeLocalOrigin)), -sin(D2R(latitudeLocalOrigin)) ;
+			ecef2local <<-sin(D2R(latitudeLocalOrigin))*cos(D2R(longitudeLocalOrigin)),-sin(D2R(latitudeLocalOrigin))*sin(D2R(longitudeLocalOrigin)),cos(D2R(latitudeLocalOrigin)),
+				   			-sin(D2R(longitudeLocalOrigin)) , cos(D2R(longitudeLocalOrigin)), 0,
+							-cos(D2R(latitudeLocalOrigin))*cos(D2R(longitudeLocalOrigin)), -cos(D2R(latitudeLocalOrigin))*sin(D2R(longitudeLocalOrigin)), -sin(D2R(latitudeLocalOrigin)) ;
 
 			//ROS_INFO_STREAM("DCM:" << ecef2local);
 		}
@@ -97,39 +98,39 @@ public:
 	void publishOdometry(Eigen::Vector3d & prpPointLocal){
 
 		/* Broadcast the base_link to map transform */
-                geometry_msgs::TransformStamped map_transform;
-                map_transform.header.stamp = ros::Time::now(); //msg.header.stamp;
-                map_transform.header.frame_id = "map"; //FIXME: we are assuming that the prp is the base_link origin
-                map_transform.child_frame_id = "base_link";
+        geometry_msgs::TransformStamped map_transform;
+        map_transform.header.stamp = ros::Time::now(); //msg.header.stamp;
+        map_transform.header.frame_id = "map"; //FIXME: we are assuming that the prp is the base_link origin
+        map_transform.child_frame_id = "base_link";
 
-                map_transform.transform.translation.x = prpPointLocal[0];
-                map_transform.transform.translation.y = prpPointLocal[1];
-                map_transform.transform.translation.z = prpPointLocal[2];
-                map_transform.transform.rotation = lastAttitude.orientation;
+        map_transform.transform.translation.x = prpPointLocal[0];
+        map_transform.transform.translation.y = prpPointLocal[1];
+        map_transform.transform.translation.z = prpPointLocal[2];
+        map_transform.transform.rotation = lastAttitude.orientation;
 
-                transformBroadcaster.sendTransform(map_transform);
+        transformBroadcaster.sendTransform(map_transform);
 
-                /* Publish the odometry message over ROS */
-                nav_msgs::Odometry odom;
-                odom.header.stamp = ros::Time::now();//msg.header.stamp;
-                odom.header.frame_id = "odom";
+        /* Publish the odometry message over ROS */
+        nav_msgs::Odometry odom;
+        odom.header.stamp = ros::Time::now();//msg.header.stamp;
+        odom.header.frame_id = "odom";
 
-                //set the position
-                odom.pose.pose.position.x = prpPointLocal[0];
-                odom.pose.pose.position.y = prpPointLocal[1];
-                odom.pose.pose.position.z = prpPointLocal[2];
+        //set the position
+        odom.pose.pose.position.x = prpPointLocal[0];
+        odom.pose.pose.position.y = prpPointLocal[1];
+        odom.pose.pose.position.z = prpPointLocal[2];
 
 		//TODO: compensate attitude value using delta t, since our last attitude value dates from a little while back
-                odom.pose.pose.orientation = lastAttitude.orientation;
+        odom.pose.pose.orientation = lastAttitude.orientation;
 
-                //set the velocity
-                odom.child_frame_id = "base_link";
-                //odom.twist.twist.linear.x = vx;
-                //odom.twist.twist.linear.y = vy;
-                //odom.twist.twist.angular.z = vth;
+        //set the velocity
+        odom.child_frame_id = "base_link";
+        //odom.twist.twist.linear.x = vx;
+        //odom.twist.twist.linear.y = vy;
+        //odom.twist.twist.angular.z = vth;
 
-                //publish the message
-                odomPublisher.publish(odom);
+        //publish the message
+        odomPublisher.publish(odom);
 	}
 
 	void processPosition(const sensor_msgs::NavSatFix & msg){
@@ -162,20 +163,20 @@ public:
 
 private:
 	ros::NodeHandle n;
-        ros::Publisher  odomPublisher;
+	ros::Publisher  odomPublisher;
 
 	ros::Publisher  depthRepublisher;//FIXME: delete this
 
-        ros::Subscriber gpsSubscriber;
+	ros::Subscriber gpsSubscriber;
 
-        ros::Subscriber positionSubscriber;
+	ros::Subscriber positionSubscriber;
 	ros::Subscriber attitudeSubscriber;
 	ros::Subscriber lidarSubscriber;
 	ros::Subscriber depthSubscriber;
 
 
 
-        tf2_ros::TransformBroadcaster transformBroadcaster;
+	tf2_ros::TransformBroadcaster transformBroadcaster;
 
 	//These are used to georeference
 	sensor_msgs::Imu 	lastAttitude;

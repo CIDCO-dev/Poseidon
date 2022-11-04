@@ -3,9 +3,9 @@
 <launch>
 
 	<param name="/use_sim_time" value="true" />
-	<node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 base_link velodyne 100" />
-<!--	<node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 1 base_link odom 100" />-->
-<!--	<node pkg="tf" type="static_transform_publisher" name="link3_broadcaster" args="1 1 1 1 1 1 map_ned base_link 100" />-->
+	<node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.5 0 0 0.735 base_link velodyne 100" />
+	<node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="-0.3 0 0 0 0 0 base_link sonar 100" />
+<!--	<node pkg="tf" type="static_transform_publisher" name="link3_broadcaster" args="1 1 1 1 1 1 base_link gpsAntena 100" />-->
 
 	<node pkg="echoboat_odometry" type="echoboat_odometry_node" name="odometry"/>
 	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ubuntu/Poseidon/src/workspace/launch/echoboat.rviz" required="True" />

@@ -6,9 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /TF1/Status1
-        - /PointCloud21
-        - /PointCloud21/Status1
+        - /PointStamped1
       Splitter Ratio: 0.5
     Tree Height: 538
   - Class: rviz/Selection
@@ -55,26 +53,10 @@ Visualization Manager:
       Reference Frame: <Fixed Frame>
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
-          Value: true
-        base_link_frd:
-          Value: true
-        imu:
-          Value: true
-        map:
-          Value: true
-        map_ned:
-          Value: true
-        odom:
-          Value: true
-        odom_ned:
-          Value: true
-        velodyne:
-          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -82,21 +64,9 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          map_ned:
-            base_link:
-              base_link_frd:
-                {}
-              imu:
-                {}
-              odom:
-                {}
-              odom_ned:
-                {}
-              velodyne:
-                {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -125,11 +95,22 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 1
+      Class: rviz/PointStamped
+      Color: 204; 41; 204
+      Enabled: true
+      History Length: 1
+      Name: PointStamped
+      Queue Size: 10
+      Radius: 0.07000000029802322
+      Topic: /depth_ned
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -169,9 +150,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.785398006439209
+      Pitch: 0.7603980898857117
       Target Frame: <Fixed Frame>
-      Yaw: 0.785398006439209
+      Yaw: 4.803578853607178
     Saved: ~
 Window Geometry:
   Displays:

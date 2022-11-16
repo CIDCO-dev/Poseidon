@@ -52,9 +52,12 @@ class PoseidonBinaryReader{
 			
 			else if(hdr.packetType == 4){
 				std::cout<<"lidarCallback \n";
-				LidarPacket packet;
-				file.read((char *) &packet, sizeof(LidarPacket) * hdr.packetSize);
-				processLidar(hdr, packet);
+				LidarPacket *packet = (LidarPacket*) malloc(hdr.packetSize);
+				std::cout<< "size: " << sizeof(LidarPacket) << ", packetSize: "<< hdr.packetSize << "\n";
+				//std::cout<< sizeof(LidarPacket) * hdr.packetSize <<"\n";
+				file.read((char *) &packet, hdr.packetSize );
+				//processLidar(hdr, packet);
+				free(packet);
 			}
 			
 			else{

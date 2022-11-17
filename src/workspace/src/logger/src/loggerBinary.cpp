@@ -184,13 +184,10 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 		if(timestamp > lastLidarTimestamp){
 			PacketHeader hdr;
             hdr.packetType=PACKET_LIDAR;
-            std::cout<< "size: "<<sizeof(LidarPacket)<<" vector length: "<< points.size() << "\n";
-            std::cout<<" sizeof(LidarPacket) * points.size() = " << (uint64_t) (sizeof(LidarPacket) * points.size()) <<"\n";
             hdr.packetSize= sizeof(LidarPacket) * points.size();  //(uint64_t) (sizeof(LidarPacket) * points.size());
-            std::cout<< "hdr.packetSize : " << hdr.packetSize << "   uint64_t hdr.packetSize : "<< (uint64_t) hdr.packetSize << "\n\n";
             hdr.packetTimestamp=TimeUtils::buildTimeStamp(lidar.header.stamp.sec,lidar.header.stamp.nsec);
 
-            outputFile.write((char*)&hdr,sizeof(PacketHeader));
+            outputFile.write((char*)&hdr, sizeof(PacketHeader));
 			
 			for(auto const& point : points){
     			LidarPacket packet;
@@ -200,6 +197,7 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
             	
             	outputFile.write((char*)&packet, sizeof(LidarPacket));
     		}
+    		
 		}
 		lastLidarTimestamp = timestamp;
 	}

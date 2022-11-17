@@ -15,7 +15,10 @@ class LoggerBinaryTestSuite : public ::testing::Test {
     	std::string outPath;
     	
     	GnssSignalGenerator signalGnss;
-    	std::vector<double> gnssMessages;
+    	ImuSignalGenerator signalImu;
+    	SonarSignalGenerator signalSonar;
+    	LidarSignalGenerator signalLidar;
+    	std::vector<double> messages;
     	
     	virtual void SetUp() override{
     		this->outPath = "/home/ubuntu/unittestPoseidonRecord";
@@ -25,7 +28,7 @@ class LoggerBinaryTestSuite : public ::testing::Test {
     		this->GetLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
     		this->SetLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
     		for(double i = 2.0; i<12; i++){
-    			gnssMessages.push_back(i);
+    			messages.push_back(i);
     		}
     		
     	}
@@ -84,13 +87,33 @@ TEST_F(LoggerBinaryTestSuite, testGeneratingFiles) {
     getLoggingStatusServiceClient.call(status);
     ASSERT_TRUE(status.response.status) << "logging status was not changed after enable toggle";
     
-    // send messages
-    for(auto const &i: gnssMessages){
-		signalGnss.publishMessage(0, i, i, i);
-		sleep(0.1);
-	}
-    logger.finalize();
     
+    
+    // send messages
+    for(auto const &i: messages){
+		signalGnss.publishMessage(0, i, i, i);
+		sleep(0.5);
+		/*
+		signalImu.publishMessage(0, i, i, i);
+		sleep(0.01);
+		*/
+    	signalSonar.publishMessage(0, i, i, i);
+    	sleep(0.5);
+    	
+    	std::vector<geometry_msgs::Point32> points;
+    	geometry_msgs::Point32 point;
+		point.x = float(i); //c++ functional cast
+		point.y = float(i);
+		point.z = float(i);
+		points.push_back(point);
+    	sleep(0.5);
+    	signalLidar.publishMessage(0, points);
+		sleep(0.5);
+	}
+	sleep(0.5);
+    logger.finalize();
+	sleep(1.0);
+
     std::ifstream file;
     std::string filePath;
     std::filesystem::path PATH = outPath;
@@ -105,19 +128,47 @@ TEST_F(LoggerBinaryTestSuite, testGeneratingFiles) {
     file.open(filePath, std::ios::out | std::ios::binary);
     ASSERT_TRUE(file.is_open()) << "no file present : " << filePath;
     file.close();
-    
+	
     // read file
     PoseidonBinaryReaderTest reader(filePath);
     reader.read();
-    //sleep(0.1);
-    ASSERT_TRUE(reader.getGnssMessagesCount() == gnssMessages.size()) << reader.getGnssMessagesCount() << "!=" << gnssMessages.size();
+    
+    // file parsed properly
+    ASSERT_TRUE(reader.getGnssMessagesCount() == messages.size()) << reader.getGnssMessagesCount() << "!=" << messages.size();
+    ASSERT_TRUE(reader.getSonarMessagesCount() == messages.size()) << reader.getSonarMessagesCount() << "!=" << messages.size();
+    ASSERT_TRUE(reader.getLidarMessagesCount() == messages.size()) << reader.getLidarMessagesCount() << "!=" << messages.size();
+    //ASSERT_TRUE(reader.getImuMessagesCount() == messages.size()) << reader.getImuMessagesCount() << "!=" << messages.size();
+    
+    // checking gnss file content
     auto positions = reader.getPositions();
     for(int i = 0; i<positions.size(); ++i){
     	PositionPacket packet = positions.at(i);
     	sleep(0.01);
     	ASSERT_TRUE(packet.longitude == packet.latitude && packet.latitude == packet.altitude) << "1 parsing problem or binary logger problem for packet position: " << i;
     	sleep(0.01);
-    	ASSERT_TRUE(packet.longitude == gnssMessages.at(i)) << "2 parsing problem or binary logger problem for packet position: " << i;
+    	ASSERT_TRUE(packet.longitude == messages.at(i)) << "2 parsing problem or binary logger problem for packet position: " << i;
+    	sleep(0.01);
+    }
+    
+    // checking sonar file content
+    auto depths = reader.getDepths();
+    for(int i = 0; i<depths.size(); ++i){
+    	DepthPacket packet = depths.at(i);
+    	sleep(0.01);
+    	ASSERT_TRUE(packet.depth_x == packet.depth_y && packet.depth_y == packet.depth_z) << "1 parsing problem or binary logger problem for packet depth: " << i;
+    	sleep(0.01);
+    	ASSERT_TRUE(packet.depth_x == messages.at(i)) << "2 parsing problem or binary logger problem for packet depth: " << i;
+    	sleep(0.01);
+    }
+    
+    // checking lidar file content
+    auto laserPoints = reader.getLaserPoints();
+    for(int i = 0; i<laserPoints.size(); ++i){
+    	LidarPacket packet = laserPoints.at(i);
+    	sleep(0.01);
+    	ASSERT_TRUE(packet.laser_x == packet.laser_y && packet.laser_y == packet.laser_z) << "1 parsing problem or binary logger problem for packet lidar: " << i;
+    	sleep(0.01);
+    	ASSERT_TRUE(packet.laser_x == messages.at(i)) << "2 parsing problem or binary logger problem for packet lidar: " << i;
     	sleep(0.01);
     }
     

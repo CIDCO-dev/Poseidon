@@ -6,7 +6,7 @@ import sys, os
 
 parser=argparse.ArgumentParser(description="Cidco 2022 {} Rosbag reader".format(os.linesep))
 parser.add_argument("rosbag", type=str)
-parser.add_argument("-t", "--topics", type=str, nargs='+', action='append', help='list of topic to read')
+parser.add_argument("-t", "--topics", type=str, nargs='+', action='append', help='list of topic to read, ex: /fix /laserScan')
 args = parser.parse_args()
 rosbagPath = args.rosbag
 

@@ -71,10 +71,13 @@ void LoggerBinary::rotate(){
 }
 
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
+	
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){
+		//ROS_INFO_STREAM("LoggerBinary::gnssCallback -> bootstrappedGnssTime"); ok
 		bootstrappedGnssTime = true;
 	}
-
+	//ROS_INFO_STREAM("logger enabled: "<< loggerEnabled);
+	//ROS_INFO("LoggerBinary::gnssCallback, gnss status %d", gnss.status.status);
 	if(bootstrappedGnssTime && loggerEnabled){
 
 		if(!outputFile.is_open()){
@@ -181,10 +184,10 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 		if(timestamp > lastLidarTimestamp){
 			PacketHeader hdr;
             hdr.packetType=PACKET_LIDAR;
-            hdr.packetSize=sizeof(LidarPacket) * points.size();
+            hdr.packetSize= sizeof(LidarPacket) * points.size();  //(uint64_t) (sizeof(LidarPacket) * points.size());
             hdr.packetTimestamp=TimeUtils::buildTimeStamp(lidar.header.stamp.sec,lidar.header.stamp.nsec);
 
-            outputFile.write((char*)&hdr,sizeof(PacketHeader));
+            outputFile.write((char*)&hdr, sizeof(PacketHeader));
 			
 			for(auto const& point : points){
     			LidarPacket packet;
@@ -194,6 +197,7 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
             	
             	outputFile.write((char*)&packet, sizeof(LidarPacket));
     		}
+    		
 		}
 		lastLidarTimestamp = timestamp;
 	}

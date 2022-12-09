@@ -13,17 +13,17 @@ class PoseidonBinaryReader{
 			  exit(1);
 			}
 		}
-		virtual void processGnss(PositionPacket & packet){
+		virtual void processGnss(PacketHeader & hdr, PositionPacket & packet){
 		}
 		
-		virtual void processImu(AttitudePacket & packet){
+		virtual void processImu(PacketHeader & hdr, AttitudePacket & packet){
 			std::cout<<"ok\n";
 		}
 		
-		virtual void processSonar(DepthPacket & packet){
+		virtual void processSonar(PacketHeader & hdr, DepthPacket & packet){
 		}
 		
-		virtual void processLidar(LidarPacket & packet){
+		virtual void processLidar(PacketHeader & hdr, LidarPacket & packet){
 		}
 		
 		void read(){
@@ -35,21 +35,21 @@ class PoseidonBinaryReader{
 					std::cout<<"gnssCallback \n";
 					PositionPacket packet;
 					file.read((char *) &packet, sizeof(PositionPacket));
-					processGnss(packet);
+					processGnss(hdr, packet);
 				}
 				
 				else if(hdr.packetType == 2){
 					std::cout<<"imuCallback \n";
 					AttitudePacket packet;
 					file.read((char *) &packet, sizeof(AttitudePacket));
-					processImu(packet);
+					processImu(hdr, packet);
 				}
 				
 				else if(hdr.packetType == 3){
 					std::cout<<"sonarCallback \n";
 					DepthPacket packet;
 					file.read((char *) &packet, sizeof(DepthPacket));
-					processSonar(packet);
+					processSonar(hdr, packet);
 				}
 				
 				else if(hdr.packetType == 4){
@@ -58,7 +58,7 @@ class PoseidonBinaryReader{
 					for(int i =0; i<nbPoints; ++i){
 						LidarPacket packet;
 						file.read((char *) &packet, sizeof(LidarPacket));
-						processLidar(packet);
+						processLidar(hdr, packet);
 					}
 					
 				}

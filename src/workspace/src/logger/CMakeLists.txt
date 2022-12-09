@@ -4,6 +4,7 @@ project(logger)
 add_definitions(-std=c++17 -Wall -g)
 
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs)
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -32,12 +33,14 @@ add_library(${PROJECT_NAME} src/loggerBase.cpp
 add_executable(logger_text_node nodes/logger_text_node.cpp)
 add_executable(logger_binary_node nodes/logger_binary_node.cpp)
 add_executable(poseidonReader src/poseidon_reader.cpp)
-
+add_executable(lidarGeoreferencer src/georefLog.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(logger_text_node ${catkin_LIBRARIES} ${PROJECT_NAME} )
 target_link_libraries(logger_binary_node ${catkin_LIBRARIES} ${PROJECT_NAME} )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} )
+target_link_libraries(lidarGeoreferencer Eigen3::Eigen)
+
 
 #############
 ## Install ##

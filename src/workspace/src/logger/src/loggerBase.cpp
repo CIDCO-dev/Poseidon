@@ -222,7 +222,7 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 
 	QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation,imu.orientation,heading,pitch,roll);
 
-	heading = 90 - heading;
+	heading = 90 - heading; //XXX
 
 	//Hydrographers prefer 0-360 degree RPY
 	if(heading < 0) {

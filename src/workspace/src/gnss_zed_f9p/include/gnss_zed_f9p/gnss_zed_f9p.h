@@ -381,6 +381,8 @@ class ZEDF9P{
 										else{//read error
 											ROS_ERROR("payload not read properly: %d bytes of %d read", n,hdr.length);
 										}
+										
+										free(payload);
 									}
 									else{//read error
 										ROS_ERROR("not enough bytes to read ubx header");

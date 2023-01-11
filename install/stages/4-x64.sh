@@ -29,3 +29,19 @@ echo "[+] Install PPS"
 sudo apt-get install pps-tools -y | tee -a log.txt
 # sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/config.txt'  
 sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
+
+echo "[+] Adding roslaunch on boot"
+sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service
+[Unit]
+Description=Launch ROS on boot.
+After=gpsd.service hwrtc.service
+[Service]
+Type=simple
+ExecStart=/home/ubuntu/Poseidon/launchROSService.sh
+[Install]
+WantedBy=multi-user.target
+EOF3'
+
+sudo chmod 755 /etc/systemd/system/ros.service
+sudo systemctl enable ros
+echo "sudo systemctl start ros"

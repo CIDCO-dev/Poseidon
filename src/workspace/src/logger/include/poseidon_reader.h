@@ -32,28 +32,28 @@ class PoseidonBinaryReader{
 
 			while(file.read((char *) &hdr, sizeof(PacketHeader))){
 				if(hdr.packetType == 1){
-					std::cout<<"gnssCallback \n";
+					//std::cout<<"gnssCallback \n";
 					PositionPacket packet;
 					file.read((char *) &packet, sizeof(PositionPacket));
 					processGnss(hdr, packet);
 				}
 				
 				else if(hdr.packetType == 2){
-					std::cout<<"imuCallback \n";
+					//std::cout<<"imuCallback \n";
 					AttitudePacket packet;
 					file.read((char *) &packet, sizeof(AttitudePacket));
 					processImu(hdr, packet);
 				}
 				
 				else if(hdr.packetType == 3){
-					std::cout<<"sonarCallback \n";
+					//std::cout<<"sonarCallback \n";
 					DepthPacket packet;
 					file.read((char *) &packet, sizeof(DepthPacket));
 					processSonar(hdr, packet);
 				}
 				
 				else if(hdr.packetType == 4){
-					std::cout<<"lidarCallback \n";
+					//std::cout<<"lidarCallback \n";
 					int nbPoints = hdr.packetSize / sizeof(LidarPacket);
 					for(int i =0; i<nbPoints; ++i){
 						LidarPacket packet;

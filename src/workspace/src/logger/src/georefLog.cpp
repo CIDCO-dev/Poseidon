@@ -81,6 +81,14 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
         	unsigned int attitudeIndex = 0;
         	unsigned int positionIndex = 0;
         	
+        	PositionPacket firstPosition = std::get<PositionPacket>(positions[0]);
+        	
+        	double firstLat = firstPosition.latitude;
+        	double firstLon = firstPosition.longitude;
+        	
+        	Eigen::Matrix3d ecefToNed;
+        	Georeference::generateEcefToNed(ecefToNed, firstLat, firstLon);
+        	
         	//Georef pings
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
         		
@@ -140,8 +148,9 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 		        //georeference
 		        Eigen::Vector3d georeferencedLaserPoint;
 				
-		        Georeference::PoseidonFrameToEcef(georeferencedLaserPoint, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
-		        Georeference::ecefToWgs84(georeferencedLaserPoint, positionIndex, attitudeIndex);
+		        //Georeference::PoseidonFrameToEcef(georeferencedLaserPoint, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
+		        
+		        Georeference::PoseidonFrameToNed(georeferencedLaserPoint, ecefToNed, firstPosition, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
 				
 				
 		        delete interpolatedAttitude;
@@ -173,12 +182,12 @@ void printUsage(){
 NAME\n\n\
 	georeference - Produces a georeferenced point cloud from binary multibeam echosounder datagrams files\n\n\
 SYNOPSIS\n \
-	georeference [-x lever_arm_x] [-y lever_arm_y] [-z lever_arm_z] [-r roll_angle] [-p pitch_angle] [-h heading_angle] [-s svp_file] [-S svpStrategy] file\n\n\
+	georeference [-x lever_arm_x] [-y lever_arm_y] [-z lever_arm_z] [-r roll_angle] [-p pitch_angle] [-h heading_angle] file\n\n\
 DESCRIPTION\n \
 	-L Use a local geographic frame (NED)\n \
 	-T Use a terrestrial geographic frame (WGS84 ECEF)\n \
         -S choose one: nearestTime or nearestLocation\n\n \
-Copyright 2017-2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés" << std::endl;
+Copyright 2017-2023 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés" << std::endl;
 	exit(1);
 }
 

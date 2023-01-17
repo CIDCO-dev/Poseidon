@@ -1,5 +1,4 @@
 #include "types.h"
-//s#include <algorithm>
 #include <cmath>
 #include <Eigen/Dense>
 #include "CartesianToGeodeticFukushima.h"
@@ -115,12 +114,10 @@ namespace Interpolator{
 
 namespace Georeference{
 		
-	void generateEnuToEcefMatrix(Eigen::Matrix3d & outputMatrix, PositionPacket & position){
-		outputMatrix << -sin(position.longitude*D2R), -sin(position.latitude*D2R)*cos(position.longitude*D2R), cos(position.latitude*D2R)*cos(position.longitude*D2R),
-						cos(position.longitude*D2R), -sin(position.latitude*D2R)*sin(position.longitude*D2R), cos(position.latitude*D2R)*sin(position.longitude*D2R),
-						0, cos(position.latitude*D2R), sin(position.latitude*D2R);
-		
-		return;
+	void generateNedToEcefMatrix(Eigen::Matrix3d & outputMatrix, PositionPacket & position){
+		outputMatrix << -sin(position.latitude*D2R)*cos(position.longitude*D2R), -sin(position.longitude*D2R), -cos(position.latitude*D2R)*cos(position.longitude*D2R),
+					-sin(position.latitude*D2R) * sin(position.longitude*D2R), cos(position.longitude*D2R), -cos(position.latitude*D2R)*sin(position.longitude*D2R),
+					cos(position.latitude*D2R), 0, -sin(position.latitude*D2R);
 	}
 	
 	void generateDcmMatrix(Eigen::Matrix3d & outputMatrix, AttitudePacket & attitude){
@@ -153,6 +150,12 @@ namespace Georeference{
 		return;
 	}
 	
+	void generateEcefToNed(Eigen::Matrix3d & outputMatrix, double & firstLat, double & firstLon){
+		outputMatrix << -sin(firstLat*D2R)*cos(firstLon*D2R), -sin(firstLat*D2R) * sin(firstLon*D2R), cos(firstLat*D2R),
+					-sin(firstLon*D2R), cos(firstLon*D2R), 0,
+					-cos(firstLat*D2R)*cos(firstLon*D2R), -cos(firstLat*D2R)*sin(firstLon*D2R), -sin(firstLat*D2R);
+	}
+	
 	
 	void getPositionECEF(Eigen::Vector3d & positionECEF, PositionPacket & position){
 		double N = a_wgs84  / (sqrt(1 - e2_wgs84 * sin(position.latitude * D2R) *  sin(position.latitude * D2R)));
@@ -162,11 +165,12 @@ namespace Georeference{
 		positionECEF << xTRF, yTRF, zTRF;
 	}
 	
+	/*
 	void PoseidonFrameToEcef(Eigen::Vector3d & georeferencedLaserPoint, AttitudePacket & attitude, PositionPacket & position, 
 						LidarPacket & point, Eigen::Vector3d & leverArm, Eigen::Matrix3d & boresight) {
 	
-		Eigen::Matrix3d poseidonToEcef;
-    	generateEnuToEcefMatrix(poseidonToEcef, position);
+		Eigen::Matrix3d nedToEcef;
+    	generateNedToEcefMatrix(nedToEcef, position);
     	
     	Eigen::Matrix3d imu2ned;
     	generateDcmMatrix(imu2ned, attitude);
@@ -174,27 +178,52 @@ namespace Georeference{
     	Eigen::Vector3d positionECEF;
     	getPositionECEF(positionECEF, position);
     	
-    	Eigen::Vector3d laserPointsVectorPoseidon(point.laser_x, point.laser_y, point.laser_z);
+    	Eigen::Vector3d lidarPoint(point.laser_y, point.laser_x, -point.laser_z); //
+    	
 
-		Eigen::Vector3d laserPointECEF = poseidonToEcef * laserPointsVectorPoseidon;
+		Eigen::Vector3d laserPointECEF = nedToEcef * (imu2ned * lidarPoint);
 		
 		//Convert lever arm to ECEF
-		Eigen::Vector3d leverArmECEF =  poseidonToEcef * (imu2ned * leverArm);
+		Eigen::Vector3d leverArmECEF =  nedToEcef * (imu2ned * leverArm);
 
 		//Compute total ECEF vector
 
-		georeferencedLaserPoint = positionECEF + laserPointECEF + leverArmECEF;
-		    	
+		//georeferencedLaserPoint = positionECEF + laserPointECEF + leverArmECEF;
+		//georeferencedLaserPoint = positionECEF + laserPointECEF;
+		georeferencedLaserPoint = positionECEF;
+		
+		std::cout<<georeferencedLaserPoint(0)<<" "<<georeferencedLaserPoint(1)<<" "<< georeferencedLaserPoint(2) << std::endl;
+		
 		return;
 	}
+	*/
 	
-	void ecefToWgs84(Eigen::Vector3d & georeferencedLaserPoint, int positionIndex, int attitudeIndex, int numberOfIterations = 3) {
-		CartesianToGeodeticFukushima cart2geo(numberOfIterations);
-		PositionPacket position;
-		cart2geo.ecefToLongitudeLatitudeElevation(georeferencedLaserPoint, position);
-		std::cout << position.longitude << " " << position.latitude << " " << position.altitude << std::endl;
-		return;
-	}
+	void PoseidonFrameToNed(Eigen::Vector3d & georeferencedLaserPoint, Eigen::Matrix3d ecefToNed, PositionPacket & firstPosition, AttitudePacket & attitude, PositionPacket & position, LidarPacket & point, Eigen::Vector3d & leverArm, Eigen::Matrix3d & boresight) {
+			
+		Eigen::Matrix3d nedToEcef;
+    	generateNedToEcefMatrix(nedToEcef, position);
+    	
+    	Eigen::Matrix3d imu2ned;
+    	generateDcmMatrix(imu2ned, attitude);
+    	
+    	Eigen::Vector3d positionECEF; // XXX can we go from wgs84 to NED without having to pass by ECEF ?
+    	getPositionECEF(positionECEF, position);
+    	Eigen::Vector3d firstPositionECEF;
+    	getPositionECEF(firstPositionECEF, firstPosition);
+    	Eigen::Vector3d positionNed = ecefToNed * (positionECEF -  firstPositionECEF);
+    	
+    	Eigen::Vector3d lidarPoint(point.laser_y, point.laser_x, -point.laser_z);
+		Eigen::Vector3d laserPointNed = imu2ned * lidarPoint;
+		
+		//Convert lever arm to NED
+		Eigen::Vector3d leverArmNed = imu2ned * leverArm;
+		
+		//georeferencedLaserPoint = positionNed + laserPointNed + leverArmNed;
+		georeferencedLaserPoint = positionNed;
+		
+		std::cout<<georeferencedLaserPoint(0)<<" "<<georeferencedLaserPoint(1)<<" "<< georeferencedLaserPoint(2) << std::endl;
+		
+		}
 	
 }
 

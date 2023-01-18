@@ -1,7 +1,8 @@
 #include "types.h"
 #include <cmath>
 #include <Eigen/Dense>
-#include "CartesianToGeodeticFukushima.h"
+
+#include "lidarFilters.h"
 
 #define PI M_PI
 #define INF 1.e100
@@ -218,8 +219,8 @@ namespace Georeference{
 		//Convert lever arm to NED
 		Eigen::Vector3d leverArmNed = imu2ned * leverArm;
 		
-		//georeferencedLaserPoint = positionNed + laserPointNed + leverArmNed;
-		georeferencedLaserPoint = positionNed;
+		georeferencedLaserPoint = positionNed + laserPointNed + leverArmNed;
+		
 		
 		std::cout<<georeferencedLaserPoint(0)<<" "<<georeferencedLaserPoint(1)<<" "<< georeferencedLaserPoint(2) << std::endl;
 		

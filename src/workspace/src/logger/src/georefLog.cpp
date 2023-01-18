@@ -58,12 +58,16 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 	            return;
 		    }
 		    
+		    std::cerr<<this->laserPoints.size() << " points read"<<std::endl; 
+		    
 			// TODO Compute centroid or use first position
 			
 			//Sort everything
 		    std::sort(positions.begin(), positions.end(), &sortByTimestamp<PositionPacket>);
 		    std::sort(attitudes.begin(), attitudes.end(), &sortByTimestamp<AttitudePacket>);
 		    std::sort(laserPoints.begin(), laserPoints.end(), &sortByTimestamp<LidarPacket>);
+		    
+		    std::cerr<<"sorting by timestamp done."<<std::endl;
 			
 			// For correct display of timestamps on Windows
 		    std::cerr <<  "[+] Position data points: " << positions.size() << " [" << std::get<PacketHeader>(positions[0]).packetTimestamp << " to " 
@@ -91,6 +95,16 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
         	
         	//Georef pings
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
+        	
+        		/*
+        		if(! LidarFilter::keepPoint(std::get<LidarPacket>(*i),-180.0, , 1.0, 40.0)){
+        			continue;
+        		}
+        		*/
+        		
+        		if (LidarFilter::badPoint(std::get<LidarPacket>(*i), -60.0, 60.0, 1.5, 20.0)){
+        			continue;
+        		}
         		
         		while (attitudeIndex + 1 < attitudes.size() && 
 						std::get<PacketHeader>(attitudes[attitudeIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 

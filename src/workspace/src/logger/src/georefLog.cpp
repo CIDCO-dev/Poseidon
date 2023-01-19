@@ -101,10 +101,26 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
         			continue;
         		}
         		*/
-        		
+        		/*
         		if (LidarFilter::badPoint(std::get<LidarPacket>(*i), -60.0, 60.0, 1.5, 20.0)){
         			continue;
         		}
+        		*/
+        		/*
+        		if(LidarFilter::azimutFilter(std::get<LidarPacket>(*i),0, 180) || LidarFilter::distanceFilter(std::get<LidarPacket>(*i),1.0,60.0)){
+        			continue;	
+        		}
+        		*/
+        		/*
+        		if(LidarFilter::azimutFilter(std::get<LidarPacket>(*i),-180, 0)){
+        			continue;	
+        		}
+        		*/
+        		
+        		if(LidarFilter::distanceFilter(std::get<LidarPacket>(*i),2.0, 50.0)){
+        			continue;
+        		}
+        		
         		
         		while (attitudeIndex + 1 < attitudes.size() && 
 						std::get<PacketHeader>(attitudes[attitudeIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 

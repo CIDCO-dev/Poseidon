@@ -96,14 +96,11 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
         	//Georef pings
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
         		
-        		/*
-        		if(LidarFilter::distanceFilter(std::get<LidarPacket>(*i), 2.0, 50.0) || LidarFilter::horizontalAngleFilter(std::get<LidarPacket>(*i), 2.0, 50.0)){
+        		
+        		if(LidarFilter::distanceFilter(std::get<LidarPacket>(*i), 1.0, 50.0) || LidarFilter::horizontalAngleFilter(std::get<LidarPacket>(*i), -135.0, -45.0)){
         			continue;
         		}
-        		*/
-        		if(LidarFilter::horizontalAngleFilter(std::get<LidarPacket>(*i), 45.0, 135.0)){
-        			continue;
-        		}
+        		
         		
         		while (attitudeIndex + 1 < attitudes.size() && 
 						std::get<PacketHeader>(attitudes[attitudeIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 

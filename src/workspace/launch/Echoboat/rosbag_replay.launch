@@ -20,6 +20,7 @@
 	<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 
 	<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" output="screen"/>
+	<node pkg="lidar_filtering" name="lidar_filtering" type="lidar_filtering_node" output="screen"/>
 
 <!--	<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" output="screen"/>-->
 

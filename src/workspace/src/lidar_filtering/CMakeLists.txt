@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(lidarFilter)
+project(lidar_filtering)
 
 add_definitions(-std=c++17 -Wall -g)
 
@@ -29,11 +29,11 @@ include_directories(
 #							src/loggerBinary.cpp)
 
 # executables
-add_executable(${PROJECT_NAME}_node nodes/lidar_filtering_node.cpp)
+add_executable(lidar_filtering_node nodes/lidar_filtering_node.cpp)
 
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${PROJECT_NAME} )
+target_link_libraries(lidar_filtering_node ${catkin_LIBRARIES})
 
 
 #############
@@ -41,7 +41,7 @@ target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${PROJECT_NAME} )
 #############
 
 
- install(TARGETS ${PROJECT_NAME}
+ install(TARGETS lidar_filtering_node
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

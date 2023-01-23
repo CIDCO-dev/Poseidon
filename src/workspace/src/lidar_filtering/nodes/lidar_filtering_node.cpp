@@ -6,8 +6,6 @@ int main(int argc, char **argv)
 	try{
 		ros::init(argc, argv, "lidar_filtering");
 
-		ros::NodeHandle n;
-
 		LidarFiltering filtering;
 
 		ros::spin();

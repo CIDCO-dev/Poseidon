@@ -1,6 +1,12 @@
 #ifndef lidarFilters
 #define lidarFilters
 #include <cmath>
+#include "sensor_msgs/PointCloud2.h"
+#include "sensor_msgs/point_cloud_conversion.h"
+#include "sensor_msgs/PointCloud.h"
+#include <tf2_ros/transform_listener.h>
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+
 
 #define PI 3.14159265;
 
@@ -13,8 +19,8 @@ class LidarFiltering{
 	
 	public:
 		LidarFiltering(){
-			lidarSubscriber = n.subscribe("velodyne_points", 1000, &LidarFiltering::lidarCallback,this);
-			lidarFilteredPublisher = n.advertise<geometry_msgs::Point32>("filtered_lidar",1000);
+			lidarSubscriber = node.subscribe("velodyne_points", 1000, &LidarFiltering::lidarCallback,this);
+			lidarFilteredPublisher = node.advertise<sensor_msgs::PointCloud2>("filtered_lidar",1000);
 		}
 		
 		void lidarCallback(const sensor_msgs::PointCloud2& lidar){
@@ -30,7 +36,14 @@ class LidarFiltering{
 				}
 			}
 			
+			sensor_msgs::PointCloud lidarFiltered;
+			sensor_msgs::PointCloud2 lidarFilteredMsgs;
+			lidarFiltered.points = filteredPoints;
+			sensor_msgs::convertPointCloudToPointCloud2(lidarFiltered, lidarFilteredMsgs);
 			
+			lidarFilteredMsgs.header = lidar.header;
+			
+			lidarFilteredPublisher.publish(lidarFilteredMsgs);
 			
 		}
 		
@@ -38,7 +51,7 @@ class LidarFiltering{
 		static bool horizontalAngleFilter(geometry_msgs::Point32 point, double minAngle, double maxAngle){
 			// 90° is the heading
 			// 0° is on left side
-			double theta = atan2(point.y, point.x) * 180 / LPI;
+			double theta = atan2(point.y, point.x) * 180 / PI;
 			//std::cerr<<theta << " " << point.laser_x << " " << point.laser_y << " " << point.laser_z << std::endl;
 			
 			// discard point in that region
@@ -68,7 +81,7 @@ class LidarFiltering{
 		// elevation angle in degrees
 		static bool azimutFilter(geometry_msgs::Point32 point, double minAngle, double maxAngle){
 		
-			double azimut = atan2(point.laser_z, point.laser_x) * 180 / LPI;
+			double azimut = atan2(point.laser_z, point.laser_x) * 180 / PI;
 			
 			//std::cerr<< azimut << " " << point.laser_z << " " << point.laser_x << std::endl;
 			

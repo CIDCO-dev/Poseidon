@@ -196,7 +196,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 void printUsage(){
 	std::cerr << "\n\
 NAME\n\n\
-	georeference - Produces a georeferenced point cloud from binary multibeam echosounder datagrams files\n\n\
+	georeference - Produces a georeferenced point cloud from binary lidar datagrams files\n\n\
 SYNOPSIS\n \
 	georeference [-x lever_arm_x] [-y lever_arm_y] [-z lever_arm_z] [-r roll_angle] [-p pitch_angle] [-h heading_angle] file\n\n\
 DESCRIPTION\n \

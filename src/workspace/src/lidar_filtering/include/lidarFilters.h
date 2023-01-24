@@ -43,6 +43,7 @@ class Filters{
 			}
 			
 		}
+		/*
 		// elevation angle in degrees
 		static bool azimutFilter(double x, double z, double minAngle, double maxAngle){
 		
@@ -57,7 +58,7 @@ class Filters{
 				return false;
 			}
 		}
-		
+		*/
 };
 
 

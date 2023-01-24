@@ -23,17 +23,15 @@ include_directories(
  ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library 
-#add_library(${PROJECT_NAME} src/loggerBase.cpp 
-#							src/loggerText.cpp 
-#							src/loggerBinary.cpp)
+# Declare a C++ library 
+add_library(${PROJECT_NAME} src/lidarFilters.cpp)
 
 # executables
 add_executable(lidar_filtering_node nodes/lidar_filtering_node.cpp)
 
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(lidar_filtering_node ${catkin_LIBRARIES})
+target_link_libraries(lidar_filtering_node ${catkin_LIBRARIES} ${PROJECT_NAME})
 
 
 #############
@@ -59,12 +57,8 @@ target_link_libraries(lidar_filtering_node ${catkin_LIBRARIES})
 #############
 
 # Add gtest based cpp test target and link libraries
-#if(CATKIN_ENABLE_TESTING)
-#	find_package(rostest REQUIRED)
-#    add_rostest_gtest(test_logger_text_node tests/logger_text_node_test.launch tests/test_logger_text_node.cpp)
-#    target_link_libraries(test_logger_text_node ${PROJECT_NAME})
-#    
-#    add_rostest_gtest(test_logger_binary_node tests/logger_binary_node_test.launch tests/test_logger_binary_node.cpp)
-#    target_link_libraries(test_logger_binary_node ${PROJECT_NAME})
-#    
-#endif()
+if(CATKIN_ENABLE_TESTING)
+	find_package(rostest REQUIRED)
+    add_rostest_gtest(lidar_filters tests/lidar_filters_tests.launch tests/lidar_filters_tests.cpp)   
+    target_link_libraries(lidar_filters ${PROJECT_NAME} ${catkin_LIBRARIES})
+endif()

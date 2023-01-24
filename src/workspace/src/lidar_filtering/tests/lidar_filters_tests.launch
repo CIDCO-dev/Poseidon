@@ -1,0 +1,6 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+
+	<test pkg="lidar_filtering" test-name="lidar_filters" type="lidar_filters"/>
+	
+</launch>

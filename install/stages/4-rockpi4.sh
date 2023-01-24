@@ -26,12 +26,12 @@ EOF2'
 sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.target.wants/
 
 echo "[+] config /boot"
-sudo sed 's/intfc:uart2=off/intfc:uart2=on/g /boot/hw_intfc.conf' > /boot/hw_intfc.conf
-sudo sed 's/intfc:i2c7=off/intfc:i2c7=on/g /boot/hw_intfc.conf' > /boot/hw_intfc.conf
-sudo sed 's/intfc:dtoverlay=console-on-ttyS2/#intfc:dtoverlay=console-on-ttyS2/g /boot/hw_intfc.conf' > /boot/hw_intfc.conf
+sudo sed -i 's/intfc:uart2=off/intfc:uart2=on/g' /boot/hw_intfc.conf
+sudo sed -i 's/intfc:i2c7=off/intfc:i2c7=on/g' /boot/hw_intfc.conf
+sudo sed -i 's/intfc:dtoverlay=console-on-ttyS2/#intfc:dtoverlay=console-on-ttyS2/g' /boot/hw_intfc.conf'
 
-sudo sed 's/ console-ttyS2,1500000n8//g /boot/extlinux/extlinux.conf' > /boot/extlinux/extlinux.conf
-sudo sed 's/ console=ttyFIQ0,1500000n8 rw init=/sbin/init / /g /boot/extlinux/extlinux.conf' > /boot/extlinux/extlinux.conf
+sudo sed -i 's/ console-ttyS2,1500000n8//g' /boot/extlinux/extlinux.conf
+sudo sed -i 's/ console=ttyFIQ0,1500000n8 rw init=/sbin/init / /g' /boot/extlinux/extlinux.conf 
 
 
 echo "[+] Adding roslaunch on boot"

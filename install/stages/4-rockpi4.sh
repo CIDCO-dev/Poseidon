@@ -2,8 +2,7 @@
 
 
 echo "[+] Configuring UART"
-sudo bash -c 'echo "dtoverlay=disable-bt" >> /boot/firmware/usercfg.txt' | tee -a log.txt
-sudo systemctl mask serial-getty@ttyAMA0.service | tee -a log.txt
+sudo systemctl mask serial-getty@ttyS2.service | tee -a log.txt
 usrmod -G dialout ubuntu
 
 echo "[+] Install GPSD"
@@ -18,7 +17,7 @@ START_DAEMON="true"
 USBAUTO="true"
 # Devices gpsd should collect to at boot time.
 # They need to be read/writeable, either by user gpsd or the group dialout.
-DEVICES="/dev/ttyAMA0"
+DEVICES="/dev/ttyS2"
 # Other options you want to pass to gpsd
 GPSD_OPTIONS="-n"
 GPSD_SOCKET="/var/run/gpsd.sock"
@@ -29,8 +28,10 @@ sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.targe
 echo "[+] config /boot"
 sudo sed 's/intfc:uart2=off/intfc:uart2=on/g /boot/hw_intfc.conf' > /boot/hw_intfc.conf
 sudo sed 's/intfc:i2c7=off/intfc:i2c7=on/g /boot/hw_intfc.conf' > /boot/hw_intfc.conf
+sudo sed 's/intfc:dtoverlay=console-on-ttyS2/#intfc:dtoverlay=console-on-ttyS2/g /boot/hw_intfc.conf' > /boot/hw_intfc.conf
 
-sudo sed 's/console-ttyS2,1500000n8//g /boot/extlinux/extlinux.conf' > /boot/extlinux/extlinux.conf
+sudo sed 's/ console-ttyS2,1500000n8//g /boot/extlinux/extlinux.conf' > /boot/extlinux/extlinux.conf
+sudo sed 's/ console=ttyFIQ0,1500000n8 rw init=/sbin/init / /g /boot/extlinux/extlinux.conf' > /boot/extlinux/extlinux.conf
 
 
 echo "[+] Adding roslaunch on boot"

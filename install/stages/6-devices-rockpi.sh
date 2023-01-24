@@ -23,3 +23,4 @@ cd /home/ubuntu/Poseidon/src/workspace/src/
 echo "Download mavros"
 sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msgs ros-noetic-control-toolbox -y
 
+sudo sed 's/refclock  PPS/#refclock  PPS/g /etc/chrony/chrony.conf' > /etc/chrony/chrony.conf

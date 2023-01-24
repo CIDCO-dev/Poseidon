@@ -1,5 +1,6 @@
 #ifndef lidarFilters
 #define lidarFilters
+#include "ros/ros.h"
 #include <cmath>
 #include "sensor_msgs/PointCloud2.h"
 #include "sensor_msgs/point_cloud_conversion.h"
@@ -7,7 +8,58 @@
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 
-#define PI 3.14159265;
+#define LPI 3.14159265; //local PI
+
+class Filters{
+	public:
+		// horizontal angle in degrees
+		static bool horizontalAngleFilter(double x, double y, double minAngle, double maxAngle){
+			// 90° is the heading
+			// 0° is on left side
+			double theta = atan2(y, x) * 180 / LPI;
+			//std::cerr<<theta << " " << point.laser_x << " " << point.laser_y << " " << point.laser_z << std::endl;
+			
+			// discard point in that region
+			if(theta > minAngle && theta < maxAngle ){
+				
+				return true;
+			}
+			else{
+				return false;
+			}
+			
+		}
+		
+		// eucledian distance in meters
+		static bool distanceFilter(double x, double y, double z, double minDistance, double maxDistance){
+			double distance = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+			
+			// discard point
+			if(distance < minDistance || distance > maxDistance){
+				return true;
+			}
+			else{
+				return false;
+			}
+			
+		}
+		// elevation angle in degrees
+		static bool azimutFilter(double x, double z, double minAngle, double maxAngle){
+		
+			double azimut = atan2(z, x) * 180 / LPI;
+			
+			//std::cerr<< azimut << " " << point.laser_z << " " << point.laser_x << std::endl;
+			
+			if(azimut < minAngle || azimut > maxAngle){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		
+};
+
 
 class LidarFiltering{
 
@@ -30,7 +82,7 @@ class LidarFiltering{
 			std::vector<geometry_msgs::Point32> filteredPoints;
 			
 			for(auto const& point : points){
-				if(! (horizontalAngleFilter(point, -135, -45) || distanceFilter(point, 1.0, 50.0))){
+				if(! (Filters::horizontalAngleFilter(point.x, point.y, -135, -45) || Filters::distanceFilter(point.x, point.y, point.z, 1.0, 50.0))){
 					filteredPoints.push_back(point);
 					
 				}
@@ -46,54 +98,6 @@ class LidarFiltering{
 			lidarFilteredPublisher.publish(lidarFilteredMsgs);
 			
 		}
-		
-		// horizontal angle in degrees
-		static bool horizontalAngleFilter(geometry_msgs::Point32 point, double minAngle, double maxAngle){
-			// 90° is the heading
-			// 0° is on left side
-			double theta = atan2(point.y, point.x) * 180 / PI;
-			//std::cerr<<theta << " " << point.laser_x << " " << point.laser_y << " " << point.laser_z << std::endl;
-			
-			// discard point in that region
-			if(theta > minAngle && theta < maxAngle ){
-				
-				return true;
-			}
-			else{
-				return false;
-			}
-			
-		}
-		
-		// eucledian distance in meters
-		static bool distanceFilter(geometry_msgs::Point32 point, double minDistance, double maxDistance){
-			double distance = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
-			
-			// discard point
-			if(distance < minDistance || distance > maxDistance){
-				return true;
-			}
-			else{
-				return false;
-			}
-			
-		}
-		// elevation angle in degrees
-		static bool azimutFilter(geometry_msgs::Point32 point, double minAngle, double maxAngle){
-		
-			double azimut = atan2(point.z, point.x) * 180 / PI;
-			
-			//std::cerr<< azimut << " " << point.laser_z << " " << point.laser_x << std::endl;
-			
-			if(azimut < minAngle || azimut > maxAngle){
-				return true;
-			}
-			else{
-				return false;
-			}
-		}
-		
-		
 };
 
 #endif

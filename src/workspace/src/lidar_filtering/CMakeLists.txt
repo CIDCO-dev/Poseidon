@@ -3,12 +3,12 @@ project(lidar_filtering)
 
 add_definitions(-std=c++17 -Wall -g)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs tf2 tf2_ros tf2_geometry_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES logger
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs tf2 tf2_ros tf2_geometry_msgs
+  LIBRARIES lidar_filtering
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs
   DEPENDS system_lib
 )
 

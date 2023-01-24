@@ -42,7 +42,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 		}
 		
 		
-		void georeference(){
+		void georeference(bool activatedFilter){
 			if(this->positions.size()==0){
 				std::cerr << "[-] No position data found in file" << std::endl;
 				return;
@@ -96,9 +96,15 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
         	//Georef pings
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
         		
+        		if(activatedFilter){
         		
-        		if(LidarFilter::distanceFilter(std::get<LidarPacket>(*i), 1.0, 50.0) || LidarFilter::horizontalAngleFilter(std::get<LidarPacket>(*i), -135.0, -45.0)){
-        			continue;
+        			LidarPacket point = std::get<LidarPacket>(*i);
+        			
+		    		if(Filters::distanceFilter(point.laser_x, point.laser_y, point.laser_z, 1.0, 50.0) ||
+					   Filters::horizontalAngleFilter(point.laser_x, point.laser_y, -135.0, -45.0))
+					{
+		    			continue;
+		    		}
         		}
         		
         		
@@ -194,9 +200,7 @@ NAME\n\n\
 SYNOPSIS\n \
 	georeference [-x lever_arm_x] [-y lever_arm_y] [-z lever_arm_z] [-r roll_angle] [-p pitch_angle] [-h heading_angle] file\n\n\
 DESCRIPTION\n \
-	-L Use a local geographic frame (NED)\n \
-	-T Use a terrestrial geographic frame (WGS84 ECEF)\n \
-        -S choose one: nearestTime or nearestLocation\n\n \
+	-f Activate lidar filtering\n \
 Copyright 2017-2023 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés" << std::endl;
 	exit(1);
 }
@@ -219,11 +223,12 @@ int main(int argc,char** argv){
 		double roll     = 0.0;
 		double pitch    = 0.0;
 		double heading  = 0.0;
-
+		
+		bool activateFilter = false;
 
 		int index;
 
-		while((index=getopt(argc,argv,"x:y:z:r:p:h:s:S:LTg"))!=-1){
+		while((index=getopt(argc,argv,"x:y:z:r:p:h:f"))!=-1){
 			switch(index){
 				case 'x':
 				if(sscanf(optarg,"%lf", &leverArmX) != 1){
@@ -266,7 +271,12 @@ int main(int argc,char** argv){
 					printUsage();
 				}
 				break;
-			}
+				
+				case 'f':
+				if(optarg == NULL){
+					activateFilter = true;
+				}
+			}	break;
 		}
 	
 	//Lever arm
@@ -279,7 +289,7 @@ int main(int argc,char** argv){
 	
 	PoseidonBinaryLidarGeoref georeferencer(fileName, leverArm, boresight);
 	georeferencer.read();
-	georeferencer.georeference();
+	georeferencer.georeference(activateFilter);
 	}
 	
 	return 0;

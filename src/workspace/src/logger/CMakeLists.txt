@@ -9,7 +9,7 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES logger
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs lidar_filtering
   DEPENDS system_lib
 )
 
@@ -22,7 +22,12 @@ catkin_package(
 include_directories(
  include
  ${catkin_INCLUDE_DIRS}
+ ../lidar_filtering/include
 )
+
+message("here")
+message(${catkin_INCLUDE_DIRS})
+message("ok")
 
 ## Declare a C++ library 
 add_library(${PROJECT_NAME} src/loggerBase.cpp 

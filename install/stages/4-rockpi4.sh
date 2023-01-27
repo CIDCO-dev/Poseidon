@@ -30,9 +30,13 @@ sudo sed -i 's/intfc:uart2=off/intfc:uart2=on/g' /boot/hw_intfc.conf
 sudo sed -i 's/intfc:i2c7=off/intfc:i2c7=on/g' /boot/hw_intfc.conf
 sudo sed -i 's/intfc:dtoverlay=console-on-ttyS2/#intfc:dtoverlay=console-on-ttyS2/g' /boot/hw_intfc.conf
 
-sudo sed -i 's/ console-ttyS2,1500000n8//g' /boot/extlinux/extlinux.conf
-sudo sed -i 's/ console=ttyFIQ0,1500000n8 rw init=/sbin/init / /g' /boot/extlinux/extlinux.conf 
+sudo sed -i 's/ console=ttyS2,1500000n8//g' /boot/extlinux/extlinux.conf
+sudo sed -i 's/ console=ttyFIQ0,1500000n8// g' /boot/extlinux/extlinux.conf 
+sudo sed -i 's/rw //g' /boot/extlinux/extlinux.conf 
+sudo sed -i 's/init=/sbin/init //g' /boot/extlinux/extlinux.conf 
 
+
+sudo sed -i 's/ttyAMA0/ttyS2/g'/home/ubuntu/Poseidon/service/uart_on_boot.sh
 
 echo "[+] Adding roslaunch on boot"
 sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service

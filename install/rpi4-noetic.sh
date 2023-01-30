@@ -36,6 +36,11 @@ Help()
 ############################################################
 Config()
 {
+
+echo "Moving software to compile"
+sudo chmod 777 /opt
+cp -r ../../Poseidon/ /opt/ 
+
 /opt/Poseidon/install/stages/1-base-ros-noetic.sh
 
 /opt/Poseidon/install/stages/2-rpi4.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip

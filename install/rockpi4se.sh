@@ -39,7 +39,7 @@ Config()
 echo "Moving software to compile"
 sudo chmod 777 /opt
 cp -r ../../Poseidon/ /opt/ 
-chmod 
+
 
 
 /opt/Poseidon/install/stages/1-base-ros-noetic.sh

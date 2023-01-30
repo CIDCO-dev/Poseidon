@@ -37,7 +37,8 @@ Help()
 Config()
 {
 echo "Moving software to compile"
-sudo cp -r ../../Poseidon/ /opt/  
+sudo chmod 777 /opt
+cp -r ../../Poseidon/ /opt/ 
 chmod 
 
 

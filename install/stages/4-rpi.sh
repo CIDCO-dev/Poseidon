@@ -9,7 +9,7 @@ cd WiringPi/
 echo "[+] Configuring UART"
 sudo bash -c 'echo "dtoverlay=disable-bt" >> /boot/firmware/usercfg.txt' | tee -a log.txt
 sudo systemctl mask serial-getty@ttyAMA0.service | tee -a log.txt
-usrmod -G dialout ubuntu
+usermod -G dialout ubuntu
 
 echo "[+] Install GPSD"
 sudo apt-get install gpsd gpsd-clients libgps-dev -y | tee -a log.txt

@@ -3,7 +3,7 @@
 
 echo "[+] Configuring UART"
 sudo systemctl mask serial-getty@ttyS2.service | tee -a log.txt
-usrmod -G dialout ubuntu
+usermod -G dialout ubuntu
 
 echo "[+] Install GPSD"
 sudo apt-get install gpsd gpsd-clients libgps-dev -y | tee -a log.txt
@@ -74,4 +74,4 @@ sudo chmod 755 /etc/systemd/system/uart.service
 sudo systemctl enable uart
 
 echo "[+] midificating launch files"
-sed -i 's/i2c-1/i2c-7/g' /opt/Poseidon/src/workspace/launch/Hydroblock/*.*
+sudo sed -i 's/i2c-1/i2c-7/g' /opt/Poseidon/src/workspace/launch/Hydrobox/*.*

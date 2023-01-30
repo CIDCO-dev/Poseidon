@@ -6,7 +6,7 @@ echo "[+] install exiv2"
 sudo apt-get install libexiv2-dev -y | tee -a log.txt
 
 echo "[+] Configuring Inertial Sense SDK"
-cd ~/Poseidon/src/workspace/src/inertial_sense_ros/
+cd /opt/Poseidon/src/workspace/src/inertial_sense_ros/
 mkdir lib
 cd lib
 git clone https://github.com/inertialsense/InertialSenseSDK | tee -a log.txt

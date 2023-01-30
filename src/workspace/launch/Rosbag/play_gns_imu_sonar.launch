@@ -4,14 +4,14 @@
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>
 
-<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
-<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
 
-<node pkg="rosbag" name="play_gps"      type="play" args=" /home/ubuntu/rosbag/2020.11.05_185818_gnss.bag" />
-<node pkg="rosbag" name="play_imu_data" type="play" args=" /home/ubuntu/rosbag/2020.11.05_185818_imu-data.bag" />
-<node pkg="rosbag" name="play_sonar"    type="play" args=" /home/ubuntu/rosbag/2020.11.05_185818_sonar.bag" />
+<node pkg="rosbag" name="play_gps"      type="play" args=" /opt/rosbag/2020.11.05_185818_gnss.bag" />
+<node pkg="rosbag" name="play_imu_data" type="play" args=" /opt/rosbag/2020.11.05_185818_imu-data.bag" />
+<node pkg="rosbag" name="play_sonar"    type="play" args=" /opt/rosbag/2020.11.05_185818_sonar.bag" />
 
 
 

@@ -1,19 +1,19 @@
 <launch>
 <arg name="time_now" default="temp" />
 
-<node pkg="rosbag" name="record_gps"   type="record" args="-O /home/ubuntu/$(arg time_now)_gnss.bag /fix" />
-<node pkg="rosbag" name="record_imu_data" type="record" args="-O /home/ubuntu/$(arg time_now)_imu-data.bag /imu/data" />
-<node pkg="rosbag" name="record_imu_mag" type="record" args="-O /home/ubuntu/$(arg time_now)_imu-mag.bag /imu/mag" />
-<node pkg="rosbag" name="record_imu_raw" type="record" args="-O /home/ubuntu/$(arg time_now)_imu-raw.bag /imu/raw" />
-<node pkg="rosbag" name="record_imu_status" type="record" args="-O /home/ubuntu/$(arg time_now)_imu-status.bag /imu/status" />
-<node pkg="rosbag" name="record_imu_temp" type="record" args="-O /home/ubuntu/$(arg time_now)_imu-temp.bag /imu/temp" />
-<node pkg="rosbag" name="record_sonar"   type="record" args="-O /home/ubuntu/$(arg time_now)_sonar.bag /depth" />
-<node pkg="rosbag" name="record_vital" type="record" args="-O /home/ubuntu/$(arg time_now)_vital.bag /vitals" />
-<node pkg="rosbag" name="record_configuration" type="record" args="-O /home/ubuntu/$(arg time_now)_configuration.bag /configuration" />
-<node pkg="rosbag" name="record_extended_fix" type="record" args="-O /home/ubuntu/$(arg time_now)_extented-fix.bag /extended_fix" />
-<node pkg="rosbag" name="record_state" type="record" args="-O /home/ubuntu/$(arg time_now)_state.bag /state" />
+<node pkg="rosbag" name="record_gps"   type="record" args="-O /opt/$(arg time_now)_gnss.bag /fix" />
+<node pkg="rosbag" name="record_imu_data" type="record" args="-O /opt/$(arg time_now)_imu-data.bag /imu/data" />
+<node pkg="rosbag" name="record_imu_mag" type="record" args="-O /opt/$(arg time_now)_imu-mag.bag /imu/mag" />
+<node pkg="rosbag" name="record_imu_raw" type="record" args="-O /opt/$(arg time_now)_imu-raw.bag /imu/raw" />
+<node pkg="rosbag" name="record_imu_status" type="record" args="-O /opt/$(arg time_now)_imu-status.bag /imu/status" />
+<node pkg="rosbag" name="record_imu_temp" type="record" args="-O /opt$(arg time_now)_imu-temp.bag /imu/temp" />
+<node pkg="rosbag" name="record_sonar"   type="record" args="-O /opt/$(arg time_now)_sonar.bag /depth" />
+<node pkg="rosbag" name="record_vital" type="record" args="-O /opt/$(arg time_now)_vital.bag /vitals" />
+<node pkg="rosbag" name="record_configuration" type="record" args="-O /opt/$(arg time_now)_configuration.bag /configuration" />
+<node pkg="rosbag" name="record_extended_fix" type="record" args="-O /opt/$(arg time_now)_extented-fix.bag /extended_fix" />
+<node pkg="rosbag" name="record_state" type="record" args="-O /opt/$(arg time_now)_state.bag /state" />
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/$(arg time_now)_all.bag" />
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /opt/$(arg time_now)_all.bag" />
 
 
 

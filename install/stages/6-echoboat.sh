@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /home/ubuntu/Poseidon/src/workspace/src/
+cd /opt/Poseidon/src/workspace/src/
 
 echo "Download mavros"
 sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msgs ros-noetic-control-toolbox -y
@@ -26,5 +26,5 @@ EOF'
 
 
 
-cd /home/ubuntu/Poseidon/src/workspace
+cd /opt/Poseidon/src/workspace
 catkin_make -j1

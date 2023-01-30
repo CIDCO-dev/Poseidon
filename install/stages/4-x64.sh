@@ -37,7 +37,7 @@ Description=Launch ROS on boot.
 After=gpsd.service hwrtc.service
 [Service]
 Type=simple
-ExecStart=/home/ubuntu/Poseidon/launchROSService.sh
+ExecStart=/opt/Poseidon/launchROSService.sh
 [Install]
 WantedBy=multi-user.target
 EOF3'

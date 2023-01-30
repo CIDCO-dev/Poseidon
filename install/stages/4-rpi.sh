@@ -77,7 +77,7 @@ After=gpsd.service hwrtc.service
 
 [Service]
 Type=simple
-ExecStart=/home/ubuntu/Poseidon/launchROSService.sh
+ExecStart=/opt/Poseidon/launchROSService.sh
 
 [Install]
 WantedBy=multi-user.target
@@ -95,7 +95,7 @@ Before=gpsd.service
 
 [Service]
 Type=simple
-ExecStart=/home/ubuntu/Poseidon/service/uart_on_boot.sh
+ExecStart=/opt/Poseidon/service/uart_on_boot.sh
 
 [Install]
 WantedBy=multi-user.target

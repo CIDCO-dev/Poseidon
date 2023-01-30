@@ -36,7 +36,7 @@ sudo sed -i 's/rw //g' /boot/extlinux/extlinux.conf
 sudo sed -i 's/init=/sbin/init //g' /boot/extlinux/extlinux.conf 
 
 
-sudo sed -i 's/ttyAMA0/ttyS2/g'/home/ubuntu/Poseidon/service/uart_on_boot.sh
+sudo sed -i 's/ttyAMA0/ttyS2/g'/opt/Poseidon/service/uart_on_boot.sh
 
 echo "[+] Adding roslaunch on boot"
 sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service
@@ -46,7 +46,7 @@ After=gpsd.service hwrtc.service
 
 [Service]
 Type=simple
-ExecStart=/home/ubuntu/Poseidon/launchROSService.sh
+ExecStart=/opt/Poseidon/launchROSService.sh
 
 [Install]
 WantedBy=multi-user.target
@@ -64,7 +64,7 @@ Before=gpsd.service
 
 [Service]
 Type=simple
-ExecStart=/home/ubuntu/Poseidon/service/uart_on_boot.sh
+ExecStart=/opt/Poseidon/service/uart_on_boot.sh
 
 [Install]
 WantedBy=multi-user.target
@@ -73,4 +73,5 @@ EOF5'
 sudo chmod 755 /etc/systemd/system/uart.service
 sudo systemctl enable uart
 
-
+echo "[+] midificating launch files"
+sed -i 's/i2c-1/i2c-7/g' /opt/Poseidon/src/workspace/launch/Hydroblock/*.*

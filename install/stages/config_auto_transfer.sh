@@ -27,7 +27,7 @@ if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]
     exit 1
 fi
 
-sudo chmod 711 /home/ubuntu/Poseidon/install/sync_logfiles.sh
-echo "@hourly /home/ubuntu/Poseidon/install/sync_logfiles.sh $1 $2 $3 $4" | sudo tee ubuntu
+sudo chmod 711 /opt/Poseidon/install/sync_logfiles.sh
+echo "@hourly /opt/Poseidon/install/sync_logfiles.sh $1 $2 $3 $4" | sudo tee ubuntu
 crontab ubuntu
 ssh-keygen -t rsa -N "" -f ~/.ssh/$4

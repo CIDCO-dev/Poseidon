@@ -1,5 +1,5 @@
 <launch>
   <node name="sbg_device" pkg="sbg_driver" type="sbg_device" output="screen">
-  	<rosparam command="load" file="/home/ubuntu/Poseidon/src/workspace/config/echoboat_sbg_config.yaml" />
+  	<rosparam command="load" file="/opt/Poseidon/src/workspace/config/echoboat_sbg_config.yaml" />
   </node>
 </launch>

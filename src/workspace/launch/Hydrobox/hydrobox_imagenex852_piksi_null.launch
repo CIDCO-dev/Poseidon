@@ -5,8 +5,8 @@
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>
 
-<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
-<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 

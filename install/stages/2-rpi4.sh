@@ -40,7 +40,7 @@ sudo apt-get install network-manager -y | tee -a log.txt
 sudo systemctl start NetworkManager.service | tee -a log.txt
 sudo systemctl enable NetworkManager.service | tee -a log.txt
 
-/home/ubuntu/Poseidon/install/stages/ethernet-config.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
+/opt/Poseidon/install/stages/ethernet-config.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
 
 sudo netplan apply
    

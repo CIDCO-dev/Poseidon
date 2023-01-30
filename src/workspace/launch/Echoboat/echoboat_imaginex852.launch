@@ -5,8 +5,8 @@
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>
 
-<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
-<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
 
 <remap from="/imu/nav_sat_fix" to="/fix"/>
 
@@ -16,11 +16,11 @@
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/launch/sbg_device.launch"/>
+<include file="/opt/Poseidon/src/workspace/launch/sbg_device.launch"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/launch/VLP16_points.launch"/>
+<include file="/opt/Poseidon/src/workspace/launch/VLP16_points.launch"/>
 
-<include file="/home/ubuntu/Poseidon/src/workspace/launch/px4.launch"/>
+<include file="/opt/Poseidon/src/workspace/launch/px4.launch"/>
 
 <node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
 
@@ -36,6 +36,6 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/$(arg time_now)_all.bag" />
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /opt/$(arg time_now)_all.bag" />
 
 </launch>

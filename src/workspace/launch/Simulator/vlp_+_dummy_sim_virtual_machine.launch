@@ -2,8 +2,8 @@
 <launch>
 <arg name="sonarAddress" value="127.0.0.1"/>
 <arg name="sonarPort" value="8000"/>
-<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
-<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
 
 
 <!-- Velodyne vlp arguments -->

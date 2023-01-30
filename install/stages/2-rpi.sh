@@ -33,7 +33,7 @@ Config()
 {
 echo "[+] Editing uboot"
 # removing hang on bonnt cause by data from gps on uart
-sudo cp /home/ubuntu/Poseidon/install/stages/rpi-cfg-files/uboot.env /boot/firmware
+sudo cp /opt/Poseidon/install/stages/rpi-cfg-files/uboot.env /boot/firmware
 
 echo "[+] Installing RPi.GPIO"
 pip3 install RPi.GPIO | tee -a log.txt
@@ -44,7 +44,7 @@ sudo apt-get install network-manager -y | tee -a log.txt
 sudo systemctl start NetworkManager.service | tee -a log.txt
 sudo systemctl enable NetworkManager.service | tee -a log.txt
 
-/home/ubuntu/Poseidon/install/stages/ethernet-config.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
+/opt/Poseidon/install/stages/ethernet-config.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
 
 sudo netplan apply
    

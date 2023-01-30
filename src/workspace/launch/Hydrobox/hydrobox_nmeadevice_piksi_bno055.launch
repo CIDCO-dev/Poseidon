@@ -5,8 +5,8 @@
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>
 
-<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
-<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
@@ -14,7 +14,7 @@
         <param name="device" type="string" value="/dev/i2c-1"/>
         <param name="address" type="int" value="40"/> <!-- 0x28 == 40 is the default for BNO055 -->
         <param name="frame_id" type="string" value="imu"/>
-	<param name="calibrationFile" type="string" value="/home/ubuntu/Poseidon/calibration.dat" />
+	<param name="calibrationFile" type="string" value="/opt/Poseidon/calibration.dat" />
 </node>
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
@@ -35,6 +35,6 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_piksi_nema_all.bag" />
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /opt/Poseidon/www/webroot/record/$(arg time_now)_piksi_nema_all.bag" />
 
 </launch>

@@ -18,7 +18,7 @@ sudo bash -c 'cat << EOF > /etc/udev/rules.d/9sudo 9-usb-serial.rules
 KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403",ATTRS{idProduct}=="6001", SYMLINK+="sonar"
 EOF'
 
-cd /home/ubuntu/Poseidon/src/workspace/src/
+cd /opt/Poseidon/src/workspace/src/
 
 echo "Download mavros"
 sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msgs ros-noetic-control-toolbox -y

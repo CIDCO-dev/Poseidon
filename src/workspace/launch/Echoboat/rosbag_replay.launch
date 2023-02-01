@@ -7,8 +7,6 @@
 	<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
 	
 	<node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.5 0 0 0.735 base_link velodyne 100" />
-	<node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="-0.3 0 0 0 0 0 base_link sonar 100" />
-<!--	<node pkg="tf" type="static_transform_publisher" name="link3_broadcaster" args="1 1 1 1 1 1 base_link gpsAntena 100" />-->
 
 	<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
 	<node pkg="echoboat_odometry" type="echoboat_odometry_node" name="odometry"/>
@@ -19,7 +17,7 @@
 	<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 
 	<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" output="screen"/>
-
-<!--	<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" output="screen"/>-->
+	
+	<node pkg="lidar_filtering" name="lidar_filtering" type="lidar_filtering_node" output="screen"/> <!-- Visualize filtering in rviz -->
 
 </launch>

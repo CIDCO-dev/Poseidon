@@ -1,11 +1,11 @@
 #!/bin/bash
 
 
-echo "[+] Configuring UART"
+echo -e "\[35m[+] Configuring UART\[0m"
 sudo systemctl mask serial-getty@ttyS2.service | tee -a log.txt
 usermod -G dialout ubuntu
 
-echo "[+] Install GPSD"
+echo -e "\[35m[+] Install GPSD\[0m"
 sudo apt-get install gpsd gpsd-clients libgps-dev -y | tee -a log.txt
 sudo cp /etc/default/gpsd "/etc/default/gpsd.bak$(date +"%Y%m%d_%H%M%S")"
 
@@ -25,7 +25,7 @@ EOF2'
 
 sudo ln -s /lib/systemd/system/gpsd.service /etc/systemd/system/multi-user.target.wants/
 
-echo "[+] config /boot"
+echo -e "\[35m[+] config /boot\[0m"
 sudo sed -i 's/intfc:uart2=off/intfc:uart2=on/g' /boot/hw_intfc.conf
 sudo sed -i 's/intfc:i2c7=off/intfc:i2c7=on/g' /boot/hw_intfc.conf
 sudo sed -i 's/intfc:dtoverlay=console-on-ttyS2/#intfc:dtoverlay=console-on-ttyS2/g' /boot/hw_intfc.conf
@@ -38,7 +38,7 @@ sudo sed -i 's/init=/sbin/init //g' /boot/extlinux/extlinux.conf
 
 sudo sed -i 's/ttyAMA0/ttyS2/g'/opt/Poseidon/service/uart_on_boot.sh
 
-echo "[+] Adding roslaunch on boot"
+echo -e "\[35m[+] Adding roslaunch on boot\[0m"
 sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service
 [Unit]
 Description=Launch ROS on boot.
@@ -56,7 +56,7 @@ sudo chmod 755 /etc/systemd/system/ros.service
 sudo systemctl enable ros
 echo "sudo systemctl start ros"
 
-echo "[+] Adding Uart config on boot"
+echo -e "\[35m[+] Adding Uart config on boot\[0m"
 sudo bash -c 'cat << EOF5 > /etc/systemd/system/uart.service
 [Unit]
 Description=Launch Uart config on boot.
@@ -73,8 +73,8 @@ EOF5'
 sudo chmod 755 /etc/systemd/system/uart.service
 sudo systemctl enable uart
 
-echo "[+] editing launch files"
+echo -e "\[35m[+] editing launch files\[0m"
 sudo sed -i 's/i2c-1/i2c-7/g' /opt/Poseidon/src/workspace/launch/Hydrobox/*.*
 
-echo "[+] editing uart service files"
+echo -e "\[35m[+] editing uart service files\[0m"
 sudo sed -i 's/AMA0/S2/g' /opt/Poseidon/service/*.*

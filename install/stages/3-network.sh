@@ -1,12 +1,12 @@
 #!/bin/sh
 
-echo "[+] Installing web server"
+echo -e "\[35m[+] Installing web server"\[0m
 sudo apt install lighttpd -y | tee -a log.txt
 
 sudo systemctl start lighttpd.service | tee -a log.txt
 sudo systemctl enable lighttpd.service | tee -a log.txt
 
-echo "[+] Installing websocket and JSON libraries"
+echo -e "\[35m[+] Installing websocket and JSON libraries\[0m"
 sudo apt install libwebsocketpp-dev rapidjson-dev
 
 mkdir -p /opt/Poseidon/www/webroot/record

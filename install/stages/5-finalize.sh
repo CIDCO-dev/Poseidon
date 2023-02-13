@@ -1,17 +1,17 @@
 #!/bin/bash
-echo "[+] install opencv"
+echo -e "\[35m[+] install opencv\[0m"
 sudo apt-get install libopencv-dev -y | tee -a log.txt
 
-echo "[+] install exiv2"
+echo -e "\[35m[+] install exiv2\[0m"
 sudo apt-get install libexiv2-dev -y | tee -a log.txt
 
-echo "[+] Configuring Inertial Sense SDK"
+echo -e "\[35m[+] Configuring Inertial Sense SDK\[0m"
 cd /opt/Poseidon/src/workspace/src/inertial_sense_ros/
 mkdir lib
 cd lib
 git clone https://github.com/inertialsense/InertialSenseSDK | tee -a log.txt
 
-echo "[+] Install Chrony"
+echo -e "\[35m[+] Install Chrony\[0m"
 
 sudo apt-get install chrony -y | tee -a log.txt
 
@@ -70,7 +70,7 @@ rtcsync
 makestep 1 3
 EOF2'
 
-echo "[+] Downloading Rtklib"
+echo -e "\[35m[+] Downloading Rtklib\[0m"
 cd ~/ 
 git clone https://github.com/CIDCO-dev/RTKLIB.git | tee -a log.txt
 cd RTKLIB/app

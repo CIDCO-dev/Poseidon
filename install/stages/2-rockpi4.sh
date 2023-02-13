@@ -32,7 +32,7 @@ Help()
 Config()
 {
 
-echo "Configuring network"
+echo -e "\e[35mConfiguring network\[0m"
 # install network-manager and install as service
 sudo apt-get install network-manager -y | tee -a log.txt
 sudo systemctl start NetworkManager.service | tee -a log.txt

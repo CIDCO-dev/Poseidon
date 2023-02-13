@@ -29,87 +29,102 @@ catkin_make_isolated --install --use-ninja
 
 ### Compile and run Poseidon on virtual machine
 
-pre-requisite: \
-ubuntu virtual machine (ubuntu only) \
-the username must be ubuntu ( optional but easier install) \
-instruction:
+Pre-requisite: \
+Ubuntu virtual machine (ubuntu only) \
+The username must be ubuntu ( optional but easier install) \
+Instruction:
 ```
 sudo apt install git
 cd
 git clone --recursive <poseidon repo>
 ```
-run these scripts:
+Run these scripts:
 - ~/Poseidon/install/stages/1-base-ros-noetic.sh
 - ~/Poseidon/install/stages/2-x64.sh
 - ~/Poseidon/install/stages/3-network.sh
 - ~/Poseidon/install/stages/4-x64.sh
 - ~/Poseidon/install/stages/5-finalize.sh
 
-example :
+Example :
 ```
 sh ~/Poseidon/install/stages/1-base-ros-noetic.sh
 ```
-source ros environement:
+Source ros environement:
 ```
 source /opt/ros/noetic/setup.bash
 ```
 
-optional, automatic sourcing ros environement:
+Optional, automatic sourcing ros environement:
 ```
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 ```
-start new terminal or :
+Start new terminal or :
 ```
 source ~/.bashrc
 ```
 
-changes to build poseidon on virtual machine:
+Changes to build poseidon on virtual machine:
 ```
 cd ~/Poseidon/src/workspace
 catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;raspberrypi_vitals"
 ```
-source poseidon workspace:
+Source poseidon workspace:
 ```
 source devel/setup.bash
 ```
-or
+Or
 ```
 echo "source ~/Poseidon/src/workspace/devel/setup.bash" >> ~/.bashrc
 ```
-start new terminal or :
+Start new terminal or :
 ```
 source ~/.bashrc
 ```
 
-launch simulator:
+Launch simulator:
 ```
 roslaunch launch/Simulator/dummy_simulator_virtual-machine.launch
 ```
 
-start browser and navigate to localhost or 127.0.0.1
+Start browser and navigate to localhost or 127.0.0.1
 
-### unit test
+### Unit test
 
-see readme for tests :
+See readme for tests :
 - sonar_nmea_0183_tcp_client
 - gnss_zed_f9p
 
 
-run tests
+Run tests
 ```
 catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy"
 
 ```
 
 ### Replay Echoboat Rosbag
-in poseidon workspace:
+In poseidon workspace:
 ```
 roslaunch launch/Echoboat/rosbag_replay.launch bag_filename:=rosbag.bag
 ```
 
+### Geo-reference Lidar
+In poseidon workspace:
+```
+./devel/lib/logger/lidarGeoreferencer file > outputFile.txt
+```
+Activate filtering:
+```
+./devel/lib/logger/lidarGeoreferencer -f file > outputFile.txt
+```
+For help:
+```
+./devel/lib/logger/lidarGeoreferencer
+```
+
+
 ### Logging mode
 
-- always ON : 1
+- Always ON : 1
 - Manual : 2
 - Speed based : 3
 

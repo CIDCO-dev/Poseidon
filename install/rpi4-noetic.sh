@@ -36,21 +36,26 @@ Help()
 ############################################################
 Config()
 {
-~/Poseidon/install/stages/1-base-ros-noetic.sh
 
-~/Poseidon/install/stages/2-rpi4.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
+echo "Moving software to compile"
+sudo chmod 777 /opt
+cp -r ../../Poseidon/ /opt/ 
 
-~/Poseidon/install/stages/3-network.sh
+/opt/Poseidon/install/stages/1-base-ros-noetic.sh
 
-~/Poseidon/install/stages/4-rpi.sh
+/opt/Poseidon/install/stages/2-rpi4.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
 
-~/Poseidon/install/stages/rtc.sh
+/opt/Poseidon/install/stages/3-network.sh
 
-~/Poseidon/install/stages/5-finalize.sh
+/opt/Poseidon/install/stages/4-rpi.sh
 
-~/Poseidon/install/stages/6-devices-rpi.sh
+/opt/Poseidon/install/stages/rtc.sh
 
-~/Poseidon/install/stages/build-rpi4.sh
+/opt/Poseidon/install/stages/5-finalize.sh
+
+/opt/Poseidon/install/stages/6-devices-rpi.sh
+
+/opt/Poseidon/install/stages/build-rpi4.sh
 
 echo "*********************************************************************"
 echo "*                        Reboot your device                         *"

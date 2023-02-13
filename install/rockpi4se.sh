@@ -6,9 +6,9 @@
 Help()
 {
    # Display Help
-   echo "Ethernet and Wifi Configuration script."
+   echo "Install script for Raspberry 4 with ubuntu 20."
    echo
-   echo "Syntax: 2-rpi.sh [options]"
+   echo "Syntax: rpi4-noetic.sh [options]"
    echo "options:"
    echo "help or h      Print this Help.                  "    
    echo "[hotspot_if]     Hotspot interface name.           $hs_if"
@@ -18,11 +18,16 @@ Help()
    echo "[wifi_ssid]      Wifi SSID.                        $wf_ssid"
    echo "[wifi_pass]      Wifi Password.                    $wf_pass"
    echo "[eth_2nd_ip]     Wired ethernet second ip address. $snd_ip"
+   echo "[rtc]            Enable Hardware RTC and disable Software RTC"
    echo
    echo "Command line exemple."
-   echo "2-rpi.sh -help"
-   echo "2-rpi.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass -eth_2nd_ip "
-   echo "2-rpi.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' '192.168.2.101'"
+   echo "rpi4-noetic.sh -help"
+   echo "For Software RTC"
+   echo "rpi4-noetic.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass -eth_2nd_ip "
+   echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' '192.168.2.101'"
+   echo "For Hardware RTC"
+   echo "rpi4-noetic.sh hotspot_if hotspot_ssid hotspot_pass wifi_if wifi_ssid wifi_pass eth_2nd_ip rtc"
+   echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-1234' '192.168.2.101' 'rtc'"
    
 }
 
@@ -31,23 +36,31 @@ Help()
 ############################################################
 Config()
 {
-echo "[+] Editing uboot"
-# removing hang on bonnt cause by data from gps on uart
-sudo cp /opt/Poseidon/install/stages/rpi-cfg-files/uboot.env /boot/firmware
+echo "Moving software to compile"
+sudo chmod 777 /opt
+cp -r ../../Poseidon/ /opt/ 
 
-echo "[+] Installing RPi.GPIO"
-pip3 install RPi.GPIO | tee -a log.txt
 
-echo "Configuring network"
-# install network-manager and install as service
-sudo apt-get install network-manager -y | tee -a log.txt
-sudo systemctl start NetworkManager.service | tee -a log.txt
-sudo systemctl enable NetworkManager.service | tee -a log.txt
 
-/opt/Poseidon/install/stages/ethernet-config.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
+/opt/Poseidon/install/stages/1-base-ros-noetic.sh
 
-sudo netplan apply
-   
+/opt/Poseidon/install/stages/2-rockpi4.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
+
+/opt/Poseidon/install/stages/3-network.sh
+
+/opt/Poseidon/install/stages/4-rockpi4.sh
+
+/opt/Poseidon/install/stages/5-finalize.sh
+
+/opt/Poseidon/install/stages/6-devices-rockpi.sh
+
+/opt/Poseidon/install/stages/build-rockpi4.sh
+
+sudo reboot
+
+echo "*********************************************************************"
+echo "*                        Reboot your device                         *"
+echo "*********************************************************************"   
 }
 
 
@@ -72,10 +85,6 @@ else
     exit
   fi
 fi
-
-
-
-
 
 
 

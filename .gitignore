@@ -44,6 +44,9 @@ georef/.idea/
 src/workspace/build/
 src/workspace/devel/
 www/webroot/record/
+src/workspace/src/gpsd_client
+src/workspace/src/gps_umd
+src/workspace/src/gps_common
 
 devel/
 logs/
@@ -71,6 +74,7 @@ install/stages/log.txt
 # Ignore generated docs
 *.dox
 *.wikidoc
+log.txt
 
 # eclipse stuff
 .project

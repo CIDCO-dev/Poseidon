@@ -16,7 +16,7 @@ fi
 
 echo "[+] Building Poseidon"
 
-cd /home/ubuntu/Poseidon/src/workspace
+cd /opt/Poseidon/src/workspace
 source /opt/ros/melodic/setup.bash
 
 catkin_make tun_test -j1

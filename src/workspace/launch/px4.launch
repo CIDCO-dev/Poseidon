@@ -10,9 +10,9 @@
         <arg name="fcu_protocol" default="v2.0" />
         <arg name="respawn_mavros" default="true" />
 
-        <include file="/home/ubuntu/Poseidon/src/workspace/launch/mavros.launch">
-                <arg name="pluginlists_yaml" value="/home/ubuntu/Poseidon/src/workspace/config/px4_pluginlists.yaml" />
-                <arg name="config_yaml" value="/home/ubuntu/Poseidon/src/workspace/config/px4_config.yaml" />
+        <include file="/opt/Poseidon/src/workspace/launch/mavros.launch">
+                <arg name="pluginlists_yaml" value="/opt/Poseidon/src/workspace/config/px4_pluginlists.yaml" />
+                <arg name="config_yaml" value="/opt/Poseidon/src/workspace/config/px4_config.yaml" />
 
                 <arg name="fcu_url" value="$(arg fcu_url)" />
                 <arg name="gcs_url" value="$(arg gcs_url)" />

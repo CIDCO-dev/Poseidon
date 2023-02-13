@@ -6,7 +6,7 @@
 	<node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.5 0 0 0 base_link velodyne 100" />
 
 	<node pkg="echoboat_odometry" type="echoboat_odometry_node" name="odometry"/>
-<!--	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ubuntu/Poseidon/src/workspace/launch/echoboat.rviz" required="True" />-->
+<!--	<node pkg="rviz" type="rviz" name="rviz" args="-d /opt/Poseidon/src/workspace/launch/echoboat.rviz" required="True" />-->
 	
 	<node pkg="gmapping" name="slamGmapping" type="slam_gmapping" args="$(arg scan)" />
 	<node pkg="rosbag" name="replay" type="play" args="--clock $(arg bag_filename)" />

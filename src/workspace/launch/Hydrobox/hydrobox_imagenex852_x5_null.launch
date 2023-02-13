@@ -5,8 +5,8 @@
 <arg name="gpsdIp" value="localhost"/>
 <arg name="gpsdPort" value="2947"/>
 
-<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
-<arg name="configPath" value="/home/ubuntu/Poseidon/config.txt"/>
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
@@ -24,7 +24,7 @@
 
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
 
-<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+<node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
@@ -33,6 +33,6 @@
 
 <node pkg="gnss_mosaic_x5" name="gnss_mosaic_x5" type="gnss_mosaic_x5_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_852_all.bag" />
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /opt/Poseidon/www/webroot/record/$(arg time_now)_x5_852_all.bag" />
 
 </launch>

@@ -3,8 +3,8 @@
 USER=$1
 DESTINATION_PATH=$2
 SERVER=$3
-RSA_KEY_FILENAME=$4 # path = /home/ubuntu/.ssh/
-FILES_LOCATION="/home/ubuntu/Poseidon/www/webroot/record/" # without the last '/' it will transfer the folder instead of files
+RSA_KEY_FILENAME=$4 # path = /opt/.ssh/
+FILES_LOCATION="/opt/Poseidon/www/webroot/record/" # without the last '/' it will transfer the folder instead of files
 KEEP_ORIGINAL_FILES=false # set to true for testing purposes
 
 if $KEEP_ORIGINAL_FILES; then

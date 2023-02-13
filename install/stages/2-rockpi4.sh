@@ -8,7 +8,7 @@ Help()
    # Display Help
    echo "Ethernet and Wifi Configuration script."
    echo
-   echo "Syntax: 2-rpi.sh [options]"
+   echo "Syntax: 2-rpi4.sh [options]"
    echo "options:"
    echo "help or h      Print this Help.                  "    
    echo "[hotspot_if]     Hotspot interface name.           $hs_if"
@@ -20,9 +20,9 @@ Help()
    echo "[eth_2nd_ip]     Wired ethernet second ip address. $snd_ip"
    echo
    echo "Command line exemple."
-   echo "2-rpi.sh -help"
-   echo "2-rpi.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass -eth_2nd_ip "
-   echo "2-rpi.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' '192.168.2.101'"
+   echo "2-rpi4.sh -help"
+   echo "2-rpi4.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass -eth_2nd_ip "
+   echo "2-rpi4.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' '192.168.2.101'"
    
 }
 
@@ -31,14 +31,8 @@ Help()
 ############################################################
 Config()
 {
-echo "[+] Editing uboot"
-# removing hang on bonnt cause by data from gps on uart
-sudo cp /opt/Poseidon/install/stages/rpi-cfg-files/uboot.env /boot/firmware
 
-echo "[+] Installing RPi.GPIO"
-pip3 install RPi.GPIO | tee -a log.txt
-
-echo "Configuring network"
+echo -e "\e[35mConfiguring network\[0m"
 # install network-manager and install as service
 sudo apt-get install network-manager -y | tee -a log.txt
 sudo systemctl start NetworkManager.service | tee -a log.txt
@@ -72,10 +66,6 @@ else
     exit
   fi
 fi
-
-
-
-
 
 
 

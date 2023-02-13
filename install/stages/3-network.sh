@@ -1,15 +1,15 @@
 #!/bin/sh
 
-echo "[+] Installing web server"
+echo -e "\[35m[+] Installing web server"\[0m
 sudo apt install lighttpd -y | tee -a log.txt
 
 sudo systemctl start lighttpd.service | tee -a log.txt
 sudo systemctl enable lighttpd.service | tee -a log.txt
 
-echo "[+] Installing websocket and JSON libraries"
+echo -e "\[35m[+] Installing websocket and JSON libraries\[0m"
 sudo apt install libwebsocketpp-dev rapidjson-dev
 
-mkdir -p /home/ubuntu/Poseidon/www/webroot/record
+mkdir -p /opt/Poseidon/www/webroot/record
 
 sudo bash -c 'cat << EOF2 > /etc/lighttpd/lighttpd.conf
 server.modules = (
@@ -19,7 +19,7 @@ server.modules = (
         "mod_redirect",
 )
  
-server.document-root        = "/home/ubuntu/Poseidon/www/webroot"
+server.document-root        = "/opt/Poseidon/www/webroot"
 server.upload-dirs          = ( "/var/cache/lighttpd/uploads" )
 server.errorlog             = "/var/log/lighttpd/error.log"
 server.pid-file             = "/run/lighttpd.pid"

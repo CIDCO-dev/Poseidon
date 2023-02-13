@@ -9,7 +9,7 @@ sudo systemctl enable lighttpd.service | tee -a log.txt
 echo "[+] Installing websocket and JSON libraries"
 sudo apt install libwebsocketpp-dev rapidjson-dev
 
-mkdir -p ~/Poseidon/www/webroot/record
+mkdir -p /opt/Poseidon/www/webroot/record
 
 sudo bash -c 'cat << EOF2 > /etc/lighttpd/lighttpd.conf
 server.modules = (

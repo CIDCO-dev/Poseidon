@@ -35,7 +35,7 @@ The username must be ubuntu ( optional but easier install) \
 Instruction:
 ```
 sudo apt install git
-cd
+cd /opt
 git clone --recursive <poseidon repo>
 ```
 Run these scripts:

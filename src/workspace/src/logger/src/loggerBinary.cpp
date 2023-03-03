@@ -19,15 +19,17 @@ void LoggerBinary::init(){
 		fileRotationMutex.lock();
 
 		//Make sure the files are not already opened...
-		if(!outputFile.is_open()){
+		if(!outputFile.is_open() && !rawGnssoutputFile.is_open() ){
 
 			outputFileName = TimeUtils::getStringDate() + std::string(".log");
+			rawGnssFileName = TimeUtils::getStringDate() + std::string(".bin");
 
             outputFile.open(outputFolder + "/" + outputFileName,std::ios::binary|std::ios::trunc);
+			rawGnssoutputFile.open(outputFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
 			
 			ROS_INFO("Logging binary data to %s", outputFolder.c_str());
 			
-            if(!outputFile.good()){
+            if(!outputFile.good() && !rawGnssoutputFile.good()){
 				throw std::invalid_argument("Couldn't open binary log file");
             }
 
@@ -44,13 +46,18 @@ void LoggerBinary::init(){
 void LoggerBinary::finalize(){
 	fileRotationMutex.lock();
 
-	if(outputFile.is_open()){
+	if(outputFile.is_open() && rawGnssoutputFile.is_open()){
 		//close
 		outputFile.close();
+		rawGnssoutputFile.close();
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + outputFileName;
 		std::string newPath = outputFolder + "/" + outputFileName;
+		rename(oldPath.c_str(),newPath.c_str());
+		
+		oldPath = tmpLoggingFolder + "/"  + rawGnssFileName;
+		newPath = outputFolder + "/" + rawGnssFileName;
 		rename(oldPath.c_str(),newPath.c_str());
 	}
 	

@@ -3,7 +3,15 @@ project(logger)
 
 add_definitions(-std=c++17 -Wall -g)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs)
+find_package(catkin REQUIRED COMPONENTS 
+roscpp 
+std_msgs 
+geometry_msgs 
+logger_service 
+tf2 
+tf2_ros 
+tf2_geometry_msgs
+binary_stream_msg)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 catkin_package(
@@ -24,10 +32,6 @@ include_directories(
  ${catkin_INCLUDE_DIRS}
  ../lidar_filtering/include
 )
-
-message("here")
-message(${catkin_INCLUDE_DIRS})
-message("ok")
 
 ## Declare a C++ library 
 add_library(${PROJECT_NAME} src/loggerBase.cpp 

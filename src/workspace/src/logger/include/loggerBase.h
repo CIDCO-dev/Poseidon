@@ -15,6 +15,7 @@
 #include <tf2_ros/transform_listener.h>
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
+
 //C++ std lib
 #include <iostream>
 #include <mutex>
@@ -27,9 +28,10 @@
 #include "logger_service/GetLoggingMode.h"
 #include "logger_service/SetLoggingMode.h"
 
-//Config service Poseidon
+//Poseidon custom messages
 #include "setting_msg/Setting.h"
 #include "setting_msg/ConfigurationService.h"
+#include "binary_stream_msg/Stream.h"
 
 //Poseidon utils
 #include "../../utils/timestamp.h"
@@ -56,6 +58,7 @@ class LoggerBase{
 		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
 		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
 		void configurationCallBack(const setting_msg::Setting &setting);
+		//void gnssBinStreamCallback(const binary_stream_msg::Stream& stream);
 		
 		/* Speed based logging */
 		void updateSpeedThreshold();
@@ -108,6 +111,7 @@ class LoggerBase{
 		ros::Subscriber speedSubscriber ;
 		ros::Subscriber configurationSubscriber;
 		ros::Subscriber lidarSubscriber ;
+		//ros::Subscriber streamSubscriber;
 		
 		ros::ServiceServer getLoggingStatusService ;
 		ros::ServiceServer toggleLoggingService;

@@ -8,6 +8,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	speedSubscriber = node.subscribe("speed", 1000, &LoggerBase::speedCallback, this);
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
+	//streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, ros::TransportHints().tcpNoDelay(), this);
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
 	toggleLoggingService = node.advertiseService("toggle_logging", &LoggerBase::toggleLogging, this);
@@ -230,4 +231,19 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 	}
 	
 }
+
+/*
+void LoggerBase::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
+	ROS_INFO_STREAM("LoggerBase::gnssBinStreamCallback \n"); 
+	
+	char arr[stream.vector_length];
+	auto v = stream.stream;
+	
+	std::copy(v.begin(), v.end(), arr);
+	
+	outputFile.write((char*)arr, stream.vector_length);
+	
+	
+}
+*/
 

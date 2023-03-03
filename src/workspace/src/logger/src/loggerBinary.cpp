@@ -1,6 +1,8 @@
 #include "loggerBinary.h"
 
 LoggerBinary::LoggerBinary(std::string & logFolder): LoggerBase(logFolder) {
+	
+	streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBinary::gnssBinStreamCallback,this, ros::TransportHints().tcpNoDelay()); //, ros::TransportHints().tcpNoDelay()
 
 }
 
@@ -104,8 +106,8 @@ void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
         memcpy(&packet.covariance,&gnss.position_covariance,9*sizeof(double));
         packet.covarianceType=gnss.position_covariance_type;
 
-        outputFile.write((char*)&hdr,sizeof(PacketHeader));
-        outputFile.write((char*)&packet,sizeof(PositionPacket));
+        outputFile.write((char*)&hdr, sizeof(PacketHeader));
+        outputFile.write((char*)&packet, sizeof(PositionPacket));
 
 		lastGnssTimestamp = timestamp; //XXX unused lastGnssTimestamp variable
 	}
@@ -137,8 +139,8 @@ void LoggerBinary::imuCallback(const sensor_msgs::Imu& imu){
             packet.pitch=pitch;
             packet.roll=roll;
 
-            outputFile.write((char*)&hdr,sizeof(PacketHeader));
-            outputFile.write((char*)&packet,sizeof(AttitudePacket));
+            outputFile.write((char*)&hdr, sizeof(PacketHeader));
+            outputFile.write((char*)&packet, sizeof(AttitudePacket));
 			
 			lastImuTimestamp = timestamp;
 		}
@@ -161,8 +163,8 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
             packet.depth_y=sonar.point.y;
             packet.depth_z=sonar.point.z;
 
-            outputFile.write((char*)&hdr,sizeof(PacketHeader));
-            outputFile.write((char*)&packet,sizeof(DepthPacket));
+            outputFile.write((char*)&hdr, sizeof(PacketHeader));
+            outputFile.write((char*)&packet, sizeof(DepthPacket));
             
 			lastSonarTimestamp = timestamp;
 		}
@@ -203,3 +205,23 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 	}
 }
 
+void LoggerBinary::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
+	ROS_INFO_STREAM("LoggerBinary::gnssBinStreamCallback \n"); 
+	
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = stream.timeStamp;
+		
+		if(timestamp > lastLidarTimestamp){
+		
+			char arr[stream.vector_length];
+			auto v = stream.stream;
+			std::copy(v.begin(), v.end(), arr);
+			
+			outputFile.write((char*)arr, stream.vector_length);
+		}
+		
+		lastLidarTimestamp = timestamp;
+	}
+	
+	
+}

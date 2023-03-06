@@ -36,9 +36,6 @@ Help()
 ############################################################
 Config()
 {
-echo "Moving software to compile"
-sudo chmod 777 /opt
-cp -r ../../Poseidon/ /opt/ 
 
 
 

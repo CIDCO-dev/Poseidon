@@ -17,10 +17,10 @@ void LoggerText::init(){
 		fileRotationMutex.lock();
 
 		//Make sure the files are not already opened...
-		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile && !lidarOutputFile){
+		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile && !lidarOutputFile && !rawGnssoutputFile.is_open()){
 
 			std::string dateString = TimeUtils::getStringDate();
-
+			
 			//Open GNSS file
 			gnssFileName = dateString + "_gnss.txt";
 
@@ -65,8 +65,8 @@ void LoggerText::init(){
 			lidarOutputFile = fopen(lidarFilePath.c_str(),"a");
 
 	        if(!lidarOutputFile){
-			fileRotationMutex.unlock();
-			throw std::invalid_argument(std::string("Couldn't open lidar log file ") + lidarFileName);
+				fileRotationMutex.unlock();
+				throw std::invalid_argument(std::string("Couldn't open lidar log file ") + lidarFileName);
 	        }
 	        
 	        
@@ -76,6 +76,14 @@ void LoggerText::init(){
 			fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
 			fprintf(sonarOutputFile,"Timestamp%sDepth\n",separator.c_str());
 			fprintf(lidarOutputFile,"Timestamp%sPoints\n",separator.c_str());
+			
+			rawGnssFileName = dateString + std::string(".bin");
+			rawGnssoutputFile.open(outputFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
+			
+			if( !rawGnssoutputFile.good()){
+				throw std::invalid_argument("Couldn't open raw gnss log file");
+            }
+			
 		}
 
 		lastRotationTime = ros::Time::now();
@@ -132,6 +140,15 @@ void LoggerText::finalize(){
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + lidarFileName;
 		std::string newPath = outputFolder + "/" + lidarFileName;
+		rename(oldPath.c_str(),newPath.c_str());
+	}
+	
+	if(rawGnssoutputFile.is_open()){
+		//close
+		rawGnssoutputFile.close();
+		
+		std::string oldPath = tmpLoggingFolder + "/"  + rawGnssFileName;
+		std::string newPath = outputFolder + "/" + rawGnssFileName;
 		rename(oldPath.c_str(),newPath.c_str());
 	}
 	
@@ -245,3 +262,23 @@ void LoggerText::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 	
 }
 
+void LoggerText::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
+	ROS_INFO_STREAM("LoggerText::gnssBinStreamCallback \n"); 
+
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = stream.timeStamp;
+		
+		if(timestamp > lastLidarTimestamp){
+		
+			char arr[stream.vector_length];
+			auto v = stream.stream;
+			std::copy(v.begin(), v.end(), arr);
+			
+			rawGnssoutputFile.write((char*)arr, stream.vector_length);
+		}
+		
+		lastLidarTimestamp = timestamp;
+	}
+	
+	
+}

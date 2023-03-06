@@ -18,7 +18,8 @@ class LoggerText : public LoggerBase{
 		void sonarCallback(const geometry_msgs::PointStamped& sonar);
 		void speedCallback(const nav_msgs::Odometry& speed);
 		void lidarCallBack(const sensor_msgs::PointCloud2& lidar);
-	
+		void gnssBinStreamCallback(const binary_stream_msg::Stream& stream);
+		
 	private:
 		
 		// log files

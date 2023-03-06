@@ -1,7 +1,6 @@
 #ifndef logger_text
 #define logger_text
 #include "loggerBase.h"
-#include <fstream>
 #include "types.h"
 
 class LoggerBinary : public LoggerBase{
@@ -30,9 +29,7 @@ class LoggerBinary : public LoggerBase{
 		//std::string  outputFilePath;
         std::string  outputFileName;
         std::ofstream outputFile;
-        std::string  rawGnssFileName;
-        std::ofstream rawGnssoutputFile;
-        ros::Subscriber streamSubscriber;
+        
 
 };
 #endif

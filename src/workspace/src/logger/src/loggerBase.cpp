@@ -8,7 +8,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	speedSubscriber = node.subscribe("speed", 1000, &LoggerBase::speedCallback, this);
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
-	//streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, ros::TransportHints().tcpNoDelay(), this);
+	streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
 	toggleLoggingService = node.advertiseService("toggle_logging", &LoggerBase::toggleLogging, this);

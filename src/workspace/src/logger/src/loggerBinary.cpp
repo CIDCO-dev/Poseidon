@@ -2,7 +2,7 @@
 
 LoggerBinary::LoggerBinary(std::string & logFolder): LoggerBase(logFolder) {
 	
-	streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBinary::gnssBinStreamCallback,this, ros::TransportHints().tcpNoDelay()); //, ros::TransportHints().tcpNoDelay()
+	//streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBinary::gnssBinStreamCallback,this, ros::TransportHints().tcpNoDelay()); //, ros::TransportHints().tcpNoDelay()
 
 }
 
@@ -29,8 +29,11 @@ void LoggerBinary::init(){
 			
 			ROS_INFO("Logging binary data to %s", outputFolder.c_str());
 			
-            if(!outputFile.good() && !rawGnssoutputFile.good()){
+            if(!outputFile.good()){
 				throw std::invalid_argument("Couldn't open binary log file");
+            }
+            if( !rawGnssoutputFile.good()){
+				throw std::invalid_argument("Couldn't open raw gnss log file");
             }
 
 			lastRotationTime = ros::Time::now();
@@ -224,7 +227,7 @@ void LoggerBinary::gnssBinStreamCallback(const binary_stream_msg::Stream& stream
 			auto v = stream.stream;
 			std::copy(v.begin(), v.end(), arr);
 			
-			outputFile.write((char*)arr, stream.vector_length);
+			rawGnssoutputFile.write((char*)arr, stream.vector_length);
 		}
 		
 		lastLidarTimestamp = timestamp;

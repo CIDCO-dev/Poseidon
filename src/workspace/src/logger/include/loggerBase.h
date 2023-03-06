@@ -21,6 +21,7 @@
 #include <mutex>
 #include <thread>
 #include <numeric>
+#include <fstream>
 
 //Logger service Poseidon
 #include "logger_service/GetLoggingStatus.h"
@@ -58,7 +59,7 @@ class LoggerBase{
 		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
 		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
 		void configurationCallBack(const setting_msg::Setting &setting);
-		//void gnssBinStreamCallback(const binary_stream_msg::Stream& stream);
+		virtual void gnssBinStreamCallback(const binary_stream_msg::Stream& stream)=0;
 		
 		/* Speed based logging */
 		void updateSpeedThreshold();
@@ -111,13 +112,17 @@ class LoggerBase{
 		ros::Subscriber speedSubscriber ;
 		ros::Subscriber configurationSubscriber;
 		ros::Subscriber lidarSubscriber ;
-		//ros::Subscriber streamSubscriber;
 		
 		ros::ServiceServer getLoggingStatusService ;
 		ros::ServiceServer toggleLoggingService;
 		
 		ros::ServiceServer getLoggingModeService ;
 		ros::ServiceServer setLoggingModeService;
+		
+		// raw gnss binary stream
+		std::string  rawGnssFileName;
+        std::ofstream rawGnssoutputFile;
+        ros::Subscriber streamSubscriber;
 };
 	
 #endif

@@ -78,7 +78,7 @@ void LoggerText::init(){
 			fprintf(lidarOutputFile,"Timestamp%sPoints\n",separator.c_str());
 			
 			rawGnssFileName = dateString + std::string(".bin");
-			rawGnssoutputFile.open(outputFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
+			rawGnssoutputFile.open(tmpLoggingFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
 			
 			if( !rawGnssoutputFile.good()){
 				throw std::invalid_argument("Couldn't open raw gnss log file");

@@ -265,9 +265,7 @@ class ZEDF9P{
 				msg.stream = v;
 				msg.timeStamp=ros::Time::now().toNSec();
 				gnssBinStreamPublisher.publish(msg);
-				
-				
-				
+
 			}
 			else{
 				ROS_ERROR("zf9p checksum error");

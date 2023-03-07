@@ -73,6 +73,10 @@ class LoggerBase{
 		bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response);
 		void updateLoggingMode();
 		
+		/* log transfer */
+		//void compress(filesPath);
+		//void transfert(zipPath, url);
+		
 	protected:
 		// ros
 		ros::NodeHandle node;

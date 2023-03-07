@@ -100,6 +100,7 @@ void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 			//TODO: we could throttle this if CPU usage becomes an issue
 			rotate();
 		}
+		fileLock.lock();
 		uint64_t timestamp = TimeUtils::buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
 		PacketHeader hdr;
         hdr.packetType=PACKET_POSITION;
@@ -120,6 +121,8 @@ void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
         outputFile.write((char*)&packet, sizeof(PositionPacket));
 
 		lastGnssTimestamp = timestamp; //XXX unused lastGnssTimestamp variable
+		
+		fileLock.unlock();
 	}
 }
 
@@ -137,6 +140,8 @@ void LoggerBinary::imuCallback(const sensor_msgs::Imu& imu){
 
 		if(timestamp > lastImuTimestamp){
 			
+			fileLock.lock();
+			
 			imuTransform(imu, roll, pitch, heading);
 			
 			PacketHeader hdr;
@@ -153,6 +158,7 @@ void LoggerBinary::imuCallback(const sensor_msgs::Imu& imu){
             outputFile.write((char*)&packet, sizeof(AttitudePacket));
 			
 			lastImuTimestamp = timestamp;
+			fileLock.unlock();
 		}
 	}
 }
@@ -162,6 +168,9 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(sonar.header.stamp.sec, sonar.header.stamp.nsec);
 
 		if(timestamp > lastSonarTimestamp){
+			
+			fileLock.lock();
+			
 			PacketHeader hdr;
             hdr.packetType=PACKET_DEPTH;
             hdr.packetSize=sizeof(DepthPacket);
@@ -177,6 +186,7 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
             outputFile.write((char*)&packet, sizeof(DepthPacket));
             
 			lastSonarTimestamp = timestamp;
+			fileLock.unlock();
 		}
 	}
 }
@@ -194,6 +204,9 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
 		
 		if(timestamp > lastLidarTimestamp){
+		
+			fileLock.lock();
+			
 			PacketHeader hdr;
             hdr.packetType=PACKET_LIDAR;
             hdr.packetSize= sizeof(LidarPacket) * points.size();  //(uint64_t) (sizeof(LidarPacket) * points.size());
@@ -212,6 +225,7 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
     		
 		}
 		lastLidarTimestamp = timestamp;
+		fileLock.unlock();
 	}
 }
 

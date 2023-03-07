@@ -29,6 +29,7 @@ class LoggerBinary : public LoggerBase{
 		//std::string  outputFilePath;
         std::string  outputFileName;
         std::ofstream outputFile;
+        std::mutex fileLock;
         
 
 };

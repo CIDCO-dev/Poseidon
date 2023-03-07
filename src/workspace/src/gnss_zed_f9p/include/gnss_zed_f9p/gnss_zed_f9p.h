@@ -150,7 +150,7 @@ class ZEDF9P{
 
                 ros::Subscriber gnssSubscriber;
                 ros::Publisher speedPublisher;
-                ros::Publisher streamPublisher;
+                ros::Publisher gnssBinStreamPublisher;
 
 
 
@@ -159,7 +159,7 @@ class ZEDF9P{
 		ZEDF9P(std::string & outputFolder, std::string & serialport): outputFolder(outputFolder), serialport(serialport){
 			gnssSubscriber = n.subscribe("fix", 1000, &ZEDF9P::gnssCallback,this);
 			speedPublisher = n.advertise<nav_msgs::Odometry>("speed",1000);
-			streamPublisher = n.advertise<binary_stream_msg::Stream>("gnss_bin_stream",1000);
+			gnssBinStreamPublisher = n.advertise<binary_stream_msg::Stream>("gnss_bin_stream",1000);
 		}
 
 		std::string datetime(){
@@ -244,37 +244,27 @@ class ZEDF9P{
 				uint8_t sync[2];
 				sync[0] = 0xb5;
 				sync[1] = 0x62;
-				
-				
-				
+			
 				/*
 				file.write((char*)sync, sizeof(uint16_t));
 				file.write((char*)hdr, sizeof(ubx_header));
 				file.write((char*)payload, hdr->length);
 				file.write((char*)checksum, sizeof(ubx_checksum));
 				*/
-				char header[sizeof(ubx_header)];
-				memcpy(header, (char*)&hdr, sizeof(ubx_header));
-				
-				char content[hdr->length];
-				memcpy(content, (char*)&payload, hdr->length);
-				
-				char chcksm[sizeof(ubx_checksum)];
-				memcpy(chcksm, (char*)&checksum, sizeof(ubx_checksum));
 				
 				std::vector<unsigned char> v;
 				
 				v.insert(v.begin(), sync, sync+2);
-				v.insert(v.end(), header, header + sizeof(ubx_header));
-				v.insert(v.end(), content, content + hdr->length);
-				v.insert(v.end(), chcksm, chcksm + sizeof(ubx_checksum));
 				
-
+				v.insert(v.end(), (unsigned char*)hdr, (unsigned char*)hdr + sizeof(ubx_header));
+				v.insert(v.end(), (unsigned char*)payload, (unsigned char*)payload + hdr->length);
+				v.insert(v.end(), (unsigned char*)checksum, (unsigned char*)checksum + sizeof(ubx_checksum));
+				
 				binary_stream_msg::Stream msg;
 				msg.vector_length = v.size();
 				msg.stream = v;
 				msg.timeStamp=ros::Time::now().toNSec();
-				streamPublisher.publish(msg);
+				gnssBinStreamPublisher.publish(msg);
 				
 				
 				

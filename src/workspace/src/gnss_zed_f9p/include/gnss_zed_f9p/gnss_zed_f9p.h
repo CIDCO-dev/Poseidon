@@ -218,8 +218,6 @@ class ZEDF9P{
 		}
 
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
-			//TODO verify checksum
-			//TODO process , hdr
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
 
@@ -235,10 +233,11 @@ class ZEDF9P{
 					msg.twist.twist.linear.y= speedKmh;
 					speedPublisher.publish(msg);
 				}
+				/*
 				else if(hdr->msgClass == 0x02 && hdr->id == 0x15){
-					//Cool beans
 					//ROS_INFO("Got GNSS observation packet");
 				}
+				*/
 				
 				//write frame to bin file
 				uint8_t sync[2];
@@ -271,37 +270,6 @@ class ZEDF9P{
 				ROS_ERROR("zf9p checksum error");
 			}
 		}
-		/*
-		void initLogFile(){
-			if(!file.is_open()){
-	                        outputFileName = std::string(datetime()) + std::string(".ubx");
-				std::string outputFilePath = tmpFolder + "/" + outputFileName;
-        	                file.open(outputFilePath.c_str(),std::ios::app|std::ios::out|std::ios::binary);
-				lastRotationTime = ros::Time::now();
-			}
-		}
-
-		void finalizeLogFile(){
-			if(file.is_open()){
-				file.close();
-				std::string oldPath = tmpFolder + "/" + outputFileName;
-				std::string newPath = outputFolder + "/" + outputFileName;
-				rename(oldPath.c_str(),newPath.c_str());
-			}
-		}
-		*/
-		/*
-		void rotateLogFile(){
-                ros::Time currentTime = ros::Time::now();
-
-    	        if(currentTime.toSec() - lastRotationTime.toSec() > logRotationIntervalSeconds){
-			        ROS_INFO("Rotating GNSS UBX logs");
-		        	//close (if need be), then reopen files.
-					finalizeLogFile();
-					initLogFile();
-			}
-		}
-		*/
 
 		void run(){
 			//serial port opening
@@ -354,14 +322,7 @@ class ZEDF9P{
 				ros::spinOnce();
 			}
 
-			//FIXME: superflous with new rotate()
-			//open file
-			//initLogFile();
-
-			//if(file) {
-
 				while(ros::ok()){ //read serial port and save in the file
-					//rotateLogFile();
 
 					//read sync characters
 					int n = serialRead(serial_port, (unsigned char*)&read_buf, size);
@@ -425,18 +386,9 @@ class ZEDF9P{
 					else{//read error
 
 					}
-				}//while
+				}//while ros ok
 
-				//cleanup
-		                close(serial_port);
-	        	        //file.close();
-			/*
-			}
-			else{
-				ROS_INFO("Cannot open UBX file\n");
-				exit(1);
-			}
-			*/
+			close(serial_port);
 		}
 
 };

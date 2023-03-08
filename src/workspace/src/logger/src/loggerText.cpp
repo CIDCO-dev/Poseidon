@@ -263,7 +263,6 @@ void LoggerText::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 }
 
 void LoggerText::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
-	ROS_INFO_STREAM("LoggerText::gnssBinStreamCallback \n"); 
 
 	if(bootstrappedGnssTime && loggerEnabled){
 		uint64_t timestamp = stream.timeStamp;

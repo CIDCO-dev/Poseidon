@@ -191,25 +191,23 @@ void LoggerText::rotate(){
 bool LoggerText::compress(std::string &zipFilename, std::string &gnssFilePath, std::string &imuFilePath, std::string &sonarFilePath, 
 						std::string &lidarFilePath, std::string &rawGnssFilePath){
 	
-	ROS_INFO_STREAM("LoggerText::compress");
-	ROS_INFO_STREAM("zipFilename: "<< zipFilename);
-	ROS_INFO_STREAM("outputFolder: "<< outputFolder);
-	ROS_INFO_STREAM("gnssFilePath: "<< gnssFilePath);
+	std::string files = gnssFilePath + " " + imuFilePath + " " + sonarFilePath + " " + lidarFilePath + " " + rawGnssFilePath;
 	
-	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + gnssFilePath + " " + imuFilePath + " " + sonarFilePath + " " + lidarFilePath + " " + rawGnssFilePath;
-
-	ROS_INFO_STREAM(command);
+	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + files;
 	
-	auto p = std::system(command.c_str());
+	auto zip = std::system(command.c_str());
 	
-	ROS_INFO_STREAM(p);
-	
-	if(p == 0){
-		// delete files
+	if(zip == 0){
+		command = "rm -f" + files;
+		auto deleteFiles = std::system(command.c_str());
+		if (deleteFiles != 0){
+			ROS_ERROR_STREAM("Compress function cannot delete files");
+		}
+		
 		return true;
 	}
 	else{
-		ROS_ERROR_STREAM("Zipping process returned" << p);
+		ROS_ERROR_STREAM("Cannot zip files \nZipping process returned" << zip);
 		return false;
 	}
 	

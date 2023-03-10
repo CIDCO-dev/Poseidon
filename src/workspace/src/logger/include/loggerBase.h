@@ -85,7 +85,7 @@ class LoggerBase{
 		virtual bool compress(){};
 		void transfer();
 		std::string zip_to_base64(std::string &zipPath);
-		//std::string create_json_str(std::string zipFilename, std::string base64Zip);
+		std::string create_json_str(std::string &base64Zip);
 		//bool send_job(std::string json);
 		//bool can_reach_server();
 		

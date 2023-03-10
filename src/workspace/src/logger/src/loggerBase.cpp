@@ -234,17 +234,18 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 
 void LoggerBase::transfer(){
 	
-	/*
-	
+	/*	
 	std::filesystem::path outputFolderPath = outputFolder;
 	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
 		    if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
 		    	
 		    	std::string base64Zip = zip_to_base64(dir_entry.path());
+		    	std::string json = create_json_str(base64Zip);
 		    	
 		    }
 	}
 	*/
+	
 	// 1- read zip file and convert to base64 string
 	// 2- create json {"apiKey": key, "jobType":jobType, "fileData": b64Data.decode("utf-8")}
 	// 3- post request <string_body>
@@ -257,7 +258,7 @@ std::string LoggerBase::zip_to_base64(std::string &zipPath){
 	typedef boost::archive::iterators::base64_from_binary<boost::archive::iterators::transform_width<std::string::const_iterator,6,8> > it_base64_t;
 	std::string s;
 	
-	std::ifstream file("test.zip", std::ios::in | std::ios::binary);
+	std::ifstream file(zipPath, std::ios::in | std::ios::binary);
 
 	if (file.is_open())
 	{
@@ -267,12 +268,35 @@ std::string LoggerBase::zip_to_base64(std::string &zipPath){
 	else{
 		throw std::ios_base::failure("Failed to open the file");
 	}
-	
-	
+
   // Encode
   unsigned int writePaddChars = (3-s.length()%3)%3;
   std::string base64(it_base64_t(s.begin()),it_base64_t(s.end()));
   base64.append(writePaddChars,'=');
 
   return base64;
+}
+
+std::string LoggerBase::create_json_str(std::string &base64Zip){
+	
+	rapidjson::Document d;
+	d.SetObject();
+
+	rapidjson::Value key("classified");
+	d.AddMember("apiKey", key, d.GetAllocator());
+	
+	rapidjson::Value jobType("captain crunch");
+	d.AddMember("jobType", jobType, d.GetAllocator());
+	
+	rapidjson::Value fileData;
+	char buffer[base64Zip.size()];
+	int len = sprintf(buffer, "%s", base64Zip.c_str());
+	fileData.SetString(buffer, len, d.GetAllocator());
+	d.AddMember("fileData", fileData, d.GetAllocator());
+	
+
+	rapidjson::StringBuffer sb;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+	d.Accept(writer);
+	return sb.GetString();
 }

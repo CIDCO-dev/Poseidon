@@ -48,7 +48,10 @@ void LoggerBinary::init(){
 
 void LoggerBinary::finalize(){
 	fileRotationMutex.lock();
-
+	
+	std::string newBinSensorFileName;
+	std::string newRawGnssFileName;
+	
 	if(outputFile.is_open() && rawGnssoutputFile.is_open()){
 		//close
 		outputFile.close();
@@ -56,15 +59,23 @@ void LoggerBinary::finalize(){
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + outputFileName;
-		std::string newPath = outputFolder + "/" + outputFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newBinSensorFileName = outputFolder + "/" + outputFileName;
+		rename(oldPath.c_str(), newBinSensorFileName.c_str());
 		
 		oldPath = tmpLoggingFolder + "/"  + rawGnssFileName;
-		newPath = outputFolder + "/" + rawGnssFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newRawGnssFileName = outputFolder + "/" + rawGnssFileName;
+		rename(oldPath.c_str(), newRawGnssFileName.c_str());
 	}
 	
 	fileRotationMutex.unlock();
+	
+	bool noError = compress(newBinSensorFileName, newRawGnssFileName);
+	/*
+	if(noError && can_reach_server()){
+		transfer();
+	}
+	*/
+	
 }
 
 /* Rotates logs based on time */
@@ -82,19 +93,27 @@ void LoggerBinary::rotate(){
 	}
 }
 
-void compress(std::string binSensorFileName, std::string rawGnssFileName){
+bool LoggerBinary::compress(std::string &binSensorFileName, std::string &rawGnssFileName){
 
-	size_t posLastDot = binSensorFileName.find_last_of(".");
-	// Should we handle the case scenario where theres no file extension ?
-	std::string zipFilename = binSensorFileName.substr(0, posLastDot) + std::string(".zip");
+	// only keep timestamp for zip file name
+	std::string zipFilename = binSensorFileName.substr(0, 17) + std::string(".zip");
 	
-	std::string command = "zip " + zipFilename + " " + binSensorFileName + " " + rawGnssFileName;
+	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + binSensorFileName + " " + rawGnssFileName;
 
 	ROS_INFO_STREAM(command.c_str());
 	
 	auto p = std::system(command.c_str());
 	
 	ROS_INFO_STREAM(p);
+	
+	if(p == 0){
+		//TODO delete files
+		return true;
+	}
+	else{
+		ROS_ERROR_STREAM("Zipping process returned" << p);
+		return false;
+	}
 }
 
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){

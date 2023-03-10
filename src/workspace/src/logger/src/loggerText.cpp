@@ -160,9 +160,11 @@ void LoggerText::finalize(){
 	
 	fileRotationMutex.unlock();
 	
-	compress(newGnssPath,newImuPath,newSonarPath,newLidarPath,newRawGnssPath);
+	std::string zipFilename = gnssFileName.substr(0, 17) + std::string(".zip");
+	
+	bool noError = compress(zipFilename, newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath);
 	/*
-	if(can_reach_server()){
+	if(noError && can_reach_server()){
 		transfer();
 	}
 	*/
@@ -186,21 +188,31 @@ void LoggerText::rotate(){
 }
 
 
-void LoggerText::compress(std::string gnssFileName, std::string imuFileName, std::string sonarFileName, 
-						std::string lidarFileName, std::string rawGnssFileName){
+bool LoggerText::compress(std::string &zipFilename, std::string &gnssFilePath, std::string &imuFilePath, std::string &sonarFilePath, 
+						std::string &lidarFilePath, std::string &rawGnssFilePath){
 	
-	size_t posLastDot = gnssFileName.find_last_of(".");
-	// Should we handle the case scenario where theres no file extension ?
-	std::string zipFilename = gnssFileName.substr(0, posLastDot) + std::string(".zip");
+	ROS_INFO_STREAM("LoggerText::compress");
+	ROS_INFO_STREAM("zipFilename: "<< zipFilename);
+	ROS_INFO_STREAM("outputFolder: "<< outputFolder);
+	ROS_INFO_STREAM("gnssFilePath: "<< gnssFilePath);
 	
-	std::string command = "zip " + zipFilename + " " + gnssFileName + " " + imuFileName + " " + sonarFileName + " " + lidarFileName + " " + rawGnssFileName;
+	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + gnssFilePath + " " + imuFilePath + " " + sonarFilePath + " " + lidarFilePath + " " + rawGnssFilePath;
 
 	ROS_INFO_STREAM(command);
 	
 	auto p = std::system(command.c_str());
 	
 	ROS_INFO_STREAM(p);
-	//TODO : Throw error if command did not execute properly
+	
+	if(p == 0){
+		// delete files
+		return true;
+	}
+	else{
+		ROS_ERROR_STREAM("Zipping process returned" << p);
+		return false;
+	}
+	
 	
 }
 

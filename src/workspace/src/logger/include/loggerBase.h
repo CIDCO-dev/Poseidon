@@ -39,6 +39,14 @@
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
 
+//Boost lib
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+
+//rapidjson
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+
 class LoggerBase{
 	
 	public:
@@ -74,14 +82,13 @@ class LoggerBase{
 		void updateLoggingMode();
 		
 		/* log transfer */
-		virtual void compress(){};
-		/*
+		virtual bool compress(){};
 		void transfer();
-		std::string zip_to_base64(std::string zipPath);
-		std::string create_json_str(std::string zipFilename, std::string base64Zip);
-		bool send_job(std::string json);
-		bool can_reach_server();
-		*/
+		std::string zip_to_base64(std::string &zipPath);
+		//std::string create_json_str(std::string zipFilename, std::string base64Zip);
+		//bool send_job(std::string json);
+		//bool can_reach_server();
+		
 	protected:
 		// ros
 		ros::NodeHandle node;

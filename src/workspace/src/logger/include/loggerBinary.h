@@ -15,7 +15,7 @@ class LoggerBinary : public LoggerBase{
 		void updateLoggingMode();
 		
 		/* log transfer */
-		void compress(std::string binSensorFileName, std::string rawGnssFileName);
+		bool compress(std::string &binSensorFileName, std::string &rawGnssFileName);
 		
 		/* topic callbacks */
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss);

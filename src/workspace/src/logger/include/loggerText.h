@@ -13,8 +13,8 @@ class LoggerText : public LoggerBase{
 		void updateLoggingMode();
 		
 		/* log transfer */
-		void compress(std::string gnssFileName, std::string imuFileName, std::string sonarFileName, 
-						std::string lidarFileName, std::string rawGnssFileName);
+		bool compress(std::string &zipFilename, std::string &gnssFilePath, std::string &imuFilePath, std::string &sonarFilePath, 
+						std::string &lidarFilePath, std::string &rawGnssFilePath);
 		
 		/* topic callbacks */
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss);

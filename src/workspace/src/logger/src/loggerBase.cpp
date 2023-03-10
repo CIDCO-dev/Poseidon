@@ -232,7 +232,7 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 	
 }
 
-void transfer(){
+void LoggerBase::transfer(){
 	
 	/*
 	
@@ -251,3 +251,28 @@ void transfer(){
 	
 }
 
+std::string LoggerBase::zip_to_base64(std::string &zipPath){
+
+	
+	typedef boost::archive::iterators::base64_from_binary<boost::archive::iterators::transform_width<std::string::const_iterator,6,8> > it_base64_t;
+	std::string s;
+	
+	std::ifstream file("test.zip", std::ios::in | std::ios::binary);
+
+	if (file.is_open())
+	{
+		s.append(std::string(std::istreambuf_iterator<char>(file), {}));
+		file.close();
+	}
+	else{
+		throw std::ios_base::failure("Failed to open the file");
+	}
+	
+	
+  // Encode
+  unsigned int writePaddChars = (3-s.length()%3)%3;
+  std::string base64(it_base64_t(s.begin()),it_base64_t(s.end()));
+  base64.append(writePaddChars,'=');
+
+  return base64;
+}

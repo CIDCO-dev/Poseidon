@@ -232,18 +232,22 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 	
 }
 
-/*
-void LoggerBase::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
-	ROS_INFO_STREAM("LoggerBase::gnssBinStreamCallback \n"); 
+void transfer(){
 	
-	char arr[stream.vector_length];
-	auto v = stream.stream;
+	/*
 	
-	std::copy(v.begin(), v.end(), arr);
-	
-	outputFile.write((char*)arr, stream.vector_length);
-	
+	std::filesystem::path outputFolderPath = outputFolder;
+	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
+		    if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
+		    	
+		    	std::string base64Zip = zip_to_base64(dir_entry.path());
+		    	
+		    }
+	}
+	*/
+	// 1- read zip file and convert to base64 string
+	// 2- create json {"apiKey": key, "jobType":jobType, "fileData": b64Data.decode("utf-8")}
+	// 3- post request <string_body>
 	
 }
-*/
 

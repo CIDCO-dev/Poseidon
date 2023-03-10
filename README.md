@@ -39,15 +39,15 @@ cd /opt
 git clone --recursive <poseidon repo>
 ```
 Run these scripts:
-- ~/Poseidon/install/stages/1-base-ros-noetic.sh
-- ~/Poseidon/install/stages/2-x64.sh
-- ~/Poseidon/install/stages/3-network.sh
-- ~/Poseidon/install/stages/4-x64.sh
-- ~/Poseidon/install/stages/5-finalize.sh
+- /opt/Poseidon/install/stages/1-base-ros-noetic.sh
+- /opt/Poseidon/install/stages/2-x64.sh
+- /opt/Poseidon/install/stages/3-network.sh
+- /opt/Poseidon/install/stages/4-x64.sh
+- /opt/Poseidon/install/stages/5-finalize.sh
 
 Example :
 ```
-sh ~/Poseidon/install/stages/1-base-ros-noetic.sh
+sh /opt/Poseidon/install/stages/1-base-ros-noetic.sh
 ```
 Source ros environement:
 ```
@@ -65,7 +65,7 @@ source ~/.bashrc
 
 Changes to build poseidon on virtual machine:
 ```
-cd ~/Poseidon/src/workspace
+cd /opt/Poseidon/src/workspace
 catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;raspberrypi_vitals"
 ```
 Source poseidon workspace:
@@ -74,7 +74,7 @@ source devel/setup.bash
 ```
 Or
 ```
-echo "source ~/Poseidon/src/workspace/devel/setup.bash" >> ~/.bashrc
+echo "source /opt/Poseidon/src/workspace/devel/setup.bash" >> ~/.bashrc
 ```
 Start new terminal or :
 ```

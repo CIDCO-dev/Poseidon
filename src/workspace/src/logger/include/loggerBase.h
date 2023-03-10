@@ -74,9 +74,14 @@ class LoggerBase{
 		void updateLoggingMode();
 		
 		/* log transfer */
-		//void compress(filesPath);
-		//void transfert(zipPath, url);
-		
+		virtual void compress(){};
+		/*
+		void transfer();
+		std::string zip_to_base64(std::string zipPath);
+		std::string create_json_str(std::string zipFilename, std::string base64Zip);
+		bool send_job(std::string json);
+		bool can_reach_server();
+		*/
 	protected:
 		// ros
 		ros::NodeHandle node;

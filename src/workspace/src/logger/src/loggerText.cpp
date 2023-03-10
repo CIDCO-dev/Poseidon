@@ -98,38 +98,44 @@ void LoggerText::init(){
 
 void LoggerText::finalize(){
 	fileRotationMutex.lock();
-
-        if(gnssOutputFile){
+	
+	std::string newGnssPath;
+	std::string newImuPath;
+	std::string newSonarPath;
+	std::string newLidarPath;
+	std::string newRawGnssPath;
+	
+	if(gnssOutputFile){
 		//close
 		fclose(gnssOutputFile);
 		gnssOutputFile = NULL;
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + gnssFileName;
-		std::string newPath = outputFolder + "/" + gnssFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newGnssPath = outputFolder + "/" + gnssFileName;
+		rename(oldPath.c_str(), newGnssPath.c_str());
 	}
 
-        if(imuOutputFile){
+	if(imuOutputFile){
 		//close
 		fclose(imuOutputFile);
 		imuOutputFile = NULL;
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + imuFileName;
-		std::string newPath = outputFolder + "/" + imuFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newImuPath = outputFolder + "/" + imuFileName;
+		rename(oldPath.c_str(), newImuPath.c_str());
 	}
 
-        if(sonarOutputFile){
+	if(sonarOutputFile){
 		//close
 		fclose(sonarOutputFile);
 		sonarOutputFile = NULL;
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + sonarFileName;
-		std::string newPath = outputFolder + "/" + sonarFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newSonarPath = outputFolder + "/" + sonarFileName;
+		rename(oldPath.c_str(), newSonarPath.c_str());
 	}
 	
 	if(lidarOutputFile){
@@ -139,8 +145,8 @@ void LoggerText::finalize(){
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + lidarFileName;
-		std::string newPath = outputFolder + "/" + lidarFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newLidarPath = outputFolder + "/" + lidarFileName;
+		rename(oldPath.c_str(), newLidarPath.c_str());
 	}
 	
 	if(rawGnssoutputFile.is_open()){
@@ -148,11 +154,20 @@ void LoggerText::finalize(){
 		rawGnssoutputFile.close();
 		
 		std::string oldPath = tmpLoggingFolder + "/"  + rawGnssFileName;
-		std::string newPath = outputFolder + "/" + rawGnssFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newRawGnssPath = outputFolder + "/" + rawGnssFileName;
+		rename(oldPath.c_str(), newRawGnssPath.c_str());
 	}
 	
 	fileRotationMutex.unlock();
+	
+	compress(newGnssPath,newImuPath,newSonarPath,newLidarPath,newRawGnssPath);
+	/*
+	if(can_reach_server()){
+		transfer();
+	}
+	*/
+	
+	
 }
 
 /* Rotates logs based on time */
@@ -169,6 +184,26 @@ void LoggerText::rotate(){
 		}
 	}
 }
+
+
+void LoggerText::compress(std::string gnssFileName, std::string imuFileName, std::string sonarFileName, 
+						std::string lidarFileName, std::string rawGnssFileName){
+	
+	size_t posLastDot = gnssFileName.find_last_of(".");
+	// Should we handle the case scenario where theres no file extension ?
+	std::string zipFilename = gnssFileName.substr(0, posLastDot) + std::string(".zip");
+	
+	std::string command = "zip " + zipFilename + " " + gnssFileName + " " + imuFileName + " " + sonarFileName + " " + lidarFileName + " " + rawGnssFileName;
+
+	ROS_INFO_STREAM(command);
+	
+	auto p = std::system(command.c_str());
+	
+	ROS_INFO_STREAM(p);
+	//TODO : Throw error if command did not execute properly
+	
+}
+
 
 void LoggerText::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){

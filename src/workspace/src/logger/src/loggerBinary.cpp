@@ -82,6 +82,21 @@ void LoggerBinary::rotate(){
 	}
 }
 
+void compress(std::string binSensorFileName, std::string rawGnssFileName){
+
+	size_t posLastDot = binSensorFileName.find_last_of(".");
+	// Should we handle the case scenario where theres no file extension ?
+	std::string zipFilename = binSensorFileName.substr(0, posLastDot) + std::string(".zip");
+	
+	std::string command = "zip " + zipFilename + " " + binSensorFileName + " " + rawGnssFileName;
+
+	ROS_INFO_STREAM(command.c_str());
+	
+	auto p = std::system(command.c_str());
+	
+	ROS_INFO_STREAM(p);
+}
+
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){

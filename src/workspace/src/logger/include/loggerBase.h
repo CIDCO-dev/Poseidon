@@ -22,6 +22,7 @@
 #include <thread>
 #include <numeric>
 #include <fstream>
+#include <filesystem>
 
 //Logger service Poseidon
 #include "logger_service/GetLoggingStatus.h"
@@ -42,6 +43,11 @@
 //Boost lib
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
 //rapidjson
 #include <rapidjson/document.h>
@@ -82,12 +88,12 @@ class LoggerBase{
 		void updateLoggingMode();
 		
 		/* log transfer */
-		virtual bool compress(){};
+		virtual bool compress(){return false;};
 		void transfer();
-		std::string zip_to_base64(std::string &zipPath);
+		std::string zip_to_base64(std::string zipPath);
 		std::string create_json_str(std::string &base64Zip);
-		//bool send_job(std::string json);
-		//bool can_reach_server();
+		bool send_job(std::string json);
+		bool can_reach_server();
 		
 	protected:
 		// ros

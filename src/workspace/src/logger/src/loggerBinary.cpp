@@ -69,12 +69,14 @@ void LoggerBinary::finalize(){
 	
 	fileRotationMutex.unlock();
 	
-	bool noError = compress(newBinSensorFileName, newRawGnssFileName);
-	/*
+	std::string zipFilename = rawGnssFileName.substr(0, 17) + std::string(".zip");
+	
+	bool noError = compress(zipFilename, newBinSensorFileName, newRawGnssFileName);
+	
 	if(noError && can_reach_server()){
 		transfer();
 	}
-	*/
+	
 	
 }
 
@@ -93,25 +95,26 @@ void LoggerBinary::rotate(){
 	}
 }
 
-bool LoggerBinary::compress(std::string &binSensorFileName, std::string &rawGnssFileName){
-
-	// only keep timestamp for zip file name
-	std::string zipFilename = binSensorFileName.substr(0, 17) + std::string(".zip");
+bool LoggerBinary::compress(std::string &zipFilename, std::string &binSensorFilePath, std::string &rawGnssFilePath){
 	
-	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + binSensorFileName + " " + rawGnssFileName;
-
-	ROS_INFO_STREAM(command.c_str());
+	std::string files =  binSensorFilePath + " " + rawGnssFilePath;
 	
-	auto p = std::system(command.c_str());
+	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + files;
 	
-	ROS_INFO_STREAM(p);
+	auto zip = std::system(command.c_str());
 	
-	if(p == 0){
-		//TODO delete files
+	if(zip == 0){
+		command = "rm -f " + files;
+		auto deleteFiles = std::system(command.c_str());
+		if (deleteFiles != 0){
+			ROS_ERROR_STREAM("Compress function cannot delete files");
+		}
+		
 		return true;
 	}
 	else{
-		ROS_ERROR_STREAM("Zipping process returned" << p);
+		ROS_ERROR_STREAM("Cannot zip files \nZipping process returned" << zip);
+		ROS_ERROR_STREAM(command);
 		return false;
 	}
 }

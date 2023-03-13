@@ -234,25 +234,23 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 
 void LoggerBase::transfer(){
 	
-	/*	
 	std::filesystem::path outputFolderPath = outputFolder;
 	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
-		    if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
-		    	
-		    	std::string base64Zip = zip_to_base64(dir_entry.path());
-		    	std::string json = create_json_str(base64Zip);
-		    	
-		    }
-	}
-	*/
-	
-	// 1- read zip file and convert to base64 string
-	// 2- create json {"apiKey": key, "jobType":jobType, "fileData": b64Data.decode("utf-8")}
-	// 3- post request <string_body>
-	
+		if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
+		    		    
+	    	std::string base64Zip = zip_to_base64(dir_entry.path());
+	    	std::string json = create_json_str(base64Zip);
+	    	bool ok = send_job(json);
+	    	
+	    	if(!ok){
+	    		// XXX retry  3-5 time ??
+	    		break;
+	    	}
+	    }
+	}	
 }
 
-std::string LoggerBase::zip_to_base64(std::string &zipPath){
+std::string LoggerBase::zip_to_base64(std::string zipPath){
 
 	
 	typedef boost::archive::iterators::base64_from_binary<boost::archive::iterators::transform_width<std::string::const_iterator,6,8> > it_base64_t;
@@ -299,4 +297,131 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
 	d.Accept(writer);
 	return sb.GetString();
+}
+
+bool LoggerBase::send_job(std::string json){
+	bool status;
+	
+	try{
+        auto const host = "127.0.0.1";
+        auto const target = "/";
+		int version = 11;
+		
+        // The io_context is required for all I/O
+        boost::asio::io_context ioService;
+
+        // These objects perform our I/O
+        boost::asio::ip::tcp::resolver resolver(ioService);
+        boost::beast::tcp_stream stream(ioService);
+
+        // Look up the domain name
+        auto const results = resolver.resolve(host, "5000");
+
+        // Make the connection on the IP address we get from a lookup
+        stream.connect(results);
+
+        // Set up an HTTP GET request message
+        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, target, version};
+        req.set(boost::beast::http::field::host, host);
+        req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+		
+		req.body() = json;
+		req.prepare_payload();
+		
+        // Send the HTTP request to the remote host
+        boost::beast::http::write(stream, req);
+
+        // This buffer is used for reading and must be persisted
+        boost::beast::flat_buffer buffer;
+
+        // Declare a container to hold the response
+        boost::beast::http::response<boost::beast::http::dynamic_body> res;
+
+        // Receive the HTTP response
+        boost::beast::http::read(stream, buffer, res);
+        boost::beast::error_code ec;
+
+		if(res.result() == boost::beast::http::status::ok){
+			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		    if(ec && ec != boost::beast::errc::not_connected){
+		        throw boost::beast::system_error{ec};
+		    }
+		    status = true;
+        }
+        else{
+         	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        	if(ec && ec != boost::beast::errc::not_connected){
+            	throw boost::beast::system_error{ec};
+            }
+            status = false;
+        }
+
+    }
+    catch(std::exception const& e)
+    {
+        ROS_ERROR_STREAM("Post request error: " << e.what());
+    }
+    return status;
+}
+
+bool LoggerBase::can_reach_server(){
+	bool status;
+	try{
+        auto const host = "127.0.0.1";
+        auto const target = "/";
+		int version = 11;
+		
+        // The io_context is required for all I/O
+        boost::asio::io_context ioService;
+
+        // These objects perform our I/O
+        boost::asio::ip::tcp::resolver resolver(ioService);
+        boost::beast::tcp_stream stream(ioService);
+
+        // Look up the domain name
+        auto const results = resolver.resolve(host, "5000");
+
+        // Make the connection on the IP address we get from a lookup
+        stream.connect(results);
+
+        // Set up an HTTP GET request message
+        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, target, version};
+        req.set(boost::beast::http::field::host, host);
+        req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+		
+        // Send the HTTP request to the remote host
+        boost::beast::http::write(stream, req);
+
+        // This buffer is used for reading and must be persisted
+        boost::beast::flat_buffer buffer;
+
+        // Declare a container to hold the response
+        boost::beast::http::response<boost::beast::http::dynamic_body> res;
+
+        // Receive the HTTP response
+        boost::beast::http::read(stream, buffer, res);
+        boost::beast::error_code ec;
+
+		if(res.result() == boost::beast::http::status::ok){
+			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		    if(ec && ec != boost::beast::errc::not_connected){
+		        throw boost::beast::system_error{ec};
+		    }
+		    status = true;
+        }
+        else{
+         	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        	if(ec && ec != boost::beast::errc::not_connected){
+            	throw boost::beast::system_error{ec};
+            }
+            status = false;
+        }
+
+    }
+    catch(std::exception const& e)
+    {
+        ROS_ERROR_STREAM("Get request error: " << e.what());
+    }
+    
+    return status;
 }

@@ -163,11 +163,11 @@ void LoggerText::finalize(){
 	std::string zipFilename = gnssFileName.substr(0, 17) + std::string(".zip");
 	
 	bool noError = compress(zipFilename, newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath);
-	/*
+	
 	if(noError && can_reach_server()){
 		transfer();
 	}
-	*/
+	
 	
 	
 }
@@ -198,7 +198,7 @@ bool LoggerText::compress(std::string &zipFilename, std::string &gnssFilePath, s
 	auto zip = std::system(command.c_str());
 	
 	if(zip == 0){
-		command = "rm -f" + files;
+		command = "rm -f " + files;
 		auto deleteFiles = std::system(command.c_str());
 		if (deleteFiles != 0){
 			ROS_ERROR_STREAM("Compress function cannot delete files");
@@ -208,6 +208,7 @@ bool LoggerText::compress(std::string &zipFilename, std::string &gnssFilePath, s
 	}
 	else{
 		ROS_ERROR_STREAM("Cannot zip files \nZipping process returned" << zip);
+		ROS_ERROR_STREAM(command);
 		return false;
 	}
 	

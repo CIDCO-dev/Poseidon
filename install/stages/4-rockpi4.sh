@@ -73,8 +73,6 @@ EOF5'
 sudo chmod 755 /etc/systemd/system/uart.service
 sudo systemctl enable uart
 
-echo -e "\[35m[+] editing launch files\[0m"
-sudo sed -i 's/i2c-1/i2c-7/g' /opt/Poseidon/src/workspace/launch/Hydrobox/*.*
 
 echo -e "\[35m[+] editing uart service files\[0m"
 sudo sed -i 's/AMA0/S2/g' /opt/Poseidon/service/*.*

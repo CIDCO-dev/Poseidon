@@ -1,0 +1,42 @@
+<launch>
+
+<arg name="time_now" default="temp" />
+<arg name="gnssPortPath" value="/dev/ttyACM0"/>
+<arg name="gpsdIp" value="localhost"/>
+<arg name="gpsdPort" value="2947"/>
+
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
+
+
+<node ns="imu" name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" respawn="true" respawn_delay="2" output="screen">
+        <param name="device" type="string" value="/dev/i2c-7"/>
+        <param name="address" type="int" value="40"/> <!-- 0x28 == 40 is the default for BNO055 -->
+        <param name="frame_id" type="string" value="imu"/>
+	<param name="calibrationFile" type="string" value="/opy/Poseidon/calibration.dat" />
+</node>
+
+<node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
+
+<node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
+
+  
+
+<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+
+<node pkg="ins_piksi" name="ins_piksi" type="ins_piksi_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
+
+<node pkg="rosbag" name="record_all"   type="record" args="-a -O /opt/Poseidon/www/webroot/record/$(arg time_now)_piksi_852_all.bag" />
+
+</launch>

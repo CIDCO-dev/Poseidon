@@ -1,8 +1,5 @@
 #!/bin/sh
 
-echo "Moving software to compile"
-sudo chmod 777 /opt
-cp -r ../../Poseidon/ /opt/ 
 
 /opt/Poseidon/install/stages/1-base-ros-melodic.sh
 

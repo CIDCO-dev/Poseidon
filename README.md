@@ -1,6 +1,9 @@
 # Poseidon
 Hydrographic surveying platform operating system
 
+NOTE: 
+Clone the repo in /opt for proper use.
+call the installation file located in install/ acording to the environement you have.
 
 ### Google Cartographer installation
 

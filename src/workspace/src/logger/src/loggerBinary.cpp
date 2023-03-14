@@ -1,9 +1,6 @@
 #include "loggerBinary.h"
 
 LoggerBinary::LoggerBinary(std::string & logFolder): LoggerBase(logFolder) {
-	
-	//streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBinary::gnssBinStreamCallback,this, ros::TransportHints().tcpNoDelay()); //, ros::TransportHints().tcpNoDelay()
-
 }
 
 LoggerBinary::~LoggerBinary(){
@@ -22,7 +19,7 @@ void LoggerBinary::init(){
 		if(!outputFile.is_open() && !rawGnssoutputFile.is_open() ){
 
 			outputFileName = TimeUtils::getStringDate() + std::string(".log");
-			rawGnssFileName = TimeUtils::getStringDate() + std::string(".bin");
+			rawGnssFileName = TimeUtils::getStringDate() + std::string(".bin"); // TODO make extension a param
 
             outputFile.open(outputFolder + "/" + outputFileName,std::ios::binary|std::ios::trunc);
 			rawGnssoutputFile.open(outputFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);

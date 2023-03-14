@@ -85,6 +85,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
+		ROS_DEBUG_STREAM("LoggerBase::toggleLogging(mutex lock)");
 		if(!loggerEnabled && request.loggingEnabled){	
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
@@ -98,6 +99,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 		response.loggingStatus=loggerEnabled;
 		mtx.unlock();
+		ROS_DEBUG_STREAM("LoggerBase::toggleLogging(mutex unlock)");
 		//ROS_WARN_STREAM("unlocking thread_id: "<<thread_id);
 		return true;
 	}
@@ -237,10 +239,14 @@ void LoggerBase::transfer(){
 	std::filesystem::path outputFolderPath = outputFolder;
 	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
 		if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
-		    		    
+		    
+		    ROS_DEBUG_STREAM("LoggerBase::transfer()");	    
 	    	std::string base64Zip = zip_to_base64(dir_entry.path());
+	    	ROS_DEBUG_STREAM("LoggerBase::transfer(2)");
 	    	std::string json = create_json_str(base64Zip);
+	    	ROS_DEBUG_STREAM("LoggerBase::transfer(3)");
 	    	bool ok = send_job(json);
+	    	ROS_DEBUG_STREAM("LoggerBase::transfer(4)");
 	    	
 	    	if(!ok){
 	    		// XXX retry  3-5 time ??
@@ -286,16 +292,23 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	rapidjson::Value jobType("captain crunch");
 	d.AddMember("jobType", jobType, d.GetAllocator());
 	
+	ROS_DEBUG_STREAM("LoggerBase::create_json_str()");
+	ROS_DEBUG_STREAM("LoggerBase::create_json_str() base64Zip size : " << base64Zip.size());
 	rapidjson::Value fileData;
 	char buffer[base64Zip.size()];
 	int len = sprintf(buffer, "%s", base64Zip.c_str());
+	ROS_DEBUG_STREAM("LoggerBase::create_json_str(1)");
 	fileData.SetString(buffer, len, d.GetAllocator());
+	ROS_DEBUG_STREAM("LoggerBase::create_json_str(2)");
 	d.AddMember("fileData", fileData, d.GetAllocator());
+	ROS_DEBUG_STREAM("LoggerBase::create_json_str(3)");
 	
 
 	rapidjson::StringBuffer sb;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+	ROS_DEBUG_STREAM("LoggerBase::create_json_str(4)");
 	d.Accept(writer);
+	ROS_DEBUG_STREAM("LoggerBase::create_json_str(5)");
 	return sb.GetString();
 }
 

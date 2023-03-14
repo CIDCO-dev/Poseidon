@@ -98,7 +98,7 @@ void LoggerText::init(){
 
 void LoggerText::finalize(){
 	fileRotationMutex.lock();
-	
+	ROS_DEBUG_STREAM("LoggerText::finalize(mutex lock)");
 	std::string newGnssPath;
 	std::string newImuPath;
 	std::string newSonarPath;
@@ -159,7 +159,7 @@ void LoggerText::finalize(){
 	}
 	
 	fileRotationMutex.unlock();
-	
+	ROS_DEBUG_STREAM("LoggerText::finalize(mutex unlock)");
 	std::string zipFilename = gnssFileName.substr(0, 17) + std::string(".zip");
 	
 	bool noError = compress(zipFilename, newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath);

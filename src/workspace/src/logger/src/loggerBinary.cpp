@@ -96,17 +96,11 @@ bool LoggerBinary::compress(std::string &zipFilename, std::string &binSensorFile
 	
 	std::string files =  binSensorFilePath + " " + rawGnssFilePath;
 	
-	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + files;
+	std::string command = "zip -Tmj " + outputFolder + "/" + zipFilename + " " + files;
 	
 	auto zip = std::system(command.c_str());
 	
-	if(zip == 0){
-		command = "rm -f " + files;
-		auto deleteFiles = std::system(command.c_str());
-		if (deleteFiles != 0){
-			ROS_ERROR_STREAM("Compress function cannot delete files");
-		}
-		
+	if(zip == 0){		
 		return true;
 	}
 	else{

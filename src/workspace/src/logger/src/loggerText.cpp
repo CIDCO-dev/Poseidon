@@ -191,28 +191,18 @@ void LoggerText::rotate(){
 bool LoggerText::compress(std::string &zipFilename, std::string &gnssFilePath, std::string &imuFilePath, std::string &sonarFilePath, 
 						std::string &lidarFilePath, std::string &rawGnssFilePath){
 	
-	std::string files = gnssFilePath + " " + imuFilePath + " " + sonarFilePath + " " + lidarFilePath + " " + rawGnssFilePath;
+	std::string command = "zip -Tmj " + outputFolder + "/" + zipFilename + " " + gnssFilePath + " " + imuFilePath + " " + sonarFilePath + " " + lidarFilePath + " " + rawGnssFilePath;
 	
-	std::string command = "zip " + outputFolder + "/" + zipFilename + " " + files;
-	
-	auto zip = std::system(command.c_str());
+	int zip = std::system(command.c_str());
 	
 	if(zip == 0){
-		command = "rm -f " + files;
-		auto deleteFiles = std::system(command.c_str());
-		if (deleteFiles != 0){
-			ROS_ERROR_STREAM("Compress function cannot delete files");
-		}
-		
 		return true;
 	}
 	else{
 		ROS_ERROR_STREAM("Cannot zip files \nZipping process returned" << zip);
 		ROS_ERROR_STREAM(command);
 		return false;
-	}
-	
-	
+	}	
 }
 
 

@@ -34,6 +34,7 @@
 #include "setting_msg/Setting.h"
 #include "setting_msg/ConfigurationService.h"
 #include "binary_stream_msg/Stream.h"
+#include "raspberrypi_vitals_msg/sysinfo.h"
 
 //Poseidon utils
 #include "../../utils/timestamp.h"
@@ -74,6 +75,7 @@ class LoggerBase{
 		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
 		void configurationCallBack(const setting_msg::Setting &setting);
 		virtual void gnssBinStreamCallback(const binary_stream_msg::Stream& stream)=0;
+		void hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals);
 		
 		/* Speed based logging */
 		void updateSpeedThreshold();
@@ -134,6 +136,7 @@ class LoggerBase{
 		ros::Subscriber speedSubscriber ;
 		ros::Subscriber configurationSubscriber;
 		ros::Subscriber lidarSubscriber ;
+		ros::Subscriber hddVitalsSubscriber ;
 		
 		ros::ServiceServer getLoggingStatusService ;
 		ros::ServiceServer toggleLoggingService;

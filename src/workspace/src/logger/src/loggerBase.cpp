@@ -9,6 +9,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
 	streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
+	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
 	toggleLoggingService = node.advertiseService("toggle_logging", &LoggerBase::toggleLogging, this);
@@ -428,3 +429,14 @@ bool LoggerBase::can_reach_server(){
     
     return status;
 }
+
+
+void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
+
+	ROS_INFO_STREAM("LoggerBase::hddVitalsCallback " << vitals.freehdd); //freehdd
+	
+	
+	
+}
+
+

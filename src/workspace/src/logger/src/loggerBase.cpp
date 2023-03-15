@@ -9,6 +9,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
 	streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
+	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
 	toggleLoggingService = node.advertiseService("toggle_logging", &LoggerBase::toggleLogging, this);
@@ -85,7 +86,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
-		if(!loggerEnabled && request.loggingEnabled){	
+		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){	
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
@@ -428,3 +429,25 @@ bool LoggerBase::can_reach_server(){
     
     return status;
 }
+
+
+void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
+	
+	if(vitals.freehdd < 10.0 ){
+		
+		this->hddFreeSpaceOK = false;
+		
+		logger_service::ToggleLogging::Request toggleRequest;
+		toggleRequest.loggingEnabled = false;
+		logger_service::ToggleLogging::Response toggleResponse;
+		toggleLogging(toggleRequest, toggleResponse);
+				
+	}
+	
+	if(vitals.freehdd > 11.0 ){
+		this->hddFreeSpaceOK = true;
+	}
+	
+}
+
+

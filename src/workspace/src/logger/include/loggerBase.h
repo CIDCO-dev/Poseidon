@@ -150,6 +150,8 @@ class LoggerBase{
         ros::Subscriber streamSubscriber;
         
         double testing = 0.0;
+        
+        bool hddFreeSpaceOK = true;
 };
 	
 #endif

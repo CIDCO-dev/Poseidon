@@ -86,7 +86,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
-		if(!loggerEnabled && request.loggingEnabled){	
+		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){	
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
@@ -437,29 +437,27 @@ void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals)
 	
 	double freeSpace = vitals.freehdd - testing;
 	
-	if(freeSpace < 10.0){
 	
-		logger_service::SetLoggingMode::Request setModeRequest;
-		logger_service::SetLoggingMode::Response setModeResponse;
-		setModeRequest.loggingMode = 2;
-		setLoggingMode(setModeRequest, setModeResponse);
-	
-		logger_service::ToggleLogging::Request toggleRequest;
-		toggleRequest.loggingEnabled = false;
-		logger_service::ToggleLogging::Response toggleResponse;
-		toggleLogging(toggleRequest, toggleResponse);
+	if(freeSpace < 10.0 ){
 		
-		
-		
+		this->hddFreeSpaceOK = false;
+				
 	}
 	
-	this->testing += 20.0;
+	if(freeSpace > 11.0 ){
+		this->testing += 20.0;
+		this->hddFreeSpaceOK = true;
+	}
+	
+	if(freeSpace < -50.0){
+		this->testing = 100.0;
+	}
 	
 	logger_service::GetLoggingStatus::Request request;
-	logger_service::GetLoggingStatus::Response response;
-	bool isLogging = getLoggingStatus(request,response);
+    logger_service::GetLoggingStatus::Response response;
+    bool isLogging = getLoggingStatus(request,response);
 	
-	ROS_INFO_STREAM("LoggerBase::hddVitalsCallback " << isLogging );
+	ROS_INFO_STREAM("LoggerBase::hddVitalsCallback " << response.status );
 }
 
 

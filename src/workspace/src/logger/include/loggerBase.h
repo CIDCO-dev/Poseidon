@@ -149,8 +149,6 @@ class LoggerBase{
         std::ofstream rawGnssoutputFile;
         ros::Subscriber streamSubscriber;
         
-        double testing = 0.0;
-        
         bool hddFreeSpaceOK = true;
 };
 	

@@ -148,6 +148,8 @@ class LoggerBase{
 		std::string  rawGnssFileName;
         std::ofstream rawGnssoutputFile;
         ros::Subscriber streamSubscriber;
+        
+        double testing = 0.0;
 };
 	
 #endif

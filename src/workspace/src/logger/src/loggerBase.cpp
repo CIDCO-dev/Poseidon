@@ -433,10 +433,26 @@ bool LoggerBase::can_reach_server(){
 
 void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
 
-	ROS_INFO_STREAM("LoggerBase::hddVitalsCallback " << vitals.freehdd); //freehdd
+	double testing = 0.0;
+	ROS_INFO_STREAM("LoggerBase::hddVitalsCallback " << (vitals.freehdd - testing)); 
 	
+	double freeSpace = vitals.freehdd - testing;
 	
+	if(freeSpace < 10.0){
+		logger_service::ToggleLogging::Request toggleRequest;
+		toggleRequest.loggingEnabled = false;
+		logger_service::ToggleLogging::Response toggleResponse;
+		toggleLogging(toggleRequest, toggleResponse);
+		
+		testing += 20.0;
+		
+	}
 	
+	logger_service::GetLoggingStatus::Request request;
+	logger_service::GetLoggingStatus::Response response;
+	bool isLogging = getLoggingStatus(request,response);
+	
+	ROS_INFO_STREAM("LoggerBase::hddVitalsCallback " << isLogging );
 }
 
 

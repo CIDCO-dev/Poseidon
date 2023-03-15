@@ -445,13 +445,17 @@ void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals)
 	}
 	
 	if(freeSpace > 11.0 ){
-		this->testing += 20.0;
 		this->hddFreeSpaceOK = true;
 	}
 	
 	if(freeSpace < -50.0){
-		this->testing = 100.0;
+		this->testing = 0.0;
 	}
+	
+	if(freeSpace > -50.0){
+		this->testing += 20.0;
+	}
+	
 	
 	logger_service::GetLoggingStatus::Request request;
     logger_service::GetLoggingStatus::Response response;

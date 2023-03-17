@@ -70,7 +70,7 @@ void LoggerBinary::finalize(){
 	
 	bool noError = compress(zipFilename, newBinSensorFileName, newRawGnssFileName);
 	
-	if(noError && can_reach_server()){
+	if(noError && can_reach_server() && activatedTransfer){
 		transfer();
 	}
 	

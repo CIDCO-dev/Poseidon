@@ -164,7 +164,7 @@ void LoggerText::finalize(){
 	
 	bool noError = compress(zipFilename, newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath);
 	
-	if(noError && can_reach_server()){
+	if(noError && can_reach_server() && activatedTransfer){
 		transfer();
 	}
 	

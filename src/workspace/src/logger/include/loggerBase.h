@@ -64,6 +64,7 @@ class LoggerBase{
 		virtual void init()=0;
 		virtual void finalize()=0;
 		virtual void rotate()=0;
+		void updateLogRotationInterval();
 		
 		/* Tranformers */
 		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
@@ -96,6 +97,7 @@ class LoggerBase{
 		std::string create_json_str(std::string &base64Zip);
 		bool send_job(std::string json);
 		bool can_reach_server();
+		void updateTranferConfig();
 		
 	protected:
 		// ros

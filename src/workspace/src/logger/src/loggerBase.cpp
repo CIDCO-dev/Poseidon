@@ -18,6 +18,9 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	setLoggingModeService = node.advertiseService("set_logging_mode", &LoggerBase::setLoggingMode, this);
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+	updateLogRotationInterval();
+	updateTranferConfig();
+	
 	updateSpeedThreshold();
 	updateLoggingMode();
 	ROS_INFO_STREAM("Logging mode set to : "<< loggingMode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
@@ -72,6 +75,72 @@ void LoggerBase::updateSpeedThreshold(){
     }
 }
 
+void LoggerBase::updateTranferConfig(){
+	setting_msg::ConfigurationService srv;
+
+    srv.request.key = "targetServer";
+
+    if(configurationClient.call(srv)){
+    	ROS_INFO_STREAM("targetServer : " << srv.response.value);
+        try{
+        	this->host = srv.response.value;
+        	this->activatedTransfer = true;
+        	ROS_INFO_STREAM("Activated automatic file transfer with server target : " << srv.response.value);
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR("Error in server target definition, deactivating automatic file transfer");
+        	this->host = "";
+        	this->activatedTransfer = false;
+        }
+    }
+    else{
+    	ROS_WARN("No server target definition, deactivating automatic file transfer");
+		this->host = "";
+		this->activatedTransfer = false;
+    }
+    
+    srv.request.key = "apiTarget";
+
+    if(configurationClient.call(srv)){
+    	ROS_INFO_STREAM("apiTarget : " << srv.response.value);
+        try{
+        	this->target = srv.response.value;
+        	ROS_INFO_STREAM("API target : " << srv.response.value);
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR("Error in api target definition, defaulting to /");
+        	this->target = "/";
+        }
+    }
+    else{
+    	ROS_WARN("No API target definition, defaulting to /");
+		this->target = "/";
+    }
+}
+
+void LoggerBase::updateLogRotationInterval(){
+	
+	setting_msg::ConfigurationService srv;
+
+    srv.request.key = "logRotationIntervalSeconds";
+
+    if(configurationClient.call(srv)){
+    	ROS_INFO_STREAM("logRotationIntervalSeconds : " << srv.response.value);
+        try{
+        	this->logRotationIntervalSeconds = stoi(srv.response.value);
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR_STREAM("Error in log rotation interval definition, defaulting to 1H \n Example for 1H: 3600");
+        	this->logRotationIntervalSeconds = 3600;
+        }
+    }
+    else{
+    	ROS_WARN("No log rotation interval defined, defaulting to 1H");
+        this->logRotationIntervalSeconds = 3600;
+    }
+	
+}
+
 double LoggerBase::getSpeedThreshold(){
 	return speedThresholdKmh;
 }
@@ -107,6 +176,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 	}
 }
 
+// Callback for when configs are changed by the user via the web ui
 void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 	ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
 	if(setting.key == "loggingMode"){

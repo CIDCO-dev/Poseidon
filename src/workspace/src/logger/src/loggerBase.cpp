@@ -21,7 +21,8 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	
 	updateLogRotationInterval();
 	updateTranferConfig();
-	ROS_INFO_STREAM("Target server : "<< this->host <<" , "<<"Target API : "<< this->target);
+	ROS_INFO_STREAM("File transfert activated: " << this->activatedTransfer << ", Target server: "
+					<< this->host <<", Target API: "<< this->target);
 	
 	updateSpeedThreshold();
 	updateLoggingMode();

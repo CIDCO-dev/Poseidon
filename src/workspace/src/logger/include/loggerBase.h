@@ -109,11 +109,12 @@ class LoggerBase{
 		std::mutex mtx;
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
+		bool hddFreeSpaceOK = true;
 		
 		// log rotation
 		std::mutex fileRotationMutex;
 		ros::Time lastRotationTime;
-		int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter 
+		int logRotationIntervalSeconds;
 		std::string tmpLoggingFolder = "/tmp"; //TODO: make this a parameter?
 		uint64_t lastGnssTimestamp =  0;
 		uint64_t lastImuTimestamp  =  0;
@@ -149,7 +150,11 @@ class LoggerBase{
         std::ofstream rawGnssoutputFile;
         ros::Subscriber streamSubscriber;
         
-        bool hddFreeSpaceOK = true;
+        // transfer
+		std::string host;
+		std::string target;
+		bool activatedTransfer;
+		        
 };
 	
 #endif

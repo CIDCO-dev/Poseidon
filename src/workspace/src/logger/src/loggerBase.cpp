@@ -151,8 +151,37 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			mtx.unlock();
 		}
 	}
-	else{
-
+	else if(setting.key == "targetServer"){
+		if(setting.value == ""){
+			this->activatedTransfer = false;
+		}
+		else{
+			this->host = setting.value;
+			this->activatedTransfer = true;
+		}
+	}
+	else if(setting.key == "apiTarget"){
+		if(setting.value == ""){
+			this->target = "/";
+		}
+		else{
+			this->target = setting.value;
+		}
+	}
+	else if(setting.key == "logRotationIntervalSeconds"){
+		if(setting.value == ""){
+			this->logRotationIntervalSeconds = 3600;
+			ROS_INFO_STREAM("Log rotation interval from config file is not set \n Defaulting to 1h");
+		}
+		else{
+			try{
+        		this->logRotationIntervalSeconds = stoi(setting.value);
+        	}
+        	catch(std::invalid_argument &err){
+        		ROS_ERROR_STREAM("Log rotation interval from config file is not set properly \n example : 3600 \n Defaulting to 1h");
+        		this->logRotationIntervalSeconds = 3600;
+        	}
+		}
 	}
 }
 
@@ -307,8 +336,6 @@ bool LoggerBase::send_job(std::string json){
 	bool status;
 	
 	try{
-        auto const host = "127.0.0.1";
-        auto const target = "/";
 		int version = 11;
 		
         // The io_context is required for all I/O
@@ -319,14 +346,14 @@ bool LoggerBase::send_job(std::string json){
         boost::beast::tcp_stream stream(ioService);
 
         // Look up the domain name
-        auto const results = resolver.resolve(host, "5000");
+        auto const results = resolver.resolve(this->host, "5000");
 
         // Make the connection on the IP address we get from a lookup
         stream.connect(results);
 
         // Set up an HTTP GET request message
-        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, target, version};
-        req.set(boost::beast::http::field::host, host);
+        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, this->target, version};
+        req.set(boost::beast::http::field::host, this->host);
         req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
 		
 		req.body() = json;
@@ -371,8 +398,6 @@ bool LoggerBase::send_job(std::string json){
 bool LoggerBase::can_reach_server(){
 	bool status;
 	try{
-        auto const host = "127.0.0.1";
-        auto const target = "/";
 		int version = 11;
 		
         // The io_context is required for all I/O
@@ -383,14 +408,14 @@ bool LoggerBase::can_reach_server(){
         boost::beast::tcp_stream stream(ioService);
 
         // Look up the domain name
-        auto const results = resolver.resolve(host, "5000");
+        auto const results = resolver.resolve(this->host, "5000");
 
         // Make the connection on the IP address we get from a lookup
         stream.connect(results);
 
         // Set up an HTTP GET request message
-        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, target, version};
-        req.set(boost::beast::http::field::host, host);
+        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, this->target, version};
+        req.set(boost::beast::http::field::host, this->host);
         req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
 		
         // Send the HTTP request to the remote host

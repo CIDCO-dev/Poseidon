@@ -169,6 +169,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 		}
 	}
 	else if(setting.key == "logRotationIntervalSeconds"){
+		ROS_INFO_STREAM("configurationCallBack(logRotationIntervalSeconds): " << setting.value);
 		if(setting.value == ""){
 			this->logRotationIntervalSeconds = 3600;
 			ROS_INFO_STREAM("Log rotation interval from config file is not set \n Defaulting to 1h");

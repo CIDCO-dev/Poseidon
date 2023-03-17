@@ -18,8 +18,10 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	setLoggingModeService = node.advertiseService("set_logging_mode", &LoggerBase::setLoggingMode, this);
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+	
 	updateLogRotationInterval();
 	updateTranferConfig();
+	ROS_INFO_STREAM("Target server : "<< this->host <<" , "<<"Target API : "<< this->target);
 	
 	updateSpeedThreshold();
 	updateLoggingMode();
@@ -81,11 +83,9 @@ void LoggerBase::updateTranferConfig(){
     srv.request.key = "targetServer";
 
     if(configurationClient.call(srv)){
-    	ROS_INFO_STREAM("targetServer : " << srv.response.value);
         try{
         	this->host = srv.response.value;
         	this->activatedTransfer = true;
-        	ROS_INFO_STREAM("Activated automatic file transfer with server target : " << srv.response.value);
         }
         catch(std::invalid_argument &err){
         	ROS_ERROR("Error in server target definition, deactivating automatic file transfer");
@@ -102,10 +102,8 @@ void LoggerBase::updateTranferConfig(){
     srv.request.key = "apiTarget";
 
     if(configurationClient.call(srv)){
-    	ROS_INFO_STREAM("apiTarget : " << srv.response.value);
         try{
         	this->target = srv.response.value;
-        	ROS_INFO_STREAM("API target : " << srv.response.value);
         }
         catch(std::invalid_argument &err){
         	ROS_ERROR("Error in api target definition, defaulting to /");

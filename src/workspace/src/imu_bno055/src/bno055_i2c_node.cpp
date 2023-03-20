@@ -29,10 +29,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::string calibrationFile;
-    //nh->param<std::string>("calibrationFile",calibrationFile,"/home/ubuntu/Poseidon/calibration.dat");
-    //ROS_INFO_STREAM(argc << argv[1]);
-    //std::string global_name, relative_name, default_param;
-	if (!ros::param::get("calibrationFile", calibrationFile))
+	if (!nh_priv->getParam("calibrationFile", calibrationFile))
 	{
 		ROS_ERROR_STREAM("calibrationFile parameter not found, defaulting to: ../../../../../calibration.dat");
 		calibrationFile = "../../../../../calibration.dat";

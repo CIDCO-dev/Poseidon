@@ -28,8 +28,10 @@ int main(int argc, char *argv[]) {
         return -2;
     }
 
-    std::string calibrationFile;
-    nh->param<std::string>("calibrationFile",calibrationFile,"/home/ubuntu/Poseidon/calibration.dat");
+    std::string calibrationFile = argv[1];
+    //nh->param<std::string>("calibrationFile",calibrationFile,"/home/ubuntu/Poseidon/calibration.dat");
+    ROS_INFO_STREAM(argc << argv[1]);
+    
 
     imu_bno055::BNO055I2CActivity* activity = new imu_bno055::BNO055I2CActivity(*nh, *nh_priv,calibrationFile);
     watchdog::Watchdog* watchdog = new watchdog::Watchdog();

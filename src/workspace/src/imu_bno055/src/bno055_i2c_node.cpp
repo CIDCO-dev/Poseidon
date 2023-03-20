@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
 	if (!nh_priv->getParam("calibrationFile", calibrationFile))
 	{
 		ROS_ERROR_STREAM("calibrationFile parameter not found, defaulting to: /opt/Poseidon/calibration.dat");
+		calibrationFile = "/opt/Poseidon/calibration.dat";
 	}
     
 

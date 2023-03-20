@@ -167,9 +167,6 @@ void LoggerText::finalize(){
 	if(noError && can_reach_server() && activatedTransfer){
 		transfer();
 	}
-	
-	
-	
 }
 
 /* Rotates logs based on time */

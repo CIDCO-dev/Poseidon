@@ -177,7 +177,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 // Callback for when configs are changed by the user via the web ui
 void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
-	ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
 	if(setting.key == "loggingMode"){
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{
@@ -403,7 +403,7 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 }
 
 bool LoggerBase::send_job(std::string json){
-	bool status;
+	bool status = false;
 	
 	try{
 		int version = 11;
@@ -455,6 +455,7 @@ bool LoggerBase::send_job(std::string json){
             	throw boost::beast::system_error{ec};
             }
             status = false;
+            ROS_ERROR_STREAM(res.result());
         }
 
     }
@@ -466,7 +467,7 @@ bool LoggerBase::send_job(std::string json){
 }
 
 bool LoggerBase::can_reach_server(){
-	bool status;
+	bool status = false;
 	try{
 		int version = 11;
 		
@@ -514,6 +515,7 @@ bool LoggerBase::can_reach_server(){
             	throw boost::beast::system_error{ec};
             }
             status = false;
+            ROS_ERROR_STREAM(res.result());
         }
 
     }

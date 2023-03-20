@@ -31,8 +31,7 @@ int main(int argc, char *argv[]) {
     std::string calibrationFile;
 	if (!nh_priv->getParam("calibrationFile", calibrationFile))
 	{
-		ROS_ERROR_STREAM("calibrationFile parameter not found, defaulting to: ../../../../../calibration.dat");
-		calibrationFile = "../../../../../calibration.dat";
+		ROS_ERROR_STREAM("calibrationFile parameter not found, defaulting to: /opt/Poseidon/calibration.dat");
 	}
     
 

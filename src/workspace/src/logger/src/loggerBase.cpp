@@ -107,7 +107,7 @@ void LoggerBase::updateTranferConfig(){
         	this->target = srv.response.value;
         }
         catch(std::invalid_argument &err){
-        	ROS_ERROR("Error in api target definition, defaulting to /");
+        	ROS_ERROR("Error in API target definition, defaulting to /");
         	this->target = "/";
         }
     }
@@ -115,6 +115,22 @@ void LoggerBase::updateTranferConfig(){
     	ROS_WARN("No API target definition, defaulting to /");
 		this->target = "/";
     }
+    
+    srv.request.key = "apiKey";
+	if(configurationClient.call(srv)){
+        try{
+        	this->apiKey = srv.response.value;
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR("Error in API key definition");
+        	this->apiKey = "";
+        }
+    }
+    else{
+    	ROS_WARN("No API key definition");
+		this->apiKey = "";
+    }
+    
 }
 
 void LoggerBase::updateLogRotationInterval(){
@@ -282,7 +298,7 @@ void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
 	//ROS_DEBUG_STREAM("current speed : " << current_speed);
 
 	// wait two mins before calculating the average speed
-	// TODO: this assumes 1 speed measrement per second (VTG, binary, etc). this may be false with some GNSS devices
+	// TODO: this assumes 1 speed measurement per second (VTG, binary, etc). this may be false with some GNSS devices
 	if (kmhSpeedList.size() < 120){
 		kmhSpeedList.push_back(current_speed);
 	}
@@ -382,7 +398,10 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	rapidjson::Document d;
 	d.SetObject();
 
-	rapidjson::Value key("classified");
+	rapidjson::Value key;
+	char buff[this->apiKey.size()+1];
+	int len = sprintf(buff, "%s", this->apiKey.c_str());
+	key.SetString(buff, len, d.GetAllocator());
 	d.AddMember("apiKey", key, d.GetAllocator());
 	
 	rapidjson::Value jobType("captain crunch");
@@ -390,7 +409,7 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	
 	rapidjson::Value fileData;
 	char* buffer = new char [base64Zip.size()+1];
-	int len = sprintf(buffer, "%s", base64Zip.c_str());
+	len = sprintf(buffer, "%s", base64Zip.c_str());
 	fileData.SetString(buffer, len, d.GetAllocator());
 	delete buffer;
 	d.AddMember("fileData", fileData, d.GetAllocator());
@@ -529,21 +548,19 @@ bool LoggerBase::can_reach_server(){
 
 void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
 	
-	if(vitals.freehdd < 10.0 ){
+	if(vitals.freehdd < 1.0 ){
 		
 		this->hddFreeSpaceOK = false;
 		
 		logger_service::ToggleLogging::Request toggleRequest;
 		toggleRequest.loggingEnabled = false;
 		logger_service::ToggleLogging::Response toggleResponse;
-		toggleLogging(toggleRequest, toggleResponse);
-				
+		toggleLogging(toggleRequest, toggleResponse);			
 	}
 	
-	if(vitals.freehdd > 11.0 ){
+	if(vitals.freehdd > 2.0 ){
 		this->hddFreeSpaceOK = true;
 	}
-	
 }
 
 

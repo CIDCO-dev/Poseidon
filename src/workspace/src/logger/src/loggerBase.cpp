@@ -299,7 +299,7 @@ void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
 	//ROS_DEBUG_STREAM("current speed : " << current_speed);
 
 	// wait two mins before calculating the average speed
-	// TODO: this assumes 1 speed measrement per second (VTG, binary, etc). this may be false with some GNSS devices
+	// TODO: this assumes 1 speed measurement per second (VTG, binary, etc). this may be false with some GNSS devices
 	if (kmhSpeedList.size() < 120){
 		kmhSpeedList.push_back(current_speed);
 	}

@@ -157,7 +157,6 @@ class LoggerBase{
 		std::string target;
 		bool activatedTransfer;
 		std::string apiKey;
-		        
 };
 	
 #endif

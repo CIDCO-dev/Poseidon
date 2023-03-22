@@ -190,8 +190,8 @@
               <div id="recordingStatusText">The system is currently recording data</div>
           </div>
           
-          <div id="hddFreeSpaceOK" class="alert alert-danger animated--grow-in d-none">
-              <div id="hddFreeSpaceText">The system has stopped recording data because hdd is full</div>
+          <div id="hddFreeSpaceOK" class="d-none">
+              <div>The system has stopped recording data because hdd is full</div>
           </div>   
 
           <!-- Status Row -->
@@ -611,23 +611,13 @@ $( document ).ready(function() {
 
 	headingGauge.value = (state.attitude[0]);
 	
-	console.log(state.vitals)
-	
-	if(state.vitals[3] > 20){
-		console.log("ok")
-		$("#hddFreeSpaceOK").removeClass("d-none alert-danger").addClass("d-block alert-success");
+	if(state.vitals[3] < 1){
+		$("#hddFreeSpaceOK").removeClass("d-none").addClass("d-block alert alert-danger");
 	}
-	
-	/*
-	
-	// HDD free space
-    $("#freehdd").removeClass("bg-gradient-warning").removeClass( ( state.telemetry.vitals[3]>20 ?"bg-gradient-danger" : "bg-gradient-success")).addClass( ( state.telemetry.vitals[3]>20 ? "bg-gradient-success" : "bg-gradient-danger"));
-
-    $("#freehddText").text(100 - state.telemetry.vitals[3] + "%");
-    $("#freehdd").width(100 - state.telemetry.vitals[3] + "%");
-    
-    */
-  }
+	else{
+		$("#hddFreeSpaceOK").removeClass("d-block alert alert-danger").addClass("d-none");
+	}
+  }// End function processTelemetry
 
   function getLoggingInfo(){
   	var cmd = {command : "getLoggingInfo"};

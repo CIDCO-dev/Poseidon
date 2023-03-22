@@ -556,14 +556,12 @@ void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals)
 		logger_service::ToggleLogging::Request toggleRequest;
 		toggleRequest.loggingEnabled = false;
 		logger_service::ToggleLogging::Response toggleResponse;
-		toggleLogging(toggleRequest, toggleResponse);
-				
+		toggleLogging(toggleRequest, toggleResponse);			
 	}
 	
 	if(vitals.freehdd > 2.0 ){
 		this->hddFreeSpaceOK = true;
 	}
-	
 }
 
 

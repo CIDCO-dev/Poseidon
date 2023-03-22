@@ -10,3 +10,4 @@ speedThresholdKmh 6.0
 targetServer 127.0.0.1
 apiTarget /
 logRotationIntervalSeconds 3600
+apiKey SECRET

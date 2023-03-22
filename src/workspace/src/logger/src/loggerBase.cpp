@@ -107,7 +107,7 @@ void LoggerBase::updateTranferConfig(){
         	this->target = srv.response.value;
         }
         catch(std::invalid_argument &err){
-        	ROS_ERROR("Error in api target definition, defaulting to /");
+        	ROS_ERROR("Error in API target definition, defaulting to /");
         	this->target = "/";
         }
     }
@@ -115,6 +115,22 @@ void LoggerBase::updateTranferConfig(){
     	ROS_WARN("No API target definition, defaulting to /");
 		this->target = "/";
     }
+    
+    srv.request.key = "apiKey";
+	if(configurationClient.call(srv)){
+        try{
+        	this->apiKey = srv.response.value;
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR("Error in API key definition");
+        	this->apiKey = "";
+        }
+    }
+    else{
+    	ROS_WARN("No API key definition");
+		this->apiKey = "";
+    }
+    
 }
 
 void LoggerBase::updateLogRotationInterval(){
@@ -383,7 +399,10 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	rapidjson::Document d;
 	d.SetObject();
 
-	rapidjson::Value key("classified");
+	rapidjson::Value key;
+	char buff[this->apiKey.size()+1];
+	int len = sprintf(buff, "%s", this->apiKey.c_str());
+	key.SetString(buff, len, d.GetAllocator());
 	d.AddMember("apiKey", key, d.GetAllocator());
 	
 	rapidjson::Value jobType("captain crunch");
@@ -391,7 +410,7 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	
 	rapidjson::Value fileData;
 	char* buffer = new char [base64Zip.size()+1];
-	int len = sprintf(buffer, "%s", base64Zip.c_str());
+	len = sprintf(buffer, "%s", base64Zip.c_str());
 	fileData.SetString(buffer, len, d.GetAllocator());
 	delete buffer;
 	d.AddMember("fileData", fileData, d.GetAllocator());
@@ -530,7 +549,7 @@ bool LoggerBase::can_reach_server(){
 
 void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
 	
-	if(vitals.freehdd < 10.0 ){
+	if(vitals.freehdd < 1.0 ){
 		
 		this->hddFreeSpaceOK = false;
 		
@@ -541,7 +560,7 @@ void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals)
 				
 	}
 	
-	if(vitals.freehdd > 11.0 ){
+	if(vitals.freehdd > 2.0 ){
 		this->hddFreeSpaceOK = true;
 	}
 	

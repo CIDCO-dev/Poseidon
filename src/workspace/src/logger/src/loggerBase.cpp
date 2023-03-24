@@ -434,7 +434,7 @@ bool LoggerBase::send_job(std::string json){
         boost::beast::tcp_stream stream(ioService);
 
         // Look up the domain name
-        auto const results = resolver.resolve(this->host, "5000");
+        auto const results = resolver.resolve(this->host, "8080");
 
         // Make the connection on the IP address we get from a lookup
         stream.connect(results);
@@ -497,13 +497,13 @@ bool LoggerBase::can_reach_server(){
         boost::beast::tcp_stream stream(ioService);
 
         // Look up the domain name
-        auto const results = resolver.resolve(this->host, "5000");
+        auto const results = resolver.resolve(this->host, "8080");
 
         // Make the connection on the IP address we get from a lookup
         stream.connect(results);
 
         // Set up an HTTP GET request message
-        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, this->target, version};
+        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, "/", version};
         req.set(boost::beast::http::field::host, this->host);
         req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
 		

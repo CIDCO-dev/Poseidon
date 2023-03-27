@@ -404,7 +404,7 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	key.SetString(buff, len, d.GetAllocator());
 	d.AddMember("apiKey", key, d.GetAllocator());
 	
-	rapidjson::Value jobType("captain crunch");
+	rapidjson::Value jobType("Hydroball20");
 	d.AddMember("jobType", jobType, d.GetAllocator());
 	
 	rapidjson::Value fileData;

@@ -188,7 +188,11 @@
           
           <div id="recordingStatus" class="alert alert-success animated--grow-in d-none">
               <div id="recordingStatusText">The system is currently recording data</div>
-          </div>	   
+          </div>
+          
+          <div id="hddFreeSpaceOK" class="d-none">
+              <div>The system has stopped recording data because hdd is full</div>
+          </div>   
 
           <!-- Status Row -->
           <div class="row">            
@@ -606,31 +610,23 @@ $( document ).ready(function() {
 	depthChart.update();
 
 	headingGauge.value = (state.attitude[0]);
-			
-  }
-  /*
-  function setLoggingMode(){
-  	//var cmd = {command : "setLoggingMode"};
-	//socket.send(JSON.stringify(cmd));
-  }
-  function getLoggingMode(){
-  	var cmd = {command : "getLoggingMode"};
-	socket.send(JSON.stringify(cmd));
-  }
-  */
+	
+	if(state.vitals[3] < 1){
+		$("#hddFreeSpaceOK").removeClass("d-none").addClass("d-block alert alert-danger");
+	}
+	else{
+		$("#hddFreeSpaceOK").removeClass("d-block alert alert-danger").addClass("d-none");
+	}
+  }// End function processTelemetry
+
   function getLoggingInfo(){
   	var cmd = {command : "getLoggingInfo"};
 	socket.send(JSON.stringify(cmd));
   }
-  /*
-  function getRecordingStatus(){
-  	var cmd = {command : "getLoggingStatus"};
-	socket.send(JSON.stringify(cmd));
-  }
-  */
+
   function processRecordingInfo(isLogging, mode){
-	console.log(isLogging);
-	console.log(mode);
+	//console.log(isLogging);
+	//console.log(mode);
   	if(mode == "1"){
   		hideLoggingButton();
   		$("#modeWidget").text("always ON");
@@ -703,7 +699,7 @@ $( document ).ready(function() {
   	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
   	$("#btnStopRecording").removeClass("d-inline").addClass("d-none");
   }
+  
   </script>
-
 </html>
 

@@ -20,6 +20,7 @@
 
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
+#include "binary_stream_msg/Stream.h"
 
 #pragma pack(1)
 typedef struct {
@@ -140,7 +141,7 @@ class ZEDF9P{
 		std_msgs::String ubx_msg_str;
 		std_msgs::String ubx_read;
 		
-		std::ofstream file; //binary log file
+		//std::ofstream file; //binary log file
 		int speedSequenceNumber = 1;
 		
 		bool bootstrappedGnssTime = false;
@@ -149,6 +150,7 @@ class ZEDF9P{
 
                 ros::Subscriber gnssSubscriber;
                 ros::Publisher speedPublisher;
+                ros::Publisher gnssBinStreamPublisher;
 
 
 
@@ -157,6 +159,7 @@ class ZEDF9P{
 		ZEDF9P(std::string & outputFolder, std::string & serialport): outputFolder(outputFolder), serialport(serialport){
 			gnssSubscriber = n.subscribe("fix", 1000, &ZEDF9P::gnssCallback,this);
 			speedPublisher = n.advertise<nav_msgs::Odometry>("speed",1000);
+			gnssBinStreamPublisher = n.advertise<binary_stream_msg::Stream>("gnss_bin_stream",1000);
 		}
 
 		std::string datetime(){
@@ -215,8 +218,6 @@ class ZEDF9P{
 		}
 
 		void processFrame(ubx_header *hdr, uint8_t *payload, ubx_checksum *checksum){
-			//TODO verify checksum
-			//TODO process , hdr
 			if(validateChecksum(hdr, payload, checksum)){
 				//UBX-NAV-PVT
 
@@ -232,52 +233,41 @@ class ZEDF9P{
 					msg.twist.twist.linear.y= speedKmh;
 					speedPublisher.publish(msg);
 				}
+				/*
 				else if(hdr->msgClass == 0x02 && hdr->id == 0x15){
-					//Cool beans
 					//ROS_INFO("Got GNSS observation packet");
 				}
-
+				*/
+				
 				//write frame to bin file
 				uint8_t sync[2];
 				sync[0] = 0xb5;
 				sync[1] = 0x62;
-
+			
+				/*
 				file.write((char*)sync, sizeof(uint16_t));
 				file.write((char*)hdr, sizeof(ubx_header));
 				file.write((char*)payload, hdr->length);
 				file.write((char*)checksum, sizeof(ubx_checksum));
+				*/
+				
+				std::vector<unsigned char> v;
+				
+				v.insert(v.begin(), sync, sync+2);
+				
+				v.insert(v.end(), (unsigned char*)hdr, (unsigned char*)hdr + sizeof(ubx_header));
+				v.insert(v.end(), (unsigned char*)payload, (unsigned char*)payload + hdr->length);
+				v.insert(v.end(), (unsigned char*)checksum, (unsigned char*)checksum + sizeof(ubx_checksum));
+				
+				binary_stream_msg::Stream msg;
+				msg.vector_length = v.size();
+				msg.stream = v;
+				msg.timeStamp=ros::Time::now().toNSec();
+				gnssBinStreamPublisher.publish(msg);
+
 			}
 			else{
 				ROS_ERROR("zf9p checksum error");
-			}
-		}
-
-		void initLogFile(){
-			if(!file.is_open()){
-	                        outputFileName = std::string(datetime()) + std::string(".ubx");
-				std::string outputFilePath = tmpFolder + "/" + outputFileName;
-        	                file.open(outputFilePath.c_str(),std::ios::app|std::ios::out|std::ios::binary);
-				lastRotationTime = ros::Time::now();
-			}
-		}
-
-		void finalizeLogFile(){
-			if(file.is_open()){
-				file.close();
-				std::string oldPath = tmpFolder + "/" + outputFileName;
-				std::string newPath = outputFolder + "/" + outputFileName;
-				rename(oldPath.c_str(),newPath.c_str());
-			}
-		}
-
-		void rotateLogFile(){
-	                ros::Time currentTime = ros::Time::now();
-
-        	        if(currentTime.toSec() - lastRotationTime.toSec() > logRotationIntervalSeconds){
-                	        ROS_INFO("Rotating GNSS UBX logs");
-                        	//close (if need be), then reopen files.
-				finalizeLogFile();
-				initLogFile();
 			}
 		}
 
@@ -332,14 +322,7 @@ class ZEDF9P{
 				ros::spinOnce();
 			}
 
-			//FIXME: superflous with new rotate()
-			//open file
-			initLogFile();
-
-			if(file) {
-
-		                while(ros::ok()){ //read serial port and save in the file
-					rotateLogFile();
+				while(ros::ok()){ //read serial port and save in the file
 
 					//read sync characters
 					int n = serialRead(serial_port, (unsigned char*)&read_buf, size);
@@ -403,16 +386,9 @@ class ZEDF9P{
 					else{//read error
 
 					}
-				}//while
+				}//while ros ok
 
-				//cleanup
-		                close(serial_port);
-	        	        file.close();
-			}
-			else{
-				ROS_INFO("Cannot open UBX file\n");
-				exit(1);
-			}
+			close(serial_port);
 		}
 
 };

@@ -15,11 +15,14 @@
 #include <tf2_ros/transform_listener.h>
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
+
 //C++ std lib
 #include <iostream>
 #include <mutex>
 #include <thread>
 #include <numeric>
+#include <fstream>
+#include <filesystem>
 
 //Logger service Poseidon
 #include "logger_service/GetLoggingStatus.h"
@@ -27,14 +30,29 @@
 #include "logger_service/GetLoggingMode.h"
 #include "logger_service/SetLoggingMode.h"
 
-//Config service Poseidon
+//Poseidon custom messages
 #include "setting_msg/Setting.h"
 #include "setting_msg/ConfigurationService.h"
+#include "binary_stream_msg/Stream.h"
+#include "raspberrypi_vitals_msg/sysinfo.h"
 
 //Poseidon utils
 #include "../../utils/timestamp.h"
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
+
+//Boost lib
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/ip/tcp.hpp>
+
+//rapidjson
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
 
 class LoggerBase{
 	
@@ -46,6 +64,7 @@ class LoggerBase{
 		virtual void init()=0;
 		virtual void finalize()=0;
 		virtual void rotate()=0;
+		void updateLogRotationInterval();
 		
 		/* Tranformers */
 		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
@@ -56,6 +75,8 @@ class LoggerBase{
 		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
 		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
 		void configurationCallBack(const setting_msg::Setting &setting);
+		virtual void gnssBinStreamCallback(const binary_stream_msg::Stream& stream)=0;
+		void hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals);
 		
 		/* Speed based logging */
 		void updateSpeedThreshold();
@@ -69,6 +90,15 @@ class LoggerBase{
 		bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response);
 		void updateLoggingMode();
 		
+		/* log transfer */
+		virtual bool compress(){return false;};
+		void transfer();
+		std::string zip_to_base64(std::string zipPath);
+		std::string create_json_str(std::string &base64Zip);
+		bool send_job(std::string json);
+		bool can_reach_server();
+		void updateTranferConfig();
+		
 	protected:
 		// ros
 		ros::NodeHandle node;
@@ -81,11 +111,12 @@ class LoggerBase{
 		std::mutex mtx;
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
+		bool hddFreeSpaceOK = true;
 		
 		// log rotation
 		std::mutex fileRotationMutex;
 		ros::Time lastRotationTime;
-		int logRotationIntervalSeconds = 60*60; //1h //TODO: make this a parameter 
+		int logRotationIntervalSeconds;
 		std::string tmpLoggingFolder = "/tmp"; //TODO: make this a parameter?
 		uint64_t lastGnssTimestamp =  0;
 		uint64_t lastImuTimestamp  =  0;
@@ -108,12 +139,24 @@ class LoggerBase{
 		ros::Subscriber speedSubscriber ;
 		ros::Subscriber configurationSubscriber;
 		ros::Subscriber lidarSubscriber ;
+		ros::Subscriber hddVitalsSubscriber ;
 		
 		ros::ServiceServer getLoggingStatusService ;
 		ros::ServiceServer toggleLoggingService;
 		
 		ros::ServiceServer getLoggingModeService ;
 		ros::ServiceServer setLoggingModeService;
+		
+		// raw gnss binary stream
+		std::string  rawGnssFileName;
+        std::ofstream rawGnssoutputFile;
+        ros::Subscriber streamSubscriber;
+        
+        // transfer
+		std::string host;
+		std::string target;
+		bool activatedTransfer;
+		std::string apiKey;
 };
 	
 #endif

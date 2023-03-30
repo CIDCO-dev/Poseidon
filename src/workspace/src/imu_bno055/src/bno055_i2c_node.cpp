@@ -29,7 +29,12 @@ int main(int argc, char *argv[]) {
     }
 
     std::string calibrationFile;
-    nh->param<std::string>("calibrationFile",calibrationFile,"/home/ubuntu/Poseidon/calibration.dat");
+	if (!nh_priv->getParam("calibrationFile", calibrationFile))
+	{
+		ROS_ERROR_STREAM("calibrationFile parameter not found, defaulting to: /opt/Poseidon/calibration.dat");
+		calibrationFile = "/opt/Poseidon/calibration.dat";
+	}
+    
 
     imu_bno055::BNO055I2CActivity* activity = new imu_bno055::BNO055I2CActivity(*nh, *nh_priv,calibrationFile);
     watchdog::Watchdog* watchdog = new watchdog::Watchdog();

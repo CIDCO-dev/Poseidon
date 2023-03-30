@@ -8,6 +8,8 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	speedSubscriber = node.subscribe("speed", 1000, &LoggerBase::speedCallback, this);
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
+	streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
+	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
 	toggleLoggingService = node.advertiseService("toggle_logging", &LoggerBase::toggleLogging, this);
@@ -16,6 +18,12 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	setLoggingModeService = node.advertiseService("set_logging_mode", &LoggerBase::setLoggingMode, this);
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+	
+	updateLogRotationInterval();
+	updateTranferConfig();
+	ROS_INFO_STREAM("File transfert activated: " << this->activatedTransfer << ", Target server: "
+					<< this->host <<", Target API: "<< this->target);
+	
 	updateSpeedThreshold();
 	updateLoggingMode();
 	ROS_INFO_STREAM("Logging mode set to : "<< loggingMode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
@@ -70,6 +78,84 @@ void LoggerBase::updateSpeedThreshold(){
     }
 }
 
+void LoggerBase::updateTranferConfig(){
+	setting_msg::ConfigurationService srv;
+
+    srv.request.key = "targetServer";
+
+    if(configurationClient.call(srv)){
+        try{
+        	this->host = srv.response.value;
+        	this->activatedTransfer = true;
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR("Error in server target definition, deactivating automatic file transfer");
+        	this->host = "";
+        	this->activatedTransfer = false;
+        }
+    }
+    else{
+    	ROS_WARN("No server target definition, deactivating automatic file transfer");
+		this->host = "";
+		this->activatedTransfer = false;
+    }
+    
+    srv.request.key = "apiTarget";
+
+    if(configurationClient.call(srv)){
+        try{
+        	this->target = srv.response.value;
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR("Error in API target definition, defaulting to /");
+        	this->target = "/";
+        }
+    }
+    else{
+    	ROS_WARN("No API target definition, defaulting to /");
+		this->target = "/";
+    }
+    
+    srv.request.key = "apiKey";
+	if(configurationClient.call(srv)){
+        try{
+        	this->apiKey = srv.response.value;
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR("Error in API key definition");
+        	this->apiKey = "";
+        }
+    }
+    else{
+    	ROS_WARN("No API key definition");
+		this->apiKey = "";
+    }
+    
+}
+
+void LoggerBase::updateLogRotationInterval(){
+	
+	setting_msg::ConfigurationService srv;
+
+    srv.request.key = "logRotationIntervalSeconds";
+
+    if(configurationClient.call(srv)){
+    	ROS_INFO_STREAM("logRotationIntervalSeconds : " << srv.response.value);
+        try{
+        	this->logRotationIntervalSeconds = stoi(srv.response.value);
+        }
+        catch(std::invalid_argument &err){
+        	ROS_ERROR_STREAM("Error in log rotation interval definition, defaulting to 1H \n Example for 1H: 3600");
+        	this->logRotationIntervalSeconds = 3600;
+        }
+    }
+    else{
+    	ROS_WARN("No log rotation interval defined, defaulting to 1H");
+        this->logRotationIntervalSeconds = 3600;
+    }
+	
+}
+
 double LoggerBase::getSpeedThreshold(){
 	return speedThresholdKmh;
 }
@@ -84,7 +170,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
-		if(!loggerEnabled && request.loggingEnabled){	
+		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){	
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
@@ -97,7 +183,6 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 		response.loggingStatus=loggerEnabled;
 		mtx.unlock();
-		//ROS_WARN_STREAM("unlocking thread_id: "<<thread_id);
 		return true;
 	}
 	else{
@@ -106,8 +191,9 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 	}
 }
 
+// Callback for when configs are changed by the user via the web ui
 void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
-	ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
 	if(setting.key == "loggingMode"){
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{
@@ -150,8 +236,37 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			mtx.unlock();
 		}
 	}
-	else{
-
+	else if(setting.key == "targetServer"){
+		if(setting.value == ""){
+			this->activatedTransfer = false;
+		}
+		else{
+			this->host = setting.value;
+			this->activatedTransfer = true;
+		}
+	}
+	else if(setting.key == "apiTarget"){
+		if(setting.value == ""){
+			this->target = "/";
+		}
+		else{
+			this->target = setting.value;
+		}
+	}
+	else if(setting.key == "logRotationIntervalSeconds"){
+		if(setting.value == ""){
+			this->logRotationIntervalSeconds = 3600;
+			ROS_INFO_STREAM("Log rotation interval from config file is not set \n Defaulting to 1h");
+		}
+		else{
+			try{
+        		this->logRotationIntervalSeconds = stoi(setting.value);
+        	}
+        	catch(std::invalid_argument &err){
+        		ROS_ERROR_STREAM("Log rotation interval from config file is not set properly \n example : 3600 \n Defaulting to 1h");
+        		this->logRotationIntervalSeconds = 3600;
+        	}
+		}
 	}
 }
 
@@ -183,7 +298,7 @@ void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
 	//ROS_DEBUG_STREAM("current speed : " << current_speed);
 
 	// wait two mins before calculating the average speed
-	// TODO: this assumes 1 speed measrement per second (VTG, binary, etc). this may be false with some GNSS devices
+	// TODO: this assumes 1 speed measurement per second (VTG, binary, etc). this may be false with some GNSS devices
 	if (kmhSpeedList.size() < 120){
 		kmhSpeedList.push_back(current_speed);
 	}
@@ -230,4 +345,222 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 	}
 	
 }
+
+void LoggerBase::transfer(){
+	
+	std::filesystem::path outputFolderPath = outputFolder;
+	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
+		if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
+		    	    
+	    	std::string base64Zip = zip_to_base64(dir_entry.path());
+	    	std::string json = create_json_str(base64Zip);
+	    	bool ok = send_job(json);
+	    	
+	    	if(!ok){
+	    		// XXX retry  3-5 time ??
+	    		break;
+	    	}
+	    	else{
+	    		if(!std::filesystem::remove(dir_entry.path())){
+	    			ROS_ERROR_STREAM("Could not delete file:" << dir_entry.path());
+	    		}
+	    	}
+	    }
+	}	
+}
+
+std::string LoggerBase::zip_to_base64(std::string zipPath){
+
+	typedef boost::archive::iterators::base64_from_binary<boost::archive::iterators::transform_width<std::string::const_iterator,6,8> > it_base64_t;
+	std::string s;
+	
+	std::ifstream file(zipPath, std::ios::in | std::ios::binary);
+
+	if (file.is_open())
+	{
+		s.append(std::string(std::istreambuf_iterator<char>(file), {}));
+		file.close();
+	}
+	else{
+		throw std::ios_base::failure("Failed to open the file");
+	}
+
+  // Encode
+  unsigned int writePaddChars = (3-s.length()%3)%3;
+  std::string base64(it_base64_t(s.begin()),it_base64_t(s.end()));
+  base64.append(writePaddChars,'=');
+
+  return base64;
+}
+
+std::string LoggerBase::create_json_str(std::string &base64Zip){
+	
+	rapidjson::Document d;
+	d.SetObject();
+
+	rapidjson::Value key;
+	char buff[this->apiKey.size()+1];
+	int len = sprintf(buff, "%s", this->apiKey.c_str());
+	key.SetString(buff, len, d.GetAllocator());
+	d.AddMember("apiKey", key, d.GetAllocator());
+	
+	rapidjson::Value jobType("Hydroball20");
+	d.AddMember("jobType", jobType, d.GetAllocator());
+	
+	rapidjson::Value fileData;
+	char* buffer = new char [base64Zip.size()+1];
+	len = sprintf(buffer, "%s", base64Zip.c_str());
+	fileData.SetString(buffer, len, d.GetAllocator());
+	delete buffer;
+	d.AddMember("fileData", fileData, d.GetAllocator());
+	
+	rapidjson::StringBuffer sb;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+	d.Accept(writer);
+	return sb.GetString();
+}
+
+bool LoggerBase::send_job(std::string json){
+	bool status = false;
+	
+	try{
+		int version = 11;
+		
+        // The io_context is required for all I/O
+        boost::asio::io_context ioService;
+
+        // These objects perform our I/O
+        boost::asio::ip::tcp::resolver resolver(ioService);
+        boost::beast::tcp_stream stream(ioService);
+
+        // Look up the domain name
+        auto const results = resolver.resolve(this->host, "8080");
+
+        // Make the connection on the IP address we get from a lookup
+        stream.connect(results);
+
+        // Set up an HTTP GET request message
+        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, this->target, version};
+        req.set(boost::beast::http::field::host, this->host);
+        req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+		
+		req.body() = json;
+		req.prepare_payload();
+		
+        // Send the HTTP request to the remote host
+        boost::beast::http::write(stream, req);
+
+        // This buffer is used for reading and must be persisted
+        boost::beast::flat_buffer buffer;
+
+        // Declare a container to hold the response
+        boost::beast::http::response<boost::beast::http::dynamic_body> res;
+
+        // Receive the HTTP response
+        boost::beast::http::read(stream, buffer, res);
+        boost::beast::error_code ec;
+
+		if(res.result() == boost::beast::http::status::ok){
+			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		    if(ec && ec != boost::beast::errc::not_connected){
+		        throw boost::beast::system_error{ec};
+		    }
+		    status = true;
+        }
+        else{
+         	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        	if(ec && ec != boost::beast::errc::not_connected){
+            	throw boost::beast::system_error{ec};
+            }
+            status = false;
+            ROS_ERROR_STREAM("send_job() response: " << res.result());
+        }
+
+    }
+    catch(std::exception const& e)
+    {
+        ROS_ERROR_STREAM("Post request error: " << e.what());
+    }
+    return status;
+}
+
+bool LoggerBase::can_reach_server(){
+	bool status = false;
+	try{
+		int version = 11;
+		
+        // The io_context is required for all I/O
+        boost::asio::io_context ioService;
+
+        // These objects perform our I/O
+        boost::asio::ip::tcp::resolver resolver(ioService);
+        boost::beast::tcp_stream stream(ioService);
+
+        // Look up the domain name
+        auto const results = resolver.resolve(this->host, "8080");
+
+        // Make the connection on the IP address we get from a lookup
+        stream.connect(results);
+
+        // Set up an HTTP GET request message
+        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, "/", version};
+        req.set(boost::beast::http::field::host, this->host);
+        req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+		
+        // Send the HTTP request to the remote host
+        boost::beast::http::write(stream, req);
+
+        // This buffer is used for reading and must be persisted
+        boost::beast::flat_buffer buffer;
+
+        // Declare a container to hold the response
+        boost::beast::http::response<boost::beast::http::dynamic_body> res;
+
+        // Receive the HTTP response
+        boost::beast::http::read(stream, buffer, res);
+        boost::beast::error_code ec;
+
+		if(res.result() == boost::beast::http::status::ok){
+			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		    if(ec && ec != boost::beast::errc::not_connected){
+		        throw boost::beast::system_error{ec};
+		    }
+		    status = true;
+        }
+        else{
+         	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        	if(ec && ec != boost::beast::errc::not_connected){
+            	throw boost::beast::system_error{ec};
+            }
+            status = false;
+            ROS_ERROR_STREAM("can_reach_server() response: " << res.result());
+        }
+
+    }
+    catch(std::exception const& e)
+    {
+        ROS_ERROR_STREAM("Get request error: " << e.what());
+    }
+    
+    return status;
+}
+
+
+void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
+	
+	if(vitals.freehdd < 1.0 ){
+		
+		this->hddFreeSpaceOK = false;
+		
+		logger_service::ToggleLogging::Request toggleRequest;
+		toggleRequest.loggingEnabled = false;
+		logger_service::ToggleLogging::Response toggleResponse;
+		toggleLogging(toggleRequest, toggleResponse);			
+	}
+	
+	if(vitals.freehdd > 2.0 ){
+		this->hddFreeSpaceOK = true;
+	}
+}
+
 

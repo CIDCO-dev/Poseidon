@@ -1,7 +1,6 @@
 #include "loggerBinary.h"
 
 LoggerBinary::LoggerBinary(std::string & logFolder): LoggerBase(logFolder) {
-
 }
 
 LoggerBinary::~LoggerBinary(){
@@ -17,16 +16,21 @@ void LoggerBinary::init(){
 		fileRotationMutex.lock();
 
 		//Make sure the files are not already opened...
-		if(!outputFile.is_open()){
+		if(!outputFile.is_open() && !rawGnssoutputFile.is_open() ){
 
 			outputFileName = TimeUtils::getStringDate() + std::string(".log");
+			rawGnssFileName = TimeUtils::getStringDate() + std::string(".bin"); // TODO make extension a param
 
             outputFile.open(outputFolder + "/" + outputFileName,std::ios::binary|std::ios::trunc);
+			rawGnssoutputFile.open(outputFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
 			
 			ROS_INFO("Logging binary data to %s", outputFolder.c_str());
 			
             if(!outputFile.good()){
 				throw std::invalid_argument("Couldn't open binary log file");
+            }
+            if( !rawGnssoutputFile.good()){
+				throw std::invalid_argument("Couldn't open raw gnss log file");
             }
 
 			lastRotationTime = ros::Time::now();
@@ -41,18 +45,36 @@ void LoggerBinary::init(){
 
 void LoggerBinary::finalize(){
 	fileRotationMutex.lock();
-
-	if(outputFile.is_open()){
+	
+	std::string newBinSensorFileName;
+	std::string newRawGnssFileName;
+	
+	if(outputFile.is_open() && rawGnssoutputFile.is_open()){
 		//close
 		outputFile.close();
+		rawGnssoutputFile.close();
 
 		//move
 		std::string oldPath = tmpLoggingFolder + "/"  + outputFileName;
-		std::string newPath = outputFolder + "/" + outputFileName;
-		rename(oldPath.c_str(),newPath.c_str());
+		newBinSensorFileName = outputFolder + "/" + outputFileName;
+		rename(oldPath.c_str(), newBinSensorFileName.c_str());
+		
+		oldPath = tmpLoggingFolder + "/"  + rawGnssFileName;
+		newRawGnssFileName = outputFolder + "/" + rawGnssFileName;
+		rename(oldPath.c_str(), newRawGnssFileName.c_str());
 	}
 	
 	fileRotationMutex.unlock();
+	
+	std::string zipFilename = rawGnssFileName.substr(0, 17) + std::string(".zip");
+	
+	bool noError = compress(zipFilename, newBinSensorFileName, newRawGnssFileName);
+	
+	if(noError && can_reach_server() && activatedTransfer){
+		transfer();
+	}
+	
+	
 }
 
 /* Rotates logs based on time */
@@ -67,6 +89,24 @@ void LoggerBinary::rotate(){
 			finalize();
 			init();
 		}
+	}
+}
+
+bool LoggerBinary::compress(std::string &zipFilename, std::string &binSensorFilePath, std::string &rawGnssFilePath){
+	
+	std::string files =  binSensorFilePath + " " + rawGnssFilePath;
+	
+	std::string command = "zip -Tmj " + outputFolder + "/" + zipFilename + " " + files;
+	
+	auto zip = std::system(command.c_str());
+	
+	if(zip == 0){		
+		return true;
+	}
+	else{
+		ROS_ERROR_STREAM("Cannot zip files \nZipping process returned" << zip);
+		ROS_ERROR_STREAM(command);
+		return false;
 	}
 }
 
@@ -88,6 +128,7 @@ void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 			//TODO: we could throttle this if CPU usage becomes an issue
 			rotate();
 		}
+		fileLock.lock();
 		uint64_t timestamp = TimeUtils::buildTimeStamp(gnss.header.stamp.sec, gnss.header.stamp.nsec);
 		PacketHeader hdr;
         hdr.packetType=PACKET_POSITION;
@@ -104,10 +145,12 @@ void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
         memcpy(&packet.covariance,&gnss.position_covariance,9*sizeof(double));
         packet.covarianceType=gnss.position_covariance_type;
 
-        outputFile.write((char*)&hdr,sizeof(PacketHeader));
-        outputFile.write((char*)&packet,sizeof(PositionPacket));
+        outputFile.write((char*)&hdr, sizeof(PacketHeader));
+        outputFile.write((char*)&packet, sizeof(PositionPacket));
 
 		lastGnssTimestamp = timestamp; //XXX unused lastGnssTimestamp variable
+		
+		fileLock.unlock();
 	}
 }
 
@@ -125,6 +168,8 @@ void LoggerBinary::imuCallback(const sensor_msgs::Imu& imu){
 
 		if(timestamp > lastImuTimestamp){
 			
+			fileLock.lock();
+			
 			imuTransform(imu, roll, pitch, heading);
 			
 			PacketHeader hdr;
@@ -137,10 +182,11 @@ void LoggerBinary::imuCallback(const sensor_msgs::Imu& imu){
             packet.pitch=pitch;
             packet.roll=roll;
 
-            outputFile.write((char*)&hdr,sizeof(PacketHeader));
-            outputFile.write((char*)&packet,sizeof(AttitudePacket));
+            outputFile.write((char*)&hdr, sizeof(PacketHeader));
+            outputFile.write((char*)&packet, sizeof(AttitudePacket));
 			
 			lastImuTimestamp = timestamp;
+			fileLock.unlock();
 		}
 	}
 }
@@ -150,6 +196,9 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(sonar.header.stamp.sec, sonar.header.stamp.nsec);
 
 		if(timestamp > lastSonarTimestamp){
+			
+			fileLock.lock();
+			
 			PacketHeader hdr;
             hdr.packetType=PACKET_DEPTH;
             hdr.packetSize=sizeof(DepthPacket);
@@ -161,10 +210,11 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
             packet.depth_y=sonar.point.y;
             packet.depth_z=sonar.point.z;
 
-            outputFile.write((char*)&hdr,sizeof(PacketHeader));
-            outputFile.write((char*)&packet,sizeof(DepthPacket));
+            outputFile.write((char*)&hdr, sizeof(PacketHeader));
+            outputFile.write((char*)&packet, sizeof(DepthPacket));
             
 			lastSonarTimestamp = timestamp;
+			fileLock.unlock();
 		}
 	}
 }
@@ -182,6 +232,9 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
 		
 		if(timestamp > lastLidarTimestamp){
+		
+			fileLock.lock();
+			
 			PacketHeader hdr;
             hdr.packetType=PACKET_LIDAR;
             hdr.packetSize= sizeof(LidarPacket) * points.size();  //(uint64_t) (sizeof(LidarPacket) * points.size());
@@ -200,6 +253,26 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
     		
 		}
 		lastLidarTimestamp = timestamp;
+		fileLock.unlock();
 	}
 }
 
+void LoggerBinary::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
+	
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = stream.timeStamp;
+		
+		if(timestamp > lastLidarTimestamp){
+		
+			char arr[stream.vector_length];
+			auto v = stream.stream;
+			std::copy(v.begin(), v.end(), arr);
+			
+			rawGnssoutputFile.write((char*)arr, stream.vector_length);
+		}
+		
+		lastLidarTimestamp = timestamp;
+	}
+	
+	
+}

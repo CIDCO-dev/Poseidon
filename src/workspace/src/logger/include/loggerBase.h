@@ -151,6 +151,7 @@ class LoggerBase{
 		std::string  rawGnssFileName;
         std::ofstream rawGnssoutputFile;
         ros::Subscriber streamSubscriber;
+        std::string fileExtensionForGpsDatagram;
         
         // transfer
 		std::string host;

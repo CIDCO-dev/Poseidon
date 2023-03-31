@@ -19,7 +19,7 @@ void LoggerBinary::init(){
 		if(!outputFile.is_open() && !rawGnssoutputFile.is_open() ){
 
 			outputFileName = TimeUtils::getStringDate() + std::string(".log");
-			rawGnssFileName = TimeUtils::getStringDate() + std::string(".bin"); // TODO make extension a param
+			rawGnssFileName = TimeUtils::getStringDate() + this->fileExtensionForGpsDatagram;
 
             outputFile.open(outputFolder + "/" + outputFileName,std::ios::binary|std::ios::trunc);
 			rawGnssoutputFile.open(outputFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);

@@ -117,7 +117,7 @@ In poseidon workspace:
 ```
 Activate filtering:
 ```
-./devel/lib/logger/lidarGeoreferencer -f file > outputFile.txt
+./devel/lib/logger/lidarGeoreferencer -f -a -135 -b -45 -d 1 -e 5 file > outputFile.txt
 ```
 For help:
 ```

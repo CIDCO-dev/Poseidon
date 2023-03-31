@@ -41,8 +41,15 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 			return laserPoints;
 		}
 		
+		void setFilter(double &minAngle, double &maxAngle, double &minDistance, double &maxDistance){
+			this->activatedFilter = true;
+			this->minAngle = minAngle;
+			this->maxAngle = maxAngle;
+			this->minDistance = minDistance;
+			this->maxDistance = maxDistance;
+		}
 		
-		void georeference(bool activatedFilter){
+		void georeference(){
 			if(this->positions.size()==0){
 				std::cerr << "[-] No position data found in file" << std::endl;
 				return;
@@ -96,12 +103,12 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
         	//Georef pings
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
         		
-        		if(activatedFilter){
+        		if(this->activatedFilter){
         		
         			LidarPacket point = std::get<LidarPacket>(*i);
         			
-		    		if(Filters::distanceFilter(point.laser_x, point.laser_y, point.laser_z, 1.0, 50.0) ||
-					   Filters::horizontalAngleFilter(point.laser_x, point.laser_y, -135.0, -45.0))
+		    		if(Filters::distanceFilter(point.laser_x, point.laser_y, point.laser_z, this->minDistance, this->maxDistance) ||
+					   Filters::horizontalAngleFilter(point.laser_x, point.laser_y, this->minAngle, this->maxAngle))
 					{
 		    			continue;
 		    		}
@@ -190,6 +197,11 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 		std::vector<std::pair<PacketHeader, LidarPacket>>  laserPoints;
 		Eigen::Vector3d leverArm;
 		Eigen::Matrix3d boresight;
+		double minAngle = 0.0;
+		double maxAngle = 0.0;
+		double minDistance = 0.0;
+		double maxDistance = 0.0;
+		bool activatedFilter = false;
 
 };
 
@@ -201,6 +213,10 @@ SYNOPSIS\n \
 	georeference [-x lever_arm_x] [-y lever_arm_y] [-z lever_arm_z] [-r roll_angle] [-p pitch_angle] [-h heading_angle] file\n\n\
 DESCRIPTION\n \
 	-f Activate lidar filtering\n \
+	-a Minimum angle\n \
+	-b Maximum angle\n \
+	-d Minimum distance\n \
+	-e Maximum distance\n \
 Copyright 2017-2023 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés" << std::endl;
 	exit(1);
 }
@@ -225,10 +241,14 @@ int main(int argc,char** argv){
 		double heading  = 0.0;
 		
 		bool activateFilter = false;
+		double minAngle = 0.0;
+		double maxAngle = 0.0;
+		double minDistance = 0.0;
+		double maxDistance = 0.0;
 
 		int index;
 
-		while((index=getopt(argc,argv,"x:y:z:r:p:h:f"))!=-1){
+		while((index=getopt(argc,argv,"a:b:d:e:x:y:z:r:p:h:f"))!=-1){
 			switch(index){
 				case 'x':
 				if(sscanf(optarg,"%lf", &leverArmX) != 1){
@@ -276,7 +296,40 @@ int main(int argc,char** argv){
 				if(optarg == NULL){
 					activateFilter = true;
 				}
-			}	break;
+				else{
+					printUsage();
+				}
+				break;
+				
+				case 'a':
+				if (sscanf(optarg,"%lf", &minAngle) != 1){
+					std::cerr << "Invalid minimum angle (-a)" << std::endl;
+					printUsage();
+				}
+				break;
+				
+				case 'b':
+				if (sscanf(optarg,"%lf", &maxAngle) != 1){
+					std::cerr << "Invalid maximum angle (-b)" << std::endl;
+					printUsage();
+				}
+				break;
+				
+				case 'd':
+				if (sscanf(optarg,"%lf", &minDistance) != 1){
+					std::cerr << "Invalid minimum distance (-d)" << std::endl;
+					printUsage();
+				}
+				break;
+				
+				case 'e':
+				if (sscanf(optarg,"%lf", &maxDistance) != 1){
+					std::cerr << "Invalid maximum distance (-e)" << std::endl;
+					printUsage();
+				}
+				break;
+				
+			}	
 		}
 	
 	//Lever arm
@@ -286,10 +339,12 @@ int main(int argc,char** argv){
     //Boresight
     Eigen::Matrix3d boresight;
     Boresight::buildMatrix(boresight, roll, pitch, heading);
-	
 	PoseidonBinaryLidarGeoref georeferencer(fileName, leverArm, boresight);
+	if(activateFilter){
+		georeferencer.setFilter(minAngle, maxAngle, minDistance, maxDistance);
+	}
 	georeferencer.read();
-	georeferencer.georeference(activateFilter);
+	georeferencer.georeference();
 	}
 	
 	return 0;

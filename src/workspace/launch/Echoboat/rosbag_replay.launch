@@ -18,6 +18,7 @@
 
 	<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" output="screen"/>
 	
-	<node pkg="lidar_filtering" name="lidar_filtering" type="lidar_filtering_node" output="screen"/> <!-- Visualize filtering in rviz -->
-
+	<!-- Visualize filtering in rviz -->
+	<node pkg="lidar_filtering" name="lidar_filtering" type="lidar_filtering_node" output="screen" args="-120.0 -60. 1.0 5.0"/>
+ 
 </launch>

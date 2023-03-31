@@ -13,7 +13,7 @@
 class Filters{
 	public:
 		// horizontal angle in degrees
-		static bool horizontalAngleFilter(double x, double y, double minAngle, double maxAngle){
+		static bool horizontalAngleFilter(double x, double y, double &minAngle, double &maxAngle){
 			// 90° is the heading
 			// 0° is on left side
 			double theta = atan2(y, x) * 180 / LPI;
@@ -21,7 +21,6 @@ class Filters{
 			
 			// discard point in that region
 			if(theta > minAngle && theta < maxAngle ){
-				
 				return true;
 			}
 			else{
@@ -31,7 +30,7 @@ class Filters{
 		}
 		
 		// eucledian distance in meters
-		static bool distanceFilter(double x, double y, double z, double minDistance, double maxDistance){
+		static bool distanceFilter(double x, double y, double z, double &minDistance, double &maxDistance){
 			double distance = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
 			
 			// discard point
@@ -68,9 +67,13 @@ class LidarFiltering{
 		ros::NodeHandle node;
 		ros::Subscriber lidarSubscriber ;
 		ros::Publisher lidarFilteredPublisher ;
+		double minAngle = 0.0;
+		double maxAngle = 0.0;
+		double minDistance = 0.0;
+		double maxDistance = 0.0;
 	
 	public:
-		LidarFiltering(){
+		LidarFiltering(double a, double b, double d, double e): minAngle(a), maxAngle(b), minDistance(d), maxDistance(e){
 			lidarSubscriber = node.subscribe("velodyne_points", 1000, &LidarFiltering::lidarCallback,this);
 			lidarFilteredPublisher = node.advertise<sensor_msgs::PointCloud2>("filtered_lidar",1000);
 		}
@@ -83,7 +86,9 @@ class LidarFiltering{
 			std::vector<geometry_msgs::Point32> filteredPoints;
 			
 			for(auto const& point : points){
-				if(! (Filters::horizontalAngleFilter(point.x, point.y, -135, -45) || Filters::distanceFilter(point.x, point.y, point.z, 1.0, 50.0))){
+				if(! (Filters::horizontalAngleFilter(point.x, point.y, minAngle, maxAngle) || 
+					  Filters::distanceFilter(point.x, point.y, point.z, minDistance, maxDistance)))
+				{
 					filteredPoints.push_back(point);
 					
 				}

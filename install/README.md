@@ -1,4 +1,4 @@
-###Install instructions for Raspberry Pi:
+### Install instructions for Raspberry Pi:
 
 Edit UBoot before running the install scripts:
 
@@ -13,23 +13,35 @@ U-Boot> saveenv
 U-Boot> reset
 
 ----
-###automatic script launch upon new up network interface
+### Automatic script launch upon new UP network interface
 
-1) modify : /etc/network/interfaces
-example:
-auto eth0
-iface eth0 inet dhcp
-up ./sync_logfiles.sh
+script example:
 
-2) put script in : /etc/network/if-up.d
+```
+#!/bin/bash
 
-3) give execution right to script 
-chmod +x logfiles.sh
+IF=$1
+STATUS=$2
+
+if [ "$IF" == "wlan0" ] && [ "$STATUS" == "up" ];then
+    bash /opt/Poseindon/install/sync_logfiles.sh
+fi
+
+```
+ 
+- put script in : /etc/NetworkManager/dispatcher.d/
+
+- give execution right to script 
+chmod +x script.sh
+
+- sudo systemctl restart network-manager.service && sudo systemctl restart networking.service
+
 
 ---
-###rsync passwordless connection
+### rsync passwordless connection
+```
 ssh-keygen
 ssh-copy-id -i path/key.pub user@server
 ssh user@server
 logout
-
+```

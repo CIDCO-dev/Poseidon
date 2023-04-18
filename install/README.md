@@ -23,9 +23,20 @@ script example:
 IF=$1
 STATUS=$2
 
-if [ "$IF" == "wlan0" ] && [ "$STATUS" == "up" ];then
-    bash /opt/Poseindon/install/sync_logfiles.sh
+if [ "$IF" == "wlan0" ]
+then
+    case "$2" in
+        up)
+        sh /opt/Poseidon/tools/CSB-User/upload_files_to_webserver.sh USER Directory2Transfer
+        ;;
+        down)
+        #command 
+        ;;
+        *)
+        ;;
+    esac
 fi
+
 
 ```
  
@@ -35,6 +46,8 @@ fi
 chmod +x script.sh
 
 - sudo systemctl restart network-manager.service && sudo systemctl restart networking.service
+
+- The RSA key for rsync connection needs be in root directory since dispatcher script are ran by root
 
 
 ---

@@ -40,6 +40,12 @@ if os.path.isfile(path):
 		print("not ok", response.status_code)
 
 elif os.path.isdir(path):
-        pass
-        #TODO
+	for f in os.listdir(path):
+		response = sendRequest(host, target, assembleJson(key, jobType, encodeFile(os.path.join(path,f))))
+		if response.status_code == 200 :
+			os.remove(os.path.join(path,f))
+			if os.path.exists(os.path.join(path,f)):
+				print("could not delete file after sending it")
+		else:
+			print("not ok", response.status_code)
 

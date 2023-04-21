@@ -1,4 +1,7 @@
+apiKey SECRET
+apiTarget /
 headingOffset 0
+logRotationIntervalSeconds 3600
 loggingMode 1
 pitchOffset 0
 rollOffset 0
@@ -7,7 +10,6 @@ sonarPulseLength 120
 sonarRange 20
 sonarStartGain 16
 speedThresholdKmh 6.0
+ssid patate
 targetServer 127.0.0.1
-apiTarget /
-logRotationIntervalSeconds 3600
-apiKey SECRET
+wifiPassword qwerty1234

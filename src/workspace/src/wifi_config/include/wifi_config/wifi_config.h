@@ -56,12 +56,15 @@ class WifiConfig{
 			if(this->ssid.size() > 0){
 				this->wifiTransferActivated = true;
 			}
+			else{
+				ROS_ERROR_STREAM("ssid not set properly");
+			}
 		}
 		
 		void set_wifi_config(){
 			
 			std::string command = "nmcli connection add type wifi ssid " + this->ssid;	
-			command += 	" wifi-sec.key-mgmt \"wpa-psk\" wifi-sec.psk " + this->wifiPassword;
+			command += 	" wifi-sec.key-mgmt wpa-psk wifi-sec.psk " + this->wifiPassword;
 			command += " autoconnect yes con-name " + this->ssid;
 			
 			if( std::system(command.c_str()) != 0){
@@ -100,6 +103,12 @@ class WifiConfig{
 			
 				deleteOldConnection();
 				this->wifiTransferActivated = false;
+				
+				this->ssid = this->newSsid;
+				this->wifiPassword = this->newWifiPassword;
+				
+				this->newSsid = "";
+				this->newWifiPassword = "";
 			}
 			
 		}

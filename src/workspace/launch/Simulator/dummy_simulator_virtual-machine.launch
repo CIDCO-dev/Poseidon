@@ -23,5 +23,7 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" output="screen"/>
 
+<node pkg="wifi_config" name="wifiConfig" type="wifi_config_node" output="screen"/>
+
 
 </launch>

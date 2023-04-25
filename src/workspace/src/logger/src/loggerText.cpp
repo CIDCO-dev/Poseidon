@@ -77,7 +77,7 @@ void LoggerText::init(){
 			fprintf(sonarOutputFile,"Timestamp%sDepth\n",separator.c_str());
 			fprintf(lidarOutputFile,"Timestamp%sPoints\n",separator.c_str());
 			
-			rawGnssFileName = dateString + std::string(".bin");
+			rawGnssFileName = dateString + this->fileExtensionForGpsDatagram;
 			rawGnssoutputFile.open(tmpLoggingFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
 			
 			if( !rawGnssoutputFile.good()){

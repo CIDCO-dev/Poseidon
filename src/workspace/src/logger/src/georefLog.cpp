@@ -5,12 +5,53 @@
 #include <Eigen/Dense>
 #include <stdio.h>
 #include <unistd.h>
+#include <SbetProcessor.hpp>
+#include <filesystem>
 
-class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
+class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProcessor{
 	public:
-		PoseidonBinaryLidarGeoref(std::string & filePath, Eigen::Vector3d &leverArm, Eigen::Matrix3d &boresight) : PoseidonBinaryReader(filePath), 
-																													leverArm(leverArm), boresight(boresight){}
+		PoseidonBinaryLidarGeoref(std::string & filePath, Eigen::Vector3d &leverArm, Eigen::Matrix3d &boresight, std::string sbetFilePath) : PoseidonBinaryReader(filePath), 
+																													leverArm(leverArm), boresight(boresight), sbetFilePath(sbetFilePath){}
 		~PoseidonBinaryLidarGeoref(){}
+		
+		void processEntry(SbetEntry * entry){
+			
+			PacketHeader hdrPosition;
+			hdrPosition.packetTimestamp = static_cast<uint64_t>(entry->time);
+			hdrPosition.packetType = PACKET_POSITION;
+			hdrPosition.packetSize = sizeof(PositionPacket);
+			
+			PositionPacket position;
+			position.longitude = (entry->longitude* 180) / M_PI;
+			position.latitude = (entry->latitude * 180) / M_PI;
+			position.altitude = entry->altitude;
+			
+			//std::cerr<<"lat lon : "<< position.latitude << " , " << position.longitude << "\n";
+			
+			std::pair pairPosition = std::make_pair(hdrPosition, position);
+			positions.push_back(pairPosition);
+			
+			
+			PacketHeader hdrAttitude;
+			hdrAttitude.packetTimestamp = static_cast<uint64_t>(entry->time);
+			hdrAttitude.packetType = PACKET_ATTITUDE;
+			hdrAttitude.packetSize = sizeof(AttitudePacket);
+			
+			AttitudePacket attitude;
+			attitude.roll = entry->roll;
+			attitude.pitch = entry->pitch;
+			attitude.heading = entry->heading;
+			
+			std::pair pairAttitude = std::make_pair(hdrAttitude, attitude);
+			attitudes.push_back(pairAttitude);
+			
+			
+			//std::cerr<<"roll pitch heading : "<< attitude.roll << " , " << attitude.pitch << " , " << attitude.heading << "\n";
+			
+		}
+		void done(){
+		
+		}
 		
 		void processGnss(PacketHeader & hdr, PositionPacket & packet)override{
 			std::pair pairPacket = std::make_pair(hdr, packet);
@@ -50,6 +91,15 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 		}
 		
 		void georeference(){
+			
+			// if we have sbet read it
+			if(sbetFilePath.size() > 0){
+				positions.clear();
+				attitudes.clear();
+				readFile(sbetFilePath);
+			}
+		
+		
 			if(this->positions.size()==0){
 				std::cerr << "[-] No position data found in file" << std::endl;
 				return;
@@ -76,6 +126,28 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 		    
 		    std::cerr<<"sorting by timestamp done."<<std::endl;
 			
+			//fix timeStamps
+			if(sbetFilePath.size() > 0){
+				uint64_t attitudeTimestamp = std::get<PacketHeader>(attitudes[0]).packetTimestamp;
+				uint64_t positionTimestamp = std::get<PacketHeader>(positions[0]).packetTimestamp;
+				uint64_t laserPointTimestamp = std::get<PacketHeader>(laserPoints[0]).packetTimestamp;
+				
+				if( attitudeTimestamp == positionTimestamp){
+				
+					uint64_t diff = laserPointTimestamp - positionTimestamp * 1000000;
+					
+					for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
+						std::get<PacketHeader>(*i).packetTimestamp = (std::get<PacketHeader>(*i).packetTimestamp - diff) / 1000000;
+					}
+				}
+				else{
+					std::cerr<<"Sbet imu & gnss timestamp not the same \n";
+					exit(1);
+				}
+				
+			}
+			
+			
 			// For correct display of timestamps on Windows
 		    std::cerr <<  "[+] Position data points: " << positions.size() << " [" << std::get<PacketHeader>(positions[0]).packetTimestamp << " to " 
 		            << std::get<PacketHeader>(positions[positions.size() - 1]).packetTimestamp << "]\n";
@@ -100,7 +172,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
         	Eigen::Matrix3d ecefToNed;
         	Georeference::generateEcefToNed(ecefToNed, firstLat, firstLon);
         	
-        	//Georef pings
+        	//filter laser points
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
         		
         		if(this->activatedFilter){
@@ -123,7 +195,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 
 		        //No more attitudes available
 		        if (attitudeIndex >= attitudes.size() - 1) {
-		            //std::cerr << "No more attitudes" << std::endl;
+		            std::cerr << "No more attitudes" << std::endl;
 		            break;
 		        }
 
@@ -135,7 +207,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 		        
 		        //No more positions available
 		        if (positionIndex >= positions.size() - 1) {
-		            //std::cerr << "No more positions" << std::endl;
+		            std::cerr << "No more positions" << std::endl;
 		            break;
 		        }
 		        
@@ -157,7 +229,13 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 					
 		            continue;
 				}
-		    
+		    	
+		    	//std::cerr<<"interpolating pos between : " << std::get<PositionPacket>(positions[positionIndex]).latitude << " , " 
+		    	//											<< std::get<PositionPacket>(positions[positionIndex + 1]).latitude <<"\n";
+		    		
+	    		//std::cerr<<"interpolating roll between : " << std::get<AttitudePacket>(attitudes[attitudeIndex]).roll << " , " 
+	    		//										<< std::get<AttitudePacket>(attitudes[attitudeIndex + 1]).roll <<"\n";
+		    	
 				AttitudePacket * interpolatedAttitude = Interpolator::interpolateAttitude(attitudes[attitudeIndex], 
 																					  attitudes[attitudeIndex + 1], 
 																					  std::get<PacketHeader>(*i).packetTimestamp);
@@ -167,13 +245,14 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 																						  positions[positionIndex + 1],
 													 									  std::get<PacketHeader>(*i).packetTimestamp);
 		        
+		        //std::cerr << "interpolated roll : " << interpolatedAttitude->roll << "\n";
+		        //std::cerr << "interpolated lat : " << interpolatedPosition->latitude << "\n";
 				
 		        //georeference
 		        Eigen::Vector3d georeferencedLaserPoint;
 				
-		        //Georeference::PoseidonFrameToEcef(georeferencedLaserPoint, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
 		        
-		        Georeference::PoseidonFrameToNed(georeferencedLaserPoint, ecefToNed, firstPosition, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
+		        Georeference::georeferenceLGF(georeferencedLaserPoint, ecefToNed, firstPosition, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
 				
 				
 		        delete interpolatedAttitude;
@@ -202,6 +281,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader{
 		double minDistance = 0.0;
 		double maxDistance = 0.0;
 		bool activatedFilter = false;
+		std::string sbetFilePath="";
 
 };
 
@@ -210,7 +290,7 @@ void printUsage(){
 NAME\n\n\
 	georeference - Produces a georeferenced point cloud from binary lidar datagrams files\n\n\
 SYNOPSIS\n \
-	georeference [-x lever_arm_x] [-y lever_arm_y] [-z lever_arm_z] [-r roll_angle] [-p pitch_angle] [-h heading_angle] file\n\n\
+	georeference [-x lever_arm_x] [-y lever_arm_y] [-z lever_arm_z] [-r roll_angle] [-p pitch_angle] [-h heading_angle] [-s sbet_file] file\n\n\
 DESCRIPTION\n \
 	-f Activate lidar filtering\n \
 	-a Minimum angle\n \
@@ -245,10 +325,12 @@ int main(int argc,char** argv){
 		double maxAngle = 0.0;
 		double minDistance = 0.0;
 		double maxDistance = 0.0;
+		
+		char sbetFilePath[1024] = "";
 
 		int index;
 
-		while((index=getopt(argc,argv,"a:b:d:e:x:y:z:r:p:h:f"))!=-1){
+		while((index=getopt(argc,argv,"a:b:d:e:x:y:z:r:p:h:s:f"))!=-1){
 			switch(index){
 				case 'x':
 				if(sscanf(optarg,"%lf", &leverArmX) != 1){
@@ -293,12 +375,7 @@ int main(int argc,char** argv){
 				break;
 				
 				case 'f':
-				if(optarg == NULL){
 					activateFilter = true;
-				}
-				else{
-					printUsage();
-				}
 				break;
 				
 				case 'a':
@@ -329,20 +406,43 @@ int main(int argc,char** argv){
 				}
 				break;
 				
+				case 's':
+				if (sscanf(optarg,"%s", sbetFilePath) != 1){
+					std::cerr << "Invalid maximum distance (-e)" << std::endl;
+					printUsage();
+				}
+				else{
+					std::filesystem::path f{sbetFilePath};
+					if (!std::filesystem::exists(f)){
+						std::cerr << "Sbet file path provided does not exists" << std::endl;
+						printUsage();
+					} 
+				}
+				break;
+				
 			}	
 		}
-	
+		
 	//Lever arm
     Eigen::Vector3d leverArm;
     leverArm << leverArmX, leverArmY, leverArmZ;
     
     //Boresight
-    Eigen::Matrix3d boresight;
-    Boresight::buildMatrix(boresight, roll, pitch, heading);
-	PoseidonBinaryLidarGeoref georeferencer(fileName, leverArm, boresight);
+    Eigen::Matrix3d boresightMatrix;
+    //Boresight::buildMatrix(boresight, roll, pitch, heading);
+    
+    AttitudePacket boresight;
+    boresight.roll = roll;
+    boresight.pitch = pitch;
+    boresight.heading = heading;
+    Georeference::generateDcmMatrix(boresightMatrix, boresight);
+    
+	PoseidonBinaryLidarGeoref georeferencer(fileName, leverArm, boresightMatrix, sbetFilePath);
+	
 	if(activateFilter){
 		georeferencer.setFilter(minAngle, maxAngle, minDistance, maxDistance);
 	}
+	
 	georeferencer.read();
 	georeferencer.georeference();
 	}

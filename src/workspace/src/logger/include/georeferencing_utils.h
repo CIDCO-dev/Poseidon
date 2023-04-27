@@ -76,6 +76,9 @@ namespace Interpolator{
 		uint64_t beforeTimestamp = std::get<PacketHeader>(beforePosition).packetTimestamp;
 		uint64_t afterTimestamp = std::get<PacketHeader>(afterPosition).packetTimestamp;
 		
+		//std::cerr << "interpolatePosition by timeStamp : " << beforeTimestamp << " , " << afterTimestamp <<" , " << targetTimestamp << "\n";
+		
+		
 		PositionPacket *interpolatedPosition = new PositionPacket;
 		
 		interpolatedPosition->latitude  = linearInterpolationByTime(std::get<PositionPacket>(beforePosition).latitude, std::get<PositionPacket>(afterPosition).latitude,
@@ -152,9 +155,13 @@ namespace Georeference{
 	}
 	
 	void generateEcefToNed(Eigen::Matrix3d & outputMatrix, double & firstLat, double & firstLon){
+		// ned to ecef matrix
 		outputMatrix << -sin(firstLat*D2R)*cos(firstLon*D2R), -sin(firstLat*D2R) * sin(firstLon*D2R), cos(firstLat*D2R),
 					-sin(firstLon*D2R), cos(firstLon*D2R), 0,
 					-cos(firstLat*D2R)*cos(firstLon*D2R), -cos(firstLat*D2R)*sin(firstLon*D2R), -sin(firstLat*D2R);
+		// ecef to ned matrix
+		outputMatrix.transposeInPlace();
+		
 	}
 	
 	
@@ -199,22 +206,20 @@ namespace Georeference{
 	}
 	*/
 	
-	void PoseidonFrameToNed(Eigen::Vector3d & georeferencedLaserPoint, Eigen::Matrix3d ecefToNed, PositionPacket & firstPosition, AttitudePacket & attitude, PositionPacket & position, LidarPacket & point, Eigen::Vector3d & leverArm, Eigen::Matrix3d & boresight) {
-			
-		Eigen::Matrix3d nedToEcef;
-    	generateNedToEcefMatrix(nedToEcef, position);
+	void georeferenceLGF(Eigen::Vector3d & georeferencedLaserPoint, Eigen::Matrix3d & ecefToNed, PositionPacket & firstPosition, AttitudePacket & attitude, PositionPacket & position, LidarPacket & point, Eigen::Vector3d & leverArm, Eigen::Matrix3d & boresight) {
+		
     	
     	Eigen::Matrix3d imu2ned;
     	generateDcmMatrix(imu2ned, attitude);
     	
-    	Eigen::Vector3d positionECEF; // XXX can we go from wgs84 to NED without having to pass by ECEF ?
+    	Eigen::Vector3d positionECEF;
     	getPositionECEF(positionECEF, position);
     	Eigen::Vector3d firstPositionECEF;
     	getPositionECEF(firstPositionECEF, firstPosition);
     	Eigen::Vector3d positionNed = ecefToNed * (positionECEF -  firstPositionECEF);
     	
     	Eigen::Vector3d lidarPoint(point.laser_y, point.laser_x, -point.laser_z);
-		Eigen::Vector3d laserPointNed = imu2ned * lidarPoint;
+		Eigen::Vector3d laserPointNed = imu2ned * (boresight * lidarPoint); //
 		
 		//Convert lever arm to NED
 		Eigen::Vector3d leverArmNed = imu2ned * leverArm;
@@ -231,17 +236,17 @@ namespace Georeference{
 
 namespace Boresight{
 	void buildMatrix(Eigen::Matrix3d rotationMatrix, double roll, double pitch, double heading){
-	/*
+	
 		double ch = cos(heading*D2R);
 		double sh = sin(heading*D2R);
 		double cp = cos(pitch*D2R);
 		double sp = sin(pitch*D2R);
 		double cr = cos(roll*D2R);
 		double sr = sin(roll*D2R);
-	*/
-		//rotationMatrix << 	ch*cp , ch*sp*sr - sh*cr  , ch*sp*cr + sh*sr,
-							//sh*cp , sh*sp*sr + ch*cr  , sh*sp*cr - ch*sr,
-							//-sp   , cp*sr			  , cp*cr;
+	
+		rotationMatrix << 	ch*cp , ch*sp*sr - sh*cr  , ch*sp*cr + sh*sr,
+							sh*cp , sh*sp*sr + ch*cr  , sh*sp*cr - ch*sr,
+							-sp   , cp*sr			  , cp*cr;
 	}
 
 }

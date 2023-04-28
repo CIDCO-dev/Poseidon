@@ -17,7 +17,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 		void processEntry(SbetEntry * entry){
 			
 			PacketHeader hdrPosition;
-			hdrPosition.packetTimestamp = static_cast<uint64_t>(entry->time);
+			hdrPosition.packetTimestamp = static_cast<uint64_t>(entry->time * 1000000);
 			hdrPosition.packetType = PACKET_POSITION;
 			hdrPosition.packetSize = sizeof(PositionPacket);
 			
@@ -33,7 +33,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			
 			
 			PacketHeader hdrAttitude;
-			hdrAttitude.packetTimestamp = static_cast<uint64_t>(entry->time);
+			hdrAttitude.packetTimestamp = static_cast<uint64_t>(entry->time * 1000000);
 			hdrAttitude.packetType = PACKET_ATTITUDE;
 			hdrAttitude.packetSize = sizeof(AttitudePacket);
 			
@@ -134,14 +134,14 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 				
 				if( attitudeTimestamp == positionTimestamp){
 				
-					uint64_t diff = laserPointTimestamp - positionTimestamp * 1000000;
+					uint64_t diff = laserPointTimestamp - positionTimestamp;
 					
 					for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
-						std::get<PacketHeader>(*i).packetTimestamp = (std::get<PacketHeader>(*i).packetTimestamp - diff) / 1000000;
+						std::get<PacketHeader>(*i).packetTimestamp = (std::get<PacketHeader>(*i).packetTimestamp - diff);
 					}
 				}
 				else{
-					std::cerr<<"Sbet imu & gnss timestamp not the same \n";
+					std::cerr<<"Sbet imu & gnss timestamp are not the same \n";h
 					exit(1);
 				}
 				

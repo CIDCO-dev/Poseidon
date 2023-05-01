@@ -132,16 +132,37 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 				uint64_t positionTimestamp = std::get<PacketHeader>(positions[0]).packetTimestamp;
 				uint64_t laserPointTimestamp = std::get<PacketHeader>(laserPoints[0]).packetTimestamp;
 				
-				if( attitudeTimestamp == positionTimestamp){
+				std::cerr << "first point : " << laserPointTimestamp <<"\n";
 				
-					uint64_t diff = laserPointTimestamp - positionTimestamp;
+				if( attitudeTimestamp == positionTimestamp){
+					
+					// unix time 1st jan 1970 is a thursday
+					// gps first day of the week starts on sundays
+					// 4 day difference : 60 *60 *24 *4 = 345600 seconds
+					uint64_t offset = 345600000000;
+					
+					uint64_t nbMicroSecondsPerWeek = 604800000000; // microseconds per week
+					
+					//std::cerr<<"micro sec per week : " << nbMicroSecondsPerWeek <<"\n";
+					
+					uint64_t nbWeek = laserPointTimestamp / nbMicroSecondsPerWeek; //nb week unix time
+					
+					//std::cerr<<"nb week : " << nbWeek << "\n";
+					
+					uint64_t startOfWeek = nbMicroSecondsPerWeek * nbWeek; // micro sec from unix time to start of week
+					
+					//std::cerr<<"start Of Week : " << startOfWeek << "\n";
+				
+					uint64_t diff = startOfWeek + (nbMicroSecondsPerWeek - offset);
+					
+					//std::cerr<<"diff : " << diff << "\n";
 					
 					for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
 						std::get<PacketHeader>(*i).packetTimestamp = (std::get<PacketHeader>(*i).packetTimestamp - diff);
 					}
 				}
 				else{
-					std::cerr<<"Sbet imu & gnss timestamp are not the same \n";h
+					std::cerr<<"Sbet imu & gnss timestamp are not the same \n";
 					exit(1);
 				}
 				

@@ -1,4 +1,5 @@
 #include "loggerBase.h"
+#include "../../utils/string_utils.hpp"
 
 LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
 	
@@ -26,9 +27,9 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	}
 	
 	updateLogRotationInterval();
-	updateTranferConfig();
-	ROS_INFO_STREAM("File transfert activated: " << this->activatedTransfer << ", Target server: "
-					<< this->host <<", Target API: "<< this->target);
+	updateApiTransferConfig();
+	ROS_INFO_STREAM("File transfert activated: " << this->activatedTransfer << ", API server: "
+					<< this->host <<", API url: "<< this->target);
 	
 	updateSpeedThreshold();
 	updateLoggingMode();
@@ -84,17 +85,24 @@ void LoggerBase::updateSpeedThreshold(){
     }
 }
 
-void LoggerBase::updateTranferConfig(){
+void LoggerBase::updateApiTransferConfig(){
 	setting_msg::ConfigurationService srv;
 
-    srv.request.key = "targetServer";
+    srv.request.key = "apiServer";
 
     if(configurationClient.call(srv)){
         try{
-        	this->host = srv.response.value;
-        	this->activatedTransfer = true;
+        	this->host = trimSpaces(srv.response.value);
+        	if(this->host.size() > 0){
+        		this->activatedTransfer = true;
+        	}
+        	else{
+        		this->activatedTransfer = false;
+        	}
+        	
         }
-        catch(std::invalid_argument &err){
+        catch(const std::exception& ex){
+        	ROS_ERROR_STREAM(ex.what());
         	ROS_ERROR("Error in server target definition, deactivating automatic file transfer");
         	this->host = "";
         	this->activatedTransfer = false;
@@ -106,13 +114,14 @@ void LoggerBase::updateTranferConfig(){
 		this->activatedTransfer = false;
     }
     
-    srv.request.key = "apiTarget";
+    srv.request.key = "apiUrlPath";
 
     if(configurationClient.call(srv)){
         try{
-        	this->target = srv.response.value;
+        	this->target = trimSpaces(srv.response.value);
         }
-        catch(std::invalid_argument &err){
+        catch(const std::exception& ex){
+        	ROS_ERROR_STREAM(ex.what());
         	ROS_ERROR("Error in API target definition, defaulting to /");
         	this->target = "/";
         }
@@ -125,9 +134,10 @@ void LoggerBase::updateTranferConfig(){
     srv.request.key = "apiKey";
 	if(configurationClient.call(srv)){
         try{
-        	this->apiKey = srv.response.value;
+        	this->apiKey = trimSpaces(srv.response.value);
         }
-        catch(std::invalid_argument &err){
+        catch(const std::exception& ex){
+        	ROS_ERROR_STREAM(ex.what());
         	ROS_ERROR("Error in API key definition");
         	this->apiKey = "";
         }
@@ -135,8 +145,7 @@ void LoggerBase::updateTranferConfig(){
     else{
     	ROS_WARN("No API key definition");
 		this->apiKey = "";
-    }
-    
+    }  
 }
 
 void LoggerBase::updateLogRotationInterval(){
@@ -242,8 +251,9 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			mtx.unlock();
 		}
 	}
-	else if(setting.key == "targetServer"){
-		if(setting.value == ""){
+	else if(setting.key == "apiServer"){
+		std::string temp = setting.value;
+		if(trimSpaces(temp) == ""){
 			this->activatedTransfer = false;
 		}
 		else{
@@ -251,8 +261,9 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			this->activatedTransfer = true;
 		}
 	}
-	else if(setting.key == "apiTarget"){
-		if(setting.value == ""){
+	else if(setting.key == "apiUrlPath"){
+		std::string temp = setting.value;
+		if(trimSpaces(temp) == ""){
 			this->target = "/";
 		}
 		else{

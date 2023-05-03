@@ -162,10 +162,11 @@ void LoggerText::finalize(){
 
 	std::string zipFilename = gnssFileName.substr(0, 17) + std::string(".zip");
 	
-	bool noError = compress(zipFilename, newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath);
-	
-	if(noError && can_reach_server() && activatedTransfer){
-		transfer();
+	if(activatedTransfer){
+		bool noError = compress(zipFilename, newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath);
+		if(noError && can_reach_server()){
+			transfer();
+		}
 	}
 }
 

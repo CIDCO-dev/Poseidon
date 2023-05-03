@@ -26,8 +26,6 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			position.latitude = (entry->latitude * 180) / M_PI;
 			position.altitude = entry->altitude;
 			
-			//std::cerr<<"lat lon : "<< position.latitude << " , " << position.longitude << "\n";
-			
 			std::pair pairPosition = std::make_pair(hdrPosition, position);
 			positions.push_back(pairPosition);
 			
@@ -45,8 +43,6 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			std::pair pairAttitude = std::make_pair(hdrAttitude, attitude);
 			attitudes.push_back(pairAttitude);
 			
-			
-			//std::cerr<<"roll pitch heading : "<< attitude.roll << " , " << attitude.pitch << " , " << attitude.heading << "\n";
 			
 		}
 		void done(){
@@ -149,16 +145,10 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 					
 					//std::cerr<<"nb week : " << nbWeek << "\n";
 					
-					uint64_t startOfWeek = nbMicroSecondsPerWeek * nbWeek; // micro sec from unix time to start of week
-					
-					//std::cerr<<"start Of Week : " << startOfWeek << "\n";
-				
-					uint64_t diff = startOfWeek + (nbMicroSecondsPerWeek - offset);
-					
-					//std::cerr<<"diff : " << diff << "\n";
+					uint64_t startOfWeek = (nbMicroSecondsPerWeek * nbWeek) + (nbMicroSecondsPerWeek - offset); // micro sec from unix time to start of week
 					
 					for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
-						std::get<PacketHeader>(*i).packetTimestamp = (std::get<PacketHeader>(*i).packetTimestamp - diff);
+						std::get<PacketHeader>(*i).packetTimestamp = std::get<PacketHeader>(*i).packetTimestamp - startOfWeek;
 					}
 				}
 				else{
@@ -250,12 +240,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 					
 		            continue;
 				}
-		    	
-		    	//std::cerr<<"interpolating pos between : " << std::get<PositionPacket>(positions[positionIndex]).latitude << " , " 
-		    	//											<< std::get<PositionPacket>(positions[positionIndex + 1]).latitude <<"\n";
-		    		
-	    		//std::cerr<<"interpolating roll between : " << std::get<AttitudePacket>(attitudes[attitudeIndex]).roll << " , " 
-	    		//										<< std::get<AttitudePacket>(attitudes[attitudeIndex + 1]).roll <<"\n";
+				
 		    	
 				AttitudePacket * interpolatedAttitude = Interpolator::interpolateAttitude(attitudes[attitudeIndex], 
 																					  attitudes[attitudeIndex + 1], 
@@ -266,8 +251,6 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 																						  positions[positionIndex + 1],
 													 									  std::get<PacketHeader>(*i).packetTimestamp);
 		        
-		        //std::cerr << "interpolated roll : " << interpolatedAttitude->roll << "\n";
-		        //std::cerr << "interpolated lat : " << interpolatedPosition->latitude << "\n";
 				
 		        //georeference
 		        Eigen::Vector3d georeferencedLaserPoint;
@@ -450,7 +433,6 @@ int main(int argc,char** argv){
     
     //Boresight
     Eigen::Matrix3d boresightMatrix;
-    //Boresight::buildMatrix(boresight, roll, pitch, heading);
     
     AttitudePacket boresight;
     boresight.roll = roll;

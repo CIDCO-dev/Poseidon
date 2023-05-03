@@ -68,13 +68,12 @@ void LoggerBinary::finalize(){
 	
 	std::string zipFilename = rawGnssFileName.substr(0, 17) + std::string(".zip");
 	
-	bool noError = compress(zipFilename, newBinSensorFileName, newRawGnssFileName);
-	
-	if(noError && can_reach_server() && activatedTransfer){
-		transfer();
+	if(activatedTransfer){
+		bool noError = compress(zipFilename, newBinSensorFileName, newRawGnssFileName);
+		if(noError && can_reach_server()){
+			transfer();
+		}
 	}
-	
-	
 }
 
 /* Rotates logs based on time */

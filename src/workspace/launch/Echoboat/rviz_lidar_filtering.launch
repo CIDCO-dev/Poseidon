@@ -1,0 +1,7 @@
+<!-- -*- mode: XML -*- -->
+
+<launch>
+	
+	<node pkg="lidar_filtering" name="lidar_filtering" type="lidar_filtering_node" output="screen" args="-180.0 90.0 2.0 50.0"/>
+ 
+</launch>

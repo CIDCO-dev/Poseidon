@@ -1,8 +1,6 @@
 import requests, base64, json
 import sys,os,shutil
 
-
-
 def encode_file(zipFilePath):
 	encondedZip = ""
 	with open(zipFilePath, "rb") as f:
@@ -56,9 +54,12 @@ def zip_all(path):
 
 def transfer_all(host, target, key, jobType, path):
 	for f in os.listdir(path):
+	
 		if not f.endswith(".zip"):
-			continue
+			continue;
+			
 		response = send_request(host, target, assemble_json(key, jobType, encode_file(os.path.join(path,f))))
+		
 		if response.status_code == 200 :
 			# delete zip
 			os.remove(os.path.join(path,f))
@@ -76,7 +77,8 @@ def transfer_all(host, target, key, jobType, path):
 #======== MAIN =========#
 
 if len(sys.argv) != 6:
-        sys.stderr.write("Usage: python3 csb_api_call.py host target key jobType path \n")
+        sys.stderr.write("Usage: python3 csb_api_call.py host target key jobType directory \n")
+        sys.stderr.write("python3 csb_api_call.py http://127.0.0.1 :5000 key job directory")
         sys.exit(1)
 
 host = sys.argv[1]

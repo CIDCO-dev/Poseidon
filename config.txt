@@ -1,5 +1,6 @@
 apiKey SECRET
-apiTarget /
+apiUrlPath /
+apiServer localhost
 headingOffset 0
 logRotationIntervalSeconds 3600
 loggingMode 1
@@ -10,6 +11,6 @@ sonarPulseLength 120
 sonarRange 20
 sonarStartGain 16
 speedThresholdKmh 6.0
-ssid patate
-targetServer 127.0.0.1
 wifiPassword qwerty1234
+wifiSSID cidco
+wifiTransferEnabled true

@@ -97,7 +97,7 @@ class LoggerBase{
 		std::string create_json_str(std::string &base64Zip);
 		bool send_job(std::string json);
 		bool can_reach_server();
-		void updateTranferConfig();
+		void updateApiTransferConfig();
 		
 	protected:
 		// ros

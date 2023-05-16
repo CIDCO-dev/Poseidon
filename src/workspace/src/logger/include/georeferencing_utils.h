@@ -16,13 +16,13 @@ namespace Interpolator{
 	
 		double linearInterpolationByTime(double y1, double y2, uint64_t targetTimestamp, uint64_t t1, uint64_t t2) {
 			if (t1 == t2){
-				// throw new Exception("The two positions timestamp are the same");
+				//throw new Exception("The two positions timestamp are the same");
 			}
 			if (t1 > targetTimestamp){
-				// throw new Exception("The first position timestamp is higher than interpolation timestamp");
+				//throw new Exception("The first position timestamp is higher than interpolation timestamp");
 			}
 			if (t1 > t2){
-				// throw new Exception("The first position timestamp is higher than the second position timestamp");
+				//throw new Exception("The first position timestamp is higher than the second position timestamp");
 			}
 			
 			double result = (y1 + (y2 - y1)*(targetTimestamp - t1) / (t2 - t1));
@@ -42,12 +42,11 @@ namespace Interpolator{
 		}
 
 		if (std::abs(a2 - a1)==180){
-			/*
 			std::stringstream ss;        
 			ss << "The angles " << a1 << " and " << a2
 			<< " have a difference of 180 degrees which means there are two possible answers at timestamp " << targetTimestamp;
-			throw new Exception(ss.str());
-			*/
+			//throw new Exception(ss.str());
+			
 		}
 
 		if (a1 == a2) {
@@ -75,7 +74,8 @@ namespace Interpolator{
 		
 		uint64_t beforeTimestamp = std::get<PacketHeader>(beforePosition).packetTimestamp;
 		uint64_t afterTimestamp = std::get<PacketHeader>(afterPosition).packetTimestamp;
-		
+
+
 		PositionPacket *interpolatedPosition = new PositionPacket;
 		
 		interpolatedPosition->latitude  = linearInterpolationByTime(std::get<PositionPacket>(beforePosition).latitude, std::get<PositionPacket>(afterPosition).latitude,
@@ -116,9 +116,11 @@ namespace Interpolator{
 namespace Georeference{
 		
 	void generateNedToEcefMatrix(Eigen::Matrix3d & outputMatrix, PositionPacket & position){
+	
 		outputMatrix << -sin(position.latitude*D2R)*cos(position.longitude*D2R), -sin(position.longitude*D2R), -cos(position.latitude*D2R)*cos(position.longitude*D2R),
 					-sin(position.latitude*D2R) * sin(position.longitude*D2R), cos(position.longitude*D2R), -cos(position.latitude*D2R)*sin(position.longitude*D2R),
 					cos(position.latitude*D2R), 0, -sin(position.latitude*D2R);
+					
 	}
 	
 	void generateDcmMatrix(Eigen::Matrix3d & outputMatrix, AttitudePacket & attitude){
@@ -152,9 +154,13 @@ namespace Georeference{
 	}
 	
 	void generateEcefToNed(Eigen::Matrix3d & outputMatrix, double & firstLat, double & firstLon){
+		// ned to ecef matrix
 		outputMatrix << -sin(firstLat*D2R)*cos(firstLon*D2R), -sin(firstLat*D2R) * sin(firstLon*D2R), cos(firstLat*D2R),
 					-sin(firstLon*D2R), cos(firstLon*D2R), 0,
 					-cos(firstLat*D2R)*cos(firstLon*D2R), -cos(firstLat*D2R)*sin(firstLon*D2R), -sin(firstLat*D2R);
+		// ecef to ned matrix
+		outputMatrix.transposeInPlace();
+		
 	}
 	
 	
@@ -166,55 +172,20 @@ namespace Georeference{
 		positionECEF << xTRF, yTRF, zTRF;
 	}
 	
-	/*
-	void PoseidonFrameToEcef(Eigen::Vector3d & georeferencedLaserPoint, AttitudePacket & attitude, PositionPacket & position, 
-						LidarPacket & point, Eigen::Vector3d & leverArm, Eigen::Matrix3d & boresight) {
-	
-		Eigen::Matrix3d nedToEcef;
-    	generateNedToEcefMatrix(nedToEcef, position);
+	void georeferenceLGF(Eigen::Vector3d & georeferencedLaserPoint, Eigen::Matrix3d & ecefToNed, PositionPacket & firstPosition, AttitudePacket & attitude, PositionPacket & position, LidarPacket & point, Eigen::Vector3d & leverArm, Eigen::Matrix3d & boresight) {
+		
     	
     	Eigen::Matrix3d imu2ned;
     	generateDcmMatrix(imu2ned, attitude);
     	
     	Eigen::Vector3d positionECEF;
     	getPositionECEF(positionECEF, position);
-    	
-    	Eigen::Vector3d lidarPoint(point.laser_y, point.laser_x, -point.laser_z); //
-    	
-
-		Eigen::Vector3d laserPointECEF = nedToEcef * (imu2ned * lidarPoint);
-		
-		//Convert lever arm to ECEF
-		Eigen::Vector3d leverArmECEF =  nedToEcef * (imu2ned * leverArm);
-
-		//Compute total ECEF vector
-
-		//georeferencedLaserPoint = positionECEF + laserPointECEF + leverArmECEF;
-		//georeferencedLaserPoint = positionECEF + laserPointECEF;
-		georeferencedLaserPoint = positionECEF;
-		
-		std::cout<<georeferencedLaserPoint(0)<<" "<<georeferencedLaserPoint(1)<<" "<< georeferencedLaserPoint(2) << std::endl;
-		
-		return;
-	}
-	*/
-	
-	void PoseidonFrameToNed(Eigen::Vector3d & georeferencedLaserPoint, Eigen::Matrix3d ecefToNed, PositionPacket & firstPosition, AttitudePacket & attitude, PositionPacket & position, LidarPacket & point, Eigen::Vector3d & leverArm, Eigen::Matrix3d & boresight) {
-			
-		Eigen::Matrix3d nedToEcef;
-    	generateNedToEcefMatrix(nedToEcef, position);
-    	
-    	Eigen::Matrix3d imu2ned;
-    	generateDcmMatrix(imu2ned, attitude);
-    	
-    	Eigen::Vector3d positionECEF; // XXX can we go from wgs84 to NED without having to pass by ECEF ?
-    	getPositionECEF(positionECEF, position);
     	Eigen::Vector3d firstPositionECEF;
     	getPositionECEF(firstPositionECEF, firstPosition);
     	Eigen::Vector3d positionNed = ecefToNed * (positionECEF -  firstPositionECEF);
     	
     	Eigen::Vector3d lidarPoint(point.laser_y, point.laser_x, -point.laser_z);
-		Eigen::Vector3d laserPointNed = imu2ned * lidarPoint;
+		Eigen::Vector3d laserPointNed = imu2ned * (boresight * lidarPoint); //
 		
 		//Convert lever arm to NED
 		Eigen::Vector3d leverArmNed = imu2ned * leverArm;
@@ -226,22 +197,4 @@ namespace Georeference{
 		
 		}
 	
-}
-
-
-namespace Boresight{
-	void buildMatrix(Eigen::Matrix3d rotationMatrix, double roll, double pitch, double heading){
-	/*
-		double ch = cos(heading*D2R);
-		double sh = sin(heading*D2R);
-		double cp = cos(pitch*D2R);
-		double sp = sin(pitch*D2R);
-		double cr = cos(roll*D2R);
-		double sr = sin(roll*D2R);
-	*/
-		//rotationMatrix << 	ch*cp , ch*sp*sr - sh*cr  , ch*sp*cr + sh*sr,
-							//sh*cp , sh*sp*sr + ch*cr  , sh*sp*cr - ch*sr,
-							//-sp   , cp*sr			  , cp*cr;
-	}
-
 }

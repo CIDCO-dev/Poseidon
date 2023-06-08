@@ -21,6 +21,8 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			hdrPosition.packetType = PACKET_POSITION;
 			hdrPosition.packetSize = sizeof(PositionPacket);
 			
+			//printf("%.8f\n",entry->time);
+			
 			PositionPacket position;
 			position.longitude = (entry->longitude* 180) / M_PI;
 			position.latitude = (entry->latitude * 180) / M_PI;
@@ -90,6 +92,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			
 			// if we have sbet read it
 			if(sbetFilePath.size() > 0){
+				std::cerr<<"[+] Using Sbet for georeferencing" << std::endl;
 				positions.clear();
 				attitudes.clear();
 				readFile(sbetFilePath);

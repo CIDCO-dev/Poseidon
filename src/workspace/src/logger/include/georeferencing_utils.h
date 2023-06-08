@@ -131,36 +131,18 @@ namespace Georeference{
 		double sp = sin(attitude.pitch*D2R);
 		double cr = cos(attitude.roll*D2R);
 		double sr = sin(attitude.roll*D2R);
-		
-		
-		Eigen::Matrix3d headingMatrix;
-		headingMatrix <<  ch, -sh, 0,
-		                 +sh,  ch, 0,
-		                  0,   0,  1;
 
-		Eigen::Matrix3d pitchMatrix;
-		pitchMatrix <<  cp, 0, sp,
-		                 0, 1, 0,
-		               -sp, 0, cp;
-
-		Eigen::Matrix3d rollMatrix;
-		rollMatrix << 1,  0,   0,
-		              0,  cr, -sr,
-		              0, +sr,  cr;
-
-		outputMatrix = headingMatrix * pitchMatrix * rollMatrix;
+		outputMatrix << 	ch*cp , ch*sp*sr - sh*cr  , ch*sp*cr + sh*sr,
+		sh*cp , sh*sp*sr + ch*cr  , sh*sp*cr - ch*sr,
+		-sp   , cp*sr		  , cp*cr;
 		
-		return;
 	}
 	
 	void generateEcefToNed(Eigen::Matrix3d & outputMatrix, double & firstLat, double & firstLon){
-		// ned to ecef matrix
+		// ecef to ned matrix
 		outputMatrix << -sin(firstLat*D2R)*cos(firstLon*D2R), -sin(firstLat*D2R) * sin(firstLon*D2R), cos(firstLat*D2R),
 					-sin(firstLon*D2R), cos(firstLon*D2R), 0,
 					-cos(firstLat*D2R)*cos(firstLon*D2R), -cos(firstLat*D2R)*sin(firstLon*D2R), -sin(firstLat*D2R);
-		// ecef to ned matrix
-		outputMatrix.transposeInPlace();
-		
 	}
 	
 	
@@ -180,8 +162,10 @@ namespace Georeference{
     	
     	Eigen::Vector3d positionECEF;
     	getPositionECEF(positionECEF, position);
+    	
     	Eigen::Vector3d firstPositionECEF;
     	getPositionECEF(firstPositionECEF, firstPosition);
+    	
     	Eigen::Vector3d positionNed = ecefToNed * (positionECEF -  firstPositionECEF);
     	
     	Eigen::Vector3d lidarPoint(point.laser_y, point.laser_x, -point.laser_z);

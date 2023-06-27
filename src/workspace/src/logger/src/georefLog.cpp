@@ -144,11 +144,11 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 					
 					//std::cerr<<"micro sec per week : " << nbMicroSecondsPerWeek <<"\n";
 					
-					uint64_t nbWeek = laserPointTimestamp / nbMicroSecondsPerWeek; //nb week unix time
+					uint64_t nbWeek = (laserPointTimestamp + (nbMicroSecondsPerWeek - offset)) / nbMicroSecondsPerWeek; //nb week unix time
 					
 					//std::cerr<<"nb week : " << nbWeek << "\n";
 					
-					uint64_t startOfWeek = (nbMicroSecondsPerWeek * nbWeek) + (nbMicroSecondsPerWeek - offset); // micro sec from unix time to start of week
+					uint64_t startOfWeek = (nbMicroSecondsPerWeek * nbWeek) - offset; // micro sec from unix time to start of week
 					
 					for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
 						std::get<PacketHeader>(*i).packetTimestamp = std::get<PacketHeader>(*i).packetTimestamp - startOfWeek;

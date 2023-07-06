@@ -237,7 +237,7 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 			PacketHeader hdr;
             hdr.packetType=PACKET_LIDAR;
             hdr.packetSize= sizeof(LidarPacket) * points.size();  //(uint64_t) (sizeof(LidarPacket) * points.size());
-            hdr.packetTimestamp=TimeUtils::buildTimeStamp(lidar.header.stamp.sec,lidar.header.stamp.nsec);
+            hdr.packetTimestamp=TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
 
             outputFile.write((char*)&hdr, sizeof(PacketHeader));
 			

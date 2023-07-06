@@ -16,7 +16,7 @@
   <arg name="read_once" default="false" />
   <arg name="repeat_delay" default="0.0" />
   <arg name="rpm" default="600.0" />
-  <arg name="gps_time" default="false" />
+  <arg name="gps_time" default="true" />
   <arg name="pcap_time" default="false" />
   <arg name="cut_angle" default="-0.01" />
   <arg name="timestamp_first_packet" default="false" />

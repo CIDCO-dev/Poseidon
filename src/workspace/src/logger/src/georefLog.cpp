@@ -37,10 +37,11 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			hdrAttitude.packetType = PACKET_ATTITUDE;
 			hdrAttitude.packetSize = sizeof(AttitudePacket);
 			
+			
 			AttitudePacket attitude;
-			attitude.roll = entry->roll;
-			attitude.pitch = entry->pitch;
-			attitude.heading = entry->heading;
+			attitude.roll = entry->roll*180/M_PI;
+			attitude.pitch = entry->pitch*180/M_PI;
+			attitude.heading = entry->heading*180/M_PI;
 			
 			std::pair pairAttitude = std::make_pair(hdrAttitude, attitude);
 			attitudes.push_back(pairAttitude);

@@ -132,7 +132,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 				uint64_t positionTimestamp = std::get<PacketHeader>(positions[0]).packetTimestamp;
 				uint64_t laserPointTimestamp = std::get<PacketHeader>(laserPoints[0]).packetTimestamp;
 				
-				std::cerr << "first point : " << laserPointTimestamp <<"\n";
+				//std::cerr << "first point : " << laserPointTimestamp <<"\n";
 				
 				if( attitudeTimestamp == positionTimestamp){
 					

@@ -214,7 +214,6 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 		            break;
 		        }
 					
-				std::cerr<<"attitudeTimestamp: "<<std::get<PacketHeader>(attitudes[attitudeIndex]).packetTimestamp <<"\n";
 					
 		        while (positionIndex + 1 < positions.size() && 
 						std::get<PacketHeader>(positions[positionIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 
@@ -227,8 +226,6 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 		            std::cerr << "No more positions" << std::endl;
 		            break;
 		        }
-		        
-		        std::cerr<<"PositionTimestamp: "<<std::get<PacketHeader>(positions[positionIndex]).packetTimestamp <<"\n";
 		        
 		        //No position or attitude smaller than ping, so discard this ping
             	if (std::get<PacketHeader>(positions[positionIndex]).packetTimestamp > std::get<PacketHeader>(*i).packetTimestamp 

@@ -20,7 +20,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 	
-	if (!node.getParam("fileExtensionForGpsDatagram", this->fileExtensionForGpsDatagram))
+	if (!node.getParam("/logger/fileExtensionForGpsDatagram", this->fileExtensionForGpsDatagram))
 	{
 		ROS_ERROR_STREAM("No protocol file extention defined, defaulting to .bin");
 		this->fileExtensionForGpsDatagram = ".bin";

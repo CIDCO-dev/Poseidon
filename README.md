@@ -32,12 +32,10 @@ catkin_make_isolated --install --use-ninja
 
 ### Compile and run Poseidon on virtual machine
 
-Pre-requisite: \
-Ubuntu virtual machine (ubuntu only) \
-The username must be ubuntu ( optional but easier install) \
 Instruction:
 ```
 sudo apt install git
+sudo chown $USER:$USER /opt
 cd /opt
 git clone --recursive <poseidon repo>
 ```

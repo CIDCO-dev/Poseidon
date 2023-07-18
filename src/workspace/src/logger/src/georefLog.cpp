@@ -132,7 +132,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 				uint64_t positionTimestamp = std::get<PacketHeader>(positions[0]).packetTimestamp;
 				uint64_t laserPointTimestamp = std::get<PacketHeader>(laserPoints[0]).packetTimestamp;
 				
-				std::cerr << "first point : " << laserPointTimestamp <<"\n";
+				//std::cerr << "first point : " << laserPointTimestamp <<"\n";
 				
 				if( attitudeTimestamp == positionTimestamp){
 					
@@ -200,7 +200,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 		    			continue;
 		    		}
         		}
-        		
+        		        		
         		
         		while (attitudeIndex + 1 < attitudes.size() && 
 						std::get<PacketHeader>(attitudes[attitudeIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 
@@ -213,7 +213,8 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 		            std::cerr << "No more attitudes" << std::endl;
 		            break;
 		        }
-
+					
+					
 		        while (positionIndex + 1 < positions.size() && 
 						std::get<PacketHeader>(positions[positionIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 
 				{
@@ -230,17 +231,25 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
             	if (std::get<PacketHeader>(positions[positionIndex]).packetTimestamp > std::get<PacketHeader>(*i).packetTimestamp 
 					|| std::get<PacketHeader>(attitudes[attitudeIndex]).packetTimestamp > std::get<PacketHeader>(*i).packetTimestamp)
 					
-					{
+				{
             		
+            		// this commented block can create segFault if filter is activated
+            		/*
             		int nbPoints = std::get<PacketHeader>(*i).packetSize / sizeof(LidarPacket);
             		
             		std::cerr << "rejecting " << nbPoints << " lidar point " << std::get<PacketHeader>(*i).packetTimestamp << " " 
 							<< std::get<PacketHeader>(positions[positionIndex]).packetTimestamp << " "
 							<< std::get<PacketHeader>(attitudes[attitudeIndex]).packetTimestamp << std::endl;
 					
-					for(int lidarPoint = 0; lidarPoint < nbPoints; ++lidarPoint){
+					for(int lidarPoint = 0; lidarPoint < nbPoints-1; ++lidarPoint){
             			i++;
             		}
+					*/
+					
+					// no segfault if filter is activated but its much slower
+					std::cerr << "rejecting lidar point " << std::get<PacketHeader>(*i).packetTimestamp << " " 
+							<< std::get<PacketHeader>(positions[positionIndex]).packetTimestamp << " "
+							<< std::get<PacketHeader>(attitudes[attitudeIndex]).packetTimestamp << std::endl;
 					
 		            continue;
 				}

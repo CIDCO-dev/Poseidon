@@ -117,22 +117,22 @@ class PoseidonBinaryReaderTest : public PoseidonBinaryReader{
 		PoseidonBinaryReaderTest(std::string & filePath) : PoseidonBinaryReader(filePath){}
 		~PoseidonBinaryReaderTest(){}
 		
-		void processGnss(PositionPacket & packet)override{
+		void processGnss(PositionPacket & packet){
 			gnssMessagesCount++;
 			positions.push_back(packet);
 		}
 		
-		void processImu(AttitudePacket & packet)override{
+		void processImu(AttitudePacket & packet){
 			imuMessagesCount++;
 			atitudes.push_back(packet);
 		}
 		
-		void processSonar(DepthPacket & packet)override{
+		void processSonar(DepthPacket & packet){
 			sonarMessagesCount++;
 			depths.push_back(packet);
 		}
 		
-		void processLidar(LidarPacket &packet)override{
+		void processLidar(LidarPacket &packet){
 			lidarMessagesCount++;
 			laserPoints.push_back(packet);
 		}

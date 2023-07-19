@@ -11,224 +11,134 @@
 
   <title>Hydroball - System Settings</title>
 
+  <link rel="shortcut icon" href="img/cidco_logo-removebg.png">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
 
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
 
-<script>
-
-var socket;
-
-function processConfig(config){
-	var form = document.getElementById('formContent');
-
-	form.innerHTML='';
-	var newHTML='';
-	var endNewHTML='';
-
-	config.forEach(function (item,index){
-		if(item.key == "loggingMode"){
-			endNewHTML += '<div class="form-group row"><label class="col-lg-2 col-form-label" for="' + item.key +'">'+ item.key + '</label><div class="col-lg-10"><select id="'+ item.key  + '" name="logginModeSelector" class="dropdownright configurationField"></div>';
-		
-			var mode = Number(item.value);
-			switch(mode){
-				case 1:
-					endNewHTML += '<option value="1" selected>always</option><option value="2">manual</option><option value="3">speed based</option></select></div></div>';
-					break;
-				case 2:
-					endNewHTML += '<option value="1">always</option><option value="2" selected>manual</option><option value="3">speed based</option></select></div></div>';
-					break;
-				case 3:
-					endNewHTML += '<option value="1">always</option><option value="2">manual</option><option value="3" selected>speed based</option></select></div></div>';
-					break;
-				default:
-					alert("Erreur ! Logging mode read from configuration file is :" + mode);
-					endNewHTML += '<option value="1" selected>always ON</option><option value="2">manual</option><option value="3">speed based</option></select></div></div>';
-					break;
-			}	
-		}
-		else{
-			newHTML += '<div class="form-group row"> <label class="col-lg-2 col-form-label" for="' + item.key +'">' + item.key + '</label> <div class="col-lg-10"> <input id="'+ item.key  + '" class="form-control text-right configurationField" type="text" value="' + item.value + '"/> </div></div>';
-			}
-	
-	});
-	newHTML += endNewHTML;
-	form.innerHTML = newHTML;
-}
-
-function processMessage(msg){
-	if(msg.configuration){
-		processConfig(msg.configuration);
-	}
-}
-
-//******************************
-//Function to save configuration
-//******************************
-function saveConfig() {
-	var cmd = { command : "saveConfiguration", configuration: []};
-
-	var elements = document.getElementsByClassName("configurationField");
-
-	var i;
-	for(i=0;i<elements.length;i++){
-		var setting = {key:elements[i].id,value:elements[i].value};
-		cmd.configuration.push(setting);
-	}
-
-	console.log(cmd);
-	socket.send(JSON.stringify(cmd));
-	
-}
-
-//******************************
-//Function to get configuration
-//******************************
-function getConfig(){
-	var cmd = { command : "getConfiguration"};
-	socket.send(JSON.stringify(cmd));	
-}
-
-//******************************
-// Main
-//******************************
-      
-socket = new WebSocket("ws://" + window.location.hostname +":9004");
-
-socket.onmessage = function (event) {
-        var msg = JSON.parse(event.data);
-        processMessage(msg);
-}
-
-socket.onopen = function( event ){
-	getConfig();
-}
-     
-</script>
 </head>
 
 <body id="page-top">
 
+  <!-- Topbar -->
+  <nav id="topNav" class="navbar sticky-top navbar-expand navbar-light bg-white topbar static-top shadow">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <div id="sidebarToggleTop" class="ml-2 btn text-primary">
+      <i class="fa fa-2x fa-bars"></i>
+    </div>
+  </nav>
+  <!-- End of Topbar -->
+
   <!-- Page Wrapper -->
   <div id="wrapper">
 
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <div class="wrapper sidebar mr-4" id="navWrap">
+      <!-- Sidebar -->
+      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar">
 
-      <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <!--<div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
-        </div>-->
-        <div class="sidebar-brand-text mx-3">Hydroball <sup>2<sup></div>
-      </a>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0">
-
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item inactive">
-        <a class="nav-link" href="index.html">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="map.html">
-          <i class="fas fa-fw fa-globe-americas"></i>
-          <span>Map</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="status.html">
-          <i class="fas fa-fw fa-globe-americas"></i>
-          <span>System Status</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="data.html">
-          <i class="fas fa-fw fa-database"></i>
-          <span>Download Data</span></a>
-      </li>
-
-    <li class="nav-item inactive">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-          <i class="fas fa-fw fa-wrench"></i>
-          <span>System Configuration</span>
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+          <div class="sidebar-brand-text mx-3">Hydroball <sup>2<sup></div>
+          <i id="homeIcon" class="ml-3 fa fa-2x fa-heading" aria-hidden="true" style="display: none;"><sup>2</sup></i>
         </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Configuration Utilities:</h6>
-            <a class="collapse-item" href="calibration.html">Calibration</a>
-            <a class="collapse-item" href="settings.html">Settings</a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="map.html">
+            <i class="fas fa-fw fa-globe-americas"></i>
+            <span>Map</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="status.html">
+            <i class="fas fa-fw fa-globe-americas"></i>
+            <span>System Status</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="data.html">
+            <i class="fas fa-fw fa-database"></i>
+            <span>Download Data</span></a>
+        </li>
+        <li class="nav-item" id="utils">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+            aria-expanded="true" aria-controls="collapseUtilities">
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>System Configuration</span>
+          </a>
+          <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+            data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Configuration Utilities:</h6>
+              <a class="collapse-item" href="calibration.html">Calibration</a>
+              <a class="collapse-item" href="settings.html">Settings</a>
+            </div>
           </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
-    </li>
 
-
-
-
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block">
-
-      <!-- Sidebar Toggler (Sidebar) -->
-      <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
-      </div>
-
-    </ul>
-    <!-- End of Sidebar -->
+      </ul>
+      <!-- End of Sidebar -->
+    </div>
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
       <!-- Main Content -->
-      <div id="content">
-
-        <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-          <!-- Sidebar Toggle (Topbar) -->
-          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-            <i class="fa fa-bars"></i>
-          </button>
-
-          
-        </nav>
-        <!-- End of Topbar -->
+      <div id="content" class="pt-3">
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <div class="d-sm-flex align-items-center justify-content-between mb-2">
             <h1 class="h3 mb-0 text-gray-800">System Settings</h1>
           </div>
-
+          <hr class="hr hr-blurry mt-0" />
 
           <!-- Status Row -->
           <div class="row">
 
-<!-- Modal for file delete -->
-<div class="modal fade" id="sendcfg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Save Configuration</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <h2>Changing the system configuration can cause unstability and crashes.</h2>
-	<div class="data-file"></div>	
-      <p>Are you sure you want to proceed?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-        <button type="button" class="btn btn-primary" onclick="saveConfig()" data-dismiss="modal">Yes</button>
-      </div>
-    </div>
-  </div>
-</div>
+            <!-- Modal for file delete -->
+            <div class="modal fade" id="sendcfg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Save Configuration</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <h2>Changing the system configuration can cause unstability and crashes.</h2>
+                    <div class="data-file"></div>
+                    <p>Are you sure you want to proceed?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" onclick="saveConfig()"
+                      data-dismiss="modal">Yes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
 
           </div>
@@ -239,32 +149,25 @@ socket.onopen = function( event ){
               <h6 class="m-0 font-weight-bold text-primary">Configuration</h6>
             </div>
             <div class="card-body">
+              <form>
+                <div id="formContent">
 
-		<!--
-              <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                      <th>Name</th>
-		      <th>Value</th>
-                  </thead>
-		  <tbody id='tableContents'>
-                  </tbody>
-                </table>
-              </div>
+                </div>
+                <div class="form-group row align-items-center">
+                  <label class="col-auto col-form-label" for="logRotationIntervalSeconds">logRotationIntervalSeconds</label>
+                  <div class="col">
+                    <input id="logRotationIntervalSeconds" class="form-control text-left configurationField" type="text" value="3600">
+                  </div>
+                </div>
+                
+                              
+              </form>
 
-	      //-->
+              <br />
 
-	      <form>
-		<div id="formContent">
-
-		</div>
-	      </form>
-	      		
-	      <br/>
-          <br/>
-              
-		
-	      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendcfg">Save Configuration</button>
+              <button type="button" class="btn btn-primary mb-3 mx-3 float-right" data-toggle="modal"
+                data-target="#sendcfg">Save
+                Configuration</button>
 
             </div>
 
@@ -273,19 +176,24 @@ socket.onopen = function( event ){
         </div>
         <!-- /.container-fluid -->
 
-
-
-        </div>
-        <!-- /.container-fluid -->
-
       </div>
-      <!-- End of Main Content -->
+      <!-- /.container-fluid -->
 
-       </div>
-    <!-- End of Content Wrapper -->
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white footer">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; CIDCO</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Main Content -->
 
   </div>
-  <!-- End of Page Wrapper -->
+  <!-- End of Content Wrapper -->
 
   <!-- Scroll to Top Button-->
   <a class="scroll-to-top rounded" href="#page-top">
@@ -301,6 +209,13 @@ socket.onopen = function( event ){
 
   <!-- Custom scripts for all pages-->
   <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Custom script -->
+  <script src="js/script.js"></script>
+
+  <!-- page scipt -->
+  <script src="js/settingsScript.js"></script>
+
 
   <!-- Page level plugins -->
   <!-- <script src="vendor/chart.js/Chart.min.js"></script> -->

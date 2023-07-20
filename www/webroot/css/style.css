@@ -1,0 +1,52 @@
+.gg-record {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs, 1));
+    width: 32px;
+    height: 32px;
+    border: 6px solid transparent;
+    box-shadow: 0 0 0 2px, inset 0 0 0 10px;
+    border-radius: 100px;
+}
+
+.gg-record:hover {
+    cursor: pointer;
+}
+
+#sidebarToggleTop:hover {
+    cursor: pointer;
+}
+
+#overlay {
+    position: fixed;
+    /* Sit on top of the page content */
+    /*display: none; Visible by default */
+    width: 100%;
+    /* Full width (cover the whole page) */
+    height: 100%;
+    /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background-color: rgba(0,0,0,1); */
+    z-index: 2;
+    /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer;
+    /* Add a pointer on hover */
+}
+
+#overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 50px;
+    color: white;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
+
+#RecIcon:hover {
+    filter: brightness(90%);
+}

@@ -1,11 +1,11 @@
 apiKey SECRET
-apiUrlPath /
 apiServer localhost
-headingOffset 0
+apiUrlPath /
+headingOffset -27.956781
 logRotationIntervalSeconds 3600
-loggingMode 1
-pitchOffset 0
-rollOffset 0
+loggingMode 2
+pitchOffset 7.254680
+rollOffset -9.318927
 sonarAbsorbtion 20
 sonarPulseLength 120
 sonarRange 20

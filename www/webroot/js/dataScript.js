@@ -28,7 +28,7 @@ function processState(state) {
   //******************************
   if (dataln !== olddataln) {
     olddataln = dataln;
-    var dataArray = [];
+    dataArray = [];
     for (i = 0; i < dataln; i++) {
       dataArray.push('<tr class="remove"><td><div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="' +
         fileslist[i][0] +
@@ -38,6 +38,7 @@ function processState(state) {
         linklist[i] +
         "</td></tr>");
     }
+    console.log(dataArray.length)
     tableFilter(dataArray);
   }
 }
@@ -62,9 +63,19 @@ function sendDelete() {
 //******************************
 function selectall() {
   var rowsPerPage = parseInt($('#perPageSelect').val());
+  var anyBoxUnchecked = false;
+
+  // Check if any box is unchecked
   for (i = 0; i < rowsPerPage; i++) {
-    document.getElementById(fileslist[i][0]).checked =
-      !document.getElementById(fileslist[i][0]).checked;
+    if (document.getElementById(fileslist[i][0]).checked === false) {
+      anyBoxUnchecked = true;
+      break;
+    }
+  }
+
+  // Set the checked status based on the 'anyBoxUnchecked' flag
+  for (i = 0; i < rowsPerPage; i++) {
+    document.getElementById(fileslist[i][0]).checked = anyBoxUnchecked;
   }
 }
 
@@ -92,21 +103,31 @@ socket.onmessage = function (event) {
 //******************************
 
 // Searchbar 
-function Search() {
+function Search(dataArray) {
   var value = $(".searchbar").val();
   value = value.toLowerCase();
-  var files = $(".search");
-  var el = $(".remove");
-  for (i = 0; i < files.length; i++) {
-    if (!files[i].innerHTML.toLowerCase().includes(value)) {
-      el[i].style.display = "none";
-    } else {
-      el[i].style.display = "table-row";
+  
+  var filteredArray = dataArray.filter(function (item) {
+    // Extract the part within the quotes of the id attribute then compare to search value
+    var idValue = item.match(/id="([^"]+)"/);
+    if (idValue) {
+      idValue = idValue[1].toLowerCase();
+      return idValue.includes(value);
     }
-  }
+    // If idValue is not found, exclude the item from the filteredArray
+    return false; 
+  });
+
+  return filteredArray;
 }
 
-// Ajustement de barre de recherche pour petit écrans
+// Search bar event handler
+$(".searchbar").on("keyup", function () {
+  var filteredData = Search(dataArray);
+  tableFilter(filteredData);
+});
+
+// Searchbar display size depending on screen size
 $(window).on("resize", function () {
   if ($(window).width() < 766) {
     $("#searchbarDiv").removeClass("ml-auto");

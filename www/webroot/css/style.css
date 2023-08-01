@@ -8,6 +8,7 @@
     border: 6px solid transparent;
     box-shadow: 0 0 0 2px, inset 0 0 0 10px;
     border-radius: 100px;
+    cursor: pointer;
 }
 
 .gg-record:hover {

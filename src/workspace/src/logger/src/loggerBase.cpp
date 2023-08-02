@@ -93,7 +93,7 @@ void LoggerBase::updateApiTransferConfig(){
     if(configurationClient.call(srv)){
         try{
         	this->host = trimSpaces(srv.response.value);
-        	if((this->host.size() > 0) or (this->host != "localhost")){
+        	if((this->host.size() > 0) && (this->host != "localhost")){
         		this->activatedTransfer = true;
         	}
         	else{

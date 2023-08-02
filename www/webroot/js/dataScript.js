@@ -17,7 +17,7 @@ function processState(state) {
   //******************************
   for (i = 0; i < dataln; i++) {
     linklist[i] =
-      '<a href="' +
+      `<a class="tableElement" href="` +
       fileslist[i][1] +
       '" target="_blank" download>' +
       fileslist[i][0] +
@@ -38,7 +38,6 @@ function processState(state) {
         linklist[i] +
         "</td></tr>");
     }
-    console.log(dataArray.length)
     tableFilter(dataArray);
   }
 }

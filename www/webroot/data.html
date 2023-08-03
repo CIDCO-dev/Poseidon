@@ -8,7 +8,7 @@
   <meta name="description" content="Hydroball Control Panel" />
   <meta name="author" content="CIDCO" />
 
-  <title>Hydroball - Data</title>
+  <title>Hydroball - Download Data</title>
 
   <link rel="shortcut icon" href="img/cidco_logo-removebg.png">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -128,10 +128,10 @@
                   <div class="data-file"></div>
                   <p class="text-center">Are you sure you want to proceed?</p>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" id="noDel" class="btn btn-secondary" data-dismiss="modal">
                       No
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="sendDelete()" data-dismiss="modal">
+                    <button type="button" id="yesDel" class="btn btn-primary" onclick="sendDelete()" data-dismiss="modal">
                       Yes
                     </button>
                   </div>
@@ -146,17 +146,17 @@
               <h6 class="m-0 font-weight-bold text-primary">Files</h6>
             </div>
             <div class="card-body row pt-1">
-              <button type="button" class="btn btn-primary col-xs-2 m-1 mb-2" onclick="selectall()"
+              <button type="button" id="selectBtn" class="btn btn-primary col-xs-2 m-1 mb-2" onclick="selectall()"
                 data-dismiss="modal">
                 Select All
               </button>
-              <button type="button" class="btn btn-primary col-xs-2 m-1 mb-2" data-toggle="modal"
+              <button type="button" id="delBtn" class="btn btn-primary col-xs-2 m-1 mb-2" data-toggle="modal"
                 data-target="#filedel">
                 Delete
               </button>
               <div id="searchbarDiv" class="ml-auto col-xs-2 m-1 mb-2">
                 <input class="searchbar form-control-plaintext border border-primary rounded" type="text"
-                  name="searchbar" placeholder="Search..." onkeyup="Search()" />
+                  name="searchbar" placeholder="Search..." />
               </div>
               <br /><br />
               <div class="table-responsive">
@@ -199,7 +199,7 @@
                     <label for="perPageSelect" class="mb-0 text-dark">Results per page :</label>
                   </div>
                   <div class="col-auto">
-                    <select id="perPageSelect" onchange="tableFilter(dataArray)" class="form-control">
+                    <select id="perPageSelect" class="form-control">
                       <option value="5">5</option>
                       <option value="10" selected>10</option>
                       <option value="25">25</option>

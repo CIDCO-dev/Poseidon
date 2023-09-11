@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,358 +11,324 @@
 
   <title>Hydroball - Dashboard</title>
 
+  <link rel="shortcut icon" href="img/cidco_logo-removebg.png">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
 
   <link href="js/Chart.min.css" rel="stylesheet">
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
-  
+  <link href="css/style.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="/leaflet/gh-pages.css" />
 
-  <script src="/leaflet/leaflet.js"></script>
-  <script src="/leaflet/catiline.js"></script>
-  <script src="/leaflet/leaflet.shpfile.js"></script>
-  <script src="/leaflet/leaflet-heat.js"></script>
-  <script src="/leaflet/leaflet.hotline.js"></script>
+  <link rel="stylesheet" href="leaflet/gh-pages.css" />
 
-<style>
-#overlay {
-  position: fixed; /* Sit on top of the page content */
-  /*display: none; Visible by default */
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
-  top: 0; 
-  left: 0;
-  right: 0;
-  bottom: 0;
- /* background-color: rgba(0,0,0,1); */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
-}
-
-#overlay-text{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  font-size: 50px;
-  color: white;
-  transform: translate(-50%,-50%);
-  -ms-transform: translate(-50%,-50%);
-}
-</style>
+  <script src="leaflet/leaflet.js"></script>
+  <script src="leaflet/catiline.js"></script>
+  <script src="leaflet/leaflet.shpfile.js"></script>
+  <script src="leaflet/leaflet-heat.js"></script>
+  <script src="leaflet/leaflet.hotline.js"></script>
 
 </head>
 
 <body id="page-top">
 
+  <!-- Topbar -->
+  <nav id="topNav" class="navbar sticky-top navbar-expand navbar-light bg-white topbar static-top shadow">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <div id="sidebarToggleTop" class="ml-2 btn text-primary">
+      <i class="fa fa-2x fa-bars"></i>
+    </div>
+    <div id="RecIcon" class="border-right-warning d-inline float-right ml-auto text-success rounded-circle">
+      <i class="gg-record" href="#" onclick="toggleRecording()"></i>
+    </div>
+  </nav>
+  <!-- End of Topbar -->
+
   <!-- Page Wrapper -->
   <div id="wrapper">
     <div id="overlay" class="bg-white">
-	<div id="overlay-text"></div>
+      <div id="overlay-text"></div>
     </div>
 
+    <div class="wrapper sidebar mr-4" id="navWrap">
+      <!-- Sidebar -->
+      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar">
 
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-      <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <!--<div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
-        </div>-->
-        <div class="sidebar-brand-text mx-3">Hydroball <sup>2<sup></div>
-      </a>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0">
-
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
-        <a class="nav-link" href="index.html">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="map.html">
-          <i class="fas fa-fw fa-globe-americas"></i>
-          <span>Map</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="status.html">
-          <i class="fas fa-fw fa-globe-americas"></i>
-          <span>System Status</span></a>
-      </li>
-      <li class="nav-item inactive">
-        <a class="nav-link" href="data.html">
-          <i class="fas fa-fw fa-database"></i>
-          <span>Download Data</span></a>
-      </li>
-
-    <li class="nav-item inactive">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-          <i class="fas fa-fw fa-wrench"></i>
-          <span>System Configuration</span>
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+          <div class="sidebar-brand-text mx-3"><span>Hydroball</span><sup>2<sup></div>
+          <i id="homeIcon" class="ml-3 fa fa-2x fa-heading" aria-hidden="true" style="display: none;"><sup>2</sup></i>
         </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Configuration Utilities:</h6>
-            <a class="collapse-item" href="calibration.html">Calibration</a>
-            <a class="collapse-item" href="settings.html">Settings</a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="map.html">
+            <i class="fas fa-fw fa-globe-americas"></i>
+            <span>Map</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="status.html">
+            <i class="fas fa-fw fa-globe-americas"></i>
+            <span>System Status</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="data.html">
+            <i class="fas fa-fw fa-database"></i>
+            <span>Download Data</span></a>
+        </li>
+        <li class="nav-item" id="utils">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+            aria-expanded="true" aria-controls="collapseUtilities">
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>System Configuration</span>
+          </a>
+          <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+            data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Configuration Utilities:</h6>
+              <a class="collapse-item" href="calibration.html">Calibration</a>
+              <a class="collapse-item" href="settings.html">Settings</a>
+            </div>
           </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
-    </li>
 
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block">
-
-      <!-- Sidebar Toggler (Sidebar) -->
-      <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
-      </div>
-
-    </ul>
-    <!-- End of Sidebar -->
+      </ul>
+      <!-- End of Sidebar -->
+    </div>
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
       <!-- Main Content -->
-      <div id="content">
-
-        <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-          <!-- Sidebar Toggle (Topbar) -->
-          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-            <i class="fa fa-bars"></i>
-          </button>
-
-	  <ul class="navbar-nav ml-auto">
-	  <li>
-	  <div class="float-right d-inline">
-		<div id="btnStartRecording" class="d-inline">
-		<a href="#" onclick="startRecording()" class="btn btn-success">
-			<span class="icon-text-white-50"><i class="fas fa-circle"></i></span>
-			<span class="text">Start Recording</span>
-		</a>
-		</div>
-
-		<div id="btnStopRecording" class="d-inline">
-		<a href="#" onclick="stopRecording()" class="btn btn-danger">
-                        <i class="fa fa-stop"></i>
-                        Stop Recording
-                </a>
-		</div>
-		&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="border-right-warning float-right d-inline">
-		        <div class="row align-items-center">
-		            <div class="col mr-2">
-		                <div class="text-lg font-weight-bold text-warning text-uppercase mb-1"> logging mode</div>
-		                	<div id="modeWidget" class="h5 mb-0 font-weight-bold text-info"> mode </div>
-		            </div>
-		            <div class="col-auto">
-		                <i class="fas fa-comments fa-2x text-gray-300"></i>
-		            </div>
-		        </div>
-    	</div>
-	  </div>
-          </li>
-          </ul>
-          
-        </nav>
-        <!-- End of Topbar -->
+      <div id="content" class="pt-3">
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <div class="d-sm-flex align-items-center justify-content-between mb-2">
             <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
           </div>
+          <hr class="hr hr-blurry mt-0" />
 
           <div id="systemStatus" class="alert alert-danger animated--grow-in d-none">
-              <strong> Warning: </strong> <div id="systemStatusText"></div>
+            <strong> Warning: </strong>
+            <div id="systemStatusText"></div>
           </div>
-          
-          <div id="recordingStatus" class="alert alert-success animated--grow-in d-none">
-              <div id="recordingStatusText">The system is currently recording data</div>
-          </div>
-          
+
+          <!--  <div id="recordingStatus" class="alert alert-success animated--grow-in d-none">
+            <div id="recordingStatusText">The system is currently recording data</div>
+          </div> -->
+
           <div id="hddFreeSpaceOK" class="d-none">
-              <div>The system has stopped recording data because hdd is full</div>
-          </div>   
+            <div>The system has stopped recording data because hdd is full</div>
+          </div>
+
+          <!-- logging data card -->
+          <div class="mb-4">
+            <div class="card" id="logCard">
+              <div class="card-header text-lg font-weight-bold text-dark">
+                Data recording :
+                <span id="recordingStatus2" class="text-success">
+                  Active
+                </span>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <div class="">
+                    <div class="border-right-warning d-inline ml-auto">
+                      <div class="text-lg font-weight-bold text-dark"> Logging mode : <span id="modeWidget"
+                          class="h5 mb-0 font-weight-bold d-inline text-primary"></span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="container-fluid pl-0">
+                    <div id="btnRecording" href="#" onclick="toggleRecording()"
+                      class="d-inline btn btn-success">
+                      <span class="icon-text-white-50"><i class="fas fa-circle"></i></span>
+                      <span id="btnRecordingText" class="text">Start Recording</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
 
           <!-- Status Row -->
-          <div class="row">            
-
-		<!-- GNSS top marquee //-->
-                 <div class="col-lg-4 mb-4">
-                  <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      <p>GNSS</p>
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div>Longitude</div>
-                                    <div id="gnssLongitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div>Latitude</div>
-                                    <div id="gnssLatitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                               <div class="col-lg-12">
-                                <div id="gnssStatusText">Waiting for data...</div>
-                               </div>
-                            </div>
-
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-		<!-- IMU top marquee //-->
-                 <div class="col-lg-4 mb-4">
-                  <div id="imuStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-		
-                      <p>IMU</p>
-                      <div class="row">
-                          <div class="col mr-2">
-			    <div class="row">
-				<div class="col-lg-4">
-				    <div>Heading</div>
-	                            <div id="imuHeadingValue" class="text-gray-200 h6 font-weight-bold"></div>
-				</div>
-				<div class="col-lg-4">
-				    <div>Pitch</div>
-        	                    <div id="imuPitchValue" class="text-gray-200 h6 font-weight-bold"></div>
-				</div>
-				<div class="col-lg-4">
-				    <div>Roll</div>
-                	            <div id="imuRollValue" class="text-gray-200 h6 font-weight-bold"></div>
-				</div>
-			    </div>
-			    <div class="row">
-			       <div class="col-lg-12">
-				<div id="imuStatusText">Waiting for data...</div>
-			       </div>
-			    </div>
-                          </div>
-                        <div class="col-auto">
-                          <i class="fas fa-ship fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-		<!-- Sonar top marquee //-->
-                 <div class="col-lg-4 mb-4">
-                  <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
-
-                    <div class="card-body">
-                      <p>Sonar</p>
-                      <div class="row">
-                          <div class="col mr-2">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div>Meters</div>
-                                    <div id="sonarDepthValue" class="text-gray-200 h6 font-weight-bold"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                               <div class="col-lg-12">
-                                <div id="sonarStatusText">Waiting for data...</div>
-                               </div>
-                            </div>
-                          </div>
-
-                        <div class="col-auto">
-                          <i class="fas fa-rss fa-rotate-180 fa-2x text-gray-300"></i>
-                        </div>                          
-                      </div>
-                    </div>
-                  </div>
-                </div>
-          </div>
-
-	  <!-- Gauges row -->
           <div class="row">
 
-            <!-- Depth Card --> 
-            <div class="col-lg-8 mb-4">
-              <div class="card shadow mb-4">
 
-                <div class="card-header py-3" >
+            <!-- GNSS top marquee //-->
+            <div class="col mb-4">
+              <div id="gnssStatus" class="card bg-gradient-warning text-white shadow">
+
+                <div class="card-body">
+                  <p>GNSS</p>
+                  <div class="row">
+                    <div class="col mr-2">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div>Longitude</div>
+                          <div id="gnssLongitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div>Latitude</div>
+                          <div id="gnssLatitudeValue" class="text-gray-200 h6 font-weight-bold"></div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div id="gnssStatusText">Waiting for data...</div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- IMU top marquee //-->
+            <div class="col mb-4">
+              <div id="imuStatus" class="card bg-gradient-warning text-white shadow">
+                <div class="card-body">
+                  <p>IMU</p>
+                  <div class="row">
+                    <div class="col mr-2">
+                      <div class="row">
+                        <div class="col-lg-4">
+                          <div>Heading</div>
+                          <div id="imuHeadingValue" class="text-gray-200 h6 font-weight-bold"></div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div>Pitch</div>
+                          <div class="navbar-nav ml-auto nav-item ">
+                            <li>
+                              <div class="d-inline">
+
+                              </div>
+                            </li>
+                          </div>
+                          <div id="imuPitchValue" class="text-gray-200 h6 font-weight-bold"></div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div>Roll</div>
+                          <div id="imuRollValue" class="text-gray-200 h6 font-weight-bold"></div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div id="imuStatusText">Waiting for data...</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-ship fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Sonar top marquee //-->
+            <div id="sonarCard" class="col mb-4">
+              <div id="sonarStatus" class="card bg-gradient-warning text-white shadow">
+                <div class="card-body">
+                  <p>Sonar</p>
+                  <div class="row">
+                    <div class="col mr-2">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div>Meters</div>
+                          <div id="sonarDepthValue" class="text-gray-200 h6 font-weight-bold"></div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div id="sonarStatusText">Waiting for data...</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-rss fa-rotate-180 fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gauges row -->
+          <div class="row">
+
+            <!-- Depth Card -->
+            <div class="col-lg-8 mb-4 d-">
+              <div class="card shadow mb-4 text-center">
+
+                <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Depth</h6>
                 </div>
 
                 <div class="card-body">
-                  <div class="chart-area">
-                    <div id="depthChartContainer">
+                  <div class="chart-area" style="height: fit-content;">
+                    <div id="depthChartContainer" style="height: 20em;">
                       <canvas id="depthChart"></canvas>
-			<br style="clear:both"/>
                     </div>
                   </div>
                 </div>
-
               </div>
-           </div>
+            </div>
 
-           <!-- Attitude Card -->
-           <div class="col-lg-4 mb-4">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3" >
+            <!-- Attitude Card -->
+            <div class="col-lg-4 mb-4">
+              <div class="card shadow mb-4 text-center">
+                <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Attitude</h6>
                 </div>
                 <div class="card-body">
                   <div class="">
-		    <h6 class="text-center">Heading</h6>
-		    <br/>
-		    <div id="gaugeContainer">
-		       <canvas id="imuz"></canvas>
-         	    </div>  
+                    <h6 class="text-primary d-inline">Heading</h6>
+                    <br />
+                    <div class="" id="gaugeContainer">
+                      <canvas id="imuz"></canvas>
+                    </div>
                   </div>
-
-		  <hr/>
-
-                  <div class="chart-area">
+                  <hr />
+                  <div class="chart-area" style="height: fit-content;">
                     <div id="chartContainer">
                       <canvas id="attitudeChart"></canvas>
                     </div>
                   </div>
-
                 </div>
               </div>
-            </div>            
-
-          
- 
-
+            </div>
           </div>
-
         </div>
-        </div>
-        </div>
-        <!-- /.container-fluid -->
-
       </div>
-      <!-- End of Main Content -->
-
       <!-- Footer -->
-      <footer class="sticky-footer bg-white">
+      <footer class="sticky-footer bg-white footer">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
             <span>Copyright &copy; CIDCO</span>
@@ -371,12 +336,11 @@
         </div>
       </footer>
       <!-- End of Footer -->
-
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- /.container-fluid -->
 
   </div>
-  <!-- End of Page Wrapper -->
+  <!-- End of Main Content -->
 
   <!-- Scroll to Top Button-->
   <a class="scroll-to-top rounded" href="#page-top">
@@ -402,304 +366,12 @@
   <!-- <script src="js/demo/chart-area-demo.js"></script> -->
   <!-- <script src="js/demo/chart-pie-demo.js"></script> -->
   <script src="js/poseidon.js"></script>
- 
+
+  <!-- Custom script -->
+  <script src="js/script.js"></script>
+
+  <!-- page scipt -->
+  <script src="js/dashboardscript.js"></script>
 </body>
-<script>
-	var socket;
 
-	var depthChart;
-        var depth = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-        
-	var attitudeChart;
-	var imu_x = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-        var imu_y = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	var depth = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-
-	var headingGauge;
-	
-$( document ).ready(function() {
-
-        //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        //Chart.defaults.global.defaultFontColor = '#858796'
-		
-	var ctxAttitude = document.getElementById("attitudeChart").getContext('2d');
-	attitudeChart = new Chart(ctxAttitude, {
-		type: 'line',
-		data: {
-		labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
-		datasets: [{label: "Pitch", data:imu_x, backgroundColor: [ 'rgba(105, 0, 132, 0)', ], borderColor: [ 'rgba(200, 99, 132, .7)', ], borderWidth: 2 }, 
-		           {label: "Roll", data:imu_y, backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] },
-		options: { responsive: true, animation: false, elements: {point:{radius: 0}}} 
-	});
-
-        var ctxDepth = document.getElementById("depthChart").getContext('2d');
-        depthChart = new Chart(ctxDepth, 
-	{
-               	type: 'line',
-               	data: {
-			labels: [ ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
-               		datasets: [ {label: "Depth(m)", data:depth , backgroundColor: [ 'rgba(0, 137, 132, 0)', ], borderColor: [ 'rgba(0, 10, 130, .7)', ], borderWidth: 2 } ] 
-		},
-	        options: { maintainAspectRatio: false, responsive: true, animation: false, elements: {point:{radius: 0}} }
-	});
-
-	headingGauge = new RadialGauge({
-	    renderTo: 'imuz',
-	    minValue: 0,
-	    maxValue: 360,
-	    majorTicks: [
-	        "0",
-	        "45",
-	        "90",
-	        "135",
-	        "180",
-	        "225",
-	        "270",
-	        "315",
-	        "0"
-	    ],
-	    minorTicks: 22,
-	    ticksAngle: 360,	
-	    startAngle: 180,
-	    strokeTicks: false,
-	    highlights: false,
-	    colorPlate: "#222",
-	    colorMajorTicks: "#f5f5f5",
-	    colorMinorTicks: "#ddd",
-	    colorNumbers: "#ccc",
-	    colorNeedle: "rgba(240, 128, 128, 1)",
-	    colorNeedleEnd: "rgba(255, 160, 122, .9)",
-	    valueBox: false,
-	    valueTextShadow: false,
-	    colorCircleInner: "#fff",
-	    colorNeedleCircleOuter: "#ccc",
-	    needleCircleSize: 10,
-	    needleCircleOuter: false,
-	    animationRule: "linear",
-	    needleType: "line",
-	    needleStart: 25,
-	    needleEnd: 99,
-	    needleWidth: 5,
-	    borders: true,
-	    borderInnerWidth: 0,
-	    borderMiddleWidth: 0,
-	    borderOuterWidth: 3,
-	    colorBorderOuter: "#ccc",
-	    colorBorderOuterEnd: "#ccc",
-	    colorNeedleShadowDown: "#222",
-	    borderShadowWidth: 0,
-	    animationDuration: 150,
-	    animateOnInit: true,
-	    animation: false
-	}).draw();
-
-
-	// Init websocket
-
-	//display overlay...
-	displayOverlay();
-
-	socket = new WebSocket("ws://" + window.location.hostname +":9002");
-
-	socket.onmessage = function (event) {
-        	//console.log(event.data);
-        	var msg = JSON.parse(event.data);
-        	
-        	if(msg.telemetry){
-                	processTelemetry(msg.telemetry);
-        	}
-        	else if(msg.recordingInfo){
-        		var isLogging = msg.recordingInfo.status;
-        		var mode = msg.loggingMode.the_mode_is;
-        		processRecordingInfo(isLogging, mode);
-        	}
-        	
-  	};
-
-	socket.onopen = function(event){
-		hideOverlay();
-		//init display
-        getLoggingInfo();
-	};
-
-	socket.onerror = function(){
-		//display error div
-		console.log("Error: Cannot connect to websocket")
-		displayOverlay();		
-	}
-	
-	
-});
-
-
-    function displayOverlay(){
-	document.getElementById("overlay-text").innerHTML= "<p class='text-dark text-center'>Loading...</p><img src='/img/loading.gif'/>";//"<p class='text-light'>Loading...</p>"; //"<img href='/img/loading.gif'/>";
-	document.getElementById("overlay").style.display = "block";	
-    }
-
-    function hideOverlay(){
-        document.getElementById("overlay").style.display = "none";
-    }
-
-    function processTelemetry(state){
-       
-	// Update dashboard top marquees  
-        
-        if(!state.position.length || !state.attitude.length || !state.depth.length){
-            $("#systemStatus").removeClass("d-none").addClass("d-block");
-            
-            $("#systemStatusText").text("Check connexion with sensors and reload the page.");
-        }
-        else{
-            $("#systemStatus").removeClass("d-block").addClass("d-none");
-            $("#systemStatusText").text();
-        }
-        
-        if(state.position.length){
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#gnssLongitudeValue").text(state.position[0].toFixed(8));
-            $("#gnssLatitudeValue").text(state.position[1].toFixed(8));
-	    	$("#gnssStatusText").text("");
-        }
-        else{
-            $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#gnssLongitudeValue").text("");
-            $("#gnssLatitudeValue").text("");
-            $("#gnssStatusText").text("No GNSS Data...");
-        }
-        
-        if(state.attitude.length){
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#imuHeadingValue").text(state.attitude[0].toFixed(3));
-            $("#imuPitchValue").text(state.attitude[1].toFixed(3));
-            $("#imuRollValue").text(state.attitude[2].toFixed(3));
-	    	$("#imuStatusText").text("");
-        }
-        else{
-            $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#imuHeadingValue").text("");
-            $("#imuPitchValue").text("");
-            $("#imuRollValue").text("");        
-	    	$("#imuStatusText").text("No IMU Data");
-        }
-        
-        if(state.depth.length){
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-            $("#sonarDepthValue").text(state.depth[0].toFixed(2));
-            $("#sonarStatusText").text("");
-        }
-        else{
-            $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-            $("#sonarDepthValue").text("");
-            $("#sonarStatusText").text("No Sonar Data");
-        }
-
-	// Update attitude/depth plot
-
-	imu_x.push(state.attitude[1]);
-	imu_x.shift();
-
-	imu_y.push(state.attitude[2]);
-	imu_y.shift();
-
-	//Display depth as negative Z 
-	depth.push(-1 * state.depth[0]);
-	depth.shift();
-	
-	attitudeChart.update();
-	depthChart.update();
-
-	headingGauge.value = (state.attitude[0]);
-	
-	if(state.vitals[3] < 1){
-		$("#hddFreeSpaceOK").removeClass("d-none").addClass("d-block alert alert-danger");
-	}
-	else{
-		$("#hddFreeSpaceOK").removeClass("d-block alert alert-danger").addClass("d-none");
-	}
-  }// End function processTelemetry
-
-  function getLoggingInfo(){
-  	var cmd = {command : "getLoggingInfo"};
-	socket.send(JSON.stringify(cmd));
-  }
-
-  function processRecordingInfo(isLogging, mode){
-	//console.log(isLogging);
-	//console.log(mode);
-  	if(mode == "1"){
-  		hideLoggingButton();
-  		$("#modeWidget").text("always ON");
-  		if(isLogging){
-  			//console.log("logging mode 1 : always ON");
-  			showRecording();
-  		}
-  		else{
-  			showNotRecording();
-  		}
-  		
-  	}
-  	else if(mode == "2"){
-  		$("#modeWidget").text("manual");
-  		if(isLogging){
-  			//console.log("logging mode 2 : manual , isLogging");
-  			showRecordingButton();
-  			showRecording();
-  		}
-  		else{
-  		//console.log("logging mode 2 : manual , is not logging");
-  		showNotRecording();
-  		showNotRecordingButton();
-  		}
-  	}
-  	else if(mode == "3"){
-  		hideLoggingButton();
-  		$("#modeWidget").text("speed based");
-  		if(isLogging){
-  			//console.log("logging mode 3 : speed based , isLogging");
-	  		showRecording();
-  		}
-  		else{
-  			//console.log("logging mode 3 : speed based , is not Logging");
-	  		showNotRecording();
-  		}
-  	}
-  }
-
-  function startRecording(){
-	var cmd = { command : "startLogging"};
-	socket.send(JSON.stringify(cmd));
-  }
-
-  function stopRecording(){
-	var cmd = { command : "stopLogging"};
-        socket.send(JSON.stringify(cmd));
-  }
-
-  function showRecording(){ 
-    $("#recordingStatus").removeClass("d-none alert-danger").addClass("d-block alert-success");
-    $("#recordingStatus").text("The system is currently recording data");
-    $("#modeWidget").removeClass("text-danger text-success").addClass("text-success");
-  }
-
-  function showNotRecording(){
-    $("#recordingStatus").removeClass("d-none alert-success").addClass("d-block alert-danger");
-    $("#recordingStatus").text("The system is not recording data")
-    $("#modeWidget").removeClass("text-danger text-success").addClass("text-danger");
-  }
-  function showRecordingButton(){
-  	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
-    $("#btnStopRecording").removeClass("d-none").addClass("d-inline");
-  }
-  function showNotRecordingButton(){
-  	$("#btnStartRecording").removeClass("d-none").addClass("d-inline");
-    $("#btnStopRecording").removeClass("d-inline").addClass("d-none");
-  }
-  function hideLoggingButton(){
-  	$("#btnStartRecording").removeClass("d-inline").addClass("d-none");
-  	$("#btnStopRecording").removeClass("d-inline").addClass("d-none");
-  }
-  
-  </script>
 </html>
-

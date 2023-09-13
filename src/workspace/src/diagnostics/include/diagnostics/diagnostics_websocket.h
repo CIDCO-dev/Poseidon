@@ -110,12 +110,19 @@ public:
 			std::string command = document["command"].GetString();
 			if(command == "updateDiagnostic"){
 			
-				rapidjson::Document doc;
-				doc.SetObject();
-				build_running_nodes_array(doc);
+				//rapidjson::Document doc;
+				document.SetObject();
+				//build_running_nodes_array(doc);
 				
-				build_diagnostics(doc);
-				send_json(doc);
+				build_diagnostics(document);
+				send_json(document);
+			}
+			if(command == "getRunningNodes"){
+				//rapidjson::Document doc;
+				std::cout<<"getRunningNodes \n";
+				document.SetObject();
+				build_running_nodes_array(document);
+				send_json(document);
 			}
 		}
 	}

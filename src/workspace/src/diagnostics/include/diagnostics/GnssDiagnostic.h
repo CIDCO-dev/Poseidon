@@ -45,7 +45,7 @@ private:
 	ros::Subscriber gnssSubscriber;
 	ros::NodeHandle node;
 	std::mutex mutex;
-	int time = 10;
+	int time = 3;
 	std::vector<sensor_msgs::NavSatFix> receivedMessage;
 
 };

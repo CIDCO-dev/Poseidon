@@ -30,26 +30,18 @@ public:
 	virtual bool do_test() = 0;
 	
 	virtual void to_json(rapidjson::Document &doc, rapidjson::Value &diagnosticsArray){
+	
+		rapidjson::Document diagnostic(rapidjson::kObjectType);
 		
-		rapidjson::Value diagnostic;
-		diagnostic.SetObject();
-		rapidjson::Value diagnosticArray(rapidjson::kArrayType);
+		rapidjson::Value diagName(this->key.c_str(), diagnostic.GetAllocator());
+		diagnostic.AddMember("name", diagName, diagnostic.GetAllocator());
 		
-		rapidjson::Value info(rapidjson::kObjectType);
-		rapidjson::Value infoStr(this->value.c_str(), doc.GetAllocator());
-		info.AddMember("info", infoStr, doc.GetAllocator());
-		diagnosticArray.PushBack(info, doc.GetAllocator());
+		rapidjson::Value infoStr(this->value.c_str(), diagnostic.GetAllocator());
+		diagnostic.AddMember("message", infoStr, diagnostic.GetAllocator());
 		
-		rapidjson::Value status(rapidjson::kObjectType);
-		rapidjson::Value statusValue(this->status);
-		status.AddMember("status", statusValue, doc.GetAllocator());
-		diagnosticArray.PushBack(status, doc.GetAllocator());
-		
-		//diagnosticsArray.PushBack(diagnostic, doc.GetAllocator());
+		rapidjson::Value status(this->status);
+		diagnostic.AddMember("status", status, diagnostic.GetAllocator());
 
-		rapidjson::Value keyVal;
-		keyVal.SetString(this->key.c_str(), this->key.length(), doc.GetAllocator());
-		diagnostic.AddMember(keyVal, diagnosticArray, doc.GetAllocator());
 		diagnosticsArray.PushBack(diagnostic, doc.GetAllocator());
 	}
 

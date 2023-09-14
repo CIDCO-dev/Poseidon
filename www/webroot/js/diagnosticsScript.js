@@ -4,7 +4,13 @@ function processDiagnostics(diagnostics) {
 	console.log('diagnostics');
 	var tableContainer = document.getElementById('diagnostics');
 	
+	var diagnosticsTable = document.getElementById('diagnosticsTable');
+	if (diagnosticsTable) {
+		diagnosticsTable.remove();
+	}
+	
 	var table = document.createElement('table');
+	table.id = 'diagnosticsTable';
 	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
 
 	// Create the table header row
@@ -27,7 +33,7 @@ function processDiagnostics(diagnostics) {
 		cell.textContent = diagnostic.name;
 		
 		var cell1 = row.insertCell(-1);
-		cell1.textContent = diagnostic.status;
+		cell1.textContent = diagnostic.status ? "✅" : "❌";;
 		
 		var cell2 = row.insertCell(-1);
 		cell2.textContent = diagnostic.message;
@@ -43,9 +49,15 @@ function processRunningNodes(runningNodes){
 	
 	var tableContainer = document.getElementById('runningNodes');
 	
+	var runningNodesTable = document.getElementById("runningNodesTable");
+	if (runningNodesTable) {
+		runningNodesTable.remove();
+	}
+	
 	var table = document.createElement('table');
+	table.id = "runningNodesTable";
 	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
-
+	
 	// Create the table header row
 	var headerRow = table.insertRow(0);
 	var th = document.createElement('th');
@@ -62,23 +74,6 @@ function processRunningNodes(runningNodes){
 
 	// Append the table to the table container
 	tableContainer.appendChild(table);
-	
-	
-	
-	/*
-	var form = document.getElementById('runningNodes');
-	
-	form.innerHTML = '';
-	var newHTML = '';
-	
-	newHTML += '<div class="align-items-center"> <label class="col-auto col-form-label-lg"> Running Nodes: </div>';
-	
-	runningNodes.forEach(function (item) {
-		newHTML += '<div class="align-items-center">' + item +'</div>';
-	});
-	
-	form.innerHTML = newHTML;
-	*/
 }
 
 function processMessage(msg) {

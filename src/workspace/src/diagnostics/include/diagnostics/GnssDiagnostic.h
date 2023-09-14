@@ -20,14 +20,28 @@ public:
 	bool do_test(){
 		try{
 			gnssSubscriber = node.subscribe("fix", 10, &GnssDiagnostic::gnssCallback, this);
-			auto start = std::chrono::steady_clock::now();
-			while(std::chrono::steady_clock::now() - start < std::chrono::seconds(time)){
-				//wait
+			
+			ros::Time startTime = ros::Time::now();
+			double elapsedTime =0.0;
+			//loop while condition is not met or exit loop if timer has expired
+			while (ros::ok()){
+				
+				ros::Time currentTime = ros::Time::now();
+				elapsedTime = (currentTime - startTime).toSec();
+			
+				if (receivedMessage.size() >= 1){
+					break;
+				}
+				
+				if (elapsedTime >= sleepDuration){
+					break;
+				}
+				ros::Duration(0.1).sleep();
 			}
 			
 			if(receivedMessage.size() > 0){
 				this->status = true;
-				this->value = std::to_string(receivedMessage.size()) + " message received in " + std::to_string(time) + " seconds"; //TODO add more logics to have more info on what is good or not
+				this->value = std::to_string(receivedMessage.size()) + " message received in " + std::to_string(elapsedTime) + " seconds"; //TODO add more logics to have more info on what is good or not
 			}
 			
 			gnssSubscriber.shutdown();
@@ -45,7 +59,7 @@ private:
 	ros::Subscriber gnssSubscriber;
 	ros::NodeHandle node;
 	std::mutex mutex;
-	int time = 3;
+	double sleepDuration = 3.0;
 	std::vector<sensor_msgs::NavSatFix> receivedMessage;
 
 };

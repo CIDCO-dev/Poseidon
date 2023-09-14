@@ -50,6 +50,8 @@ public:
 		}
 		catch(const std::exception& ex){
 			ROS_ERROR_STREAM(ex.what());
+			this->status = false;
+			this->value = ex.what();
 			return false;
 		}
 	}

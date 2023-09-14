@@ -27,5 +27,7 @@
 
 <node pkg="wifi_config" name="wifiConfig" type="wifi_config_node" output="screen"/>
 
+<node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen"/>>
+
 
 </launch>

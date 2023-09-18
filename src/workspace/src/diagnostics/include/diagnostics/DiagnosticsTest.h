@@ -11,15 +11,9 @@
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/Imu.h"
 #include <std_msgs/String.h>
-/*#include "sensor_msgs/PointCloud2.h"*/
-/*#include "sensor_msgs/point_cloud_conversion.h"*/
-/*#include "sensor_msgs/PointCloud.h"*/
-/*#include "geometry_msgs/PointStamped.h"*/
-/*#include "geometry_msgs/TransformStamped.h"*/
+#include "geometry_msgs/PointStamped.h"
 /*#include "nav_msgs/Odometry.h"*/
 /*#include "std_msgs/String.h"*/
-/*#include <tf2_ros/transform_listener.h>*/
-/*#include "tf2_geometry_msgs/tf2_geometry_msgs.h"*/
 
 class DiagnosticsTest {
 public:
@@ -61,7 +55,6 @@ public:
 				}
 				this->value = std::to_string(messageCount) + " message received in " + std::to_string(elapsedTime) + " seconds";
 			}
-			
 			subscriber.shutdown();
 			return true;
 		}
@@ -69,18 +62,19 @@ public:
 			ROS_ERROR_STREAM(ex.what());
 			this->status = false;
 			this->value = ex.what();
+			subscriber.shutdown();
 			return false;
 		}
 	}
 	
-	virtual bool receiving_messages(){
+	virtual bool is_receiving_messages(){
 		this->status = false;
 		try{
 			start_subscriber();
 			
 			ros::Time startTime = ros::Time::now();
 			double elapsedTime = 0.0;
-			//loop while condition is not met or exit loop if timer has expired
+			//loop while messageCount condition is not met or exit loop if timer has expired
 			while (ros::ok()){
 				
 				ros::Time currentTime = ros::Time::now();
@@ -98,13 +92,12 @@ public:
 			
 			if(messageCount > 0){
 				this->status = true;
-				this->value = std::to_string(messageCount) + " message received in " + std::to_string(elapsedTime) + " seconds";
+				this->value += std::to_string(messageCount) + " message received in " + std::to_string(elapsedTime) + " seconds \n";
 			}
 			else{
 				this->status = false;
 				this->value = "No message received in " + std::to_string(elapsedTime) + " seconds";
 			}
-			
 			subscriber.shutdown();
 			return true;
 		}
@@ -112,6 +105,7 @@ public:
 			ROS_ERROR_STREAM(ex.what());
 			this->status = false;
 			this->value = ex.what();
+			subscriber.shutdown();
 			return false;
 		}
 	

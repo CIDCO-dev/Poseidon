@@ -17,6 +17,7 @@
 #include "DiagnosticsTest.h"
 #include "GnssDiagnostic.h"
 #include "ImuDiagnostic.h"
+#include "SonarDiagnostic.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::connection_hdl;
@@ -26,7 +27,7 @@ public:
 	DiagnosticsServer(){
 		srv.init_asio();
 		srv.set_reuse_addr(true);
-		srv.clear_access_channels(websocketpp::log::alevel::all);  //remove cout logging
+		srv.clear_access_channels(websocketpp::log::alevel::all);
 
 		srv.set_open_handler(bind(&DiagnosticsServer::on_open, this, std::placeholders::_1));
 		srv.set_close_handler(bind(&DiagnosticsServer::on_close, this, std::placeholders::_1));
@@ -35,9 +36,8 @@ public:
 		
 		diagnosticsVector = boost::assign::list_of<DiagnosticsTest*>(new ImuDiagnostic("ImuDiagnostic","imu/data", 100))
 																	(new GnssDiagnostic("GnssDiagnostic", "fix", 1))
+																	(new SonarDiagnostic("SonarDiagnostic", "depth", 10))
 																	;
-		
-		
 	}
 	
 	~DiagnosticsServer(){

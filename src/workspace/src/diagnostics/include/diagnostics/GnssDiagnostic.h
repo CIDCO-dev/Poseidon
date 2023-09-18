@@ -31,21 +31,20 @@ public:
 		subscriber = node.subscribe(this->topic, 10, &GnssDiagnostic::messageCallback, this);
 	}
 	
-	void do_tests()override{
-		start_subscriber();
+	bool has_gnss_fix(){
 		
-		if(receiving_messages() ){ //add other test here
+	}
+	
+	void do_tests()override{
+		
+		if(is_receiving_messages() ){ //add other test here
 			this->status = true;
 		}
 	}
 	
 	
 private:
-	ros::Subscriber gnssSubscriber;
-	ros::NodeHandle node;
-	std::mutex mutex;
-	double sleepDuration = 3.0;
-	std::vector<sensor_msgs::NavSatFix> receivedMessage;
+	//std::vector<sensor_msgs::NavSatFix> receivedMessage;
 
 };
 #endif

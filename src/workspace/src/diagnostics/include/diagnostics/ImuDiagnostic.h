@@ -31,9 +31,8 @@ public:
 	}
 	
 	void do_tests()override{
-		start_subscriber();
 		
-		if(receiving_messages() ){ //add other test here
+		if(is_receiving_messages() ){ //add other test here
 			this->status = true;
 		}
 	}

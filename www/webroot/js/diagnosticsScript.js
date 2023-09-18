@@ -1,7 +1,7 @@
 var socket;
 
 function processDiagnostics(diagnostics) {
-	console.log('diagnostics');
+	console.log('processDiagnostics');
 	var tableContainer = document.getElementById('diagnostics');
 	
 	var diagnosticsTable = document.getElementById('diagnosticsTable');
@@ -44,8 +44,53 @@ function processDiagnostics(diagnostics) {
 	tableContainer.appendChild(table);
 }
 
+function processLatencies(latencies) {
+	console.log('processLatencies');
+	var tableContainer = document.getElementById('latencies');
+	
+	var latenciesTable = document.getElementById('latenciesTable');
+	if (latenciesTable) {
+		latenciesTable.remove();
+	}
+	
+	var table = document.createElement('table');
+	table.id = 'latenciesTable';
+	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
+
+	// Create the table header row
+	var headerRow = table.insertRow(0);
+	var col1 = document.createElement('th');
+	col1.textContent = "Latency";
+	headerRow.appendChild(col1);
+	
+	var col2 = document.createElement('th');
+	col2.textContent = "Quality";
+	headerRow.appendChild(col2);
+	
+	var col3 = document.createElement('th');
+	col3.textContent = "Info";
+	headerRow.appendChild(col3);
+	
+	latencies.forEach(function (latency, index) {
+		var row = table.insertRow(index + 1);
+		var cell = row.insertCell(-1);
+		cell.textContent = latency.name;
+		
+		var cell1 = row.insertCell(-1);
+		cell1.textContent = latency.status ? "✅" : "❌";;
+		
+		var cell2 = row.insertCell(-1);
+		cell2.textContent = latency.message;
+		
+	});
+	
+	
+	tableContainer.appendChild(table);
+}
+
+
 function processRunningNodes(runningNodes){
-	console.log("runningNodes");
+	console.log("processRunningNodes");
 	
 	var tableContainer = document.getElementById('runningNodes');
 	
@@ -83,6 +128,9 @@ function processMessage(msg) {
 	if (msg.diagnostics) {
 		processDiagnostics(msg.diagnostics);
 	}
+	if (msg.latencies){
+		processLatencies(msg.latencies);
+	}
 }
 
 
@@ -99,6 +147,15 @@ function getRunningNodes() {
 	socket.send(JSON.stringify(cmd));
 }
 
+function doLatencyTest() {
+	var cmd = { command: "doLatencyTest" };
+	socket.send(JSON.stringify(cmd));
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 //******************************
 // Main
 //******************************
@@ -112,4 +169,6 @@ socket.onmessage = function (event) {
 socket.onopen = function (event) {
 	getRunningNodes();
 	updateDiagnostic();
+	//sleep(1000);
+	doLatencyTest();
 }

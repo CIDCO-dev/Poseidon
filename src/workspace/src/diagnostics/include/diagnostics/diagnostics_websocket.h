@@ -16,6 +16,7 @@
 
 #include "DiagnosticsTest.h"
 #include "GnssDiagnostic.h"
+#include "ImuDiagnostic.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::connection_hdl;
@@ -27,13 +28,16 @@ public:
 		srv.set_reuse_addr(true);
 		srv.clear_access_channels(websocketpp::log::alevel::all);  //remove cout logging
 
-		srv.set_open_handler(bind(&DiagnosticsServer::on_open,this,std::placeholders::_1));
-		srv.set_close_handler(bind(&DiagnosticsServer::on_close,this,std::placeholders::_1));
-		srv.set_message_handler(bind(&DiagnosticsServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
+		srv.set_open_handler(bind(&DiagnosticsServer::on_open, this, std::placeholders::_1));
+		srv.set_close_handler(bind(&DiagnosticsServer::on_close, this, std::placeholders::_1));
+		srv.set_message_handler(bind(&DiagnosticsServer::on_message, this, std::placeholders::_1, std::placeholders::_2));
 		
-		diagnosticsVector = boost::assign::list_of<DiagnosticsTest*>(new GnssDiagnostic
-																	
-																	);
+		
+		diagnosticsVector = boost::assign::list_of<DiagnosticsTest*>(new ImuDiagnostic("ImuDiagnostic","imu/data", 100))
+																	(new GnssDiagnostic("GnssDiagnostic", "fix", 1))
+																	;
+		
+		
 	}
 	
 	~DiagnosticsServer(){
@@ -67,13 +71,10 @@ public:
 		rapidjson::StringBuffer sb;
 		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
 		document.Accept(writer);
-		std::string json = sb.GetString();
-		
-		std::cout<<json<<"\n";
 		
 		std::lock_guard<std::mutex> lock(mtx);
 		for (auto it : connections) {
-			 srv.send(it, json.c_str(), websocketpp::frame::opcode::text);
+			 srv.send(it, sb.GetString(), websocketpp::frame::opcode::text);
 		}
 	}
 	
@@ -82,10 +83,20 @@ public:
 		rapidjson::Value diagnosticsArray(rapidjson::kArrayType);
 		
 		for(auto obj: diagnosticsVector){
-			obj->do_test();
+			obj->do_tests();
 			obj->to_json(document, diagnosticsArray);
 		}
 		document.AddMember("diagnostics", diagnosticsArray, document.GetAllocator());
+	}
+	
+	void build_latency_test(rapidjson::Document &document){
+		rapidjson::Value latenciesArray(rapidjson::kArrayType);
+		
+		for(auto obj: diagnosticsVector){
+			obj->do_latency_test();
+			obj->to_json(document, latenciesArray);
+		}
+		document.AddMember("latencies", latenciesArray, document.GetAllocator());
 	}
 	
 	void on_message(connection_hdl hdl, server::message_ptr msg) {
@@ -109,19 +120,21 @@ public:
 		else {
 			std::string command = document["command"].GetString();
 			if(command == "updateDiagnostic"){
-			
-				//rapidjson::Document doc;
+				//std::cout<<"updateDiagnostic \n";
 				document.SetObject();
-				//build_running_nodes_array(doc);
-				
 				build_diagnostics(document);
 				send_json(document);
 			}
-			if(command == "getRunningNodes"){
-				//rapidjson::Document doc;
-				std::cout<<"getRunningNodes \n";
+			else if(command == "getRunningNodes"){
+				//std::cout<<"getRunningNodes \n";
 				document.SetObject();
 				build_running_nodes_array(document);
+				send_json(document);
+			}
+			else if(command == "doLatencyTest"){
+				//std::cout<<"doLatencyTest \n";
+				document.SetObject();
+				build_latency_test(document);
 				send_json(document);
 			}
 		}
@@ -137,7 +150,6 @@ public:
 		connections.erase(hdl);
 	}
 	
-
 	void receiveMessages(){
 		ros::spin();
 	}
@@ -157,7 +169,7 @@ public:
 		}
 
 		std::string closingMessage = "Server has closed the connection";
-		std::lock_guard<std::mutex> lock(mtx); // server stopped listening is this needed?
+		std::lock_guard<std::mutex> lock(mtx);
 		for (auto it : connections) {
 				websocketpp::lib::error_code ec_close_connection;
 				srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
@@ -166,12 +178,12 @@ public:
 			 	}
 			}
 
-		ROS_INFO("Stopping Telemetry server");
+		ROS_INFO("Stopping Diagnostic server");
 			srv.stop();
 	 }
 
 private:
-	typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
+	typedef std::set<connection_hdl, std::owner_less<connection_hdl>> con_list;
 	server srv;
 	con_list connections;
 	std::mutex mtx;

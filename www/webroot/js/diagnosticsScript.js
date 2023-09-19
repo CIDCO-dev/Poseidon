@@ -2,6 +2,10 @@ var socket;
 
 function processDiagnostics(diagnostics) {
 	console.log('processDiagnostics');
+	
+	var loadingSpinner = document.getElementById("loading-spinner");
+	loadingSpinner.classList.add("d-none");
+	
 	var tableContainer = document.getElementById('diagnostics');
 	
 	var diagnosticsTable = document.getElementById('diagnosticsTable');
@@ -36,7 +40,7 @@ function processDiagnostics(diagnostics) {
 		cell1.textContent = diagnostic.status ? "✅" : "❌";;
 		
 		var cell2 = row.insertCell(-1);
-		cell2.textContent = diagnostic.message;
+		cell2.innerHTML = diagnostic.message.replace(/\n/g, '<br>');
 		
 	});
 	
@@ -46,6 +50,10 @@ function processDiagnostics(diagnostics) {
 
 function processLatencies(latencies) {
 	console.log('processLatencies');
+	
+	var loadingSpinner = document.getElementById("loading-spinner");
+	loadingSpinner.classList.add("d-none");
+	
 	var tableContainer = document.getElementById('latencies');
 	
 	var latenciesTable = document.getElementById('latenciesTable');
@@ -138,6 +146,10 @@ function processMessage(msg) {
 //Function to get diagnostics results
 //******************************
 function updateDiagnostic() {
+	
+	var loadingSpinner = document.getElementById("loading-spinner");
+	loadingSpinner.classList.remove("d-none");
+	
 	var cmd = { command: "updateDiagnostic" };
 	socket.send(JSON.stringify(cmd));
 }
@@ -148,12 +160,12 @@ function getRunningNodes() {
 }
 
 function doLatencyTest() {
+	
+	var loadingSpinner = document.getElementById("loading-spinner");
+	loadingSpinner.classList.remove("d-none");
+	
 	var cmd = { command: "doLatencyTest" };
 	socket.send(JSON.stringify(cmd));
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 //******************************
@@ -169,6 +181,17 @@ socket.onmessage = function (event) {
 socket.onopen = function (event) {
 	getRunningNodes();
 	updateDiagnostic();
-	//sleep(1000);
-	doLatencyTest();
 }
+
+	var latencyButton = document.getElementById("latencyButton");
+	latencyButton.addEventListener("click", function(){
+		doLatencyTest();
+	});
+	
+	var diagnosticsButton = document.getElementById("diagnosticsButton");
+	diagnosticsButton.addEventListener("click",function(){
+		getRunningNodes();
+		updateDiagnostic();
+	});
+	
+	

@@ -55,8 +55,13 @@ public:
 				}
 				this->value = std::to_string(messageCount) + " message received in " + std::to_string(elapsedTime) + " seconds";
 			}
+			else{
+				this->status = false;
+				this->value = std::to_string(messageCount) + " message received in " + std::to_string(elapsedTime) + " seconds";
+			}
+			
 			subscriber.shutdown();
-			return true;
+			return this->status;
 		}
 		catch(const std::exception& ex){
 			ROS_ERROR_STREAM(ex.what());
@@ -99,7 +104,7 @@ public:
 				this->value = "No message received in " + std::to_string(elapsedTime) + " seconds";
 			}
 			subscriber.shutdown();
-			return true;
+			return this->status;
 		}
 		catch(const std::exception& ex){
 			ROS_ERROR_STREAM(ex.what());

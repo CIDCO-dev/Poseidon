@@ -116,23 +116,34 @@
 		  <div class="row">
 		  </div>
 
-		  <!-- DataTable -->
+		  <!-- Diagnostic Table -->
 		  <div class="card shadow mb-4">
 			<div class="card-header py-3">
 			  <h6 class="m-0 font-weight-bold text-primary">Diagnostics</h6>
 			</div>
+			
+			<div id="loading-spinner" class="d-none">
+				<div class="spinner-border text-primary" role="status">
+					<span class="sr-only">Performing diagnostics...</span>
+				</div>
+			</div>
+			
+			<div class="row-cols-3 mt-3">
+				<button id="diagnosticsButton" class="btn btn-primary">Refresh diagnostics</button>
+				<button id="latencyButton" class="btn btn-primary">Do latency tests</button>
+			</div>
 			<div class="card-body">
-                <div id="runningNodes"> </div>
-                </br>
-                <div id="diagnostics"> </div>
-                </br>
-                <div id="latencies"> </div>
+				<div id="runningNodes"> </div>
+				</br>
+				<div id="diagnostics"> </div>
+				</br>
+				<div id="latencies"> </div>
 
-            </div>
+			</div>
 
-          </div>
+		  </div>
 
-        </div>
+		</div>
 		<!-- /.container-fluid -->
 
 	  </div>

@@ -23,6 +23,7 @@
   <arg name="laserscan_ring" default="-1" />
   <arg name="laserscan_resolution" default="0.007" />
   <arg name="organize_cloud" default="false" />
+  <arg name="diagnostic_frequency_tolerance" default="0.1" />
 
  <!-- start nodelet manager -->
   <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen"/>

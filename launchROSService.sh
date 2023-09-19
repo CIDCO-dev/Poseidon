@@ -12,6 +12,9 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 # Echoboat configuration with imaginex 852
 #roslaunch /opt/Poseidon/src/workspace/launch/Echoboat/echoboat_imaginex852.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
 
+# Echoboat configuration with out sonar
+#roslaunch /opt/Poseidon/src/workspace/launch/Echoboat/echoboat.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
+
 ###########################
 #      Hydroblock  RPI    #
 ###########################

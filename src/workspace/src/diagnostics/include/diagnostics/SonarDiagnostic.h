@@ -31,6 +31,9 @@ public:
 		if(is_receiving_messages() ){ //add other test here
 			this->status = true;
 		}
+		else{
+			this->status = false;
+		}
 		
 	}
 	

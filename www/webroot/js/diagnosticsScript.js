@@ -15,16 +15,16 @@ function processDiagnostics(diagnostics) {
 	
 	var table = document.createElement('table');
 	table.id = 'diagnosticsTable';
-	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
+	table.classList.add('table-responsive', 'table-bordered', 'cell-padding');
 
 	// Create the table header row
 	var headerRow = table.insertRow(0);
 	var col1 = document.createElement('th');
-	col1.textContent = "Diagnostic";
+	col1.textContent = "Status";
 	headerRow.appendChild(col1);
 	
 	var col2 = document.createElement('th');
-	col2.textContent = "Status";
+	col2.textContent = "Diagnostic";
 	headerRow.appendChild(col2);
 	
 	var col3 = document.createElement('th');
@@ -34,10 +34,10 @@ function processDiagnostics(diagnostics) {
 	diagnostics.forEach(function (diagnostic, index) {
 		var row = table.insertRow(index + 1);
 		var cell = row.insertCell(-1);
-		cell.textContent = diagnostic.name;
+		cell.textContent = diagnostic.status ? "✅" : "❌"; 
 		
 		var cell1 = row.insertCell(-1);
-		cell1.textContent = diagnostic.status ? "✅" : "❌";;
+		cell1.textContent = diagnostic.name;
 		
 		var cell2 = row.insertCell(-1);
 		cell2.innerHTML = diagnostic.message.replace(/\n/g, '<br>');
@@ -63,16 +63,16 @@ function processLatencies(latencies) {
 	
 	var table = document.createElement('table');
 	table.id = 'latenciesTable';
-	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
+	table.classList.add('table-responsive', 'table-bordered', 'cell-padding');
 
 	// Create the table header row
 	var headerRow = table.insertRow(0);
 	var col1 = document.createElement('th');
-	col1.textContent = "Latency";
+	col1.textContent = "Quality";
 	headerRow.appendChild(col1);
 	
 	var col2 = document.createElement('th');
-	col2.textContent = "Quality";
+	col2.textContent = "Latency";
 	headerRow.appendChild(col2);
 	
 	var col3 = document.createElement('th');
@@ -82,10 +82,10 @@ function processLatencies(latencies) {
 	latencies.forEach(function (latency, index) {
 		var row = table.insertRow(index + 1);
 		var cell = row.insertCell(-1);
-		cell.textContent = latency.name;
+		cell.textContent = latency.status ? "✅" : "❌";
 		
 		var cell1 = row.insertCell(-1);
-		cell1.textContent = latency.status ? "✅" : "❌";;
+		cell1.textContent = latency.name;
 		
 		var cell2 = row.insertCell(-1);
 		cell2.textContent = latency.message;

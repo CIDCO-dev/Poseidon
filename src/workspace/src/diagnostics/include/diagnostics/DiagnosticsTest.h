@@ -12,6 +12,7 @@
 #include "sensor_msgs/Imu.h"
 #include <std_msgs/String.h>
 #include "geometry_msgs/PointStamped.h"
+#include "geometry_msgs/TransformStamped.h"
 /*#include "nav_msgs/Odometry.h"*/
 /*#include "std_msgs/String.h"*/
 

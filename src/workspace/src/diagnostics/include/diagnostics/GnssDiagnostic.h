@@ -21,7 +21,6 @@ public:
 		//reinitialize test results
 		this->status = false;
 		this->value = "";
-		//receivedMessages.clear();
 		messageCount = 0;
 		fix = 0;
 		
@@ -31,11 +30,11 @@ public:
 	bool has_gnss_fix(){
 		
 		if(fix > 0){
-			this->value += std::to_string(((double)(fix/messageCount))*100) + "% " + "of messages has fix \n";
+			this->value += std::to_string((((double)fix/(double)messageCount))*100) + "% " + "of messages has fix \n";
 			return true;
 		}
 		else{
-			this->value += "No gnss fix <br>";
+			this->value += "No gnss fix \n";
 			return false;
 		}
 		

@@ -15,9 +15,11 @@
 #include <rapidjson/prettywriter.h>
 
 #include "DiagnosticsTest.h"
-#include "GnssDiagnostic.h"
-#include "ImuDiagnostic.h"
-#include "SonarDiagnostic.h"
+#include "GnssCommunicationDiagnostic.h"
+#include "GnssFixDiagnostic.h"
+#include "ImuCommunicationDiagnostic.h"
+#include "ImuCalibrationDiagnostic.h"
+#include "SonarCommunicationDiagnostic.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::connection_hdl;
@@ -34,9 +36,11 @@ public:
 		srv.set_message_handler(bind(&DiagnosticsServer::on_message, this, std::placeholders::_1, std::placeholders::_2));
 		
 		
-		diagnosticsVector = boost::assign::list_of<DiagnosticsTest*>(new ImuDiagnostic("ImuDiagnostic","imu/data", 100))
-																	(new GnssDiagnostic("GnssDiagnostic", "fix", 1))
-																	(new SonarDiagnostic("SonarDiagnostic", "depth", 10))
+		diagnosticsVector = boost::assign::list_of<DiagnosticsTest*>(new GnssCommunicationDiagnostic("Gnss Communication", 1))
+																	(new GnssFixDiagnostic("Gnss fix", 1))
+																	(new ImuCommunicationDiagnostic("Imu Communication", 100))
+																	(new ImuCalibrationDiagnostic("Imu Calibrated", 100))
+																	(new SonarCommunicationDiagnostic("SonarDiagnostic", 10))
 																	;
 	}
 	
@@ -83,20 +87,10 @@ public:
 		rapidjson::Value diagnosticsArray(rapidjson::kArrayType);
 		
 		for(auto obj: diagnosticsVector){
-			obj->do_tests();
+			obj->do_test();
 			obj->to_json(document, diagnosticsArray);
 		}
 		document.AddMember("diagnostics", diagnosticsArray, document.GetAllocator());
-	}
-	
-	void build_latency_test(rapidjson::Document &document){
-		rapidjson::Value latenciesArray(rapidjson::kArrayType);
-		
-		for(auto obj: diagnosticsVector){
-			obj->do_latency_test();
-			obj->to_json(document, latenciesArray);
-		}
-		document.AddMember("latencies", latenciesArray, document.GetAllocator());
 	}
 	
 	void on_message(connection_hdl hdl, server::message_ptr msg) {
@@ -129,12 +123,6 @@ public:
 				//std::cout<<"getRunningNodes \n";
 				document.SetObject();
 				build_running_nodes_array(document);
-				send_json(document);
-			}
-			else if(command == "doLatencyTest"){
-				//std::cout<<"doLatencyTest \n";
-				document.SetObject();
-				build_latency_test(document);
 				send_json(document);
 			}
 		}

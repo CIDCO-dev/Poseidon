@@ -40,62 +40,12 @@ function processDiagnostics(diagnostics) {
 		cell1.textContent = diagnostic.name;
 		
 		var cell2 = row.insertCell(-1);
-		cell2.innerHTML = diagnostic.message.replace(/\n/g, '<br>');
+		cell2.innerHTML = diagnostic.message;
 		
 	});
 	
-	
 	tableContainer.appendChild(table);
 }
-
-function processLatencies(latencies) {
-	console.log('processLatencies');
-	
-	var loadingSpinner = document.getElementById("loading-spinner");
-	loadingSpinner.classList.add("d-none");
-	
-	var tableContainer = document.getElementById('latencies');
-	
-	var latenciesTable = document.getElementById('latenciesTable');
-	if (latenciesTable) {
-		latenciesTable.remove();
-	}
-	
-	var table = document.createElement('table');
-	table.id = 'latenciesTable';
-	table.classList.add('table-responsive', 'table-bordered', 'cell-padding');
-
-	// Create the table header row
-	var headerRow = table.insertRow(0);
-	var col1 = document.createElement('th');
-	col1.textContent = "Quality";
-	headerRow.appendChild(col1);
-	
-	var col2 = document.createElement('th');
-	col2.textContent = "Latency";
-	headerRow.appendChild(col2);
-	
-	var col3 = document.createElement('th');
-	col3.textContent = "Info";
-	headerRow.appendChild(col3);
-	
-	latencies.forEach(function (latency, index) {
-		var row = table.insertRow(index + 1);
-		var cell = row.insertCell(-1);
-		cell.textContent = latency.status ? "✅" : "❌";
-		
-		var cell1 = row.insertCell(-1);
-		cell1.textContent = latency.name;
-		
-		var cell2 = row.insertCell(-1);
-		cell2.textContent = latency.message;
-		
-	});
-	
-	
-	tableContainer.appendChild(table);
-}
-
 
 function processRunningNodes(runningNodes){
 	console.log("processRunningNodes");
@@ -136,9 +86,6 @@ function processMessage(msg) {
 	if (msg.diagnostics) {
 		processDiagnostics(msg.diagnostics);
 	}
-	if (msg.latencies){
-		processLatencies(msg.latencies);
-	}
 }
 
 
@@ -159,14 +106,6 @@ function getRunningNodes() {
 	socket.send(JSON.stringify(cmd));
 }
 
-function doLatencyTest() {
-	
-	var loadingSpinner = document.getElementById("loading-spinner");
-	loadingSpinner.classList.remove("d-none");
-	
-	var cmd = { command: "doLatencyTest" };
-	socket.send(JSON.stringify(cmd));
-}
 
 //******************************
 // Main
@@ -182,11 +121,6 @@ socket.onopen = function (event) {
 	getRunningNodes();
 	updateDiagnostic();
 }
-
-	var latencyButton = document.getElementById("latencyButton");
-	latencyButton.addEventListener("click", function(){
-		doLatencyTest();
-	});
 	
 	var diagnosticsButton = document.getElementById("diagnosticsButton");
 	diagnosticsButton.addEventListener("click",function(){

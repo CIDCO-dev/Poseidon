@@ -18,7 +18,8 @@ function processDiagnostics(diagnostics) {
 	diagnostics.forEach(function (diagnostic, index) {
 		var row = table.insertRow(index + 1);
 		var cell = row.insertCell(-1);
-		cell.textContent = diagnostic.status ? "✅" : "❌"; 
+		cell.innerHTML = diagnostic.status ? "✅" : "❌"; 
+		cell.style.textAlign = "center";
 		
 		var cell1 = row.insertCell(-1);
 		cell1.textContent = diagnostic.name;

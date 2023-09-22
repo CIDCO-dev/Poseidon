@@ -22,8 +22,8 @@ public:
 		geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 		QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation, imu.orientation, heading, pitch, roll);
 		
-		if(std::abs(pitch) < 1.5 && std::abs(roll) < 1.5){
-			imuCalibration++;
+		if(std::abs(pitch) > 1.5 && std::abs(roll) > 1.5){
+			calibrated = false;
 		}
 	}
 	
@@ -54,24 +54,8 @@ public:
 				ros::Duration(0.1).sleep();
 			}
 			
-			if(imuCalibration > 0){
-				
-				double calibratedMsgPourcent = ((double)imuCalibration / (double)messageCount) * 100;
-				
-				if(calibratedMsgPourcent > 95){
-					this->value += std::to_string(calibratedMsgPourcent) + "% " + "of messages angles are calibrated \n";
-					this->status = true;
-				}
-				else{
-					this->value += std::to_string(calibratedMsgPourcent) + "% " + "of messages angles are calibrated \n";
-					this->status = false;
-				}
-			}
-			else{
-				this->value = "Not calibrated \n";
-				this->status = false;
-			}
-			
+			this->value = (calibrated) ? "Calibrated" : "Not calibrated";
+			this->status = calibrated;
 			subscriber.shutdown();
 		}
 		catch(const std::exception& ex){
@@ -88,7 +72,7 @@ private:
 	double sleepDuration = 1.0;
 	int messageCount = 0;
 	int messageFrequency;
-	int imuCalibration = 0;
+	bool calibrated = true;
 	tf2_ros::Buffer buffer;
 	tf2_ros::TransformListener transformListener;
 

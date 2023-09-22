@@ -6,30 +6,14 @@ function processDiagnostics(diagnostics) {
 	var loadingSpinner = document.getElementById("loading-spinner");
 	loadingSpinner.classList.add("d-none");
 	
-	var tableContainer = document.getElementById('diagnostics');
+	//var tableContainer = document.getElementById('diagnostics');
 	
-	var diagnosticsTable = document.getElementById('diagnosticsTable');
-	if (diagnosticsTable) {
-		diagnosticsTable.remove();
-	}
-	
-	var table = document.createElement('table');
-	table.id = 'diagnosticsTable';
-	table.classList.add('table-responsive', 'table-bordered', 'cell-padding');
+	var table = document.getElementById('diagnosticsTable');
 
-	// Create the table header row
-	var headerRow = table.insertRow(0);
-	var col1 = document.createElement('th');
-	col1.textContent = "Status";
-	headerRow.appendChild(col1);
-	
-	var col2 = document.createElement('th');
-	col2.textContent = "Diagnostic";
-	headerRow.appendChild(col2);
-	
-	var col3 = document.createElement('th');
-	col3.textContent = "Info";
-	headerRow.appendChild(col3);
+	var rowCount = table.rows.length;
+	for (var i = rowCount - 1; i > 0; i--) {
+		table.deleteRow(i);
+	}
 	
 	diagnostics.forEach(function (diagnostic, index) {
 		var row = table.insertRow(index + 1);
@@ -44,7 +28,7 @@ function processDiagnostics(diagnostics) {
 		
 	});
 	
-	tableContainer.appendChild(table);
+	//tableContainer.appendChild(table);
 }
 
 function processRunningNodes(runningNodes){
@@ -59,7 +43,7 @@ function processRunningNodes(runningNodes){
 	
 	var table = document.createElement('table');
 	table.id = "runningNodesTable";
-	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
+	table.classList.add('table','table-bordered', 'dataTable');
 	
 	// Create the table header row
 	var headerRow = table.insertRow(0);

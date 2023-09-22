@@ -2,6 +2,7 @@
 var socket;
 
 function processConfig(config) {
+	console.log(config)
   var form = document.getElementById('formContent');
 
   form.innerHTML = '';
@@ -30,7 +31,7 @@ function processConfig(config) {
       }
     }
     else {
-      newHTML += '<div class="form-group row align-items-center"> <label class="col-auto col-form-label" for="' + item.key + '">' + item.key + " : " + '</label> <div class="col"> <input id="' + item.key + '" class="form-control configurationField" type="text" value="' + item.value + '"/> </div></div>';
+      newHTML += '<div class="row"> <div class="col-md-2"><label for="' + item.key + '">' + item.key + '</label> </div><div class="col-md-10"> <input id="' + item.key + '" class="form-control configurationField" type="text" value="' + item.value + '"/> </div></div>';
     }
 
   });

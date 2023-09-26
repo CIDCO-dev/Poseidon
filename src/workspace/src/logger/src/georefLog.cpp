@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <SbetProcessor.hpp>
 #include <filesystem>
+#include <boost/progress.hpp>
 
 class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProcessor{
 	public:
@@ -93,7 +94,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			
 			// if we have sbet read it
 			if(sbetFilePath.size() > 0){
-				std::cout<<"[+] Using Sbet for georeferencing" << std::endl;
+				std::cerr<<"[+] Using Sbet for georeferencing" << std::endl;
 				positions.clear();
 				attitudes.clear();
 				readFile(sbetFilePath);
@@ -115,7 +116,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 	            return;
 		    }
 		    
-		    std::cout<<this->laserPoints.size() << " points read"<<std::endl; 
+		    std::cerr<<this->laserPoints.size() << " points read"<<std::endl; 
 		    
 			// TODO Compute centroid or use first position
 			
@@ -124,7 +125,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 		    std::sort(attitudes.begin(), attitudes.end(), &sortByTimestamp<AttitudePacket>);
 		    std::sort(laserPoints.begin(), laserPoints.end(), &sortByTimestamp<LidarPacket>);
 		    
-		    std::cout<<"sorting by timestamp done."<<std::endl;
+		    std::cerr<<"sorting by timestamp done."<<std::endl;
 			
 			//fix timeStamps
 			if(sbetFilePath.size() > 0){
@@ -132,7 +133,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 				uint64_t positionTimestamp = std::get<PacketHeader>(positions[0]).packetTimestamp;
 				uint64_t laserPointTimestamp = std::get<PacketHeader>(laserPoints[0]).packetTimestamp;
 				
-				std::cout << "first point : " << laserPointTimestamp <<"\n";
+				std::cerr << "first point : " << laserPointTimestamp <<"\n";
 				
 				if( attitudeTimestamp == positionTimestamp){
 					
@@ -147,7 +148,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 					
 					uint64_t nbWeek = (laserPointTimestamp + (nbMicroSecondsPerWeek - offset)) / nbMicroSecondsPerWeek; //nb week unix time
 					
-					std::cout<<"nb week : " << nbWeek << "\n";
+					std::cerr<<"nb week : " << nbWeek << "\n";
 					
 					uint64_t startOfWeek = (nbMicroSecondsPerWeek * nbWeek) - offset; // micro sec from unix time to start of week
 					
@@ -187,8 +188,12 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
         	Eigen::Matrix3d ecefToNed;
         	Georeference::generateEcefToNed(ecefToNed, firstLat, firstLon);
         	
+        	boost::progress_display progress(this->laserPoints.size(), std::cerr);
+        	
         	//filter laser points
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
+        		
+        		++progress;
         		
         		if(this->activatedFilter){
         		

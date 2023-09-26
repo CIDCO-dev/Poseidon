@@ -1,51 +1,39 @@
 var socket;
 
 function processDiagnostics(diagnostics) {
-	console.log('diagnostics');
-	var tableContainer = document.getElementById('diagnostics');
+	console.log('processDiagnostics');
 	
-	var diagnosticsTable = document.getElementById('diagnosticsTable');
-	if (diagnosticsTable) {
-		diagnosticsTable.remove();
-	}
+	var loadingSpinner = document.getElementById("loading-spinner");
+	loadingSpinner.classList.add("d-none");
 	
-	var table = document.createElement('table');
-	table.id = 'diagnosticsTable';
-	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
+	//var tableContainer = document.getElementById('diagnostics');
+	
+	var table = document.getElementById('diagnosticsTable');
 
-	// Create the table header row
-	var headerRow = table.insertRow(0);
-	var col1 = document.createElement('th');
-	col1.textContent = "Diagnostic";
-	headerRow.appendChild(col1);
-	
-	var col2 = document.createElement('th');
-	col2.textContent = "Status";
-	headerRow.appendChild(col2);
-	
-	var col3 = document.createElement('th');
-	col3.textContent = "Info";
-	headerRow.appendChild(col3);
+	var rowCount = table.rows.length;
+	for (var i = rowCount - 1; i > 0; i--) {
+		table.deleteRow(i);
+	}
 	
 	diagnostics.forEach(function (diagnostic, index) {
 		var row = table.insertRow(index + 1);
 		var cell = row.insertCell(-1);
-		cell.textContent = diagnostic.name;
+		cell.innerHTML = diagnostic.status ? "✅" : "❌"; 
+		cell.style.textAlign = "center";
 		
 		var cell1 = row.insertCell(-1);
-		cell1.textContent = diagnostic.status ? "✅" : "❌";;
+		cell1.textContent = diagnostic.name;
 		
 		var cell2 = row.insertCell(-1);
-		cell2.textContent = diagnostic.message;
+		cell2.innerHTML = diagnostic.message;
 		
 	});
 	
-	
-	tableContainer.appendChild(table);
+	//tableContainer.appendChild(table);
 }
 
 function processRunningNodes(runningNodes){
-	console.log("runningNodes");
+	console.log("processRunningNodes");
 	
 	var tableContainer = document.getElementById('runningNodes');
 	
@@ -56,7 +44,7 @@ function processRunningNodes(runningNodes){
 	
 	var table = document.createElement('table');
 	table.id = "runningNodesTable";
-	table.classList.add('table-responsive', 'table-bordered'); // Add CSS classes as needed
+	table.classList.add('table','table-bordered', 'dataTable');
 	
 	// Create the table header row
 	var headerRow = table.insertRow(0);
@@ -90,6 +78,10 @@ function processMessage(msg) {
 //Function to get diagnostics results
 //******************************
 function updateDiagnostic() {
+	
+	var loadingSpinner = document.getElementById("loading-spinner");
+	loadingSpinner.classList.remove("d-none");
+	
 	var cmd = { command: "updateDiagnostic" };
 	socket.send(JSON.stringify(cmd));
 }
@@ -98,6 +90,7 @@ function getRunningNodes() {
 	var cmd = { command: "getRunningNodes" };
 	socket.send(JSON.stringify(cmd));
 }
+
 
 //******************************
 // Main
@@ -113,3 +106,11 @@ socket.onopen = function (event) {
 	getRunningNodes();
 	updateDiagnostic();
 }
+	
+	var diagnosticsButton = document.getElementById("diagnosticsButton");
+	diagnosticsButton.addEventListener("click",function(){
+		getRunningNodes();
+		updateDiagnostic();
+	});
+	
+	

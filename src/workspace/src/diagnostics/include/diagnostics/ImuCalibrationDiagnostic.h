@@ -54,8 +54,8 @@ public:
 				ros::Duration(0.1).sleep();
 			}
 			
-			this->value = (calibrated) ? "Calibrated" : "Not calibrated";
-			this->status = calibrated;
+			this->value = (calibrated && messageCount>0) ? "Calibrated" : "Not calibrated";
+			this->status = calibrated && (messageCount>0);
 			subscriber.shutdown();
 		}
 		catch(const std::exception& ex){

@@ -22,7 +22,7 @@ public:
 		geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 		QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation, imu.orientation, heading, pitch, roll);
 		
-		if(std::abs(pitch) > 1.5 && std::abs(roll) > 1.5){
+		if(std::abs(pitch) > 1.5 || std::abs(roll) > 1.5){
 			calibrated = false;
 		}
 	}

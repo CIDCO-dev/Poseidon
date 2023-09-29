@@ -11,7 +11,7 @@ function processConfig(config) {
 
   config.forEach(function (item, index) {
     if (item.key == "loggingMode") {
-      endNewHTML += '<div class="row"><div class="col-md-2"><label for="' + item.key + '">' + item.key + '</label></div><div class="col-md-10"><select id="' + item.key + '" name="logginModeSelector" class="form-select" style="width: 100%"></div>';
+      endNewHTML += '<div class="row"><div class="col-md-2"><label for="' + item.key + '">' + item.key + '</label></div><div class="col-md-10"><select id="' + item.key + '" name="logginModeSelector" class="form-select configurationField" style="width: 100%"></div>';
 
       var mode = Number(item.value);
       switch (mode) {

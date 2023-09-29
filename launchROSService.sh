@@ -98,3 +98,6 @@ roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_nmeadevice_ZE
 
 # Dummy simulator
 #roslaunch /opt/Poseidon/src/workspace/launch/Configuration/Config_ZED-F9P.launch
+
+# BNO-055 Calibration
+#roslaunch /opt/Poseidon/src/workspace/launch/Configuration/Calibration_BNO055.launch

@@ -24,6 +24,11 @@ public:
 		
 		if(std::abs(pitch) > 1.5 || std::abs(roll) > 1.5){
 			calibrated = false;
+			
+			r =roll;
+			p = pitch;
+			h = heading;
+			
 		}
 	}
 	
@@ -54,7 +59,7 @@ public:
 				ros::Duration(0.1).sleep();
 			}
 			
-			this->value = (calibrated && messageCount>0) ? "Calibrated" : "Not calibrated";
+			this->value = (calibrated && messageCount>0) ? "Calibrated" : "Not calibrated. \nRoll: " + std::to_string(r) + "\nPitch: "+ std::to_string(p) + "\nHeading: "+ std::to_string(h);
 			this->status = calibrated && (messageCount>0);
 			subscriber.shutdown();
 		}
@@ -75,6 +80,7 @@ private:
 	bool calibrated = true;
 	tf2_ros::Buffer buffer;
 	tf2_ros::TransformListener transformListener;
+	double r,p,h;
 
 };
 #endif

@@ -38,6 +38,9 @@ public:
 			this->status = false;
 			this->value = "";
 			this->messageCount = 0;
+			r = 0;
+			p = 0;
+			h = 0;
 			
 			subscriber = node.subscribe("imu/data", 10, &ImuCalibrationDiagnostic::callback, this);
 			

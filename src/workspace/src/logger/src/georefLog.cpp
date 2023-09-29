@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <SbetProcessor.hpp>
 #include <filesystem>
+#include <boost/progress.hpp>
 
 class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProcessor{
 	public:
@@ -132,7 +133,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 				uint64_t positionTimestamp = std::get<PacketHeader>(positions[0]).packetTimestamp;
 				uint64_t laserPointTimestamp = std::get<PacketHeader>(laserPoints[0]).packetTimestamp;
 				
-				//std::cerr << "first point : " << laserPointTimestamp <<"\n";
+				std::cerr << "first point : " << laserPointTimestamp <<"\n";
 				
 				if( attitudeTimestamp == positionTimestamp){
 					
@@ -147,7 +148,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 					
 					uint64_t nbWeek = (laserPointTimestamp + (nbMicroSecondsPerWeek - offset)) / nbMicroSecondsPerWeek; //nb week unix time
 					
-					//std::cerr<<"nb week : " << nbWeek << "\n";
+					std::cerr<<"nb week : " << nbWeek << "\n";
 					
 					uint64_t startOfWeek = (nbMicroSecondsPerWeek * nbWeek) - offset; // micro sec from unix time to start of week
 					
@@ -187,8 +188,12 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
         	Eigen::Matrix3d ecefToNed;
         	Georeference::generateEcefToNed(ecefToNed, firstLat, firstLon);
         	
+        	boost::progress_display progress(this->laserPoints.size(), std::cerr);
+        	
         	//filter laser points
         	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
+        		
+        		++progress;
         		
         		if(this->activatedFilter){
         		
@@ -200,7 +205,7 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 		    			continue;
 		    		}
         		}
-        		        		
+        		
         		
         		while (attitudeIndex + 1 < attitudes.size() && 
 						std::get<PacketHeader>(attitudes[attitudeIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 

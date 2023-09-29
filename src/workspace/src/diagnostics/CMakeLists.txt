@@ -10,6 +10,9 @@ project(diagnostics)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  tf2_geometry_msgs
+  tf2 
+  #tf2_ros
 )
 find_package(RapidJSON)
 
@@ -105,7 +108,7 @@ find_package(RapidJSON)
 catkin_package(
 	INCLUDE_DIRS include
 	#LIBRARIES diagnostics
-	CATKIN_DEPENDS roscpp std_msgs
+	CATKIN_DEPENDS roscpp std_msgs tf2_geometry_msgs tf2
 	DEPENDS system_lib
 )
 

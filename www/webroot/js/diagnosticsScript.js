@@ -25,7 +25,7 @@ function processDiagnostics(diagnostics) {
 		cell1.textContent = diagnostic.name;
 		
 		var cell2 = row.insertCell(-1);
-		cell2.innerHTML = diagnostic.message;
+		cell2.innerHTML = diagnostic.message.replace(/\n/g, '<br>');
 		
 	});
 	

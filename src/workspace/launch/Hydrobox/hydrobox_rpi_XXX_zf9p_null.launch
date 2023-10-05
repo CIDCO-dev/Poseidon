@@ -1,3 +1,4 @@
+<!-- -*- mode: XML -*- -->
 <launch>
 
 <arg name="time_now" default="temp" />
@@ -28,6 +29,8 @@
 
 <node pkg="gnss_zed_f9p" name="gnss_zf9p" type="gnss_zed_f9p_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
-<node pkg="rosbag" name="record_all"   type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_852_all.bag" />
+<node pkg="rosbag" name="record_all" type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_852_all.bag" />
+
+<node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen" respawn_delay="1"/>
 
 </launch>

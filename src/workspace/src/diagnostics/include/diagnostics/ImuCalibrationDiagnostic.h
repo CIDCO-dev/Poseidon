@@ -22,8 +22,13 @@ public:
 		geometry_msgs::TransformStamped imuBodyTransform = buffer.lookupTransform("base_link", "imu", ros::Time(0));
 		QuaternionUtils::applyTransform(imuBodyTransform.transform.rotation, imu.orientation, heading, pitch, roll);
 		
-		if(std::abs(pitch) > 1.5 && std::abs(roll) > 1.5){
+		if(std::abs(pitch) > 1.5 || std::abs(roll) > 1.5){
 			calibrated = false;
+			
+			r =roll;
+			p = pitch;
+			h = heading;
+			
 		}
 	}
 	
@@ -33,6 +38,9 @@ public:
 			this->status = false;
 			this->value = "";
 			this->messageCount = 0;
+			r = 0;
+			p = 0;
+			h = 0;
 			
 			subscriber = node.subscribe("imu/data", 10, &ImuCalibrationDiagnostic::callback, this);
 			
@@ -54,8 +62,8 @@ public:
 				ros::Duration(0.1).sleep();
 			}
 			
-			this->value = (calibrated) ? "Calibrated" : "Not calibrated";
-			this->status = calibrated;
+			this->value = (calibrated && messageCount>0) ? "Calibrated" : "Not calibrated. \nRoll: " + std::to_string(r) + "\nPitch: "+ std::to_string(p) + "\nHeading: "+ std::to_string(h);
+			this->status = calibrated && (messageCount>0);
 			subscriber.shutdown();
 		}
 		catch(const std::exception& ex){
@@ -75,6 +83,7 @@ private:
 	bool calibrated = true;
 	tf2_ros::Buffer buffer;
 	tf2_ros::TransformListener transformListener;
+	double r,p,h;
 
 };
 #endif

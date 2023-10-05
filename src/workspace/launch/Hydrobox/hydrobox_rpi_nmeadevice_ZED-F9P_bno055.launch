@@ -38,4 +38,6 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
+<node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen" respawn_delay="1"/>
+
 </launch>

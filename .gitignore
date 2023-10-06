@@ -104,3 +104,4 @@ CATKIN_IGNORE
 *.bag
 
 config.txt
+calibration.dat

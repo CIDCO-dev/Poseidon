@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# GNSS uart speed
-stty -F /dev/gnss ispeed 38400
+# GNSS uart speed NMEA
+stty -F /dev/ttyAMA0 ispeed 38400
 
 # Sonar uart speed 
 #9600bps = default speed for nmea test

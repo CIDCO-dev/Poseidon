@@ -3,6 +3,9 @@
 
 systemctl stop ros
 
-cp /opt/Poseidon/calibration.dat /opt
-cp /opt/Poseidon/config.txt /opt
+[ ! -d "/opt/Poseidon.backup" ] && mkdir /opt/Poseidon.backup
+
+cp /opt/Poseidon/calibration.dat /opt/Poseidon.backup
+cp /opt/Poseidon/config.txt /opt/Poseidon.backup
+cp /opt/Poseidon/service/uart_on_boot.sh /opt/Poseidon.backup
 

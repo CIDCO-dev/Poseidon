@@ -17,7 +17,7 @@ ram = "notset"
 swap = "notset"
 
 
-def loadvariable():
+def loadvariable()
     global system
     global isubuntu
     global version

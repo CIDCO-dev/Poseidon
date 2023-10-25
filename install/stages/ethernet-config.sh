@@ -51,6 +51,11 @@ echo "Apply wifi configuration"
 sudo nmcli con reload
 sudo service network-manager restart
 
+echo "Apply Captive portal"
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 192.168.100.1:80
+sudo iptables -t nat -A POSTROUTING -j MASQUERADE
+
+echo "Apply second IP"
 sudo bash -c 'cat << EOF2 > /etc/netplan/50-cloud-init.yaml
 # This file is generated from information provided by
 # the datasource.  Changes to it will not persist across an instance.

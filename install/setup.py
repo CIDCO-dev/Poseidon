@@ -1,49 +1,47 @@
+
 import os.path
 import platform
 import subprocess
 import distro as distro
-# from whichcraft import which
 import psutil
+import os
+import inquirer
+
+def check_ubuntu_distribution():
+    if platform.system() == 'Linux':
+        try:
+            with open('/etc/os-release', 'r') as os_release:
+                for line in os_release:
+                    if line.startswith('ID=ubuntu'):
+                        return True
+        except FileNotFoundError:
+            pass
+    return False
 
 system = platform.system()
+print("[!] Environment system:", system)
 
-print("system:", system)
-
-processor = platform.processor()
-
-print("processor:", processor)
-
-platformName = platform.platform()
-
-print("platform:", platformName)
-
-machine = platform.machine()
-
-print("machine:", machine)
-
-release = platform.release()
-
-print("release:", release)
-
-version = platform.version()
-
-print("version:", version)
-
-architecture = platform.architecture()
-
-print("architecture:", architecture)
+isubuntu = check_ubuntu_distribution()
+if isubuntu:
+    print("[!] Distribution supported!")
+else:
+    print("[X] Distribution unsupported please use Ubuntu")
+    exit()
 
 version = int(float(distro.version()))
+print("[!] Ubuntu Version:", version)
 
-print("version:", version)
+processor = platform.processor()
+print("[!] CPU Architecture:", processor)
+
+print("--------------------------------------------")
 
 ram = psutil.virtual_memory().total / 1000000000
-
-print("RAM:", ram)
+print("[!] Total RAM:", ram, "Gb")
 
 swap = psutil.swap_memory().total / 1000000000
-print("Swap:", swap)
-print(psutil.swap_memory())
+print("[!] Total Swap:", swap, "Gb")
+
 
 
 def install():
@@ -66,13 +64,25 @@ def install():
 
 
 def check_install():
-    path = '/opt/Poseidon'
+    path = '/opt/Poseidon/src/workspace/devel'
     exists = os.path.exists(path)
     if exists is True:
-        return print('Previous installation detected!')
+        print('[!] Previous installation detected!')
+        return 
     else:
-        print('New installation.')
+        print('[!] New installation.')
+
+print("--------------------------------------------")
+
+print("HotSpot")
+
+hotspot_if = inquirer.list_input("Select the wifi interface for creating the hotspot?",
+                              choices=['wlan0', 'wlan1'])
+
+hotspot_ssid = inquirer.text(message="Enter the HotSpot SSID")
+hotspot_password = inquirer.text(message="Enter the HotSpot Password")
+
 
 
 check_install()
-install()
+#install()

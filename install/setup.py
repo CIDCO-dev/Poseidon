@@ -127,7 +127,7 @@ def update_packager():
         print(f"[X] Error during the package update .")
 
 def install_ros_melodic():
-    exit()
+    print("[X] Not implemented yet!")
 
 def install_ros_noetic():
     try:
@@ -156,13 +156,17 @@ def install_ros_noetic():
     install_package("g++")
     install_package("python3-rosdep")
     install_package("ros-noetic-mavros")
+    install_package("ros-noetic-mavros-extras")
+    install_package("ros-noetic-mavros-msgs")
     install_package("ros-noetic-sbg-driver")
+    install_package("ros-noetic-control-toolbox")
     install_package("python3-rosinstall")
     install_package("python3-rosinstall-generator")
     install_package("python3-wstool")
     install_package("build-essential")
+    install_package("ros-noetic-velodyne")
     #rosdep init
-    #gpsd client
+    
 
 def install_toolchain():
     update_packager()
@@ -196,6 +200,33 @@ def install():
 
     if version == 20:
         install_ros_noetic()
+        #gpsd client
+        #wifi hotspot 2
+        #install web server 3
+        #install gpsD 4
+        #install opencv 5
+        #install libexiv2 5
+        #install inertial sence sdlk5 
+        #install Chrony 5
+        # install rtklib
+        #architecture detection 
+            #x64
+            #arm
+                #fix uboot for rpi3 2 rpi
+                #install wiringpi to be confirmed
+                #uart configuration dtoverlay
+                #install pps
+                #install i2c
+                #config uart cmdline.txt
+                # RTC
+                #enable spi
+        #device remap        
+        #build
+        #service ros        
+        #Zed-f9p configuration
+        #bno055 calibration
+
+
 
 loadvariable()
 check_install()

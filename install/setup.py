@@ -118,6 +118,12 @@ def install_ros_noetic();
             print(f"Erreur lors de l'installation de .")
 
 def install():
+    global system
+    global isubuntu
+    global version
+    global processor
+    global ram
+    global swap
     if system != "Linux" and isubuntu:
         return print("[!] Please use Ubuntu as OS!")
     elif os.geteuid() != 0:

@@ -82,7 +82,25 @@ hotspot_if = inquirer.list_input("Select the wifi interface for creating the hot
 hotspot_ssid = inquirer.text(message="Enter the HotSpot SSID")
 hotspot_password = inquirer.text(message="Enter the HotSpot Password")
 
+wifi_enable = inquirer.list_input("Do you want to configure wifi internet access?",
+                              choices=['Yes', 'No'])
 
+wifi_if = inquirer.list_input("Select the wifi interface for creating the WIFI connection?",
+                              choices=['wlan0', 'wlan1'])
+
+wifi_ssid = inquirer.text(message="Enter the WIFI SSID")
+wifi_password = inquirer.text(message="Enter the WIFI Password")
+
+wirred_type = inquirer.list_input("What type of IP configuration do you want for the wired network interface?",
+                              choices=['DHCP', 'Static'])
+
+rtc = inquirer.list_input("Do you want to activate physical RTC for your raspberry?",
+                              choices=['Yes', 'No'])
+
+swap_status = inquirer.list_input("Do you want to desactivate the SWAP",
+                              choices=['Yes', 'No'])
+
+serialnumber = inquirer.text(message="Enter the Serial Number")
 
 check_install()
 #install()

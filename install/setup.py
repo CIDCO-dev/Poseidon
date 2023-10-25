@@ -10,6 +10,13 @@ import subprocess
 
 
 def loadvariable()
+    global system
+    global isubuntu
+    global version
+    global processor
+    global ram
+    global swap
+
     def check_ubuntu_distribution():
         if platform.system() == 'Linux':
             try:

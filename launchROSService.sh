@@ -31,6 +31,9 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 # Hydroblock RPI configuration with imaginex 852 and X5 and bno055
 #roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_imagenex852_x5_null.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
 
+# Hydroblock configuration with Imagenex 852 sonar and ZED-F9P and bno055
+#roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_imagenex852_ZED-F9P_bno055.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
+
 ###
 
 # Hydroblock RPI configuration with nmea sonar and piksi and null
@@ -47,6 +50,8 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 
 # Hydroblock configuration with nmea sonar and ZED-F9P and bno055
 roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_nmeadevice_ZED-F9P_bno055.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
+
+
 
 ############################
 #      Hydroblock  Rock    #

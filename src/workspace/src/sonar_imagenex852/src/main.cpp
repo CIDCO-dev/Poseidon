@@ -165,6 +165,9 @@ class Imagenex852{
 					ros::Rate error_rate( 1 );
 
 				        while(ros::ok()){
+						//record ping start
+						ros::Time pingStart = ros::Time::now();
+
 	        	        		geometry_msgs::PointStamped msg;
 
 			                	msg.header.seq=sequenceNumber++;
@@ -179,6 +182,14 @@ class Imagenex852{
 							msg.header.frame_id="sonar_enu";
 							msg.point.z = -1 * msg.point.z;
 							sonarTopicEnu.publish(msg);
+
+							//record ping end, and wait if we have to. 
+							ros::Time pingEnd = ros::Time::now();
+							ros::Duration pingLength = pingEnd - pingStart;
+
+							//wait a bit to retrigger on the PPS
+							ros::Duration sleepTime = ros::Duration(1.0) - pingLength - ros::Duration(0.1);
+							sleepTime.sleep();
 						}
 						catch(std::exception & e){
 							//ROS_ERROR already has been called. Lets sleep on this

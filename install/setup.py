@@ -17,7 +17,7 @@ ram = "notset"
 swap = "notset"
 
 
-def loadvariable()
+def loadvariable():
     global system
     global isubuntu
     global version
@@ -53,6 +53,8 @@ def loadvariable()
     print("[!] CPU Architecture:", processor)
 
     print("--------------------------------------------")
+    #validation version os
+    #validation architeture cpu
 
     ram = psutil.virtual_memory().total / 1000000000
     print("[!] Total RAM:", ram, "Gb")
@@ -61,9 +63,12 @@ def loadvariable()
     print("[!] Total Swap:", swap, "Gb")
 
     print("--------------------------------------------")
+    #validation memoire
+    #validation espace disque
 
     print("HotSpot")
-
+    #affichage des interface résçau disponible pour la sélection du hotspot
+    #liste de choix dynamique
     hotspot_if = inquirer.list_input("Select the wifi interface for creating the hotspot?",
                                 choices=['wlan0', 'wlan1'])
 
@@ -72,7 +77,8 @@ def loadvariable()
 
     wifi_enable = inquirer.list_input("Do you want to configure wifi internet access?",
                                 choices=['Yes', 'No'])
-
+    #affichage des interface wifi disponible pour la connection internet
+    #liste de choix dynamique
     wifi_if = inquirer.list_input("Select the wifi interface for creating the WIFI connection?",
                                 choices=['wlan0', 'wlan1'])
 
@@ -81,7 +87,7 @@ def loadvariable()
 
     wirred_type = inquirer.list_input("What type of IP configuration do you want for the wired network interface?",
                                 choices=['DHCP', 'Static'])
-
+    #si static demander configuration ip
     rtc = inquirer.list_input("Do you want to activate physical RTC for your raspberry?",
                                 choices=['Yes', 'No'])
 
@@ -89,6 +95,15 @@ def loadvariable()
                                 choices=['Yes', 'No'])
 
     serialnumber = inquirer.text(message="Enter the Serial Number")
+
+    #selection des nodes a installer
+        #slection du node GNSS
+        #selection du node IMU
+        #selection du node Sonar
+        #Selection du type de logger
+        # selection du lidar
+    
+    # creation du launch file
 
 def check_install():
     path = '/opt/Poseidon/src/workspace/devel'
@@ -104,7 +119,7 @@ def install_package(package_name):
         log_file = open("install.log", "a") 
         subprocess.run(["sudo", "apt-get", "install", package_name], check=True, stdout=log_file, stderr=log_file)
         log_file.close()
-        print(f"[!] {package_name} have been installed successfully.")
+        print(f"[V] {package_name} have been installed successfully.")
     except subprocess.CalledProcessError:
         print(f"[X] Error during the installation of {package_name}.")
 
@@ -115,14 +130,14 @@ def update_packager():
         log_file = open("install.log", "a") 
         subprocess.run(["apt-get", "update"], check=True, stdout=log_file, stderr=log_file)
         log_file.close()
-        print(f"[!] Successful update of the package list.")
+        print(f"[V] Successful update of the package list.")
     except subprocess.CalledProcessError: 
         print(f"[X] Error during the update of the package list.")
     try:
         log_file = open("install.log", "a")
         subprocess.run(["apt-get", "upgrade", "-y"], check=True, stdout=log_file, stderr=log_file)
         log_file.close()
-        print(f"[!] Success for the package update.")
+        print(f"[V] Success for the package update.")
     except subprocess.CalledProcessError:
         print(f"[X] Error during the package update .")
 
@@ -130,12 +145,13 @@ def install_ros_melodic():
     print("[X] Not implemented yet!")
 
 def install_ros_noetic():
+    print(f"[!] ROS Noetic Installation.")
     try:
         log_file = open("install.log", "a") 
         command = ['/bin/sh', '-c', 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list']
         subprocess.run(command, check=True, stdout=log_file, stderr=log_file)
         log_file.close()
-        print(f"[!] Successful append ROS sources.")
+        print(f"[V] Successful append ROS sources.")
     except subprocess.CalledProcessError: 
         print(f"[X] Error during the ROS sources append.")
     try:
@@ -147,10 +163,10 @@ def install_ros_noetic():
         curl_process.stdout.close()
         apt_key_process.communicate()
         log_file.close()        
-        print(f"[!] The key have been installed.")
+        print(f"[V] The key have been installed.")
     except subprocess.CalledProcessError: 
         print(f"[X] Error during key installation.")
-    update_packager()
+    
     install_package("ros-noetic-ros-base")
     install_package("ros-noetic-tf2-geometry-msgs")
     install_package("g++")
@@ -169,7 +185,7 @@ def install_ros_noetic():
     
 
 def install_toolchain():
-    update_packager()
+    print(f"[!] Toolchain Installation.")
     install_package("gcc")
     install_package("python3-dev")
     install_package("python3-pip")
@@ -185,14 +201,17 @@ def install():
     global processor
     global ram
     global swap
+    #dois etre vérifier avant les questions
+    #remplacer les variable global par des fonction
     if system != "Linux" and isubuntu:
-        return print("[!] Please use Ubuntu as OS!")
+        return print("[X] Please use Ubuntu as OS!")
     elif os.geteuid() != 0:
-        return print("The installation must be executed by the root user!")
+        return print("[X] The installation must be executed by the root user!")
     elif (ram + swap < 2):
-        return print("Not enough RAM and SWAP.")
+        return print("[X] Not enough RAM and SWAP.")
         # implement swap gestion
 
+    update_packager()
     install_toolchain()
     if version == 18:
         install_ros_melodic()
@@ -201,9 +220,23 @@ def install():
     if version == 20:
         install_ros_noetic()
         #gpsd client
-        #wifi hotspot 2
+        #wifi hotspot 29
+        install_package("network-manager")
         #install web server 3
+        install_package("lighttpd")
+        service_enable("lighttpd")
+        install_package("libwebsocketpp-dev")
+        install_package("rapidjson-dev")
+        make_record()
+        fix_lighttpd_conf()
+        service_start("lighttpd")
         #install gpsD 4
+        install_package("gpsd")
+        install_package("gpsd-clients") 
+        install_package("libgps-dev")
+        fix_gpsd_conf
+        install_package("pps-tools")
+
         #install opencv 5
         #install libexiv2 5
         #install inertial sence sdlk5 

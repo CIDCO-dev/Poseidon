@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::string calibrationFile;
-    nh->param<std::string>("calibrationFile",calibrationFile,"/home/ubuntu/Poseidon/calibration.dat");
+    nh->param<std::string>("calibrationFile",calibrationFile,"/opt/Poseidon/calibration.dat");
 
     ROS_INFO("Using %s",calibrationFile.c_str());
 

@@ -5,5 +5,7 @@ if [[ $# -ne 3 ]]; then
 	exit 1
 fi
 
-find $1 -name ‘*.zip’ -exec sh -c ‘unzip -d “${1%.*}” “$1”’ _ {} \;
-find $1 -name ‘*.log’ -print0 | parallel -0 -j4 bash georef_echoboat_lidar.bash $2 {} $3 \;
+mkdir -p $3
+
+find $1 -name "*.zip" -exec sh -c 'unzip -d "${1%.*}" "$1"' _ {} \;
+find $1 -name "*.log" -print0 | parallel -0 -j3 bash georef_echoboat_lidar.bash $2 {} $3 \;

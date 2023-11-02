@@ -1,0 +1,37 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+
+<arg name="time_now" default="temp" />
+<arg name="gpsdIp" value="localhost"/>
+<arg name="gpsdPort" value="2947"/>
+
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" value="/opt/Poseidon/config.txt"/>
+
+<remap from="/imu/nav_sat_fix" to="/fix"/>
+
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
+
+
+<node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
+
+<include file="/opt/Poseidon/src/workspace/launch/sbg_device.launch"/>
+
+<include file="/opt/Poseidon/src/workspace/launch/VLP16_points.launch"/>
+
+<include file="/opt/Poseidon/src/workspace/launch/px4.launch"/>
+
+  
+
+<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="logger" name="logger" type="logger_binary_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+<node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+<node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
+
+</launch>

@@ -30,7 +30,7 @@
 *.exe
 *.out
 *.app
-
+*.log
 
 # virtualenv
 venv/
@@ -104,3 +104,4 @@ CATKIN_IGNORE
 *.bag
 
 config.txt
+calibration.dat

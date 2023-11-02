@@ -23,24 +23,29 @@
   <arg name="laserscan_ring" default="-1" />
   <arg name="laserscan_resolution" default="0.007" />
   <arg name="organize_cloud" default="false" />
+  <arg name="diagnostic_frequency_tolerance" default="0.1" />
 
-  <!-- start nodelet manager and driver nodelets -->
-  <include file="$(find velodyne_driver)/launch/nodelet_manager.launch">
-    <arg name="device_ip" value="$(arg device_ip)"/>
-    <arg name="frame_id" value="$(arg frame_id)"/>
-    <arg name="manager" value="$(arg manager)" />
-    <arg name="model" value="VLP16"/>
-    <arg name="pcap" value="$(arg pcap)"/>
-    <arg name="port" value="$(arg port)"/>
-    <arg name="read_fast" value="$(arg read_fast)"/>
-    <arg name="read_once" value="$(arg read_once)"/>
-    <arg name="repeat_delay" value="$(arg repeat_delay)"/>
-    <arg name="rpm" value="$(arg rpm)"/>
-    <arg name="gps_time" value="$(arg gps_time)"/>
-    <arg name="pcap_time" value="$(arg pcap_time)"/>
-    <arg name="cut_angle" value="$(arg cut_angle)"/>
-    <arg name="timestamp_first_packet" value="$(arg timestamp_first_packet)"/>
-  </include>
+ <!-- start nodelet manager -->
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen"/>
+
+  <!-- load driver nodelet into it -->
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)_driver"
+        args="load velodyne_driver/DriverNodelet $(arg manager)" >
+    <param name="device_ip" value="$(arg device_ip)" />
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="model" value="VLP16"/>
+    <param name="pcap" value="$(arg pcap)"/>
+    <param name="port" value="$(arg port)" />
+    <param name="read_fast" value="$(arg read_fast)"/>
+    <param name="read_once" value="$(arg read_once)"/>
+    <param name="repeat_delay" value="$(arg repeat_delay)"/>
+    <param name="rpm" value="$(arg rpm)"/>
+    <param name="gps_time" value="$(arg gps_time)"/>
+    <param name="pcap_time" value="$(arg pcap_time)"/>
+    <param name="cut_angle" value="$(arg cut_angle)"/>
+    <param name="timestamp_first_packet" value="$(arg timestamp_first_packet)"/>
+    <param name="diagnostic_frequency_tolerance" value="$(arg diagnostic_frequency_tolerance)"/>
+  </node>
 
   <!-- start transform nodelet -->
   <include file="$(find velodyne_pointcloud)/launch/transform_nodelet.launch">

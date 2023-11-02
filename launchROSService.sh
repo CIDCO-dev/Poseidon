@@ -12,6 +12,9 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 # Echoboat configuration with imaginex 852
 #roslaunch /opt/Poseidon/src/workspace/launch/Echoboat/echoboat_imaginex852.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
 
+# Echoboat configuration with out sonar
+#roslaunch /opt/Poseidon/src/workspace/launch/Echoboat/echoboat.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
+
 ###########################
 #      Hydroblock  RPI    #
 ###########################
@@ -27,6 +30,9 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 
 # Hydroblock RPI configuration with imaginex 852 and X5 and bno055
 #roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_imagenex852_x5_null.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
+
+# Hydroblock configuration with Imagenex 852 sonar and ZED-F9P and bno055
+#roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_imagenex852_ZED-F9P_bno055.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
 
 ###
 
@@ -44,6 +50,8 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 
 # Hydroblock configuration with nmea sonar and ZED-F9P and bno055
 roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_nmeadevice_ZED-F9P_bno055.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
+
+
 
 ############################
 #      Hydroblock  Rock    #
@@ -95,3 +103,6 @@ roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_nmeadevice_ZE
 
 # Dummy simulator
 #roslaunch /opt/Poseidon/src/workspace/launch/Configuration/Config_ZED-F9P.launch
+
+# BNO-055 Calibration
+#roslaunch /opt/Poseidon/src/workspace/launch/Configuration/Calibration_BNO055.launch

@@ -8,10 +8,6 @@
 #include <rapidjson/prettywriter.h>
 
 #include "ros/ros.h"
-//#include <std_msgs/String.h>
-//#include "geometry_msgs/TransformStamped.h"
-/*#include "nav_msgs/Odometry.h"*/
-/*#include "std_msgs/String.h"*/
 
 class DiagnosticsTest {
 public:

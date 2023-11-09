@@ -8,7 +8,7 @@ project(sonar_imagenex852)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
+  rospy
   std_msgs
   setting_msg
 )
@@ -105,9 +105,15 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES sonar_imagenex852
-  CATKIN_DEPENDS roscpp std_msgs setting_msg
+  CATKIN_DEPENDS rospy std_msgs setting_msg
 #  DEPENDS system_lib
 )
+
+catkin_install_python(PROGRAMS src/main.py
+  DESTINATION  ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+
 
 ###########
 ## Build ##
@@ -133,7 +139,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/main.cpp)
+#add_executable(${PROJECT_NAME}_node src/main.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -146,9 +152,9 @@ add_executable(${PROJECT_NAME}_node src/main.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES}
- )
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -196,9 +202,9 @@ add_executable(${PROJECT_NAME}_node src/main.cpp)
 ## Testing ##
 #############
 
-if(CATKIN_ENABLE_TESTING)
+#if(CATKIN_ENABLE_TESTING)
   # test with launch file
-  find_package(rostest REQUIRED)
-  add_rostest_gtest(test_sonar_imagenex852_node tests/sonar_imagenex852_node.test tests/test_sonar_imagenex852_node.cpp)
+#  find_package(rostest REQUIRED)
+#  add_rostest_gtest(test_sonar_imagenex852_node tests/sonar_imagenex852_node.test tests/test_sonar_imagenex852_node.cpp)
   # target_link_libraries(test_sonar_imagenex852_node ...) #what libraries are needed on rpi?
-endif()
+#endif()

@@ -169,17 +169,13 @@ def install_ros_noetic():
     
     install_package("ros-noetic-ros-base")
     install_package("ros-noetic-tf2-geometry-msgs")
-    install_package("g++")
-    install_package("python3-rosdep")
     install_package("ros-noetic-mavros")
     install_package("ros-noetic-mavros-extras")
     install_package("ros-noetic-mavros-msgs")
     install_package("ros-noetic-sbg-driver")
     install_package("ros-noetic-control-toolbox")
-    install_package("python3-rosinstall")
-    install_package("python3-rosinstall-generator")
-    install_package("python3-wstool")
-    install_package("build-essential")
+    
+    
     install_package("ros-noetic-velodyne")
     #rosdep init
     
@@ -187,8 +183,14 @@ def install_ros_noetic():
 def install_toolchain():
     print(f"[!] Toolchain Installation.")
     install_package("gcc")
+    install_package("g++")
+    install_package("build-essential")
     install_package("python3-dev")
     install_package("python3-pip")
+    install_package("python3-rosdep")
+    install_package("python3-rosinstall")
+    install_package("python3-rosinstall-generator")
+    install_package("python3-wstool")
     install_package("python-setuptools")
     install_package("git")
     install_package("curl")

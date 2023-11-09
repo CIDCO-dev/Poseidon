@@ -165,8 +165,9 @@ class Imagenex852:
             if serial_status & 0x80:
                 rospy.logerr("Character overrun detected")
 
-            msg.header.stamp = rospy.Time.now()
-            msg.header.stamp.nsecs = self.delay_nanoseconds
+            current_time = rospy.Time.now()
+            msg.header.stamp = current_time.secs
+            msg.header.stamp.nsecs = current_time.nsecs
 
             # Read datapoints
             if data_points > 0:

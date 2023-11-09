@@ -35,6 +35,7 @@ public:
 	void do_test()override{
 		try{
 			//reinitialize test results
+			calibrated = true;
 			this->status = false;
 			this->value = "";
 			this->messageCount = 0;

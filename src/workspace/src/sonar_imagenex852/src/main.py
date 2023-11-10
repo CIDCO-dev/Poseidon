@@ -2,6 +2,7 @@ import rospy
 from geometry_msgs.msg import PointStamped
 from setting_msg.srv import ConfigurationService
 from setting_msg.msg import Setting
+from std_msgs.msg import Header
 import serial
 import struct
 from threading import Lock, Thread
@@ -62,10 +63,59 @@ class Imagenex852:
 
     def process_messages(self):
         rospy.Subscriber("configuration", Setting, self.configuration_change)
-        rate = rospy.Rate(1.5)
+        #rate = rospy.Rate(1.5)
         while not rospy.is_shutdown():
+            # Check if a configuration message has been received
+            #if self.config_received.wait(timeout=0.1):
+                # Handle the configuration change
+                #self.config_received.clear()
+            #rate.sleep()
             rospy.spin_once()
-            rate.sleep()
+
+    def send_sonar_command(self):
+        # Send the initial command to the sonar
+        cmd = Imagenex852SwitchDataCommand()
+        cmd.magic[0] = 0xFE
+        cmd.magic[1] = 0x44
+        cmd.headId = 0x11
+        cmd.masterSlave = 0x43
+    
+        # Set command parameters
+        with self.mtx:
+            cmd.range = self.sonar_range[0]
+            cmd.startGain = self.sonar_start_gain[0]
+            cmd.absorption = self.sonar_absorption[0]
+            cmd.pulseLength = self.sonar_pulse_length[0]
+        
+        # Write the command to the serial port
+        nb_bytes = 0
+    
+        if self.device_file:
+            try:
+                self.device_file.write(bytearray(struct.pack('27B', *cmd)))
+                self.device_file.flush()
+                nb_bytes = 27
+            except serial.SerialException as e:
+                rospy.logerr(f"Failed to write switch data command: {e}")
+        else:
+            rospy.logerr("Device file is not open. Cannot send the command.")
+    
+        if nb_bytes == 27:
+            # Command sent successfully
+            rospy.loginfo("Initial command sent successfully")
+        else:
+            rospy.logerr(f"Cannot write switch data command ({nb_bytes} bytes written)")
+            raise Exception("Failed to send the command")
+ 
+
+    if ((nbBytes = write(deviceFile, &cmd, sizeof(Imagenex852SwitchDataCommand))) == 27) {
+        // Command sent successfully
+    }
+    else{
+        ROS_ERROR("Cannot write switch data command (%d bytes written)", nbBytes);
+        throw std::system_error();
+    }
+}
 
     def run(self):
         try:
@@ -78,19 +128,23 @@ class Imagenex852:
                 self.initial_command_sent = True
 
             # Launch message pump
-            message_thread = Thread(target=self.process_messages)
-            message_thread.start()
+            #message_thread = Thread(target=self.process_messages)
+            #message_thread.start()
 
             error_rate = rospy.Rate(1)
 
+            rospy.loginfo(f"Sonar node ready to process data")
             while not rospy.is_shutdown():
                 # record ping start
-                ping_start = rospy.Time.now()
+                #ping_start = rospy.Time.now()
 
                 msg = PointStamped()
                 msg.header.seq = self.sequence_number
                 msg.header.frame_id = "sonar"
-
+                current_time = rospy.Time.now()
+                msg.header.stamp = rospy.Time.now()
+                rospy.loginfo(f"Ping: {current_time.secs}.{current_time.nsecs}")
+                print("ping")
                 try:
                     # Publish depth point measurement
                     msg.point.z = self.measure_depth(msg, 0)
@@ -102,12 +156,12 @@ class Imagenex852:
                     self.sonar_topic_enu.publish(msg)
 
                     # record ping end, and wait if we have to.
-                    ping_end = rospy.Time.now()
-                    ping_length = ping_end - ping_start
+                    #ping_end = rospy.Time.now()
+                    #ping_length = ping_end - ping_start
 
                     # wait a bit to retrigger on the PPS
-                    sleep_time = rospy.Duration(1.0) - ping_length - rospy.Duration(0.1)
-                    sleep_time.sleep()
+                    #sleep_time = rospy.Duration(1.0) - ping_length - rospy.Duration(0.1)
+                    #sleep_time.sleep()
                 except Exception as e:
                     # rospy.logerr already has been called. Let's sleep on this
                     error_rate.sleep()
@@ -165,9 +219,13 @@ class Imagenex852:
             if serial_status & 0x80:
                 rospy.logerr("Character overrun detected")
 
-            current_time = rospy.Time.now()
-            msg.header.stamp = current_time.secs
-            msg.header.stamp.nsecs = current_time.nsecs
+            #current_time = rospy.Time.now()
+            #msg.header.stamp = rospy.Time.now()
+            #rospy.loginfo(f"Ping: {current_time.secs}.{current_time.nsecs}")
+            #msg.header.stamp.nsecs = current_time.nsecs
+            #header = Header()
+            #header.stamp = rospy.Time.now()
+            #msg.header = header
 
             # Read datapoints
             if data_points > 0:

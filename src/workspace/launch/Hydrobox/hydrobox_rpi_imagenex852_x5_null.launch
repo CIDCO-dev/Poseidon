@@ -16,7 +16,7 @@
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
-<node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
+<node pkg="sonar_imagenex852" type="main.py" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
 
   
 

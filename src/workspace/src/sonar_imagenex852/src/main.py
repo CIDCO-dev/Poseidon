@@ -14,7 +14,6 @@ class Imagenex852:
         self.sonar_topic = rospy.Publisher("depth", PointStamped, queue_size=1000)
         self.sonar_topic_enu = rospy.Publisher("depth_enu", PointStamped, queue_size=1000)
         self.configuration_client = rospy.ServiceProxy("get_configuration", ConfigurationService)
-        rospy.loginfo("Fetching sonar configuration...")
         self.get_configuration()
         self.device_file = None
         self.mtx = Lock()
@@ -22,7 +21,12 @@ class Imagenex852:
         self.delay_nanoseconds = 0  # FIXME: get from a ROS parameter
         self.initial_command_sent = False  # Flag to track if the initial command has been sent
         self.last_data_received_time = rospy.Time.now()
-
+        self.sonar_start_gain = 0x06
+        self.sonar_range = 32
+        self.sonar_absorption = 0x14  # 20 = 0.2db 675kHz
+        self.sonar_pulse_length = 150
+        self.node = rospy.init_node("sonar_imagenex852")
+        
     class Imagenex852SwitchDataCommand:
         def __init__(self):
             self.magic = [0, 0]
@@ -75,7 +79,7 @@ class Imagenex852:
     def configuration_change(self, setting):
         key = setting.key
         value = int(setting.value)
-        run..initial_command_sent = False
+        run.initial_command_sent = False
         with self.mtx:
             if key == "sonarStartGain":
                 self.sonar_start_gain[0] = value

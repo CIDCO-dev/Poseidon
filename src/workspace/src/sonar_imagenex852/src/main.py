@@ -23,7 +23,31 @@ class Imagenex852:
         self.initial_command_sent = False  # Flag to track if the initial command has been sent
         self.last_data_received_time = rospy.Time.now()
 
-
+    class Imagenex852SwitchDataCommand:
+        def __init__(self):
+            self.magic = [0, 0]
+            self.head_id = 0
+            self.range = 0
+            self.reserved = [0, 0]
+            self.master_slave = 0
+            self.reserved2 = 0
+            self.start_gain = 0
+            self.reserved3 = 0
+            self.absorption = 0
+            self.reserved4 = [0, 0, 0]
+            self.pulse_length = 0
+            self.profile_minimum_range = 0
+            self.reserved5 = [0, 0]
+            self.trigger_control = 0
+            self.data_points = 0
+            self.reserved6 = [0, 0]
+            self.profile = 0
+            self.reserved7 = 0
+            self.switch_delay = 0
+            self.frequency = 0
+            self.termination_byte = 0
+        
+        
     def __del__(self):
         if self.device_file:
             self.device_file.close()
@@ -51,6 +75,7 @@ class Imagenex852:
     def configuration_change(self, setting):
         key = setting.key
         value = int(setting.value)
+        run..initial_command_sent = False
         with self.mtx:
             if key == "sonarStartGain":
                 self.sonar_start_gain[0] = value
@@ -108,14 +133,14 @@ class Imagenex852:
             raise Exception("Failed to send the command")
  
 
-    if ((nbBytes = write(deviceFile, &cmd, sizeof(Imagenex852SwitchDataCommand))) == 27) {
-        // Command sent successfully
-    }
-    else{
-        ROS_ERROR("Cannot write switch data command (%d bytes written)", nbBytes);
-        throw std::system_error();
-    }
-}
+        # if ((nbBytes = write(deviceFile, &cmd, sizeof(Imagenex852SwitchDataCommand))) == 27) {
+            # // Command sent successfully
+        # }
+        # else{
+            # ROS_ERROR("Cannot write switch data command (%d bytes written)", nbBytes);
+            # throw std::system_error();
+        # }
+    # }
 
     def run(self):
         try:
@@ -128,8 +153,8 @@ class Imagenex852:
                 self.initial_command_sent = True
 
             # Launch message pump
-            #message_thread = Thread(target=self.process_messages)
-            #message_thread.start()
+            message_thread = Thread(target=self.process_messages)
+            message_thread.start()
 
             error_rate = rospy.Rate(1)
 
@@ -166,7 +191,7 @@ class Imagenex852:
                     # rospy.logerr already has been called. Let's sleep on this
                     error_rate.sleep()
 
-                rospy.spin_once()  # XXX: This might not be necessary due to the process_messages() thread
+                #rospy.spin_once()  # XXX: This might not be necessary due to the process_messages() thread
 
         except serial.SerialException as e:
             rospy.logerr(f"Error while opening serial port {self.device_path}: {e}")

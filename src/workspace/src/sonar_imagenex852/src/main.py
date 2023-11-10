@@ -79,16 +79,16 @@ class Imagenex852:
     def configuration_change(self, setting):
         key = setting.key
         value = int(setting.value)
-        run.initial_command_sent = False
+        run.initial_command_sent = False 
         with self.mtx:
             if key == "sonarStartGain":
-                self.sonar_start_gain[0] = value
+                self.sonar_start_gain = value
             elif key == "sonarRange":
-                self.sonar_range[0] = value
+                self.sonar_range = value
             elif key == "sonarAbsorbtion":
-                self.sonar_absorption[0] = value
+                self.sonar_absorption = value
             elif key == "sonarPulseLength":
-                self.sonar_pulse_length[0] = value
+                self.sonar_pulse_length = value
 
     def process_messages(self):
         rospy.Subscriber("configuration", Setting, self.configuration_change)

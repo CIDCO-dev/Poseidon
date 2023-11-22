@@ -50,7 +50,7 @@ sudo nmcli con reload
 sudo service network-manager restart
 
 echo "Enabling WiFi hotspot"
-sudo nmcli connection down id "Hotspot" | tee -a log.txt
+sudo nmcli connection up id "Hotspot" | tee -a log.txt
    
 }
 

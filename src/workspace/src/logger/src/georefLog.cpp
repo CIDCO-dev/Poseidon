@@ -11,8 +11,7 @@
 
 class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProcessor{
 	public:
-		PoseidonBinaryLidarGeoref(std::string & filePath, Eigen::Vector3d &leverArm, Eigen::Matrix3d &boresight, std::string sbetFilePath) : PoseidonBinaryReader(filePath), 
-																													leverArm(leverArm), boresight(boresight), sbetFilePath(sbetFilePath){}
+		PoseidonBinaryLidarGeoref(std::string & filePath, Eigen::Vector3d &leverArm, Eigen::Matrix3d &boresight, std::string sbetFilePath) : PoseidonBinaryReader(filePath), leverArm(leverArm), boresight(boresight), sbetFilePath(sbetFilePath){}
 		~PoseidonBinaryLidarGeoref(){}
 		
 		void processEntry(SbetEntry * entry){
@@ -106,26 +105,26 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 				return;
 			}
 
-		    if(this->attitudes.size()==0){
-	            std::cerr << "[-] No attitude data found in file" << std::endl;
-	            return;
-		    }
+			if(this->attitudes.size()==0){
+				std::cerr << "[-] No attitude data found in file" << std::endl;
+				return;
+			}
 
-		    if(this->laserPoints.size()==0){
-	            std::cerr << "[-] No laserPoints data found in file" << std::endl;
-	            return;
-		    }
-		    
-		    std::cerr<<this->laserPoints.size() << " points read"<<std::endl; 
-		    
+			if(this->laserPoints.size()==0){
+				std::cerr << "[-] No laserPoints data found in file" << std::endl;
+				return;
+			}
+			
+			std::cerr<<this->laserPoints.size() << " points read"<<std::endl; 
+			
 			// TODO Compute centroid or use first position
 			
 			//Sort everything
-		    std::sort(positions.begin(), positions.end(), &sortByTimestamp<PositionPacket>);
-		    std::sort(attitudes.begin(), attitudes.end(), &sortByTimestamp<AttitudePacket>);
-		    std::sort(laserPoints.begin(), laserPoints.end(), &sortByTimestamp<LidarPacket>);
-		    
-		    std::cerr<<"sorting by timestamp done."<<std::endl;
+			std::sort(positions.begin(), positions.end(), &sortByTimestamp<PositionPacket>);
+			std::sort(attitudes.begin(), attitudes.end(), &sortByTimestamp<AttitudePacket>);
+			std::sort(laserPoints.begin(), laserPoints.end(), &sortByTimestamp<LidarPacket>);
+			
+			std::cerr<<"sorting by timestamp done."<<std::endl;
 			
 			//fix timeStamps
 			if(sbetFilePath.size() > 0){
@@ -165,90 +164,90 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 			
 			
 			// For correct display of timestamps on Windows
-		    std::cerr <<  "[+] Position data points: " << positions.size() << " [" << std::get<PacketHeader>(positions[0]).packetTimestamp << " to " 
-		            << std::get<PacketHeader>(positions[positions.size() - 1]).packetTimestamp << "]\n";
-		            
-		    std::cerr <<  "[+] Attitude data points: " << attitudes.size() << " [" << std::get<PacketHeader>(attitudes[0]).packetTimestamp << " to " 
-		            << std::get<PacketHeader>(attitudes[attitudes.size() - 1]).packetTimestamp << "]\n";  
-		                
-		    std::cerr <<  "[+] Ping data points: " << laserPoints.size() << " [" 
+			std::cerr <<  "[+] Position data points: " << positions.size() << " [" << std::get<PacketHeader>(positions[0]).packetTimestamp << " to " 
+					<< std::get<PacketHeader>(positions[positions.size() - 1]).packetTimestamp << "]\n";
+					
+			std::cerr <<  "[+] Attitude data points: " << attitudes.size() << " [" << std::get<PacketHeader>(attitudes[0]).packetTimestamp << " to " 
+					<< std::get<PacketHeader>(attitudes[attitudes.size() - 1]).packetTimestamp << "]\n";  
+						
+			std::cerr <<  "[+] Ping data points: " << laserPoints.size() << " [" 
 					<< ( (laserPoints.size() > 0) ? std::get<PacketHeader>(laserPoints[0]).packetTimestamp : 0 ) << " to " 
-		            << ( (laserPoints.size() > 0) ? std::get<PacketHeader>(laserPoints[laserPoints.size() - 1]).packetTimestamp : 0 ) << "]\n";
+					<< ( (laserPoints.size() > 0) ? std::get<PacketHeader>(laserPoints[laserPoints.size() - 1]).packetTimestamp : 0 ) << "]\n";
 			
 			
 			//interpolate attitudes and positions around pings
-        	unsigned int attitudeIndex = 0;
-        	unsigned int positionIndex = 0;
-        	
-        	PositionPacket firstPosition = std::get<PositionPacket>(positions[0]);
-        	
-        	double firstLat = firstPosition.latitude;
-        	double firstLon = firstPosition.longitude;
-        	
-        	Eigen::Matrix3d ecefToNed;
-        	Georeference::generateEcefToNed(ecefToNed, firstLat, firstLon);
-        	
-        	boost::progress_display progress(this->laserPoints.size(), std::cerr);
-        	
-        	//filter laser points
-        	for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
-        		
-        		++progress;
-        		
-        		if(this->activatedFilter){
-        		
-        			LidarPacket point = std::get<LidarPacket>(*i);
-        			
-		    		if(Filters::distanceFilter(point.laser_x, point.laser_y, point.laser_z, this->minDistance, this->maxDistance) ||
+			unsigned int attitudeIndex = 0;
+			unsigned int positionIndex = 0;
+			
+			PositionPacket firstPosition = std::get<PositionPacket>(positions[0]);
+			
+			double firstLat = firstPosition.latitude;
+			double firstLon = firstPosition.longitude;
+			
+			Eigen::Matrix3d ecefToNed;
+			Georeference::generateEcefToNed(ecefToNed, firstLat, firstLon);
+			
+			boost::progress_display progress(this->laserPoints.size(), std::cerr);
+			
+			//filter laser points
+			for (auto i = laserPoints.begin(); i != laserPoints.end(); i++) {
+				
+				++progress;
+				
+				if(this->activatedFilter){
+				
+					LidarPacket point = std::get<LidarPacket>(*i);
+					
+					if(Filters::distanceFilter(point.laser_x, point.laser_y, point.laser_z, this->minDistance, this->maxDistance) ||
 					   Filters::horizontalAngleFilter(point.laser_x, point.laser_y, this->minAngle, this->maxAngle))
 					{
-		    			continue;
-		    		}
-        		}
-        		
-        		
-        		while (attitudeIndex + 1 < attitudes.size() && 
+						continue;
+					}
+				}
+				
+				
+				while (attitudeIndex + 1 < attitudes.size() && 
 						std::get<PacketHeader>(attitudes[attitudeIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 
 				{	
-		            attitudeIndex++;
-		        }
+					attitudeIndex++;
+				}
 
-		        //No more attitudes available
-		        if (attitudeIndex >= attitudes.size() - 1) {
-		            std::cerr << "No more attitudes" << std::endl;
-		            break;
-		        }
+				//No more attitudes available
+				if (attitudeIndex >= attitudes.size() - 1) {
+					std::cerr << "No more attitudes" << std::endl;
+					break;
+				}
 					
 					
-		        while (positionIndex + 1 < positions.size() && 
+				while (positionIndex + 1 < positions.size() && 
 						std::get<PacketHeader>(positions[positionIndex + 1]).packetTimestamp < std::get<PacketHeader>(*i).packetTimestamp) 
 				{
-		            positionIndex++;
-		        }
-		        
-		        //No more positions available
-		        if (positionIndex >= positions.size() - 1) {
-		            std::cerr << "No more positions" << std::endl;
-		            break;
-		        }
-		        
-		        //No position or attitude smaller than ping, so discard this ping
-            	if (std::get<PacketHeader>(positions[positionIndex]).packetTimestamp > std::get<PacketHeader>(*i).packetTimestamp 
+					positionIndex++;
+				}
+				
+				//No more positions available
+				if (positionIndex >= positions.size() - 1) {
+					std::cerr << "No more positions" << std::endl;
+					break;
+				}
+				
+				//No position or attitude smaller than ping, so discard this ping
+				if (std::get<PacketHeader>(positions[positionIndex]).packetTimestamp > std::get<PacketHeader>(*i).packetTimestamp 
 					|| std::get<PacketHeader>(attitudes[attitudeIndex]).packetTimestamp > std::get<PacketHeader>(*i).packetTimestamp)
 					
 				{
-            		
-            		// this commented block can create segFault if filter is activated
-            		/*
-            		int nbPoints = std::get<PacketHeader>(*i).packetSize / sizeof(LidarPacket);
-            		
-            		std::cerr << "rejecting " << nbPoints << " lidar point " << std::get<PacketHeader>(*i).packetTimestamp << " " 
+					
+					// this commented block can create segFault if filter is activated
+					/*
+					int nbPoints = std::get<PacketHeader>(*i).packetSize / sizeof(LidarPacket);
+					
+					std::cerr << "rejecting " << nbPoints << " lidar point " << std::get<PacketHeader>(*i).packetTimestamp << " " 
 							<< std::get<PacketHeader>(positions[positionIndex]).packetTimestamp << " "
 							<< std::get<PacketHeader>(attitudes[attitudeIndex]).packetTimestamp << std::endl;
 					
 					for(int lidarPoint = 0; lidarPoint < nbPoints-1; ++lidarPoint){
-            			i++;
-            		}
+						i++;
+					}
 					*/
 					
 					// no segfault if filter is activated but its much slower
@@ -256,29 +255,29 @@ class PoseidonBinaryLidarGeoref : public PoseidonBinaryReader, public SbetProces
 							<< std::get<PacketHeader>(positions[positionIndex]).packetTimestamp << " "
 							<< std::get<PacketHeader>(attitudes[attitudeIndex]).packetTimestamp << std::endl;
 					
-		            continue;
+					continue;
 				}
 				
-		    	
+				
 				AttitudePacket * interpolatedAttitude = Interpolator::interpolateAttitude(attitudes[attitudeIndex], 
 																					  attitudes[attitudeIndex + 1], 
 																					  std::get<PacketHeader>(*i).packetTimestamp);
-			    
-			    
-			    PositionPacket * interpolatedPosition = Interpolator::interpolatePosition(positions[positionIndex], 
+				
+				
+				PositionPacket * interpolatedPosition = Interpolator::interpolatePosition(positions[positionIndex], 
 																						  positions[positionIndex + 1],
 													 									  std::get<PacketHeader>(*i).packetTimestamp);
-		        
-				
-		        //georeference
-		        Eigen::Vector3d georeferencedLaserPoint;
-				
-		        
-		        Georeference::georeferenceLGF(georeferencedLaserPoint, ecefToNed, firstPosition, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
 				
 				
-		        delete interpolatedAttitude;
-		        delete interpolatedPosition;
+				//georeference
+				Eigen::Vector3d georeferencedLaserPoint;
+				
+				
+				Georeference::georeferenceLGF(georeferencedLaserPoint, ecefToNed, firstPosition, *interpolatedAttitude, *interpolatedPosition, std::get<LidarPacket>(*i), leverArm, boresight);
+				
+				
+				delete interpolatedAttitude;
+				delete interpolatedPosition;
 			}
 		}
 		
@@ -338,8 +337,8 @@ int main(int argc,char** argv){
 		double leverArmZ = 0.0;
 
 		//Boresight
-		double roll     = 0.0;
-		double pitch    = 0.0;
+		double roll	 = 0.0;
+		double pitch	= 0.0;
 		double heading  = 0.0;
 		
 		bool activateFilter = false;
@@ -446,18 +445,18 @@ int main(int argc,char** argv){
 		}
 		
 	//Lever arm
-    Eigen::Vector3d leverArm;
-    leverArm << leverArmX, leverArmY, leverArmZ;
-    
-    //Boresight
-    Eigen::Matrix3d boresightMatrix;
-    
-    AttitudePacket boresight;
-    boresight.roll = roll;
-    boresight.pitch = pitch;
-    boresight.heading = heading;
-    Georeference::generateDcmMatrix(boresightMatrix, boresight);
-    
+	Eigen::Vector3d leverArm;
+	leverArm << leverArmX, leverArmY, leverArmZ;
+	
+	//Boresight
+	Eigen::Matrix3d boresightMatrix;
+	
+	AttitudePacket boresight;
+	boresight.roll = roll;
+	boresight.pitch = pitch;
+	boresight.heading = heading;
+	Georeference::generateDcmMatrix(boresightMatrix, boresight);
+	
 	PoseidonBinaryLidarGeoref georeferencer(fileName, leverArm, boresightMatrix, sbetFilePath);
 	
 	if(activateFilter){

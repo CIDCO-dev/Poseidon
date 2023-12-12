@@ -270,6 +270,15 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			this->target = setting.value;
 		}
 	}
+	else if(setting.key == "apiPort"){
+		std::string temp = setting.value;
+		if(trimSpaces(temp) == ""){
+			this->port = "8080";
+		}
+		else{
+			this->port = setting.value;
+		}
+	}
 	else if(setting.key == "logRotationIntervalSeconds"){
 		if(setting.value == ""){
 			this->logRotationIntervalSeconds = 3600;
@@ -451,7 +460,7 @@ bool LoggerBase::send_job(std::string json){
         boost::beast::tcp_stream stream(ioService);
 
         // Look up the domain name
-        auto const results = resolver.resolve(this->host, "8080");
+        auto const results = resolver.resolve(this->host, this->port);
 
         // Make the connection on the IP address we get from a lookup
         stream.connect(results);
@@ -502,64 +511,7 @@ bool LoggerBase::send_job(std::string json){
 }
 
 bool LoggerBase::can_reach_server(){
-	bool status = false;
-	try{
-		int version = 11;
-		
-        // The io_context is required for all I/O
-        boost::asio::io_context ioService;
-
-        // These objects perform our I/O
-        boost::asio::ip::tcp::resolver resolver(ioService);
-        boost::beast::tcp_stream stream(ioService);
-
-        // Look up the domain name
-        auto const results = resolver.resolve(this->host, "8080");
-
-        // Make the connection on the IP address we get from a lookup
-        stream.connect(results);
-
-        // Set up an HTTP GET request message
-        boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::get, "/", version};
-        req.set(boost::beast::http::field::host, this->host);
-        req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-		
-        // Send the HTTP request to the remote host
-        boost::beast::http::write(stream, req);
-
-        // This buffer is used for reading and must be persisted
-        boost::beast::flat_buffer buffer;
-
-        // Declare a container to hold the response
-        boost::beast::http::response<boost::beast::http::dynamic_body> res;
-
-        // Receive the HTTP response
-        boost::beast::http::read(stream, buffer, res);
-        boost::beast::error_code ec;
-
-		if(res.result() == boost::beast::http::status::ok){
-			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-		    if(ec && ec != boost::beast::errc::not_connected){
-		        throw boost::beast::system_error{ec};
-		    }
-		    status = true;
-        }
-        else{
-         	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-        	if(ec && ec != boost::beast::errc::not_connected){
-            	throw boost::beast::system_error{ec};
-            }
-            status = false;
-            ROS_ERROR_STREAM("can_reach_server() response: " << res.result());
-        }
-
-    }
-    catch(std::exception const& e)
-    {
-        ROS_ERROR_STREAM("Get request error: " << e.what());
-    }
-    
-    return status;
+	return HttpClient::can_reach_server(this->host, this->port);
 }
 
 

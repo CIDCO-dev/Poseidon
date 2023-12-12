@@ -21,6 +21,7 @@
 #include "ImuCalibrationDiagnostic.h"
 #include "SonarCommunicationDiagnostic.h"
 #include "ClockDiagnostic.h"
+#include "ApiConnectionDiagnostic.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::connection_hdl;
@@ -43,6 +44,7 @@ public:
 																	(new ImuCalibrationDiagnostic("Imu Calibrated", 100))
 																	(new SonarCommunicationDiagnostic("SonarDiagnostic", 10))
 																	(new ClockDiagnostic("ClockDiagnostic"))
+																	(new ApiConnectionDiagnostic("ApiConnectionDiagnostic"))
 																	;
 	}
 	

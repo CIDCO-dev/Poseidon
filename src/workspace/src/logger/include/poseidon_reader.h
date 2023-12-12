@@ -17,13 +17,15 @@ class PoseidonBinaryReader{
 		}
 		
 		virtual void processImu(PacketHeader & hdr, AttitudePacket & packet){
-			std::cout<<"ok\n";
 		}
 		
 		virtual void processSonar(PacketHeader & hdr, DepthPacket & packet){
 		}
 		
 		virtual void processLidar(PacketHeader & hdr, LidarPacket & packet){
+			
+			std::cout<<hdr.packetTimestamp<<" "<< packet.laser_x<<" "<<packet.laser_y<<" "<<packet.laser_z<<" "<<"0"<<"\n";
+			
 		}
 		
 		void read(){

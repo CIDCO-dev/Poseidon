@@ -23,7 +23,7 @@ START_DAEMON="true"
 USBAUTO="true"
 # Devices gpsd should collect to at boot time.
 # They need to be read/writeable, either by user gpsd or the group dialout.
-DEVICES="/dev/ttyAMA0"
+DEVICES="/dev/gnss"
 # Other options you want to pass to gpsd
 GPSD_OPTIONS="-n"
 GPSD_SOCKET="/var/run/gpsd.sock"

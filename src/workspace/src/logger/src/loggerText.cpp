@@ -17,7 +17,7 @@ void LoggerText::init(){
 		fileRotationMutex.lock();
 
 		//Make sure the files are not already opened...
-		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile && !lidarOutputFile && !rawGnssoutputFile.is_open()){
+		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile && !lidarOutputFile && !rawGnssOutputFile.is_open()){
 
 			std::string dateString = TimeUtils::getStringDate();
 			
@@ -40,10 +40,10 @@ void LoggerText::init(){
 
 			imuOutputFile = fopen(imuFilePath.c_str(),"a");
 
-    		if(!imuOutputFile){
-			fileRotationMutex.unlock();
-	        	throw std::invalid_argument(std::string("Couldn't open IMU log file ") + imuFileName);
-    		}
+			if(!imuOutputFile){
+				fileRotationMutex.unlock();
+				throw std::invalid_argument(std::string("Couldn't open IMU log file ") + imuFileName);
+			}
 
 			//Open sonar file
 			sonarFileName = dateString + "_sonar.txt";
@@ -52,10 +52,10 @@ void LoggerText::init(){
 
 			sonarOutputFile = fopen(sonarFilePath.c_str(),"a");
 
-	        if(!sonarOutputFile){
+			if(!sonarOutputFile){
 			fileRotationMutex.unlock();
 			throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
-	        }
+			}
 			
 			//Open lidar file
 			lidarFileName = dateString + "_lidar.txt";
@@ -64,12 +64,12 @@ void LoggerText::init(){
 
 			lidarOutputFile = fopen(lidarFilePath.c_str(),"a");
 
-	        if(!lidarOutputFile){
+			if(!lidarOutputFile){
 				fileRotationMutex.unlock();
 				throw std::invalid_argument(std::string("Couldn't open lidar log file ") + lidarFileName);
-	        }
-	        
-	        
+			}
+			
+			
 			
 			fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",
 									separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
@@ -78,11 +78,18 @@ void LoggerText::init(){
 			fprintf(lidarOutputFile,"Timestamp%sPoints\n",separator.c_str());
 			
 			rawGnssFileName = dateString + this->fileExtensionForGpsDatagram;
-			rawGnssoutputFile.open(tmpLoggingFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
+			rawGnssOutputFile.open(tmpLoggingFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
 			
-			if( !rawGnssoutputFile.good()){
+			if( !rawGnssOutputFile.good()){
 				throw std::invalid_argument("Couldn't open raw gnss log file");
-            }
+			}
+			
+			rawSonarFileName = dateString + this->fileExtensionForSonarDatagram;
+			rawSonarOutputFile.open(tmpLoggingFolder + "/" + rawSonarFileName,std::ios::binary|std::ios::trunc);
+			
+			if( !rawSonarOutputFile.good()){
+				throw std::invalid_argument("Couldn't open raw sonar log file");
+			}
 			
 		}
 
@@ -104,6 +111,7 @@ void LoggerText::finalize(){
 	std::string newSonarPath;
 	std::string newLidarPath;
 	std::string newRawGnssPath;
+	std::string newRawSonarPath;
 	
 	if(gnssOutputFile){
 		//close
@@ -149,13 +157,22 @@ void LoggerText::finalize(){
 		rename(oldPath.c_str(), newLidarPath.c_str());
 	}
 	
-	if(rawGnssoutputFile.is_open()){
+	if(rawGnssOutputFile.is_open()){
 		//close
-		rawGnssoutputFile.close();
+		rawGnssOutputFile.close();
 		
 		std::string oldPath = tmpLoggingFolder + "/"  + rawGnssFileName;
 		newRawGnssPath = outputFolder + "/" + rawGnssFileName;
 		rename(oldPath.c_str(), newRawGnssPath.c_str());
+	}
+	
+	if(rawSonarOutputFile.is_open()){
+		//close
+		rawSonarOutputFile.close();
+		
+		std::string oldPath = tmpLoggingFolder + "/"  + rawSonarFileName;
+		newRawSonarPath = outputFolder + "/" + rawSonarFileName;
+		rename(oldPath.c_str(), newRawSonarPath.c_str());
 	}
 	
 	fileRotationMutex.unlock();
@@ -163,7 +180,10 @@ void LoggerText::finalize(){
 	std::string zipFilename = gnssFileName.substr(0, 17) + std::string(".zip");
 	
 	if(activatedTransfer){
-		bool noError = compress(zipFilename, newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath);
+	
+		std::vector<std::string> files{newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath, newRawSonarPath};
+	
+		bool noError = compress(zipFilename, files);
 		if(noError && can_reach_server()){
 			transfer();
 		}
@@ -183,24 +203,6 @@ void LoggerText::rotate(){
 			init();
 		}
 	}
-}
-
-
-bool LoggerText::compress(std::string &zipFilename, std::string &gnssFilePath, std::string &imuFilePath, std::string &sonarFilePath, 
-						std::string &lidarFilePath, std::string &rawGnssFilePath){
-	
-	std::string command = "zip -Tmj " + outputFolder + "/" + zipFilename + " " + gnssFilePath + " " + imuFilePath + " " + sonarFilePath + " " + lidarFilePath + " " + rawGnssFilePath;
-	
-	int zip = std::system(command.c_str());
-	
-	if(zip == 0){
-		return true;
-	}
-	else{
-		ROS_ERROR_STREAM("Cannot zip files \nZipping process returned" << zip);
-		ROS_ERROR_STREAM(command);
-		return false;
-	}	
 }
 
 
@@ -246,7 +248,7 @@ void LoggerText::imuCallback(const sensor_msgs::Imu& imu){
 	if(bootstrappedGnssTime && loggerEnabled){
 		double heading = 0;
 		double pitch   = 0;
-		double roll    = 0;
+		double roll	= 0;
 
 		uint64_t timestamp = TimeUtils::buildTimeStamp(imu.header.stamp.sec, imu.header.stamp.nsec);
 
@@ -288,30 +290,10 @@ void LoggerText::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 			fprintf(lidarOutputFile,"%s%s",TimeUtils::getTimestampString(lidar.header.stamp.sec, lidar.header.stamp.nsec).c_str(), separator.c_str());
 			lastLidarTimestamp = timestamp;
 			for(auto const& point : points){
-    			fprintf(lidarOutputFile,"%f %f %f%s", point.x, point.y, point.z, separator.c_str());
-    		}
-    		fprintf(lidarOutputFile,"\n");
+				fprintf(lidarOutputFile,"%f %f %f%s", point.x, point.y, point.z, separator.c_str());
+			}
+			fprintf(lidarOutputFile,"\n");
 		}
 	}
-	
-}
-
-void LoggerText::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
-
-	if(bootstrappedGnssTime && loggerEnabled){
-		uint64_t timestamp = stream.timeStamp;
-		
-		if(timestamp > lastLidarTimestamp){
-		
-			char arr[stream.vector_length];
-			auto v = stream.stream;
-			std::copy(v.begin(), v.end(), arr);
-			
-			rawGnssoutputFile.write((char*)arr, stream.vector_length);
-		}
-		
-		lastLidarTimestamp = timestamp;
-	}
-	
 	
 }

@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf2_geometry_msgs
   tf2 
+  setting_msg
   #tf2_ros
 )
 find_package(RapidJSON REQUIRED)

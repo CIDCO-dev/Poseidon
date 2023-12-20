@@ -40,6 +40,7 @@
 #include "../../utils/timestamp.h"
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
+#include "../../utils/HttpClient.hpp"
 
 //Boost lib
 #include <boost/archive/iterators/base64_from_binary.hpp>
@@ -158,6 +159,7 @@ class LoggerBase{
 		std::string target;
 		bool activatedTransfer;
 		std::string apiKey;
+		std::string port;
 };
 	
 #endif

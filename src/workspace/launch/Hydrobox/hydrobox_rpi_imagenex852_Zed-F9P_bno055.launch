@@ -23,7 +23,7 @@
 <node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
 
-<node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
+<node pkg="sonar_imagenex852" type="main.py" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
  
 
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>

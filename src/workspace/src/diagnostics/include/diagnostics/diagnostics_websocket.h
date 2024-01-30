@@ -22,6 +22,7 @@
 #include "SonarCommunicationDiagnostic.h"
 #include "ClockDiagnostic.h"
 #include "ApiConnectionDiagnostic.h"
+#include "SerialNumberDiagnostic.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::connection_hdl;
@@ -42,9 +43,10 @@ public:
 																	(new GnssFixDiagnostic("Gnss fix", 1))
 																	(new ImuCommunicationDiagnostic("Imu Communication", 100))
 																	(new ImuCalibrationDiagnostic("Imu Calibrated", 100))
-																	(new SonarCommunicationDiagnostic("SonarDiagnostic", 10))
-																	(new ClockDiagnostic("ClockDiagnostic"))
-																	(new ApiConnectionDiagnostic("ApiConnectionDiagnostic"))
+																	(new SonarCommunicationDiagnostic("Sonar Communication", 10))
+																	(new ClockDiagnostic("Clock Diagnostic"))
+																	(new ApiConnectionDiagnostic("Api Connection Diagnostic"))
+																	(new SerialNumberDiagnostic("Serial Number Pattern Validation"))
 																	;
 	}
 	

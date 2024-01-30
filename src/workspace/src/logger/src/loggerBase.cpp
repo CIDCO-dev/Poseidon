@@ -36,7 +36,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	ROS_INFO_STREAM("Logging mode set to : "<< loggingMode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
 	
 	if(!std::filesystem::exists(outputFolder)){
-		if (!std::filesystem::create_directory(directoryName)) {
+		if (!std::filesystem::create_directory(outputFolder)) {
 			ROS_ERROR_STREAM("failed creating: " << outputFolder);
 		}
 		ROS_INFO_STREAM(outputFolder << " created.");

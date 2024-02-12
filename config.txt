@@ -1,6 +1,7 @@
 apiKey SECRET
 apiServer localhost
 apiUrlPath /
+apiPort 8080
 headingOffset 0
 logRotationIntervalSeconds 3600
 loggingMode 2

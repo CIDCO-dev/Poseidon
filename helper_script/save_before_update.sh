@@ -13,4 +13,4 @@ cp /opt/Poseidon/service/uart_on_boot.sh /opt/Poseidon.backup
 now=`date +"%Y-%m-%d"`
 
 
-zip -r /opt/Poseidon/www/webroot/record/Poseidon.config.$(hostname).${now}.zip /opt/Poseidon.backup
+tar -cJvf /opt/Poseidon/www/webroot/record/Poseidon.config.$(hostname).${now}.tar.xz /opt/Poseidon.backup

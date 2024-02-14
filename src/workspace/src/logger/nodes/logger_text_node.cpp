@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 	try{
 		ros::init(argc, argv, "logger");
 
-		ros::NodeHandle n;
+		//ros::NodeHandle n;
 
 		std::string outputFolder( argv[1] );
 

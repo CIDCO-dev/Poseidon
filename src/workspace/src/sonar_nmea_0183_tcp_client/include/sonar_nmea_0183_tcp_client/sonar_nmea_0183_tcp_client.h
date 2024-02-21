@@ -414,10 +414,7 @@ public:
 		
 		set_sonar_baud_rate();
 		
-		speed_t outBaudRate, inBaudRate;
-		if(getBaudRateSetting(outBaudRate, inBaudRate)){
-			ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << see_speed(inBaudRate) << " out: " << see_speed(outBaudRate));
-		}
+
 	}
 	
 	void run(){
@@ -444,6 +441,7 @@ public:
 	}
 	
 	void configurationCallBack(const setting_msg::Setting &setting){
+		std::cout<< setting.key << ", " << setting.value <<"\n";
 		if(setting.key == "sonarSerialBaudRate"){
 			std::string value = setting.value;
 			if(trimSpaces(value) == ""){
@@ -487,7 +485,10 @@ public:
 		}
 		
 		
-		ROS_INFO_STREAM("Sonar baud rate set to : " << this->sonarSerialBaudRate);
+		speed_t outBaudRate, inBaudRate;
+		if(getBaudRateSetting(outBaudRate, inBaudRate)){
+			ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << see_speed(inBaudRate) << " out: " << see_speed(outBaudRate));
+		}
 	}
 	
 	speed_t getBaudRate(int baudrate) {

@@ -428,7 +428,7 @@ public:
 			
 			init_serial_port_speed();
 			speed_t outBaudRate, inBaudRate;
-			if(getBaudRateSetting(&outBaudRate, &inBaudRate)){
+			if(getBaudRateSetting(outBaudRate, inBaudRate)){
 				ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
 			}
 			
@@ -460,7 +460,7 @@ public:
 				catch(std::invalid_argument &err){
 					ROS_ERROR_STREAM("Baud rate from configuration is not set properly \n example : 9600");
 					speed_t outBaudRate, inBaudRate;
-					if(getBaudRateSetting(&outBaudRate, &inBaudRate)){
+					if(getBaudRateSetting(outBaudRate, inBaudRate)){
 						ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
 					}
 				}
@@ -511,15 +511,15 @@ public:
 		}
 	}
 	
-	bool getBaudRateSetting(speed_t *outBaudRate, speed_t *inBaudRate) {
+	bool getBaudRateSetting(speed_t &outBaudRate, speed_t &inBaudRate) {
 		struct termios tty;
 		if (tcgetattr(this->fileDescriptor, &tty) != 0) {
 			ROS_ERROR_STREAM("Error getting sonar serial port attributes");
 			return false;
 		}
 
-		*outBaudRate = cfgetospeed(&tty);
-		*inBaudRate = cfgetispeed(&tty);
+		outBaudRate = cfgetospeed(&tty);
+		inBaudRate = cfgetispeed(&tty);
 
 		return true;
 	}

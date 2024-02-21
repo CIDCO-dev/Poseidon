@@ -471,7 +471,7 @@ public:
 	void set_sonar_baud_rate(){
 		
 		struct termios tty;
-		if (tcgetattr(this->fileDescriptor, &tty) <= 0) {
+		if (tcgetattr(this->fileDescriptor, &tty) != -1) {
 			ROS_ERROR_STREAM("Error getting sonar serial port attributes");
 			return;
 		}
@@ -479,7 +479,7 @@ public:
 		cfsetospeed(&tty, getBaudRate(this->sonarSerialBaudRate));
 		cfsetispeed(&tty, getBaudRate(this->sonarSerialBaudRate));
 
-		if (tcsetattr(this->fileDescriptor, TCSANOW, &tty) <= 0) {
+		if (tcsetattr(this->fileDescriptor, TCSANOW, &tty) != -1) {
 			ROS_ERROR_STREAM("Error setting sonar serial port attributes");
 			return;
 		}
@@ -513,7 +513,7 @@ public:
 	
 	bool getBaudRateSetting(speed_t *outBaudRate, speed_t *inBaudRate) {
 		struct termios tty;
-		if (tcgetattr(this->fileDescriptor, &tty) <= 0) {
+		if (tcgetattr(this->fileDescriptor, &tty) != -1 ) {
 			ROS_ERROR_STREAM("Error getting sonar serial port attributes");
 			return false;
 		}

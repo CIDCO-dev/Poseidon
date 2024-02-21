@@ -413,6 +413,11 @@ public:
 		}
 		
 		set_sonar_baud_rate();
+		
+		speed_t outBaudRate, inBaudRate;
+		if(getBaudRateSetting(outBaudRate, inBaudRate)){
+			ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << see_speed(inBaudRate) << " out: " << see_speed(outBaudRate));
+		}
 	}
 	
 	void run(){
@@ -427,11 +432,7 @@ public:
 			}
 			
 			init_serial_port_speed();
-			speed_t outBaudRate, inBaudRate;
-			ros::Duration(1.0).sleep();
-			if(getBaudRateSetting(outBaudRate, inBaudRate)){
-				ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
-			}
+			
 			
 			readStream(this->fileDescriptor);
 		}
@@ -462,7 +463,7 @@ public:
 					ROS_ERROR_STREAM("Baud rate from configuration is not set properly \n example : 9600");
 					speed_t outBaudRate, inBaudRate;
 					if(getBaudRateSetting(outBaudRate, inBaudRate)){
-						ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
+						ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << see_speed(inBaudRate) << " out: " << see_speed(outBaudRate));
 					}
 				}
 			}
@@ -511,6 +512,30 @@ public:
 			default:	return -1; // Invalid baud rate
 		}
 	}
+	
+	int see_speed(speed_t speed) {
+	switch (speed) {
+		case B0:	  return 0;
+		case B50:	 return 50;
+		case B75:	 return 75;
+		case B110:	return 110;
+		case B134:	return 134;
+		case B150:	return 150;
+		case B200:	return 200;
+		case B300:	return 300;
+		case B600:	return 600;
+		case B1200:   return 1200;
+		case B1800:   return 1800;
+		case B2400:   return 2400;
+		case B4800:   return 4800;
+		case B9600:   return 9600;
+		case B19200:  return 19200;
+		case B38400:  return 38400;
+		case B57600:  return 57600;
+		case B115200: return 115200;
+		default:	  return -1; // Invalid speed_t value
+	}
+}
 	
 	bool getBaudRateSetting(speed_t &outBaudRate, speed_t &inBaudRate) {
 		struct termios tty;

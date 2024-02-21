@@ -1,4 +1,5 @@
 #include "loggerBase.h"
+#include "../../utils/string_utils.hpp"
 
 LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
 	

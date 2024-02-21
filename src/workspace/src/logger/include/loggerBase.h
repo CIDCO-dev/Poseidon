@@ -41,7 +41,6 @@
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
 #include "../../utils/HttpClient.hpp"
-#include "../../utils/string_utils.hpp"
 
 
 //Boost lib

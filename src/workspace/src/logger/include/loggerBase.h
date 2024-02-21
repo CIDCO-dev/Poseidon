@@ -41,6 +41,8 @@
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
 #include "../../utils/HttpClient.hpp"
+#include "../../utils/string_utils.hpp"
+
 
 //Boost lib
 #include <boost/archive/iterators/base64_from_binary.hpp>

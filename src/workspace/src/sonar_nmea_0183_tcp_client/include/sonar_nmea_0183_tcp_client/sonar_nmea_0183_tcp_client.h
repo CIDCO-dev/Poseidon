@@ -15,6 +15,8 @@
 //POSIX files
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <termios.h>
+#include <unistd.h>
 
 
 //ROS
@@ -22,66 +24,71 @@
 #include "geometry_msgs/PointStamped.h"
 #include "sensor_msgs/NavSatFix.h"
 #include "nav_msgs/Odometry.h"
+#include "setting_msg/Setting.h"
+#include "setting_msg/ConfigurationService.h"
+
+#include "../../utils/string_utils.hpp"
 
 
 
 typedef struct{
-    char talkerId[2];
-    double utcTime;
-    
-    double latitude; 
-    char northOrSouth;
-    
-    double longitude; 
-    char eastOrWest;
-    
-    int quality;
-    
-    int nbSatellites;
-    
-    double hdop;
-    
-    double antennaAltitude;
-    
-    double geoidalSeparation;
-    
-    int dgpsAge;
-    int dgpsStationId;    
-    
-    unsigned int checksum;
+	char talkerId[2];
+	double utcTime;
+	
+	double latitude; 
+	char northOrSouth;
+	
+	double longitude; 
+	char eastOrWest;
+	
+	int quality;
+	
+	int nbSatellites;
+	
+	double hdop;
+	
+	double antennaAltitude;
+	
+	double geoidalSeparation;
+	
+	int dgpsAge;
+	int dgpsStationId;	
+	
+	unsigned int checksum;
 } ggaData;
 
 typedef struct{
-    char talkerId[2];
-    double  depthFeet;
-    double  depthMeters;
-    double  depthFathoms;
-    unsigned int checksum;    
+	char talkerId[2];
+	double  depthFeet;
+	double  depthMeters;
+	double  depthFathoms;
+	unsigned int checksum;
 }dbtData;
 
 typedef struct{
-    char talkerId[2];
-    double degreesDecimal;
-    double degreesMagnetic;
-    double speedKnots;
-    double speedKmh;
-    unsigned int checksum;    
+	char talkerId[2];
+	double degreesDecimal;
+	double degreesMagnetic;
+	double speedKnots;
+	double speedKmh;
+	unsigned int checksum;
 }vtgData;
 
 typedef struct{
-    char talkerId[2];
-    double  depthMeters;
-    double  offsetMeters; 
-    double  maxRangeScale; // i guess it's meters
-    unsigned int checksum;    
+	char talkerId[2];
+	double  depthMeters;
+	double  offsetMeters; 
+	double  maxRangeScale; // i guess it's meters
+	unsigned int checksum;
 }dptData;
 
 
 class BaseNmeaClient{
-
-	private:
+	
+	protected:
 		ros::NodeHandle node;
-		
+	
+	private:
 		ros::Publisher sonarTopic;
 		ros::Publisher gnssTopic;
 		ros::Publisher speedTopic;
@@ -89,7 +96,7 @@ class BaseNmeaClient{
 		uint32_t depthSequenceNumber = 0;
 		uint32_t gpsSequenceNumber = 0;
 		uint32_t speedSequenceNumber = 0;
-                
+			
 		bool useDepth = true;
 		bool usePosition = false;
 		bool useAttitude = false;
@@ -162,43 +169,43 @@ class BaseNmeaClient{
 				
 					int latDegrees = (double)(data.latitude / 100);
 					double latMinutes = (data.latitude - (latDegrees*100)) / (double)60;
-					sign = (data.northOrSouth=='N')?1:-1;        
+					sign = (data.northOrSouth=='N')?1:-1;		
 
 					msg.latitude  = sign * (latDegrees+latMinutes);
-		                                                    
+															
 					switch(data.quality){
 						//No fix
 						case 0:
 							msg.status.status=-1;
 							break;
-		                                                        
+																
 						//GPS Fix
 						case 1:
 							msg.status.status=0;
 							break;
-		                                                            
+																	
 							//DGPS
 						case 2:
 							msg.status.status=2;
 							break;
 					}
-		                                                    
+															
 					msg.altitude  = data.antennaAltitude;
 					msg.position_covariance_type= 0;
-		                                                        
-					gnssTopic.publish(msg);				
+																
+					gnssTopic.publish(msg);
 
 					return true;
 					}
 					else{
 						ROS_ERROR("checksum error");
 					}
-		    	}
-		    
+				}
+			
 			return false;
 		}		
 
-		//parse DBT strings such as $SDDBT,30.9,f,9.4,M,5.1,F*35		
+		//parse DBT strings such as $SDDBT,30.9,f,9.4,M,5.1,F*35
 		bool extractDBT(std::string & s){
 			dbtData dbt;
 			
@@ -315,7 +322,7 @@ class BaseNmeaClient{
 			}
 
 			close(fileDescriptor);
-			fileDescriptor = -1;		
+			fileDescriptor = -1;
 		}
 
 		virtual void run() = 0;
@@ -333,7 +340,7 @@ public:
 
 		ros::Rate retry_rate(1);
 
-	        while(ros::ok()){
+		while(ros::ok()){
 			int s = -1;
 
 			try{
@@ -365,7 +372,7 @@ public:
 				s = -1;
 				retry_rate.sleep();
 			}
-        	}
+		}
 	}
 		
 private:
@@ -377,32 +384,151 @@ class DeviceNmeaClient : public BaseNmeaClient{
 public:
 	DeviceNmeaClient(std::string & deviceFile, bool useDepth,bool usePosition,bool useAttitude) : BaseNmeaClient(useDepth,usePosition,useAttitude),deviceFile(deviceFile){
 	
+	configurationSubscriber = node.subscribe("configuration", 1000, &DeviceNmeaClient::configurationCallBack, this);
+	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+	
+	init_serial_port_speed();
+	if(getBaudRateSetting(&outBaudRate, &inBaudRate)){
+		ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
+	}
+	
+	}
+	
+	void init_serial_port_speed(){
+		setting_msg::ConfigurationService srv;
+
+		srv.request.key = "sonarSerialBaudRate";
+
+		if(configurationClient.call(srv)){
+			std::string baudRate = srv.response.value;
+			try{
+				if(std::stoi(baudRate) != this->sonarSerialBaudRate){
+					this->sonarSerialBaudRate = std::stoi(baudRate);
+				}
+			}
+			catch(const std::exception& ex){
+				ROS_ERROR_STREAM(ex.what());
+				ROS_ERROR("Error in sonar serial baud rate definition, defaulting to 9600");
+				this->sonarSerialBaudRate = 9600;
+			}
+		}
+		else{
+			ROS_WARN("No sonar serial baud rate definition, defaulting to 9600");
+			this->sonarSerialBaudRate = 9600;
+		}
+		
+		set_sonar_baud_rate();
 	}
 	
 	void run(){
 		initTopics();
 
-		int fileDescriptor = -1;
-
 		try{
 			std::cout << "Opening NMEA device " << deviceFile << std::endl;
 
-			if((fileDescriptor = open(deviceFile.c_str(),O_RDWR))==-1){
+			if((this->fileDescriptor = open(deviceFile.c_str(),O_RDWR))==-1){
 				perror("open");
 				throw std::runtime_error("open");
 			}
 
-			readStream(fileDescriptor);
+			readStream(this->fileDescriptor);
 		}
 		catch(std::exception& e){
-			if(fileDescriptor != -1) close(fileDescriptor);
+			if(this->fileDescriptor != -1) close(this->fileDescriptor);
 
 			std::cerr << e.what() << std::endl;
 		}
-	}	
-	 
+	}
+	
+	void configurationCallBack(const setting_msg::Setting &setting){
+		if(setting.key == "sonarSerialBaudRate"){
+			std::string value = setting.value;
+			if(trimSpaces(value) == ""){
+				this->sonarSerialBaudRate = 9600;
+				ROS_INFO_STREAM("No baud rate specify in config file for sonar \n Defaulting to 9600");
+			}
+			else{
+				try{
+					if(stoi(setting.value) != this->sonarSerialBaudRate){
+						std::string value = setting.value;
+						this->sonarSerialBaudRate = stoi(trimSpaces(value));
+						set_sonar_baud_rate();
+					}
+					//else value is same, do nothing
+				}
+				catch(std::invalid_argument &err){
+					ROS_ERROR_STREAM("Baud rate from configuration is not set properly \n example : 9600");
+					speed_t outBaudRate, inBaudRate;
+					if(getBaudRateSetting(&outBaudRate, &inBaudRate)){
+						ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
+					}
+				}
+			}
+		}
+	}
+	
+	void set_sonar_baud_rate(){
+		
+		struct termios tty;
+		if (tcgetattr(this->fileDescriptor, &tty) <= 0) {
+			ROS_ERROR_STREAM("Error getting sonar serial port attributes");
+			return;
+		}
+
+		cfsetospeed(&tty, getBaudRate(this->sonarSerialBaudRate));
+		cfsetispeed(&tty, getBaudRate(this->sonarSerialBaudRate));
+
+		if (tcsetattr(this->fileDescriptor, TCSANOW, &tty) <= 0) {
+			ROS_ERROR_STREAM("Error setting sonar serial port attributes");
+			return;
+		}
+		
+		
+		ROS_INFO_STREAM("Sonar baud rate set to : " << this->sonarSerialBaudRate);
+	}
+	
+	speed_t getBaudRate(int baudrate) {
+		switch(baudrate) {
+			case 50:	return B50;
+			case 75:	return B75;
+			case 110:   return B110;
+			case 134:   return B134;
+			case 150:   return B150;
+			case 200:   return B200;
+			case 300:   return B300;
+			case 600:   return B600;
+			case 1200:  return B1200;
+			case 1800:  return B1800;
+			case 2400:  return B2400;
+			case 4800:  return B4800;
+			case 9600:  return B9600;
+			case 19200: return B19200;
+			case 38400: return B38400;
+			case 57600: return B57600;
+			case 115200:return B115200;
+			default:	return -1; // Invalid baud rate
+		}
+	}
+	
+	bool getBaudRateSetting(speed_t *outBaudRate, speed_t *inBaudRate) {
+		struct termios tty;
+		if (tcgetattr(this->fileDescriptor, &tty) <= 0) {
+			ROS_ERROR_STREAM("Error getting sonar serial port attributes");
+			return false;
+		}
+
+		*outBaudRate = cfgetospeed(&tty);
+		*inBaudRate = cfgetispeed(&tty);
+
+		return true;
+	}
+	
 private:
-	std::string deviceFile;	
+	int fileDescriptor = -1;
+	std::string deviceFile;
+	int sonarSerialBaudRate = 9600;
+	ros::Subscriber configurationSubscriber;
+	ros::ServiceClient configurationClient;
 };
 
 #endif

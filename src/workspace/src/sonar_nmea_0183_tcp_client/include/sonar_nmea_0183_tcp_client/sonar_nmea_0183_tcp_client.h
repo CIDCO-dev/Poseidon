@@ -387,12 +387,6 @@ public:
 	configurationSubscriber = node.subscribe("configuration", 1000, &DeviceNmeaClient::configurationCallBack, this);
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 	
-	init_serial_port_speed();
-	speed_t outBaudRate, inBaudRate;
-	if(getBaudRateSetting(&outBaudRate, &inBaudRate)){
-		ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
-	}
-	
 	}
 	
 	void init_serial_port_speed(){
@@ -431,7 +425,13 @@ public:
 				perror("open");
 				throw std::runtime_error("open");
 			}
-
+			
+			init_serial_port_speed();
+			speed_t outBaudRate, inBaudRate;
+			if(getBaudRateSetting(&outBaudRate, &inBaudRate)){
+				ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
+			}
+			
 			readStream(this->fileDescriptor);
 		}
 		catch(std::exception& e){

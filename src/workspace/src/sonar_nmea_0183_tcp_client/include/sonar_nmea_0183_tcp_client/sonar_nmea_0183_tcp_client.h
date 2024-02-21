@@ -428,6 +428,7 @@ public:
 			
 			init_serial_port_speed();
 			speed_t outBaudRate, inBaudRate;
+			ros::Duration(1.0).sleep();
 			if(getBaudRateSetting(outBaudRate, inBaudRate)){
 				ROS_INFO_STREAM("Current baud rate for sonar is, input speed: " << inBaudRate << " out: " << outBaudRate);
 			}

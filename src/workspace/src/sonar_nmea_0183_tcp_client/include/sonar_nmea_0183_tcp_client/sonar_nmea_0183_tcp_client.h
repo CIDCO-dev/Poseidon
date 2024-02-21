@@ -441,7 +441,9 @@ public:
 	}
 	
 	void configurationCallBack(const setting_msg::Setting &setting){
+		
 		std::cout<< setting.key << ", " << setting.value <<"\n";
+		
 		if(setting.key == "sonarSerialBaudRate"){
 			std::string value = setting.value;
 			if(trimSpaces(value) == ""){

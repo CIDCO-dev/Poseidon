@@ -247,7 +247,9 @@ public:
 			setting.key   =i->first;
 			setting.value =i->second;
 			configTopic.publish(setting);
+			std::cout<<setting.key << " , " << setting.value <<"\n";
 		}
+		std::cout<<"end of broadcast config \n";
 	}
 
 	void broadcastImuTransform(){

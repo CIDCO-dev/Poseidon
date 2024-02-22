@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "sonar_nmea_0183_tcp_client/sonar_nmea_0183_tcp_client.h"
+#include <thread>
 
 int main(int argc,char** argv){
 	bool useDepth = true;
@@ -28,6 +29,18 @@ int main(int argc,char** argv){
 	}
 	
 	DeviceNmeaClient nmea(device,useDepth,usePosition,useAttitude);
-	nmea.run();
+	
+	std::thread t(std::bind(&DeviceNmeaClient::run,&nmea));
+
+	ros::Rate loop_rate( 10 ); // 10 Hz
+	while(ros::ok()){
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+
+	t.join(); // join the thread before returning from node
+	
+	return 0;
+	//nmea.run();
 }
 

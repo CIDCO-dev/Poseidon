@@ -298,8 +298,8 @@ class BaseNmeaClient{
 
 			//FIXME: Holy wasted-syscalls Batman, that's inefficient!
 			while(read(fileDescriptor,&ch,1)==1){
-				ros::spinOnce();
-				std::cout<<"sonar nmea base readstream, spinOnce\n";
+/*				ros::spinOnce();*/
+/*				std::cout<<"sonar nmea base readstream, spinOnce\n";*/
 				if(ros::isShuttingDown()){
 					close(fileDescriptor);
 				}

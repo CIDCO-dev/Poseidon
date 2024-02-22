@@ -298,8 +298,6 @@ class BaseNmeaClient{
 
 			//FIXME: Holy wasted-syscalls Batman, that's inefficient!
 			while(read(fileDescriptor,&ch,1)==1){
-/*				ros::spinOnce();*/
-/*				std::cout<<"sonar nmea base readstream, spinOnce\n";*/
 				if(ros::isShuttingDown()){
 					close(fileDescriptor);
 				}
@@ -443,7 +441,7 @@ public:
 	}
 	
 	void configurationCallBack(const setting_msg::Setting &setting){
-		std::cout<< setting.key << ", " << setting.value <<"\n";
+		//std::cout<< setting.key << ", " << setting.value <<"\n";
 		
 		if(setting.key == "sonarSerialBaudRate"){
 			std::string value = setting.value;

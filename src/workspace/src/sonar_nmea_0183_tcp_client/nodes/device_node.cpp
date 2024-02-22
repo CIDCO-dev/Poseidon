@@ -41,6 +41,5 @@ int main(int argc,char** argv){
 	t.join(); // join the thread before returning from node
 	
 	return 0;
-	//nmea.run();
 }
 

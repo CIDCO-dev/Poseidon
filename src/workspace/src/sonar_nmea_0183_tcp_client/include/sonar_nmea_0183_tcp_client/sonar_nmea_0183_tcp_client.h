@@ -319,6 +319,7 @@ class BaseNmeaClient{
 				else{
 					line.append(1,ch);
 				}
+				ros::spinOnce();
 			}
 
 			close(fileDescriptor);
@@ -441,7 +442,6 @@ public:
 	}
 	
 	void configurationCallBack(const setting_msg::Setting &setting){
-		
 		std::cout<< setting.key << ", " << setting.value <<"\n";
 		
 		if(setting.key == "sonarSerialBaudRate"){

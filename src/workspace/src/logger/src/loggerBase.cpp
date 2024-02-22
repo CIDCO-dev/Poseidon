@@ -233,7 +233,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 // Callback for when configs are changed by the user via the web ui
 void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
-	ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value);
+	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value);
 	if(setting.key == "loggingMode"){
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{

@@ -1,0 +1,3 @@
+float64 battery_voltage
+float64 battery_voltage_drop
+float64 battery_temp

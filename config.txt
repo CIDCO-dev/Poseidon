@@ -15,3 +15,5 @@ speedThresholdKmh 6.0
 wifiPassword qwerty1234
 wifiSSID cidco
 wifiTransferEnabled true
+sonarSerialBaudRate 9600
+

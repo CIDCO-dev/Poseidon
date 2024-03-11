@@ -36,15 +36,24 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	updateLogRotationInterval();
 	updateApiTransferConfig();
 	ROS_INFO_STREAM("File transfert activated: " << this->activatedTransfer << ", API server: "
-					<< this->host <<", API url: "<< this->target);
+					<< this->host <<", API url: "<< this->target <<" , API port: "<< this->port);
 	
 	updateSpeedThreshold();
 	updateLoggingMode();
 	ROS_INFO_STREAM("Logging mode set to : "<< loggingMode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
+	
+	if(!std::filesystem::exists(outputFolder)){
+		if (!std::filesystem::create_directory(outputFolder)) {
+			ROS_ERROR_STREAM("failed creating: " << outputFolder);
+		}
+		ROS_INFO_STREAM(outputFolder << " created.");
+	}
+	
 }
 
 LoggerBase::~LoggerBase(){
 }
+
 
 
 void LoggerBase::updateLoggingMode(){
@@ -152,7 +161,23 @@ void LoggerBase::updateApiTransferConfig(){
 	else{
 		ROS_WARN("No API key definition");
 		this->apiKey = "";
-	}  
+	}
+	
+	srv.request.key = "apiPort";
+	if(configurationClient.call(srv)){
+		try{
+			this->port = trimSpaces(srv.response.value);
+		}
+		catch(const std::exception& ex){
+			ROS_ERROR_STREAM(ex.what());
+			ROS_ERROR("Error in destination server port definition");
+			this->port = "8080";
+		}
+	}
+	else{
+		ROS_WARN("No port definition");
+		this->port = "8080";
+	}
 }
 
 void LoggerBase::updateLogRotationInterval(){
@@ -215,7 +240,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 // Callback for when configs are changed by the user via the web ui
 void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
-	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value<<"\n");
+	//ROS_INFO_STREAM("logger_text configCallback -> " << setting.key << " : "<<setting.value);
 	if(setting.key == "loggingMode"){
 		if(setting.value == "1" || setting.value == "2" || setting.value == "3"){
 			try{

@@ -42,6 +42,7 @@
 #include "../../utils/Constants.hpp"
 #include "../../utils/HttpClient.hpp"
 
+
 //Boost lib
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
@@ -76,8 +77,9 @@ class LoggerBase{
 		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
 		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
 		void configurationCallBack(const setting_msg::Setting &setting);
-		virtual void gnssBinStreamCallback(const binary_stream_msg::Stream& stream)=0;
+		void gnssBinStreamCallback(const binary_stream_msg::Stream& stream);
 		void hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals);
+		void sonarBinStreamCallback(const binary_stream_msg::Stream& stream);
 		
 		/* Speed based logging */
 		void updateSpeedThreshold();
@@ -92,7 +94,7 @@ class LoggerBase{
 		void updateLoggingMode();
 		
 		/* log transfer */
-		virtual bool compress(){return false;};
+		 bool compress(std::string &zipFilename, std::vector<std::string> &filesVector);
 		void transfer();
 		std::string zip_to_base64(std::string zipPath);
 		std::string create_json_str(std::string &base64Zip);
@@ -107,7 +109,7 @@ class LoggerBase{
 		
 		// logger
 		std::string outputFolder;
-    	std::string separator;
+		std::string separator;
 		int loggingMode = 1;
 		std::mutex mtx;
 		bool loggerEnabled = false;
@@ -150,11 +152,17 @@ class LoggerBase{
 		
 		// raw gnss binary stream
 		std::string  rawGnssFileName;
-        std::ofstream rawGnssoutputFile;
-        ros::Subscriber streamSubscriber;
-        std::string fileExtensionForGpsDatagram;
-        
-        // transfer
+		std::ofstream rawGnssOutputFile;
+		ros::Subscriber gnssStreamSubscriber;
+		std::string fileExtensionForGpsDatagram;
+		
+		// raw sonar binary stream
+		std::string  rawSonarFileName;
+		std::ofstream rawSonarOutputFile;
+		ros::Subscriber sonarStreamSubscriber;
+		std::string fileExtensionForSonarDatagram;
+		
+		// transfer
 		std::string host;
 		std::string target;
 		bool activatedTransfer;

@@ -588,6 +588,7 @@ bool LoggerBase::compress(std::string &zipFilename, std::vector<std::string> &fi
 	
 	std::string files;
 	for(auto file : filesVector){
+		//TODO delete empty files
 		files+= " " + file;
 	}
 	
@@ -621,6 +622,4 @@ void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream)
 		
 		lastLidarTimestamp = timestamp;
 	}
-	
-	
 }

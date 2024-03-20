@@ -171,15 +171,15 @@ class Imagenex852{
 						ros::Time pingStart = ros::Time::now();
 						
 						try{
-							char read_buf [1];
+							uint8_t read_buf [1];
 							uint8_t packetType=0;
 							//read sync characters
 							if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
-								if(read_buf[0] == 'I'){
+								if(read_buf[0] == 73){
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 										packetType = read_buf[1];
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
-											if(read_buf[1] == 'X'){
+											if(read_buf[1] == 88){
 												Imagenex852ReturnDataHeader hdr;
 												if(serialRead((uint8_t*)&hdr+3, sizeof(Imagenex852ReturnDataHeader)) == 9){
 													hdr.magic[0] = 'I';

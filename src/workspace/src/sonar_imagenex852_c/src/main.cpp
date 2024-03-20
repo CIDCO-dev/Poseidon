@@ -176,10 +176,12 @@ class Imagenex852{
 							//read sync characters
 							if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 								if(read_buf[0] == 73){
+									std::cout<<"ok 1: "<<read_buf[0] <<"\n";
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 										packetType = read_buf[1];
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 											if(read_buf[1] == 88){
+												std::cout<<"ok 2: "<<read_buf[0] <<"\n";
 												Imagenex852ReturnDataHeader hdr;
 												if(serialRead((uint8_t*)&hdr+3, sizeof(Imagenex852ReturnDataHeader)) == 9){
 													hdr.magic[0] = 'I';

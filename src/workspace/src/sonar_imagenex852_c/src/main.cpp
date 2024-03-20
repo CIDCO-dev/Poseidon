@@ -163,7 +163,6 @@ class Imagenex852{
 					
 					
 					send_command(0);
-					ROS_INFO("ok\n");
 					
 					ros::Rate error_rate( 1 );
 
@@ -172,7 +171,7 @@ class Imagenex852{
 						ros::Time pingStart = ros::Time::now();
 						
 						try{
-							uint8_t read_buf [1];
+							char read_buf [1];
 							uint8_t packetType=0;
 							//read sync characters
 							if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
@@ -194,17 +193,15 @@ class Imagenex852{
 												}
 											}
 											else{
-												ROS_ERROR("3rd Serial read error: %c", read_buf[0]);
+												ROS_ERROR("3rd Serial read error: %d", read_buf[0]);
 												std::cout<<read_buf[0]<<"\n";
-												std::cout<<(char)read_buf[0]<<"\n";
 											}
 										}
 									}
 								}
 								else{
-									ROS_ERROR("1st Serial read error: %c", read_buf[0]);
+									ROS_ERROR("1st Serial read error: %d", read_buf[0]);
 									std::cout<<read_buf[0]<<"\n";
-									std::cout<<(char)read_buf[0]<<"\n";
 								}
 							}
 

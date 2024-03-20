@@ -170,7 +170,7 @@ class Imagenex852{
 					while(ros::ok()){
 						//record ping start
 						ros::Time pingStart = ros::Time::now();
-						ROS_INFO("ok\n");
+						
 						try{
 							uint8_t read_buf [1];
 							uint8_t packetType=0;
@@ -194,13 +194,13 @@ class Imagenex852{
 												}
 											}
 											else{
-												ROS_ERROR("Serial read error: %c", read_buf[0]);
+												ROS_ERROR("3rd Serial read error: %c", read_buf[0]);
 											}
 										}
 									}
 								}
 								else{
-									ROS_ERROR("Serial read error: %c", read_buf[0]);
+									ROS_ERROR("1st Serial read error: %c", read_buf[0]);
 								}
 							}
 

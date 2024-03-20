@@ -163,14 +163,14 @@ class Imagenex852{
 					
 					
 					send_command(0);
-					
+					ROS_INFO("ok\n");
 					
 					ros::Rate error_rate( 1 );
 
 					while(ros::ok()){
 						//record ping start
 						ros::Time pingStart = ros::Time::now();
-						
+						ROS_INFO("ok\n");
 						try{
 							uint8_t read_buf [1];
 							uint8_t packetType=0;
@@ -189,9 +189,18 @@ class Imagenex852{
 													std::cerr<<"process data \n";
 													process_data(hdr);
 												}
+												else{
+													ROS_ERROR("Did not read enough character");
+												}
+											}
+											else{
+												ROS_ERROR("Serial read error: %c", read_buf[0]);
 											}
 										}
 									}
+								}
+								else{
+									ROS_ERROR("Serial read error: %c", read_buf[0]);
 								}
 							}
 

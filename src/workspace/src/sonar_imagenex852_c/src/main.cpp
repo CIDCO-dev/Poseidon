@@ -195,12 +195,16 @@ class Imagenex852{
 											}
 											else{
 												ROS_ERROR("3rd Serial read error: %c", read_buf[0]);
+												std::cout<<read_buf[0]<<"\n";
+												std::cout<<(char)read_buf[0]<<"\n";
 											}
 										}
 									}
 								}
 								else{
 									ROS_ERROR("1st Serial read error: %c", read_buf[0]);
+									std::cout<<read_buf[0]<<"\n";
+									std::cout<<(char)read_buf[0]<<"\n";
 								}
 							}
 

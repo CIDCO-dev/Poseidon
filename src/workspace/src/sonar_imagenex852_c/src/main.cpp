@@ -167,8 +167,6 @@ class Imagenex852{
 					ros::Rate error_rate( 1 );
 
 					while(ros::ok()){
-						//record ping start
-						ros::Time pingStart = ros::Time::now();
 						
 						try{
 							uint8_t read_buf [1];
@@ -201,14 +199,6 @@ class Imagenex852{
 									//ROS_ERROR("1st Serial read error: %d", read_buf[0]);
 								}
 							}
-
-							//record ping end, and wait if we have to. 
-							ros::Time pingEnd = ros::Time::now();
-							ros::Duration pingLength = pingEnd - pingStart;
-
-							//wait a bit to retrigger on the PPS
-							ros::Duration sleepTime = ros::Duration(1.0) - pingLength - ros::Duration(0.1);
-							sleepTime.sleep();
 						}
 						catch(std::exception & e){
 							//ROS_ERROR already has been called. Lets sleep on this

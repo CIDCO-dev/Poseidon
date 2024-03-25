@@ -180,7 +180,7 @@ class Imagenex852{
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 										packetType = read_buf[1];
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
-											if(read_buf[1] == 88){
+											if(read_buf[0] == 0x58){
 												std::cout<<"ok 2: "<<read_buf[0] <<"\n";
 												Imagenex852ReturnDataHeader hdr;
 												if(serialRead((uint8_t*)&hdr+3, sizeof(Imagenex852ReturnDataHeader)) == 9){

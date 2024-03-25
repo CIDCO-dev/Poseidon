@@ -185,10 +185,6 @@ class Imagenex852{
 													hdr.magic[0] = 'I';
 													hdr.magic[1] = packetType;
 													hdr.magic[2] = 'X';
-													
-													std::cout<< (int)hdr.magic[1] <<"\n";
-													std::cerr<<"process data \n";
-													std::cout<<(int)packetType<<"\n";
 													process_data(hdr);
 												}
 												else{
@@ -196,15 +192,13 @@ class Imagenex852{
 												}
 											}
 											else{
-												ROS_ERROR("3rd Serial read error: %d", read_buf[0]);
-												std::cout<<read_buf[0]<<"\n";
+												//ROS_ERROR("3rd Serial read error: %d", read_buf[0]);
 											}
 										}
 									}
 								}
 								else{
-									ROS_ERROR("1st Serial read error: %d", read_buf[0]);
-									std::cout<<read_buf[0]<<"\n";
+									//ROS_ERROR("1st Serial read error: %d", read_buf[0]);
 								}
 							}
 
@@ -257,11 +251,6 @@ class Imagenex852{
 			cmd.absorption  = sonarAbsorbtion; //20 = 0.2db	675kHz
 			cmd.pulseLength = sonarPulseLength; //1-255 -> 1us to 255us in 1us increments
 			//mtx.unlock();
-			
-			std::cerr<<"Command param:\nsonarRange: " << sonarRange <<"\n";
-			std::cerr<<"sonarStartGain: " << sonarRange <<"\n";
-			std::cerr<<"sonarAbsorbtion: " << sonarRange <<"\n";
-			std::cerr<<"sonarPulseLength: " << sonarRange <<"\n";
 
 			cmd.magic[0]	= 0xFE	;
 			cmd.magic[1]	= 0x44	;
@@ -278,7 +267,6 @@ class Imagenex852{
 
 			unsigned int nbBytes;
 			
-			std::cerr<<"Write command \n";
 			if( (nbBytes = write(deviceFile,&cmd,sizeof(Imagenex852SwitchDataCommand))) != 27){
 				ROS_ERROR("Cannot write switch data command (%d bytes written)",nbBytes);
 				throw std::system_error();

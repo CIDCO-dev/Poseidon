@@ -176,22 +176,23 @@ class Imagenex852{
 							//read sync characters
 							if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 								if(read_buf[0] == 73){
-									std::cout<<"ok 1: "<<read_buf[0] <<"\n";
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 										packetType = read_buf[1];
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 											if(read_buf[0] == 0x58){
-												std::cout<<"ok 2: "<<read_buf[0] <<"\n";
 												Imagenex852ReturnDataHeader hdr;
 												if(serialRead((uint8_t*)&hdr+3, sizeof(Imagenex852ReturnDataHeader)-3) == 9){
 													hdr.magic[0] = 'I';
-													hdr.magic[1] = (uint8_t)packetType;
+													hdr.magic[1] = packetType;
 													hdr.magic[2] = 'X';
+													
+													std::cout<< hdr.magic[1] <<"\n";
 													std::cerr<<"process data \n";
+													std::cout<<packetType<<"\n";
 													process_data(hdr);
 												}
 												else{
-													ROS_ERROR("Did not read enough character");
+													ROS_ERROR("Serial read error");
 												}
 											}
 											else{
@@ -284,7 +285,7 @@ class Imagenex852{
 			}
 		}
 		
-		void process_data(Imagenex852ReturnDataHeader &hdr){
+		void process_data(Imagenex852ReturnDataHeader hdr){
 			
 			int dataPoints = 0;
 			
@@ -298,7 +299,7 @@ class Imagenex852{
 				//no data points
 			}
 			else{
-				ROS_ERROR("Unknown Packet type: %c", hdr.magic[1]);
+				ROS_ERROR("Unknown Packet type: %x", hdr.magic[1]);
 			}
 			
 			geometry_msgs::PointStamped msg;

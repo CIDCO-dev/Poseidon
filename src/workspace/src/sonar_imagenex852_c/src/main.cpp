@@ -177,7 +177,7 @@ class Imagenex852{
 							if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 								if(read_buf[0] == 73){
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
-										packetType = read_buf[1];
+										packetType = read_buf[0];
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 											if(read_buf[0] == 0x58){
 												Imagenex852ReturnDataHeader hdr;
@@ -186,9 +186,9 @@ class Imagenex852{
 													hdr.magic[1] = packetType;
 													hdr.magic[2] = 'X';
 													
-													std::cout<< hdr.magic[1] <<"\n";
+													std::cout<< (int)hdr.magic[1] <<"\n";
 													std::cerr<<"process data \n";
-													std::cout<<packetType<<"\n";
+													std::cout<<(int)packetType<<"\n";
 													process_data(hdr);
 												}
 												else{

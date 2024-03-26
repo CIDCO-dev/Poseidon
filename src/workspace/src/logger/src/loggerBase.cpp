@@ -486,16 +486,34 @@ bool LoggerBase::send_job(std::string json){
 		
 		// The io_context is required for all I/O
 		boost::asio::io_context ioService;
+		
+		boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv13_client);
+		ctx.set_options(boost::asio::ssl::context::default_workarounds
+							| boost::asio::ssl::context::no_sslv2
+							| boost::asio::ssl::context::no_sslv3
+							| boost::asio::ssl::context::tlsv12_client);
+		
+		ctx.set_default_verify_paths();
+		// set to : verify_peer , when server is sending the intermediate ssl certificate as well
+		ctx.set_verify_mode(boost::asio::ssl::verify_none);
 
 		// These objects perform our I/O
 		boost::asio::ip::tcp::resolver resolver(ioService);
-		boost::beast::tcp_stream stream(ioService);
+		//boost::beast::tcp_stream stream(ioService);
+		boost::beast::ssl_stream<boost::beast::tcp_stream> stream(ioService, ctx);
 
 		// Look up the domain name
 		auto const results = resolver.resolve(this->host, this->port);
-
-		// Make the connection on the IP address we get from a lookup
-		stream.connect(results);
+		boost::beast::get_lowest_layer(stream).connect(results);
+		
+		// Perform the SSL handshake
+		boost::beast::error_code ec1;
+		stream.handshake(boost::asio::ssl::stream_base::client, ec1);
+		
+		if (ec1) {
+			std::cerr << "send_job() handshake: " << ec1.message() << std::endl;
+			return 1;
+		}
 
 		// Set up an HTTP GET request message
 		boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, this->target, version};
@@ -515,19 +533,23 @@ bool LoggerBase::send_job(std::string json){
 		boost::beast::http::response<boost::beast::http::dynamic_body> res;
 
 		// Receive the HTTP response
-		boost::beast::http::read(stream, buffer, res);
+		boost::beast::error_code ec2;
+		boost::beast::http::read(stream, buffer, res, ec2);
+		if(ec2 && ec2 != boost::asio::error::eof && ec2 != boost::asio::ssl::error::stream_errors::stream_truncated){
+			ec2 = {};
+		}
 		boost::beast::error_code ec;
 
 		if(res.result() == boost::beast::http::status::ok){
-			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-			if(ec && ec != boost::beast::errc::not_connected){
+			stream.shutdown(ec);
+			if(ec && ec != boost::asio::error::eof && ec != boost::asio::ssl::error::stream_errors::stream_truncated){
 				throw boost::beast::system_error{ec};
 			}
 			status = true;
 		}
 		else{
-		 	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-			if(ec && ec != boost::beast::errc::not_connected){
+		 	stream.shutdown(ec);
+			if(ec && ec != boost::asio::error::eof && ec != boost::asio::ssl::error::stream_errors::stream_truncated){
 				throw boost::beast::system_error{ec};
 			}
 			status = false;
@@ -535,15 +557,14 @@ bool LoggerBase::send_job(std::string json){
 		}
 
 	}
-	catch(std::exception const& e)
-	{
+	catch(std::exception const& e){
 		ROS_ERROR_STREAM("Post request error: " << e.what());
 	}
 	return status;
 }
 
 bool LoggerBase::can_reach_server(){
-	return HttpClient::can_reach_server(this->host, this->port);
+	return HttpsClient::can_reach_server(this->host, this->port);
 }
 
 

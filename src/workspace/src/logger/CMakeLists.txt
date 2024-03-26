@@ -14,6 +14,8 @@ tf2_geometry_msgs
 binary_stream_msg)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package( Threads )
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenSSL REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -49,9 +51,9 @@ add_executable(lidarGeoreferencer src/georefLog.cpp)
 add_executable(calib_printer src/calib_lidar_printer.cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(logger_text_node ${catkin_LIBRARIES} ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(logger_binary_node ${catkin_LIBRARIES} ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(logger_text_node ${catkin_LIBRARIES} ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::system OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(logger_binary_node ${catkin_LIBRARIES} ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::system OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} Boost::system OpenSSL::SSL OpenSSL::Crypto)
 target_link_libraries(lidarGeoreferencer Eigen3::Eigen sbet_decoder)
 target_link_libraries(calib_printer sbet_decoder)
 

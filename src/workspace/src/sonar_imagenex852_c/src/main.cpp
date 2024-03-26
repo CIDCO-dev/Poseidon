@@ -164,44 +164,41 @@ class Imagenex852{
 					
 					send_command(0);
 					
-					
 					ros::Rate error_rate( 1 );
 
 					while(ros::ok()){
-						//record ping start
-						ros::Time pingStart = ros::Time::now();
 						
 						try{
 							uint8_t read_buf [1];
 							uint8_t packetType=0;
 							//read sync characters
 							if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
-								if(read_buf[0] == 'I'){
+								if(read_buf[0] == 73){
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
-										packetType = read_buf[1];
+										packetType = read_buf[0];
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
-											if(read_buf[1] == 'X'){
+											if(read_buf[0] == 0x58){
 												Imagenex852ReturnDataHeader hdr;
-												if(serialRead((uint8_t*)&hdr+3, sizeof(Imagenex852ReturnDataHeader)) == 9){
+												if(serialRead((uint8_t*)&hdr+3, sizeof(Imagenex852ReturnDataHeader)-3) == 9){
 													hdr.magic[0] = 'I';
-													hdr.magic[1] = (uint8_t)packetType;
+													hdr.magic[1] = packetType;
 													hdr.magic[2] = 'X';
-													std::cerr<<"process data \n";
 													process_data(hdr);
 												}
+												else{
+													ROS_ERROR("Serial read error");
+												}
+											}
+											else{
+												//ROS_ERROR("3rd Serial read error: %d", read_buf[0]);
 											}
 										}
 									}
 								}
+								else{
+									//ROS_ERROR("1st Serial read error: %d", read_buf[0]);
+								}
 							}
-
-							//record ping end, and wait if we have to. 
-							ros::Time pingEnd = ros::Time::now();
-							ros::Duration pingLength = pingEnd - pingStart;
-
-							//wait a bit to retrigger on the PPS
-							ros::Duration sleepTime = ros::Duration(1.0) - pingLength - ros::Duration(0.1);
-							sleepTime.sleep();
 						}
 						catch(std::exception & e){
 							//ROS_ERROR already has been called. Lets sleep on this
@@ -244,11 +241,6 @@ class Imagenex852{
 			cmd.absorption  = sonarAbsorbtion; //20 = 0.2db	675kHz
 			cmd.pulseLength = sonarPulseLength; //1-255 -> 1us to 255us in 1us increments
 			//mtx.unlock();
-			
-			std::cerr<<"Command param:\nsonarRange: " << sonarRange <<"\n";
-			std::cerr<<"sonarStartGain: " << sonarRange <<"\n";
-			std::cerr<<"sonarAbsorbtion: " << sonarRange <<"\n";
-			std::cerr<<"sonarPulseLength: " << sonarRange <<"\n";
 
 			cmd.magic[0]	= 0xFE	;
 			cmd.magic[1]	= 0x44	;
@@ -265,14 +257,13 @@ class Imagenex852{
 
 			unsigned int nbBytes;
 			
-			std::cerr<<"Write command \n";
 			if( (nbBytes = write(deviceFile,&cmd,sizeof(Imagenex852SwitchDataCommand))) != 27){
 				ROS_ERROR("Cannot write switch data command (%d bytes written)",nbBytes);
 				throw std::system_error();
 			}
 		}
 		
-		void process_data(Imagenex852ReturnDataHeader &hdr){
+		void process_data(Imagenex852ReturnDataHeader hdr){
 			
 			int dataPoints = 0;
 			
@@ -286,7 +277,7 @@ class Imagenex852{
 				//no data points
 			}
 			else{
-				ROS_ERROR("Unknown Packet type: %c", hdr.magic[1]);
+				ROS_ERROR("Unknown Packet type: %x", hdr.magic[1]);
 			}
 			
 			geometry_msgs::PointStamped msg;

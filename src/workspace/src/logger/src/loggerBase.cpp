@@ -9,8 +9,9 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	speedSubscriber = node.subscribe("speed", 1000, &LoggerBase::speedCallback, this);
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
-	streamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
+	gnssStreamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
 	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
+	sonarStreamSubscriber = node.subscribe("sonar_bin_stream", 1000, &LoggerBase::sonarBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
 	toggleLoggingService = node.advertiseService("toggle_logging", &LoggerBase::toggleLogging, this);
@@ -22,8 +23,14 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	
 	if (!node.getParam("/logger/fileExtensionForGpsDatagram", this->fileExtensionForGpsDatagram))
 	{
-		ROS_ERROR_STREAM("No protocol file extention defined, defaulting to .bin");
-		this->fileExtensionForGpsDatagram = ".bin";
+		ROS_ERROR_STREAM("No Gnss protocol file extention defined, defaulting to .gps");
+		this->fileExtensionForGpsDatagram = ".gps";
+	}
+	
+	if (!node.getParam("/logger/fileExtensionForSonarDatagram", this->fileExtensionForSonarDatagram))
+	{
+		ROS_ERROR_STREAM("No Sonar protocol file extention defined, defaulting to .son");
+		this->fileExtensionForGpsDatagram = ".son";
 	}
 	
 	updateLogRotationInterval();
@@ -436,12 +443,12 @@ std::string LoggerBase::zip_to_base64(std::string zipPath){
 		throw std::ios_base::failure("Failed to open the file");
 	}
 
-  // Encode
-  unsigned int writePaddChars = (3-s.length()%3)%3;
-  std::string base64(it_base64_t(s.begin()),it_base64_t(s.end()));
-  base64.append(writePaddChars,'=');
+	// Encode
+	unsigned int writePaddChars = (3-s.length()%3)%3;
+	std::string base64(it_base64_t(s.begin()),it_base64_t(s.end()));
+	base64.append(writePaddChars,'=');
 
-  return base64;
+	return base64;
 }
 
 std::string LoggerBase::create_json_str(std::string &base64Zip){
@@ -479,16 +486,34 @@ bool LoggerBase::send_job(std::string json){
 		
 		// The io_context is required for all I/O
 		boost::asio::io_context ioService;
+		
+		boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv13_client);
+		ctx.set_options(boost::asio::ssl::context::default_workarounds
+							| boost::asio::ssl::context::no_sslv2
+							| boost::asio::ssl::context::no_sslv3
+							| boost::asio::ssl::context::tlsv12_client);
+		
+		ctx.set_default_verify_paths();
+		// set to : verify_peer , when server is sending the intermediate ssl certificate as well
+		ctx.set_verify_mode(boost::asio::ssl::verify_none);
 
 		// These objects perform our I/O
 		boost::asio::ip::tcp::resolver resolver(ioService);
-		boost::beast::tcp_stream stream(ioService);
+		//boost::beast::tcp_stream stream(ioService);
+		boost::beast::ssl_stream<boost::beast::tcp_stream> stream(ioService, ctx);
 
 		// Look up the domain name
 		auto const results = resolver.resolve(this->host, this->port);
-
-		// Make the connection on the IP address we get from a lookup
-		stream.connect(results);
+		boost::beast::get_lowest_layer(stream).connect(results);
+		
+		// Perform the SSL handshake
+		boost::beast::error_code ec1;
+		stream.handshake(boost::asio::ssl::stream_base::client, ec1);
+		
+		if (ec1) {
+			std::cerr << "send_job() handshake: " << ec1.message() << std::endl;
+			return 1;
+		}
 
 		// Set up an HTTP GET request message
 		boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, this->target, version};
@@ -508,19 +533,23 @@ bool LoggerBase::send_job(std::string json){
 		boost::beast::http::response<boost::beast::http::dynamic_body> res;
 
 		// Receive the HTTP response
-		boost::beast::http::read(stream, buffer, res);
+		boost::beast::error_code ec2;
+		boost::beast::http::read(stream, buffer, res, ec2);
+		if(ec2 && ec2 != boost::asio::error::eof && ec2 != boost::asio::ssl::error::stream_errors::stream_truncated){
+			ec2 = {};
+		}
 		boost::beast::error_code ec;
 
 		if(res.result() == boost::beast::http::status::ok){
-			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-			if(ec && ec != boost::beast::errc::not_connected){
+			stream.shutdown(ec);
+			if(ec && ec != boost::asio::error::eof && ec != boost::asio::ssl::error::stream_errors::stream_truncated){
 				throw boost::beast::system_error{ec};
 			}
 			status = true;
 		}
 		else{
-		 	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-			if(ec && ec != boost::beast::errc::not_connected){
+		 	stream.shutdown(ec);
+			if(ec && ec != boost::asio::error::eof && ec != boost::asio::ssl::error::stream_errors::stream_truncated){
 				throw boost::beast::system_error{ec};
 			}
 			status = false;
@@ -528,15 +557,14 @@ bool LoggerBase::send_job(std::string json){
 		}
 
 	}
-	catch(std::exception const& e)
-	{
+	catch(std::exception const& e){
 		ROS_ERROR_STREAM("Post request error: " << e.what());
 	}
 	return status;
 }
 
 bool LoggerBase::can_reach_server(){
-	return HttpClient::can_reach_server(this->host, this->port);
+	return HttpsClient::can_reach_server(this->host, this->port);
 }
 
 
@@ -557,4 +585,62 @@ void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals)
 	}
 }
 
+void LoggerBase::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
 
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = stream.timeStamp;
+		
+		if(timestamp > lastLidarTimestamp){
+		
+			char arr[stream.vector_length];
+			auto v = stream.stream;
+			std::copy(v.begin(), v.end(), arr);
+			
+			rawGnssOutputFile.write((char*)arr, stream.vector_length);
+		}
+		
+		lastLidarTimestamp = timestamp;
+	}
+	
+	
+}
+
+bool LoggerBase::compress(std::string &zipFilename, std::vector<std::string> &filesVector){
+	
+	std::string files;
+	for(auto file : filesVector){
+		//TODO delete empty files
+		files+= " " + file;
+	}
+	
+	std::string command = "zip -Tmj " + outputFolder + "/" + zipFilename + files;
+	
+	int zip = std::system(command.c_str());
+	
+	if(zip == 0){
+		return true;
+	}
+	else{
+		ROS_ERROR_STREAM("Cannot zip files \nZipping process returned" << zip);
+		ROS_ERROR_STREAM(command);
+		return false;
+	}	
+}
+
+void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream){
+
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = stream.timeStamp;
+		
+		if(timestamp > lastSonarTimestamp){
+		
+			char arr[stream.vector_length];
+			auto v = stream.stream;
+			std::copy(v.begin(), v.end(), arr);
+			
+			rawSonarOutputFile.write((char*)arr, stream.vector_length);
+		}
+		
+		lastLidarTimestamp = timestamp;
+	}
+}

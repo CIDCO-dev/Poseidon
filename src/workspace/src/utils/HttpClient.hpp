@@ -163,7 +163,7 @@ public:
 				ROS_ERROR_STREAM("Can_reach_https_server() response: " << res.result());
 			}
 
-			// If we get here then the connection is closed gracefully
+		// If we get here then the connection is closed gracefully
 		}
 		catch(std::exception const& e){
 			status = false;

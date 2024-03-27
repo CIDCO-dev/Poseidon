@@ -21,7 +21,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 	
-	if (!node.getParam("/logger/sonarFileExtension", this->fileExtensionForSonarDatagram))
+	if (!node.getParam("/logger/fileExtensionForSonarDatagram", this->fileExtensionForSonarDatagram))
 	{
 		ROS_ERROR_STREAM("No Sonar protocol file extention defined, defaulting to .son");
 		this->fileExtensionForSonarDatagram = ".son";

@@ -31,7 +31,8 @@
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
 
 <node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1">
-	<param name="sonarFileExtension" value=".img852"/>
+<!--	file extension cannot be numbers only -> rosparam will think its a number instead of a string-->
+	<param name="fileExtensionForSonarDatagram" value=".img852"/>
 	<param name="fileExtensionForGpsDatagram" value=".ubx"/>
 </node>
 

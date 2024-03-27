@@ -13,6 +13,7 @@
 
 #include "setting_msg/Setting.h"
 #include "setting_msg/ConfigurationService.h"
+#include "binary_stream_msg/Stream.h"
 
 #pragma pack(1)
 typedef struct{
@@ -60,6 +61,7 @@ class Imagenex852{
 	public:
 		Imagenex852(std::string devicePath) : devicePath(devicePath){
 			sonarTopic = node.advertise<geometry_msgs::PointStamped>("depth", 1000);
+			sonarBinStreamTopic = node.advertise<binary_stream_msg::Stream>("sonar_bin_stream", 1000);
 			sonarTopicEnu = node.advertise<geometry_msgs::PointStamped>("depth_enu", 1000);
 			ros::Subscriber sub = node.subscribe("configuration", 1000, &Imagenex852::configurationChange,this);
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
@@ -103,15 +105,24 @@ class Imagenex852{
 		void configurationChange(const setting_msg::Setting & setting){
 			if(setting.key.compare("sonarStartGain")==0){
 				setConfigValue(setting.value,&sonarStartGain);
+				this->paramFlag++;
 			}
 			else if(setting.key.compare("sonarRange")==0){
 				setConfigValue(setting.value,&sonarRange);
+				this->paramFlag++;
 			}
 			else if(setting.key.compare("sonarAbsorbtion")==0){
 				setConfigValue(setting.value,&sonarAbsorbtion);
+				this->paramFlag++;
 			}
 			else if(setting.key.compare("sonarPulseLength")==0){
 				setConfigValue(setting.value,&sonarPulseLength);
+				this->paramFlag++;
+			}
+			
+			if(paramFlag >= 4){
+				paramFlag = 0;
+				send_command();
 			}
 		}
 
@@ -162,8 +173,7 @@ class Imagenex852{
 					ROS_INFO("Sonar file opened on %s",devicePath.c_str());
 					
 					
-					send_command(0);
-					
+					send_command();
 					ros::Rate error_rate( 1 );
 
 					while(ros::ok()){
@@ -176,6 +186,7 @@ class Imagenex852{
 								if(read_buf[0] == 73){
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 										packetType = read_buf[0];
+										//std::cout<<(char)packetType<<"\n";
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 											if(read_buf[0] == 0x58){
 												Imagenex852ReturnDataHeader hdr;
@@ -230,7 +241,8 @@ class Imagenex852{
 			return totalRead;
 		}
 		
-		void send_command(int dataPoints){
+		void send_command(){
+			//sonar needs a power cycle to change its configuration
 			
 			Imagenex852SwitchDataCommand cmd;
 			memset(&cmd,0,sizeof(Imagenex852SwitchDataCommand));
@@ -249,12 +261,12 @@ class Imagenex852{
 
 			cmd.profileMinimumRange =  0; //Min range in meters / 10
 			cmd.triggerControl = 0x07; //Trigger enabled on positive edge
-			cmd.dataPoints  = (dataPoints > 0)? dataPoints/10: 0; //XXX
-			cmd.profile	 = (dataPoints > 0)? 0: 1; //XXX
+			cmd.dataPoints  = (this->dataPoints > 0)? this->dataPoints:0; //XXX
+			cmd.profile	 = (this->dataPoints > 0)? 0:1; //XXX
 			cmd.switchDelay = 0;
 			cmd.frequency   = 0;
 			cmd.terminationByte = 0xFD;
-
+			
 			unsigned int nbBytes;
 			
 			if( (nbBytes = write(deviceFile,&cmd,sizeof(Imagenex852SwitchDataCommand))) != 27){
@@ -264,14 +276,15 @@ class Imagenex852{
 		}
 		
 		void process_data(Imagenex852ReturnDataHeader hdr){
+			int dataSize = 0;
 			
-			int dataPoints = 0;
+			//std::cout<<hdr.magic <<"\n";
 			
 			if(hdr.magic[1] == 'M'){
-				dataPoints = 252;
+				dataSize = 252;
 			}
 			else if(hdr.magic[1] == 'G'){
-				dataPoints = 500;
+				dataSize = 500;
 			}
 			else if(hdr.magic[1] == 'P'){
 				//no data points
@@ -303,17 +316,25 @@ class Imagenex852{
 			msg.header.stamp = ros::Time::now();
 			msg.header.stamp.nsec = delayNanoseconds; //Chop off sub-second values since the sonar trigger is clocked on the PPS...we may want to add a delay value though
 			
-			if(dataPoints > 0){
-				uint8_t echoData[dataPoints];
+			std::vector<uint8_t> binaryStreamMsg;
+			binary_stream_msg::Stream stream;
+			
+			if(dataSize > 0){
+				uint8_t echoData[dataSize];
 				
-				int nbBytes = serialRead(echoData, dataPoints);
+				int nbBytes = serialRead(echoData, dataSize);
 				
-				if(nbBytes != dataPoints){
+				if(nbBytes != dataSize){
 					ROS_ERROR("Could not read datapoints ( %d bytes read)",nbBytes);
 					throw std::system_error();
 				}
 				
-				//TODO process data points
+				uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&hdr);
+				binaryStreamMsg.insert(binaryStreamMsg.end(), bytePtr, bytePtr + sizeof(Imagenex852ReturnDataHeader));
+				binaryStreamMsg.insert(binaryStreamMsg.end(), echoData, echoData + dataSize);
+				
+				//std::cout<<binaryStreamMsg.size()<<" = binaryStreamMsg.size()\n";
+				
 			}
 			
 			uint8_t terminationCharacter;
@@ -335,7 +356,12 @@ class Imagenex852{
 			msg.point.z = -1 * msg.point.z;
 			sonarTopicEnu.publish(msg);
 			
-			// TODO publish stream
+			if(binaryStreamMsg.size() > sizeof(Imagenex852ReturnDataHeader)){
+				binaryStreamMsg.push_back(terminationCharacter);
+				stream.vector_length = binaryStreamMsg.size();
+				stream.stream = binaryStreamMsg;
+				sonarBinStreamTopic.publish(stream);
+			}
 		}
 
 	private:
@@ -344,10 +370,13 @@ class Imagenex852{
 		uint8_t sonarRange = 32;
 		uint8_t sonarAbsorbtion = 0x14; //20 = 0.2db	675kHz
 		uint8_t sonarPulseLength= 150;
+		int paramFlag = 0;
+		uint8_t dataPoints = 50;
 
 		ros::NodeHandle		node;
 		ros::Publisher		sonarTopic;
 		ros::Publisher		sonarTopicEnu;
+		ros::Publisher		sonarBinStreamTopic;
 		ros::ServiceClient	configurationClient;
 		ros::Subscriber configSubscriber;
 

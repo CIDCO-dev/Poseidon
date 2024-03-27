@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   setting_msg
+  binary_stream_msg
 )
 
 ## System dependencies are found with CMake's conventions

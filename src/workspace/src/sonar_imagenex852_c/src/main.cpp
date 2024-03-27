@@ -174,6 +174,7 @@ class Imagenex852{
 					
 					
 					send_command();
+					std::cerr<<"command sent \n";
 					
 					ros::Rate error_rate( 1 );
 
@@ -275,14 +276,14 @@ class Imagenex852{
 		}
 		
 		void process_data(Imagenex852ReturnDataHeader hdr){
-			
-			int dataPoints = 0;
+			std::cerr<<"process_data \n";
+			int data = 0;
 			
 			if(hdr.magic[1] == 'M'){
-				dataPoints = 252;
+				data = 252;
 			}
 			else if(hdr.magic[1] == 'G'){
-				dataPoints = 500;
+				data = 500;
 			}
 			else if(hdr.magic[1] == 'P'){
 				//no data points
@@ -368,7 +369,7 @@ class Imagenex852{
 		uint8_t sonarAbsorbtion = 0x14; //20 = 0.2db	675kHz
 		uint8_t sonarPulseLength= 150;
 		int paramFlag = 0;
-		int dataPoints = 500;
+		int dataPoints = 50;
 
 		ros::NodeHandle		node;
 		ros::Publisher		sonarTopic;

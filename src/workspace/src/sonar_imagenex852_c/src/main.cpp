@@ -261,11 +261,13 @@ class Imagenex852{
 			cmd.profileMinimumRange =  0; //Min range in meters / 10
 			cmd.triggerControl = 0x07; //Trigger enabled on positive edge
 			cmd.dataPoints  = (this->dataPoints > 0)? this->dataPoints:0; //XXX
-			cmd.profile	 = (this->dataPoints > 0)? 0: 1; //XXX
+			cmd.profile	 = (this->dataPoints > 0)? 1: 0; //XXX
 			cmd.switchDelay = 0;
 			cmd.frequency   = 0;
 			cmd.terminationByte = 0xFD;
-
+			
+			std::cout<<"cmd dataPoints : " << cmd.dataPoints <<"\n";
+			std::cout<<"cmd profile : " << cmd.profile <<"\n";
 			unsigned int nbBytes;
 			
 			if( (nbBytes = write(deviceFile,&cmd,sizeof(Imagenex852SwitchDataCommand))) != 27){
@@ -318,8 +320,8 @@ class Imagenex852{
 			std::vector<uint8_t> binaryStreamMsg;
 			binary_stream_msg::Stream stream;
 			
-			std::cerr<<data<<"\n";
-			
+			std::cerr<<"data: " << data<<"\n";
+			std::cerr<<"dataPoints: " << dataPoints<<"\n";
 			if(this->dataPoints > 0){
 				uint8_t echoData[data];
 				

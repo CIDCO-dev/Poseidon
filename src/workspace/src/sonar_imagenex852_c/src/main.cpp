@@ -315,21 +315,21 @@ class Imagenex852{
 			std::vector<uint8_t> binaryStreamMsg;
 			binary_stream_msg::Stream stream;
 			
-			std::cerr<<dataPoints<<"\n";
+			std::cerr<<data<<"\n";
 			
 			if(this->dataPoints > 0){
-				uint8_t echoData[this->dataPoints];
+				uint8_t echoData[data];
 				
-				int nbBytes = serialRead(echoData, dataPoints);
+				int nbBytes = serialRead(echoData, data);
 				
-				if(nbBytes != dataPoints){
+				if(nbBytes != data){
 					ROS_ERROR("Could not read datapoints ( %d bytes read)",nbBytes);
 					throw std::system_error();
 				}
 				
-				uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&Imagenex852ReturnDataHeader);
+				uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&hdr);
 				binaryStreamMsg.insert(binaryStreamMsg.end(), bytePtr, bytePtr + sizeof(Imagenex852ReturnDataHeader));
-				binaryStreamMsg.insert(binaryStreamMsg.end(), echoData, echoData + this->dataPoints);
+				binaryStreamMsg.insert(binaryStreamMsg.end(), echoData, echoData + data);
 				
 				std::cout<<binaryStreamMsg.size()<<" = binaryStreamMsg.size()\n";
 				

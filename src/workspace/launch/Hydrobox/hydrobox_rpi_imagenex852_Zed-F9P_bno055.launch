@@ -31,8 +31,8 @@
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
 
 <node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1">
-	<param name="fileExtensionForGpsDatagram" value=".ubx"
-		   name="fileExtensionForSonarDatagram" value=".852"/>
+	<param name="fileExtensionForSonarDatagram" value=".852"/>
+	<param name="fileExtensionForGpsDatagram" value=".ubx"/>
 </node>
 
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>

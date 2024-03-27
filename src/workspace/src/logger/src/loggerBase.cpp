@@ -21,16 +21,16 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
 	
-	if (!node.getParam("/logger/fileExtensionForGpsDatagram", this->fileExtensionForGpsDatagram))
-	{
-		ROS_ERROR_STREAM("No Gnss protocol file extention defined, defaulting to .gps");
-		this->fileExtensionForGpsDatagram = ".gps";
-	}
-	
 	if (!node.getParam("/logger/sonarFileExtension", this->fileExtensionForSonarDatagram))
 	{
 		ROS_ERROR_STREAM("No Sonar protocol file extention defined, defaulting to .son");
 		this->fileExtensionForSonarDatagram = ".son";
+	}
+	
+	if (!node.getParam("/logger/fileExtensionForGpsDatagram", this->fileExtensionForGpsDatagram))
+	{
+		ROS_ERROR_STREAM("No Gnss protocol file extention defined, defaulting to .gps");
+		this->fileExtensionForGpsDatagram = ".gps";
 	}
 	
 	updateLogRotationInterval();

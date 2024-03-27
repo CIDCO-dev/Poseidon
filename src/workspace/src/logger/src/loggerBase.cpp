@@ -27,7 +27,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 		this->fileExtensionForGpsDatagram = ".gps";
 	}
 	
-	if (!node.getParam("/logger/fileExtensionForSonarDatagram", this->fileExtensionForSonarDatagram))
+	if (!node.getParam("/logger/sonarFileExtension", this->fileExtensionForSonarDatagram))
 	{
 		ROS_ERROR_STREAM("No Sonar protocol file extention defined, defaulting to .son");
 		this->fileExtensionForSonarDatagram = ".son";

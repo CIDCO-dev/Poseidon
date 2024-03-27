@@ -174,8 +174,6 @@ class Imagenex852{
 					
 					
 					send_command();
-					std::cerr<<"command sent \n";
-					
 					ros::Rate error_rate( 1 );
 
 					while(ros::ok()){
@@ -276,7 +274,6 @@ class Imagenex852{
 		}
 		
 		void process_data(Imagenex852ReturnDataHeader hdr){
-			std::cerr<<"process_data \n";
 			int data = 0;
 			
 			if(hdr.magic[1] == 'M'){
@@ -330,7 +327,8 @@ class Imagenex852{
 					throw std::system_error();
 				}
 				
-				std::memcpy(binaryStreamMsg.data(), &hdr, sizeof(Imagenex852ReturnDataHeader));
+				uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&Imagenex852ReturnDataHeader);
+				binaryStreamMsg.insert(binaryStreamMsg.end(), bytePtr, bytePtr + sizeof(Imagenex852ReturnDataHeader));
 				binaryStreamMsg.insert(binaryStreamMsg.end(), echoData, echoData + this->dataPoints);
 				
 				std::cout<<binaryStreamMsg.size()<<" = binaryStreamMsg.size()\n";

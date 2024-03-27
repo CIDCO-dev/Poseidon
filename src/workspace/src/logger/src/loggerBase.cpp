@@ -555,7 +555,6 @@ bool LoggerBase::send_job(std::string json){
 			status = false;
 			ROS_ERROR_STREAM("send_job() response: " << res.result());
 		}
-
 	}
 	catch(std::exception const& e){
 		ROS_ERROR_STREAM("Post request error: " << e.what());

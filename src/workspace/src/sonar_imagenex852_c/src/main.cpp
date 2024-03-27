@@ -186,7 +186,7 @@ class Imagenex852{
 								if(read_buf[0] == 73){
 									if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 										packetType = read_buf[0];
-										std::cout<<(char)packetType<<"\n";
+										//std::cout<<(char)packetType<<"\n";
 										if(serialRead((uint8_t*)&read_buf, sizeof(read_buf)) == 1){
 											if(read_buf[0] == 0x58){
 												Imagenex852ReturnDataHeader hdr;
@@ -242,6 +242,7 @@ class Imagenex852{
 		}
 		
 		void send_command(){
+			//sonar needs a power cycle to change its configuration
 			
 			Imagenex852SwitchDataCommand cmd;
 			memset(&cmd,0,sizeof(Imagenex852SwitchDataCommand));
@@ -261,13 +262,11 @@ class Imagenex852{
 			cmd.profileMinimumRange =  0; //Min range in meters / 10
 			cmd.triggerControl = 0x07; //Trigger enabled on positive edge
 			cmd.dataPoints  = (this->dataPoints > 0)? this->dataPoints:0; //XXX
-			cmd.profile	 = (this->dataPoints > 0)? 1: 0; //XXX
+			cmd.profile	 = (this->dataPoints > 0)? 0:1; //XXX
 			cmd.switchDelay = 0;
 			cmd.frequency   = 0;
 			cmd.terminationByte = 0xFD;
 			
-			std::cout<<"cmd dataPoints : " << (int)cmd.dataPoints <<"\n";
-			std::cout<<"cmd profile : " << (int)cmd.profile <<"\n";
 			unsigned int nbBytes;
 			
 			if( (nbBytes = write(deviceFile,&cmd,sizeof(Imagenex852SwitchDataCommand))) != 27){
@@ -277,15 +276,15 @@ class Imagenex852{
 		}
 		
 		void process_data(Imagenex852ReturnDataHeader hdr){
-			int data = 0;
+			int dataSize = 0;
 			
 			std::cout<<hdr.magic <<"\n";
 			
 			if(hdr.magic[1] == 'M'){
-				data = 252;
+				dataSize = 252;
 			}
 			else if(hdr.magic[1] == 'G'){
-				data = 500;
+				dataSize = 500;
 			}
 			else if(hdr.magic[1] == 'P'){
 				//no data points
@@ -320,21 +319,19 @@ class Imagenex852{
 			std::vector<uint8_t> binaryStreamMsg;
 			binary_stream_msg::Stream stream;
 			
-			std::cerr<<"data: " << data<<"\n";
-			std::cerr<<"dataPoints: " << (int)this->dataPoints<<"\n";
-			if(this->dataPoints > 0){
-				uint8_t echoData[data];
+			if(data > 0){
+				uint8_t echoData[dataSize];
 				
-				int nbBytes = serialRead(echoData, data);
+				int nbBytes = serialRead(echoData, dataSize);
 				
-				if(nbBytes != data){
+				if(nbBytes != dataSize){
 					ROS_ERROR("Could not read datapoints ( %d bytes read)",nbBytes);
 					throw std::system_error();
 				}
 				
 				uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&hdr);
 				binaryStreamMsg.insert(binaryStreamMsg.end(), bytePtr, bytePtr + sizeof(Imagenex852ReturnDataHeader));
-				binaryStreamMsg.insert(binaryStreamMsg.end(), echoData, echoData + data);
+				binaryStreamMsg.insert(binaryStreamMsg.end(), echoData, echoData + dataSize);
 				
 				std::cout<<binaryStreamMsg.size()<<" = binaryStreamMsg.size()\n";
 				
@@ -359,10 +356,12 @@ class Imagenex852{
 			msg.point.z = -1 * msg.point.z;
 			sonarTopicEnu.publish(msg);
 			
-			binaryStreamMsg.push_back(terminationCharacter);
-			stream.vector_length = binaryStreamMsg.size();
-			stream.stream = binaryStreamMsg;
-			sonarBinStreamTopic.publish(stream);
+			if(dataSize > 0){
+				binaryStreamMsg.push_back(terminationCharacter);
+				stream.vector_length = binaryStreamMsg.size();
+				stream.stream = binaryStreamMsg;
+				sonarBinStreamTopic.publish(stream);
+			}
 		}
 
 	private:

@@ -266,8 +266,8 @@ class Imagenex852{
 			cmd.frequency   = 0;
 			cmd.terminationByte = 0xFD;
 			
-			std::cout<<"cmd dataPoints : " << cmd.dataPoints <<"\n";
-			std::cout<<"cmd profile : " << cmd.profile <<"\n";
+			std::cout<<"cmd dataPoints : " << (int)cmd.dataPoints <<"\n";
+			std::cout<<"cmd profile : " << (int)cmd.profile <<"\n";
 			unsigned int nbBytes;
 			
 			if( (nbBytes = write(deviceFile,&cmd,sizeof(Imagenex852SwitchDataCommand))) != 27){
@@ -321,7 +321,7 @@ class Imagenex852{
 			binary_stream_msg::Stream stream;
 			
 			std::cerr<<"data: " << data<<"\n";
-			std::cerr<<"dataPoints: " << dataPoints<<"\n";
+			std::cerr<<"dataPoints: " << (int)this->dataPoints<<"\n";
 			if(this->dataPoints > 0){
 				uint8_t echoData[data];
 				
@@ -372,7 +372,7 @@ class Imagenex852{
 		uint8_t sonarAbsorbtion = 0x14; //20 = 0.2db	675kHz
 		uint8_t sonarPulseLength= 150;
 		int paramFlag = 0;
-		int dataPoints = 50;
+		uint8_t dataPoints = 50;
 
 		ros::NodeHandle		node;
 		ros::Publisher		sonarTopic;

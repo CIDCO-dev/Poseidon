@@ -278,7 +278,7 @@ class Imagenex852{
 		void process_data(Imagenex852ReturnDataHeader hdr){
 			int dataSize = 0;
 			
-			std::cout<<hdr.magic <<"\n";
+			//std::cout<<hdr.magic <<"\n";
 			
 			if(hdr.magic[1] == 'M'){
 				dataSize = 252;
@@ -333,7 +333,7 @@ class Imagenex852{
 				binaryStreamMsg.insert(binaryStreamMsg.end(), bytePtr, bytePtr + sizeof(Imagenex852ReturnDataHeader));
 				binaryStreamMsg.insert(binaryStreamMsg.end(), echoData, echoData + dataSize);
 				
-				std::cout<<binaryStreamMsg.size()<<" = binaryStreamMsg.size()\n";
+				//std::cout<<binaryStreamMsg.size()<<" = binaryStreamMsg.size()\n";
 				
 			}
 			
@@ -356,7 +356,7 @@ class Imagenex852{
 			msg.point.z = -1 * msg.point.z;
 			sonarTopicEnu.publish(msg);
 			
-			if(dataSize > 0){
+			if(binaryStreamMsg.size() > sizeof(Imagenex852ReturnDataHeader)){
 				binaryStreamMsg.push_back(terminationCharacter);
 				stream.vector_length = binaryStreamMsg.size();
 				stream.stream = binaryStreamMsg;

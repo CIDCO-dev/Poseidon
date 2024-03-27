@@ -319,7 +319,7 @@ class Imagenex852{
 			std::vector<uint8_t> binaryStreamMsg;
 			binary_stream_msg::Stream stream;
 			
-			if(data > 0){
+			if(dataSize > 0){
 				uint8_t echoData[dataSize];
 				
 				int nbBytes = serialRead(echoData, dataSize);

@@ -16,7 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   #tf2_ros
 )
 find_package(RapidJSON REQUIRED)
-
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenSSL REQUIRED)
 find_library(libgps REQUIRED)
 
 ## System dependencies are found with CMake's conventions
@@ -154,7 +155,7 @@ add_executable(${PROJECT_NAME}_node nodes/diagnostics_websocket_node.cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES} gps
+   ${catkin_LIBRARIES} gps Boost::system OpenSSL::SSL OpenSSL::Crypto
  )
 
 #############

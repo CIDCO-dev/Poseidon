@@ -289,7 +289,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			this->activatedTransfer = false;
 		}
 		else{
-			this->host = setting.value;
+			this->host = trimSpaces(temp);
 			this->activatedTransfer = true;
 		}
 	}
@@ -299,7 +299,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			this->target = "/";
 		}
 		else{
-			this->target = setting.value;
+			this->target = trimSpaces(temp);
 		}
 	}
 	else if(setting.key == "apiPort"){
@@ -308,7 +308,16 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			this->port = "8080";
 		}
 		else{
-			this->port = setting.value;
+			std::cout<<"port : " << this->port <<"\n";
+		}
+	}
+	else if(setting.key == "apiKey"){
+		std::string temp = setting.value;
+		if(trimSpaces(temp) == ""){
+			this->apiKey = "SECRET";
+		}
+		else{
+			this->apiKey = trimSpaces(temp);
 		}
 	}
 	else if(setting.key == "logRotationIntervalSeconds"){
@@ -478,6 +487,7 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	return sb.GetString();
 }
 
+// https transfer
 bool LoggerBase::send_job(std::string json){
 	bool status = false;
 	
@@ -499,7 +509,6 @@ bool LoggerBase::send_job(std::string json){
 
 		// These objects perform our I/O
 		boost::asio::ip::tcp::resolver resolver(ioService);
-		//boost::beast::tcp_stream stream(ioService);
 		boost::beast::ssl_stream<boost::beast::tcp_stream> stream(ioService, ctx);
 
 		// Look up the domain name
@@ -538,8 +547,11 @@ bool LoggerBase::send_job(std::string json){
 		if(ec2 && ec2 != boost::asio::error::eof && ec2 != boost::asio::ssl::error::stream_errors::stream_truncated){
 			ec2 = {};
 		}
+		
 		boost::beast::error_code ec;
-
+		
+		//std::cout<<res <<"\n";
+		
 		if(res.result() == boost::beast::http::status::ok){
 			stream.shutdown(ec);
 			if(ec && ec != boost::asio::error::eof && ec != boost::asio::ssl::error::stream_errors::stream_truncated){
@@ -643,3 +655,90 @@ void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream)
 		lastLidarTimestamp = timestamp;
 	}
 }
+
+// http transfer
+
+//bool LoggerBase::send_job(std::string json){
+//	bool status = false;
+//	
+//	try{
+//		int version = 11;
+//		
+//		// The io_context is required for all I/O
+//		boost::asio::io_context ioService;
+
+//		// These objects perform our I/O
+//		boost::asio::ip::tcp::resolver resolver(ioService);
+//		boost::beast::tcp_stream stream(ioService);
+
+//		// Look up the domain name
+//		auto const results = resolver.resolve(this->host, this->port);
+
+//		// Make the connection on the IP address we get from a lookup
+//		stream.connect(results);
+
+//		// Set up an HTTP GET request message
+//		boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, this->target, version};
+//		req.set(boost::beast::http::field::host, this->host);
+//		req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+
+//		req.body() = json;
+//		req.prepare_payload();
+//		
+//		std::cout<<req<<"\n";
+//		
+//		//Send the HTTP request to the remote host
+//		boost::beast::http::write(stream, req);
+//		
+//		
+////		size_t bytes_written = 0;
+////		while (bytes_written < json.size()) {
+////			size_t chunk_size = std::min<size_t>(json.size() - bytes_written, 1024); // Chunk size of 1024 bytes
+////			boost::asio::write(stream, boost::asio::buffer(&json[bytes_written], chunk_size));
+////			bytes_written += chunk_size;
+////		}
+
+//		
+
+//		// This buffer is used for reading and must be persisted
+//		boost::beast::flat_buffer buffer;
+
+//		// Declare a container to hold the response
+//		boost::beast::http::response<boost::beast::http::dynamic_body> res;
+
+//		// Receive the HTTP response
+//		boost::beast::http::read(stream, buffer, res);
+//		boost::beast::error_code ec;
+//		
+//		std::cout<<res <<"\n";
+//		
+//		if (res.result() == boost::beast::http::status::temporary_redirect) {
+//			// Extract new location
+//			std::string new_location = res.base().at("Location").to_string();
+//			std::cout<<"redirect : " << new_location <<"\n";
+//		}
+
+//		if(res.result() == boost::beast::http::status::ok){
+//			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+//			if(ec && ec != boost::beast::errc::not_connected){
+//				throw boost::beast::system_error{ec};
+//			}
+//			status = true;
+//		}
+//		else{
+//		 	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+//			if(ec && ec != boost::beast::errc::not_connected){
+//				throw boost::beast::system_error{ec};
+//			}
+//			status = false;
+//			ROS_ERROR_STREAM("send_job() response: " << res.result());
+//		}
+
+//	}
+//	catch(std::exception const& e)
+//	{
+//		ROS_ERROR_STREAM("Post request error: " << e.what());
+//	}
+//	return status;
+//}
+

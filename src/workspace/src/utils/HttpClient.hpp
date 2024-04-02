@@ -44,10 +44,17 @@ public:
 
 			// Declare a container to hold the response
 			boost::beast::http::response<boost::beast::http::dynamic_body> res;
-
+			
+			
 			// Receive the HTTP response
 			boost::beast::http::read(stream, buffer, res);
 			boost::beast::error_code ec;
+			
+			if (res.result() == boost::beast::http::status::temporary_redirect) {
+				// Extract new location
+				std::string new_location = res.base().at("Location").to_string();
+				std::cout<<"redirect : " << new_location <<"\n";
+			}
 
 			if(res.result() == boost::beast::http::status::ok){
 				stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
@@ -62,17 +69,11 @@ public:
 					throw boost::beast::system_error{ec};
 				}
 				status = false;
-//				std::string error = "can_reach_server() response: ";
-//				error+=std::to_string(res.result_int());
-//				throw std::runtime_error(error);
 				std::cerr<<"can_reach_server() response: " << res.result() <<"\n";
 			}
 
 		}
 		catch(std::exception const& e){
-//			std::string error = "Get request error: ";
-//			error+=e.what();
-//			throw std::runtime_error(error);
 			std::cerr<< "Get request error: " << e.what()<<"\n";
 		}
 		
@@ -143,6 +144,12 @@ public:
 			boost::beast::http::read(stream, buffer, res, ec2);
 			if(ec2 && ec2 != boost::asio::error::eof && ec2 != boost::asio::ssl::error::stream_errors::stream_truncated){
 				ec2 = {};
+			}
+			
+			if (res.result() == boost::beast::http::status::temporary_redirect) {
+				// Extract new location
+				std::string new_location = res.base().at("Location").to_string();
+				std::cout<<"redirect : " << new_location <<"\n";
 			}
 			
 			

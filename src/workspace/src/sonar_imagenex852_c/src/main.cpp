@@ -72,6 +72,10 @@ class Imagenex852{
 		~Imagenex852(){
 			if(deviceFile>=0) close(deviceFile);
 		}
+		
+		void set_dataPoints(uint8_t _dataPoints){
+			this->dataPoints = _dataPoints;
+		}
 
 		void getConfiguration(){
 			char *	configKeys[] = {"sonarStartGain","sonarRange","sonarAbsorbtion","sonarPulseLength"};
@@ -371,7 +375,7 @@ class Imagenex852{
 		uint8_t sonarAbsorbtion = 0x14; //20 = 0.2db	675kHz
 		uint8_t sonarPulseLength= 150;
 		int paramFlag = 0;
-		uint8_t dataPoints = 50;
+		uint8_t dataPoints = 0;
 
 		ros::NodeHandle		node;
 		ros::Publisher		sonarTopic;
@@ -392,15 +396,29 @@ int main(int argc,char ** argv){
 	ros::init(argc,argv,"sonar_imagenex852");
 
 	try{
-		//TODO: parameterize path
+		
 		Imagenex852 sonar("/dev/sonar");
+		uint8_t dataPoints = 0;
+		
+		//dataPoints options are 0 , 25, 50
+		if(argc == 2){
+			try{
+				dataPoints = (uint8_t)std::stoi(argv[1]);
+			}
+			catch(std::exception &e){
+				ROS_ERROR("Error: %s",e.what());
+			}
+			
+			sonar.set_dataPoints(dataPoints);
+		}
+		
 		std::thread t(std::bind(&Imagenex852::run,&sonar));
 	
 		ros::Rate loop_rate( 10 ); // 10 Hz
-	while(ros::ok()){
-		ros::spinOnce();
-		loop_rate.sleep();
-	}
+		while(ros::ok()){
+			ros::spinOnce();
+			loop_rate.sleep();
+		}
 
 	}
 	catch(std::exception &e){

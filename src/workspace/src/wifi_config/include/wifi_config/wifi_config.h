@@ -145,7 +145,7 @@ class WifiConfig{
 					deleteOldConnection();
 				}
 				
-				this->ssid = this->newSsid;			
+				this->ssid = this->newSsid;
 				set_wifi_config();
 			}
 			

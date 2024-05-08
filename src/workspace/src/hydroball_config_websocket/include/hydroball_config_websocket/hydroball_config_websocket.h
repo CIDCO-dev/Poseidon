@@ -15,6 +15,9 @@
 #include <boost/lexical_cast.hpp>
 #include <mutex>
 #include <string>
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
 
 #include "ros/ros.h"
 #include <ros/console.h>
@@ -38,6 +41,7 @@
 
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
+#include "../../utils/string_utils.hpp"
 
 
 typedef websocketpp::server<websocketpp::config::asio> server;
@@ -328,6 +332,48 @@ public:
 
 	void updateHotspotSSID(){
 		
+		if(!isSameSSID()){
+			std::string cmd = "sudo nmcli con modify Hotspot 802-11-wireless.ssid ";
+			cmd += configuration["hotspotSSID"];
+			std::system(cmd.c_str());
+			std::system("sudo nmcli con down Hotspot");
+			std::system("sudo nmcli con up Hotspot");
+			if(!isSameSSID()){
+				ROS_ERROR("Error in updating hotspotSSID");
+			}
+		}
+		
+	}
+	
+	bool isSameSSID(){
+		std::array<char, 128> buffer;
+		std::string result;
+		std::shared_ptr<FILE> pipe(popen("nmcli con show Hotspot | grep wireless.ssid", "r"), pclose);
+		if (!pipe) {
+			throw std::runtime_error("popen() failed!");
+		}
+		while (!feof(pipe.get())) {
+			if (fgets(buffer.data(), 128, pipe.get()) != nullptr) {
+				result += buffer.data();
+			}
+		}
+		result.erase(0,20);
+		std::string ssid;
+		
+		for (char c : result) {
+			if (isalnum(c)) {// Check if character is alphanumeric
+				ssid += c;	
+			}
+		}
+		
+		std::cout<<"ssid: " << ssid <<"\n";
+		
+		if(ssid == configuration["hotspotSSID"]){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 private:

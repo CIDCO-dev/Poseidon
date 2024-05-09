@@ -15,6 +15,9 @@
 #include <boost/lexical_cast.hpp>
 #include <mutex>
 #include <string>
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
 
 #include "ros/ros.h"
 #include <ros/console.h>
@@ -38,6 +41,7 @@
 
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
+#include "../../utils/string_utils.hpp"
 
 
 typedef websocketpp::server<websocketpp::config::asio> server;
@@ -54,7 +58,7 @@ public:
 		srv.set_close_handler(bind(&ConfigurationServer::on_close,this,std::placeholders::_1));
 		srv.set_message_handler(bind(&ConfigurationServer::on_message,this,std::placeholders::_1,std::placeholders::_2));
 		
-		configTopic     = n.advertise<setting_msg::Setting>("configuration", 1000);
+		configTopic	 = n.advertise<setting_msg::Setting>("configuration", 1000);
 		configService   = n.advertiseService("get_configuration", &ConfigurationServer::getConfigurationService,this);
 		zeroImuService  = n.advertiseService("zero_imu_offsets", &ConfigurationServer::zeroImuOffsetService,this);
 		getStateClient  = n.serviceClient<state_controller_msg::GetStateService>("get_state");
@@ -114,25 +118,25 @@ public:
 
 	void stop() {
 		
-	    websocketpp::lib::error_code ec_stop_listening;
-	    srv.stop_listening(ec_stop_listening);
-	    if(ec_stop_listening) {
-	        ROS_ERROR_STREAM("failed to stop listening: " << ec_stop_listening.message());
-	        return;
-	    }
+		websocketpp::lib::error_code ec_stop_listening;
+		srv.stop_listening(ec_stop_listening);
+		if(ec_stop_listening) {
+			ROS_ERROR_STREAM("failed to stop listening: " << ec_stop_listening.message());
+			return;
+		}
 
-	    std::string closingMessage = "Server has closed the connection";
-	    for (auto it : connections) {
-	        websocketpp::lib::error_code ec_close_connection;
+		std::string closingMessage = "Server has closed the connection";
+		for (auto it : connections) {
+			websocketpp::lib::error_code ec_close_connection;
 
-            srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
-            if(ec_close_connection) {
-                ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
-            }
-        }
+			srv.close(it,websocketpp::close::status::normal,closingMessage, ec_close_connection);
+			if(ec_close_connection) {
+				ROS_ERROR_STREAM("failed to close connection: " << ec_close_connection.message());
+			}
+		}
 
-	    ROS_INFO("Stopping Configuration server");
-        srv.stop();
+		ROS_INFO("Stopping Configuration server");
+		srv.stop();
 	}
 
 	//Read configuration from file
@@ -164,20 +168,20 @@ public:
 
 	//Write configuration to file
 	void writeConfigurationToFile(){
-        std::ofstream out;
+		std::ofstream out;
 
-        out.open(configFilePath,std::ofstream::trunc);
+		out.open(configFilePath,std::ofstream::trunc);
 
-        if(out.is_open()){
-            for(auto i = configuration.begin();i!=configuration.end();i++){
-                out << i->first << " " << i->second << std::endl;
-            }
+		if(out.is_open()){
+			for(auto i = configuration.begin();i!=configuration.end();i++){
+				out << i->first << " " << i->second << std::endl;
+			}
 
-            out.close();
-        }
-        else{
-                throw std::invalid_argument(std::string("Cannot open file ") + configFilePath);
-        }
+			out.close();
+		}
+		else{
+				throw std::invalid_argument(std::string("Cannot open file ") + configFilePath);
+		}
 	}
 
 	//Send settings as a JSON object
@@ -234,6 +238,7 @@ public:
 			writeConfigurationToFile();
 			broadcastConfiguration();
 			broadcastImuTransform();
+			updateHotspotSSID();
 		}
 		else{
 			ROS_ERROR("%s","Configuration array not found");
@@ -275,9 +280,9 @@ public:
 				//pack transform and send
 				geometry_msgs::TransformStamped imuTransform;
 
-				imuTransform.header.stamp         = ros::Time::now();
-				imuTransform.header.frame_id      = "base_link";
-				imuTransform.child_frame_id       = "imu";
+				imuTransform.header.stamp		 = ros::Time::now();
+				imuTransform.header.frame_id	  = "base_link";
+				imuTransform.child_frame_id	   = "imu";
 				imuTransform.transform.rotation.x = q.x();
 				imuTransform.transform.rotation.y = q.y();
 				imuTransform.transform.rotation.z = q.z();
@@ -289,9 +294,9 @@ public:
 	}
 
 	bool getConfigurationService(setting_msg::ConfigurationService::Request & req,setting_msg::ConfigurationService::Response & res){
-                if(configuration.find(req.key) != configuration.end()){
-	                res.value = configuration[req.key];
-                }
+				if(configuration.find(req.key) != configuration.end()){
+					res.value = configuration[req.key];
+				}
 
 		return true;
 	}
@@ -312,11 +317,11 @@ public:
 
 			//Offsets are negated so that steady-state angle + offset = 0
 			configuration["headingOffset"] = std::to_string(-R2D(headingOffset));
-			configuration["pitchOffset"]   = std::to_string(-R2D(pitchOffset));
-			configuration["rollOffset"]    = std::to_string(-R2D(rollOffset));
+			configuration["pitchOffset"] = std::to_string(-R2D(pitchOffset));
+			configuration["rollOffset"]	 = std::to_string(-R2D(rollOffset));
 
-            writeConfigurationToFile();
-            broadcastConfiguration();
+			writeConfigurationToFile();
+			broadcastConfiguration();
 			broadcastImuTransform();
 
 			return true;
@@ -325,23 +330,69 @@ public:
 		return false;
 	}
 
+	void updateHotspotSSID(){
+		
+		if(!isSameSSID()){
+			std::string cmd = "sudo nmcli con modify Hotspot 802-11-wireless.ssid ";
+			cmd += configuration["hotspotSSID"];
+			std::system(cmd.c_str());
+			std::system("sudo nmcli con down Hotspot");
+			std::system("sudo nmcli con up Hotspot");
+			if(!isSameSSID()){
+				ROS_ERROR("Error in updating hotspotSSID");
+			}
+		}
+		
+	}
+	
+	bool isSameSSID(){
+		std::array<char, 128> buffer;
+		std::string result;
+		std::shared_ptr<FILE> pipe(popen("nmcli con show Hotspot | grep wireless.ssid", "r"), pclose);
+		if (!pipe) {
+			throw std::runtime_error("popen() failed!");
+		}
+		while (!feof(pipe.get())) {
+			if (fgets(buffer.data(), 128, pipe.get()) != nullptr) {
+				result += buffer.data();
+			}
+		}
+		result.erase(0,20);
+		std::string ssid;
+		
+		for (char c : result) {
+			if (isalnum(c)) {// Check if character is alphanumeric
+				ssid += c;	
+			}
+		}
+		
+		std::cout<<"ssid: " << ssid <<"\n";
+		
+		if(ssid == configuration["hotspotSSID"]){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
 private:
-    typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
+	typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
 
-    server 		srv;
-    con_list 		connections;
-    std::mutex 		mtx;
+	server 		srv;
+	con_list 		connections;
+	std::mutex 		mtx;
 
-    ros::NodeHandle 	n;
-    ros::Publisher	configTopic;
-    ros::ServiceServer	configService;
-    ros::ServiceServer  zeroImuService;
-    ros::ServiceClient  getStateClient;
+	ros::NodeHandle 	n;
+	ros::Publisher	configTopic;
+	ros::ServiceServer	configService;
+	ros::ServiceServer  zeroImuService;
+	ros::ServiceClient  getStateClient;
 
 
-    std::string 	configFilePath;
+	std::string 	configFilePath;
 
-    std::map<std::string,std::string>  configuration;
+	std::map<std::string,std::string>  configuration;
 };
 
 #endif

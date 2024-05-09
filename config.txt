@@ -16,4 +16,4 @@ wifiPassword qwerty1234
 wifiSSID cidco
 wifiTransferEnabled true
 sonarSerialBaudRate 9600
-
+hotspotSSID default

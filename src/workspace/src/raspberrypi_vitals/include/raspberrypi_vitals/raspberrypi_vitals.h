@@ -1,142 +1,136 @@
 #ifndef raspberrypi_vitals
 #define raspberrypi_vitals
 
-
 #include "ros/ros.h"
 #include "raspberrypi_vitals_msg/sysinfo.h"
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "sys/statvfs.h"
+#include <cmath>
+#include <cstdlib>
+#include <cstdio>
+
 using namespace std;
 
-class HBV{
-	private:
-		
-		ros::NodeHandle node;
-		ros::Publisher HBVTopic;
-		#define _LL_BUFFSIZE_ 2048
+class HBV {
+    private:
+        ros::NodeHandle node;
+        ros::Publisher HBVTopic;
+        #define _LL_BUFFSIZE_ 2048
 
-		uint32_t sequenceNumber;
-		string cputemp;
-		string cpustat;
-		char ret;
-		double loadavg;
-		string totalram;
-		string freeram;
-		string freeram1;
-		double f_totalram;
-		double f_freeram;
-		double f_ram;
-		string hdddetail;
-		string uptime;
-		float upt;
+        uint32_t sequenceNumber;
+        float upt;
 
-	public:
-		HBV(){
-			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
-			
-		}
-		
-		float getCpuTemp(){
-			ifstream fcputemp;
-			fcputemp.open ("/sys/class/thermal/thermal_zone0/temp");
-			if (fcputemp.is_open()){
-				getline (fcputemp,cputemp);
-				fcputemp.close();
-			}
-			cputemp.erase (cputemp.begin()+2);
-			cputemp.insert(2,".");
-			return strtof((cputemp).c_str(),0);
-		}
-		double getCpuLoad(){
-			ifstream fcpustat;
-			fcpustat.open ("/proc/loadavg");
-			if (fcpustat.is_open()){
-				getline (fcpustat,cpustat);
-				fcpustat.close();
-			}
-			ret = sscanf(cpustat.c_str(), "%lf",&loadavg);
-			return loadavg / 8.0 * 100.0;
-		}
-		
-		double getFreeRam(){
-			ifstream ffram;
-			ffram.open ("/proc/meminfo");
-			if (ffram.is_open()){
-				getline (ffram,totalram);
-				getline (ffram,freeram1);
-				getline (ffram,freeram);
-				ffram.close();
-			}
-			totalram.erase (totalram.begin(), totalram.begin()+18);
-			totalram.erase (totalram.end(), totalram.end()-3);
-			freeram.erase (freeram.begin(), freeram.begin()+18);
-			freeram.erase (freeram.end(), freeram.end()-3);
-			ret = sscanf(totalram.c_str(), "%lf",&f_totalram);
-			ret = sscanf(freeram.c_str(), "%lf",&f_freeram);
-			return f_freeram / f_totalram * 100.0;
-		}
-		
-		float getUpTime(){
-			ifstream fuptime;
-			fuptime.open ("/proc/uptime");
-			if (fuptime.is_open()){
-				getline (fuptime,uptime);
-				fuptime.close();
-			}
-			ret = sscanf(uptime.c_str(), "%f",&upt);
-			return upt;
-		}
-		
-		void run(){
-			ros::Rate loop_rate(1);
+        float readFloatFromFile(const string& filepath) {
+            ifstream file(filepath);
+            float value = std::nan("0");
+            if (file.is_open()) {
+                string content;
+                getline(file, content);
+                value = strtof(content.c_str(), nullptr);
+                file.close();
+            }
+            return value;
+        }
 
-			while(ros::ok()){
+        double readDoubleFromProc(const string& filepath) {
+            ifstream file(filepath);
+            double value = std::nan("0");
+            if (file.is_open()) {
+                string content;
+                getline(file, content);
+                value = stod(content);
+                file.close();
+            }
+            return value;
+        }
 
-				raspberrypi_vitals_msg::sysinfo msg;
+        double readMemoryInfo(const string& key) {
+            ifstream file("/proc/meminfo");
+            if (file.is_open()) {
+                string line;
+                while (getline(file, line)) {
+                    if (line.find(key) == 0) {
+                        line.erase(0, key.length());
+                        line.erase(line.find("kB"));
+                        return stod(line) * 1024; // Convert to bytes
+                    }
+                }
+                file.close();
+            }
+            return 0.0;
+        }
 
-				msg.header.seq=++sequenceNumber;
-				msg.header.stamp=ros::Time::now();
+    public:
+        HBV() : sequenceNumber(0) {
+            HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
+        }
 
-				//CPU temps
-				msg.cputemp=getCpuTemp();
-				
-				//CPU load
-				//loadavg = charge cpu sur 100 tenant compte que le raspberry a 4 core et 2 thread par core.
-				msg.cpuload=getCpuLoad();
-				
-				//Free RAM
-				msg.freeram=getFreeRam();
+        float getCpuTemp() {
+            return readFloatFromFile("/sys/class/thermal/thermal_zone0/temp") / 1000.0;
+        }
 
-				//Free HDD
-				struct statvfs stat;
+        double getCpuLoad() {
+            double loadavg = readDoubleFromProc("/proc/loadavg");
+            return (loadavg / 8.0) * 100.0;
+        }
 
-				if (statvfs("/home/", &stat) != 0){
-					msg.freehdd=stat.f_bfree * 100.0 / stat.f_blocks ;
-				}
-				else{
-					msg.freehdd=std::nan("0");
-				}
+        double getFreeRam() {
+            double totalram = readMemoryInfo("MemTotal:");
+            double freeram = readMemoryInfo("MemFree:");
+            return (freeram / totalram) * 100.0;
+        }
 
+        float getUpTime() {
+            return readFloatFromFile("/proc/uptime");
+        }
 
-				//Uptime
-				msg.uptime=getUpTime();
-			
-				//
+        double getFreeHdd() {
+            FILE *fp;
+            char path[1035];
+            double free_hdd = std::nan("0");
 
-				msg.vbat=12.2;
-				msg.rh=25;
-				msg.temp=12;
-				msg.psi=64;
+            fp = popen("df --output=pcent / | tail -n 1", "r");
+            if (fp == NULL) {
+                ROS_WARN("Failed to run df command");
+                return free_hdd;
+            }
 
-			
-				HBVTopic.publish(msg);
-				ros::spinOnce();
-				loop_rate.sleep();
-			}
-		}
+            if (fgets(path, sizeof(path), fp) != NULL) {
+                string output = path;
+                output.erase(output.find('%'));
+                free_hdd = 100.0 - stod(output);
+            }
+
+            pclose(fp);
+            return free_hdd;
+        }
+
+        void run() {
+            ros::Rate loop_rate(1);
+
+            while (ros::ok()) {
+                raspberrypi_vitals_msg::sysinfo msg;
+
+                msg.header.seq = ++sequenceNumber;
+                msg.header.stamp = ros::Time::now();
+
+                msg.cputemp = getCpuTemp();
+                msg.cpuload = getCpuLoad();
+                msg.freeram = getFreeRam();
+                msg.freehdd = getFreeHdd();
+                msg.uptime = getUpTime();
+
+                msg.vbat = 12.2;
+                msg.rh = 25;
+                msg.temp = 12;
+                msg.psi = 64;
+
+                HBVTopic.publish(msg);
+                ros::spinOnce();
+                loop_rate.sleep();
+            }
+        }
 };
-
 
 #endif

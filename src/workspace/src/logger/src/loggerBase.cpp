@@ -497,11 +497,11 @@ bool LoggerBase::send_job(std::string json){
 		// The io_context is required for all I/O
 		boost::asio::io_context ioService;
 		
-		boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv13_client);
+		boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv12_client);
 		ctx.set_options(boost::asio::ssl::context::default_workarounds
 							| boost::asio::ssl::context::no_sslv2
 							| boost::asio::ssl::context::no_sslv3
-							| boost::asio::ssl::context::tlsv12_client);
+							| boost::asio::ssl::context::tlsv13_client);
 		
 		ctx.set_default_verify_paths();
 		// set to : verify_peer , when server is sending the intermediate ssl certificate as well

@@ -505,7 +505,7 @@ bool LoggerBase::send_job(std::string json){
 		
 		ctx.set_default_verify_paths();
 		// set to : verify_peer , when server is sending the intermediate ssl certificate as well
-		ctx.set_verify_mode(boost::asio::ssl::verify_none);
+		ctx.set_verify_mode(boost::asio::ssl::verify_peer); //verify_none
 
 		// These objects perform our I/O
 		boost::asio::ip::tcp::resolver resolver(ioService);

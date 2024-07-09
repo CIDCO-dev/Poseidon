@@ -95,10 +95,11 @@ class SonarNode:
         if sonarPulseLength == 0:
             sonarPulseLength = 1        
         self.arrondir_sonar_range(sonarRange)
-        cmd_data = bytes([0xFE, 0x44, 0x11, sonarRange, 0x00, 0x00, 0x43, 0x00, sonarStartGain, 0x00, sonarAbsorbtion, 0x00, 0x00, 0x00, sonarPulseLength, 0x20, 0x00, 0x00, 0x07, 0, 0, 0, 1, 0, 0, 0xFD])
-        
+        cmd_data = bytes([0xFE, 0x44, 0x11, sonarRange, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00, sonarAbsorbtion, 0x00, 0x00, 0x00, sonarPulseLength, 0, 0x00, 0x00, 0x07, 0, 0, 0, 1, 0, 0, 0, 0xFD])
+        #cmd_data = bytes([0xFE, 0x44, 0x11, 5,          0x00, 0x00, 0x00, 0x00, 0x20, 0x00, 20,              0x00, 0x00, 0x00, 150,              2, 0x00, 0x00, 0x07, 0, 0, 0, 1, 0, 0, 0, 0xFD])
         self.serial_port.write(cmd_data) 
-        print(cmd_data)        
+        for byte in cmd_data:
+            print('x{:02x}'.format(byte), end=' ')        
 
     def run(self):
         # Main loop
@@ -165,7 +166,7 @@ class SonarNode:
             data_bytes_low_byte = (((byte11 & 0x01) << 7) | (byte10 & 0x7F))
             data_bytes = (data_bytes_high_byte << 8) | data_bytes_low_byte
 
-            depth = float(data_bytes) / 100
+            depth = float(profile_range) / 100
             self.data_received = True
             if automatic_mode == 1 and sonar_present == 1:
                 if not any(self.configuration_changed.values()) and self.data_received:

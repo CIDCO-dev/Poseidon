@@ -41,7 +41,7 @@
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
 #include "../../utils/HttpClient.hpp"
-
+#include "../../utils/Geofence.hpp"
 
 //Boost lib
 #include <boost/archive/iterators/base64_from_binary.hpp>
@@ -104,7 +104,12 @@ class LoggerBase{
 		bool send_job(std::string json);
 		bool can_reach_server();
 		void updateApiTransferConfig();
-		
+
+		/* Geofence */
+		void updateGeofence(const sensor_msgs::NavSatFix& gnss);
+		void updateGeofenceFromConfig();
+		void updateGeofenceFromWKT(std::string geofenceWKT);
+
 	protected:
 		// ros
 		ros::NodeHandle node;
@@ -118,7 +123,12 @@ class LoggerBase{
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
 		bool hddFreeSpaceOK = true;
-		
+
+		// Geofence
+		Geofence gf;
+		bool insideGeofence = false;
+		bool enableGeofence = false;
+
 		// log rotation
 		std::mutex fileRotationMutex;
 		ros::Time lastRotationTime;

@@ -1,4 +1,5 @@
 #include "loggerBase.h"
+#include "../../utils/Geofence.hpp"
 #include "../../utils/string_utils.hpp"
 
 LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
@@ -39,6 +40,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 					<< this->host <<", API url: "<< this->target <<" , API port: "<< this->port);
 	
 	updateSpeedThreshold();
+	updateGeofenceFromConfig();
 	updateLoggingMode();
 	ROS_INFO_STREAM("Logging mode set to : "<< loggingMode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
 	
@@ -98,6 +100,40 @@ void LoggerBase::updateSpeedThreshold(){
 	else{
 		ROS_WARN("no speed threshold define in config file, defaulting to 5 Kmh");
 		speedThresholdKmh = 5.0;
+	}
+}
+
+void LoggerBase::updateGeofenceFromWKT(std::string wkt){
+	if (trimSpaces(wkt).empty()){
+		this->enableGeofence = false;
+		return;
+	}
+	if (wkt == this->gf.geofence){
+		ROS_INFO_STREAM("Already using this geofence: " << wkt);
+	}
+	else {
+		ROS_INFO_STREAM("Updating new geofence: " << wkt);
+		try{
+			this->gf = Geofence(wkt);
+			this->enableGeofence = true;
+		} catch(std::exception &e){
+			ROS_ERROR_STREAM("Problem: " << e.what() << " with wkt: " << wkt);
+			this->enableGeofence = false;
+		}
+	}
+}
+
+void LoggerBase::updateGeofenceFromConfig(){
+	setting_msg::ConfigurationService srv;
+
+	srv.request.key = "geofence";
+
+	if(configurationClient.call(srv)){
+		updateGeofenceFromWKT(srv.response.value);
+	}
+	else {
+		ROS_ERROR_STREAM("No Geofence in config");
+		this->enableGeofence = false;
 	}
 }
 
@@ -320,6 +356,9 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			this->apiKey = trimSpaces(temp);
 		}
 	}
+	else if(setting.key == "geofence"){
+		updateGeofenceFromWKT(setting.value);
+	}
 	else if(setting.key == "logRotationIntervalSeconds"){
 		if(setting.value == ""){
 			this->logRotationIntervalSeconds = 3600;
@@ -345,6 +384,11 @@ bool LoggerBase::getLoggingMode(logger_service::GetLoggingMode::Request & req,lo
 bool LoggerBase::setLoggingMode(logger_service::SetLoggingMode::Request & req,logger_service::SetLoggingMode::Response & response){
 	loggingMode = req.loggingMode;
 	return true;
+}
+
+void LoggerBase::updateGeofence(const sensor_msgs::NavSatFix & gnss){
+	if (this->enableGeofence)
+	    this->insideGeofence = this->gf.PointInGeofence(gnss.longitude, gnss.latitude);
 }
 
 void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
@@ -649,7 +693,12 @@ void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream)
 			auto v = stream.stream;
 			std::copy(v.begin(), v.end(), arr);
 			
-			rawSonarOutputFile.write((char*)arr, stream.vector_length);
+			if (this->enableGeofence && not this->insideGeofence){
+				ROS_INFO("Not logging as we are outside active geofence");
+			}
+			else {
+				rawSonarOutputFile.write((char *) arr, stream.vector_length);
+			}
 		}
 		
 		lastLidarTimestamp = timestamp;

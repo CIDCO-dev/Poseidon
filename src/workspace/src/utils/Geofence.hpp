@@ -12,6 +12,8 @@ public:
         double lon, lat;
     };
 
+    Geofence() : Geofence(world_wkt) {}
+
     explicit Geofence(const std::string & wkt){
         this->geofence = wkt;
         this->mp = ParseWKT(this->geofence);

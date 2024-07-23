@@ -106,7 +106,7 @@ void LoggerBinary::rotate(){
 }
 
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
-	updateGeofence(gnss)
+	updateGeofence(gnss);
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){
 		//ROS_INFO_STREAM("LoggerBinary::gnssCallback -> bootstrappedGnssTime"); ok
 		bootstrappedGnssTime = true;

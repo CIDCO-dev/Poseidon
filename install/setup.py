@@ -141,8 +141,9 @@ def update_packager():
     except subprocess.CalledProcessError:
         print(f"[X] Error during the package update .")
 
-def install_ros_melodic():
+def not_implemented():
     print("[X] Not implemented yet!")
+    quit()
 
 def install_ros_noetic():
     print(f"[!] ROS Noetic Installation.")
@@ -216,7 +217,7 @@ def install():
     update_packager()
     install_toolchain()
     if version == 18:
-        install_ros_melodic()
+        not_implemented()
 
 
     if version == 20:
@@ -261,7 +262,11 @@ def install():
         #Zed-f9p configuration
         #bno055 calibration
 
+    if version == 22:
+        not_implemented()
 
+    if version == 24:
+        not_implemented()
 
 loadvariable()
 check_install()

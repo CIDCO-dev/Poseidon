@@ -13,6 +13,14 @@ U-Boot> saveenv
 U-Boot> reset
 
 ----
+
+execute the rscript acording to the material and os version
+
+ubuntu 18 = melodic
+ubuntu 20 = noetic
+
+Rpi4 with ubuntu 20 server use rpi4-noetic.sh
+
 ### Automatic script launch upon new UP network interface
 
 script example:

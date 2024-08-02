@@ -41,6 +41,7 @@ echo "Wired ethernet second ip address. $snd_ip"
 
 echo "Creating WiFi hotspot"
 sudo nmcli dev wifi hotspot ifname $hs_if ssid $hs_ssid password $hs_pass | tee -a log.txt
+sed -i "s/^hotspotSSID.*/hotspotSSID $hs_ssid/" /opt/Poseidon/config.txt
 sudo nmcli con modify Hotspot autoconnect yes
 sudo nmcli con modify Hotspot ipv4.addresses 192.168.100.1/24,192.168.100.1
 

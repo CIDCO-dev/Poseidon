@@ -26,8 +26,16 @@ function processState(state) {
 
 
     // CPU temperature
-    $("#cputemp").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[0] > 60 ? "bg-gradient-success" : "bg-gradient-danger")).addClass((state.telemetry.vitals[0] > 75 ? "bg-gradient-danger" : "bg-gradient-success"));
-
+    var cputempElement = $("#cputemp");
+    var temperatureValue = state.telemetry.vitals[0];
+    cputempElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
+    if (temperatureValue < 60) {
+        cputempElement.addClass("bg-gradient-success");
+        } else if (temperatureValue >= 60 && temperatureValue <= 75) {
+            cputempElement.addClass("bg-gradient-warning");
+        } else if (temperatureValue > 75) {
+            cputempElement.addClass("bg-gradient-danger");
+        }
     $("#cputempText").text(state.telemetry.vitals[0] + "\u00B0" + "C");
     $("#cputemp").width(20 + state.telemetry.vitals[0] + "%");
 

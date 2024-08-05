@@ -15,7 +15,15 @@ Help()
    echo
    echo "Command line exemple."
    echo "ethernet-config.sh -help"
-   echo "ethernet-config.sh CIDCO-20231012-002 "
+   echo "ethernet-config.sh CIDCO-231012-002 "
+   echo
+   echo "Serial Number Structure"
+   echo
+   echo "Name-Date-Id"
+   echo
+   echo "Name = Name (2 to 8 char)"
+   echo "Date = Date (format:yyMMdd) (6 digit)"
+   echo "Id = Device identification number (3 digit)"
    
 }
 

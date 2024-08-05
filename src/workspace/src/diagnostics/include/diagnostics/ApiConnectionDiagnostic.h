@@ -79,6 +79,7 @@ public:
 		get_config();
 		
 		this->status = HttpClient::can_reach_server(this->host, this->port);
+		//this->status = HttpsClient::can_reach_server(this->host, this->port);
 	}
 
 private:

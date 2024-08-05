@@ -38,7 +38,7 @@ sudo apt install python3-rosinstall python3-rosinstall-generator python3-wstool 
 
 echo -e "\e[35mDownloading GPSD-Cliente\[0m"
 cd /opt
-sudo git clone https://github.com/swri-robotics/gps_umd.git
+sudo git clone https://github.com/CIDCO-dev/gps_umd.git
 cd /opt/gps_umd
 sudo mv gps* /opt/Poseidon/src/workspace/src/
 cd /opt

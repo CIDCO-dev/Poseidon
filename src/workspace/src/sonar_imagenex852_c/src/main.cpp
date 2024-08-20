@@ -104,7 +104,6 @@ class Imagenex852{
 			mtx.lock();
 				sscanf(valStr.c_str(),"%hhu",val);
 				this->configChanged = true;
-				ROS_ERROR("configChanged");
 			mtx.unlock();
 		}
 

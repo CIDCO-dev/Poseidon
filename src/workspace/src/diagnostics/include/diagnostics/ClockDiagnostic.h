@@ -43,12 +43,12 @@ public:
 					unsigned int timeDifferenceMs = std::abs(systemTimeMs-(ts.tv_sec * 1000 + ts.tv_nsec / 1000000));
 					
 					if(timeDifferenceMs > 1){
-						this->value = "latency = " + std::to_string(timeDifferenceMs);
+						this->value = "latency = " + std::to_string(timeDifferenceMs)+" milliseconds";
 						this->status = false;
 						break;
 					}
 					else{
-						this->value = "latency = " + std::to_string(timeDifferenceMs);
+						this->value = "latency = " + std::to_string(timeDifferenceMs)+" milliseconds";
 						this->status = true;
 					}
 				}

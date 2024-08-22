@@ -93,17 +93,17 @@ public:
 			boost::asio::io_context ioc;
 			
 			// The SSL context is required, and holds certificates
-			boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv13_client);
+			boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv12_client);
 			ctx.set_options(boost::asio::ssl::context::default_workarounds
 								| boost::asio::ssl::context::no_sslv2
 								| boost::asio::ssl::context::no_sslv3
-								| boost::asio::ssl::context::tlsv12_client);
+								| boost::asio::ssl::context::tlsv13_client);
 
 			// This holds the root certificate used for verification
 			//load_root_certificates(ctx);
 			ctx.set_default_verify_paths();
 			// Verify the remote server's certificate
-			ctx.set_verify_mode(boost::asio::ssl::verify_none);
+			ctx.set_verify_mode(boost::asio::ssl::verify_peer);
 			
 			// These objects perform our I/O
 			boost::asio::ip::tcp::resolver resolver(ioc);

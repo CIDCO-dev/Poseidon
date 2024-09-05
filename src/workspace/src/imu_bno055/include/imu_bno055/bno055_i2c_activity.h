@@ -18,7 +18,7 @@
 #include <diagnostic_msgs/KeyValue.h>
 
 #include <linux/i2c-dev.h>
-#include <smbus_functions.h>
+#include "smbus_functions.h"
 
 #define BNO055_ID 0xA0
 

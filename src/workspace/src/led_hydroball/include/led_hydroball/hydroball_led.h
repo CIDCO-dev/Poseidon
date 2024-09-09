@@ -22,7 +22,7 @@ private:
 	ros::NodeHandle n;
 	ros::ServiceServer ledService;
 
-	bool setLEDStates(uint8_t led0, uint8_t led1, uint8_t led2) {
+	void setLEDStates(uint8_t led0, uint8_t led1, uint8_t led2) {
 		// Convert the LED states into an 8-bit value
 		uint8_t states = (0 << 6) | (led2 << 4) | (led1 << 2) | led0;
 		
@@ -32,10 +32,7 @@ private:
 		
 		if (write(file, data, 2) != 2){
 			ROS_ERROR("write error set led state");
-			return false;
 		}
-		
-		return true;
 	}
 
 public:
@@ -97,7 +94,7 @@ public:
 	}
 
 	void errorON() {
-		setLEDStates(1, 0, 0);
+		setLEDStates(1, 0, 0) == false);
 	}
 
 	void setRecording() {

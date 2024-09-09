@@ -1,0 +1,4 @@
+mode:
+error
+recording
+ready

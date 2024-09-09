@@ -25,14 +25,12 @@ public:
 
 		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
 			ROS_ERROR("Failed to write to the sensor 1");
-			exit(1);
 		}
 
 		usleep(100000);  // 100 ms
 
 		if (read(fileDescriptor, data, 4) != 4) {
 			ROS_ERROR("Failed to read humidity from the sensor");
-			exit(1);
 		}
 
 		uint16_t humidityRaw = ((data[0] & 0x3F) << 8) + data[1];
@@ -44,14 +42,12 @@ public:
 
 		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
 			ROS_ERROR("Failed to write to the sensor");
-			exit(1);
 		}
 
 		usleep(100000);  // 100 ms
 
 		if (read(fileDescriptor, data, 4) != 4) {
 			ROS_ERROR("Failed to read temp from the sensor 2");
-			exit(1);
 		}
 		
 		uint16_t tempRaw = (data[2] << 6) + (data[3] >> 2);

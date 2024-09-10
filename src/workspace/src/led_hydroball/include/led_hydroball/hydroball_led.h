@@ -71,6 +71,7 @@ public:
 	}
 
 	~LEDController() {
+		setLEDStates(0, 0, 0);
 		close(file);
 	}
 	
@@ -94,7 +95,7 @@ public:
 	}
 
 	void errorON() {
-		setLEDStates(1, 0, 0) == false);
+		setLEDStates(1, 0, 0);
 	}
 
 	void setRecording() {

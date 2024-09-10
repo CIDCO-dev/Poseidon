@@ -10,12 +10,12 @@ class HIH8130 {
 public:
 	HIH8130(const char* i2cDevice, uint8_t address) : deviceAddress(address) {
 		if ((fileDescriptor = open(i2cDevice, O_RDWR)) < 0) {
-			ROS_ERROR("Failed to open the I2C bus");
+			ROS_ERROR("HIH8130 Failed to open the I2C bus");
 			exit(1);
 		}
 
 		if (ioctl(fileDescriptor, I2C_SLAVE, deviceAddress) < 0) {
-			ROS_ERROR("Failed to connect to the sensor");
+			ROS_ERROR("Failed to connect to the HIH8130 sensor");
 			exit(1);
 		}
 	}
@@ -24,13 +24,13 @@ public:
 		uint8_t data[4];
 
 		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-			ROS_ERROR("Failed to write to the sensor 1");
+			ROS_ERROR("HIH8130::get_humidity() Failed to write");
 		}
 
 		usleep(100000);  // 100 ms
 
 		if (read(fileDescriptor, data, 4) != 4) {
-			ROS_ERROR("Failed to read humidity from the sensor");
+			ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
 		}
 
 		uint16_t humidityRaw = ((data[0] & 0x3F) << 8) + data[1];
@@ -41,13 +41,13 @@ public:
 		uint8_t data[4];
 
 		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-			ROS_ERROR("Failed to write to the sensor");
+			ROS_ERROR("HIH8130::get_temperature() Failed to write");
 		}
 
 		usleep(100000);  // 100 ms
 
 		if (read(fileDescriptor, data, 4) != 4) {
-			ROS_ERROR("Failed to read temp from the sensor 2");
+			ROS_ERROR("HIH8130::get_temperature() Failed to read temperature");
 		}
 		
 		uint16_t tempRaw = (data[2] << 6) + (data[3] >> 2);

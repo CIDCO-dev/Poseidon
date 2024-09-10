@@ -1,6 +1,6 @@
 <!-- -*- mode: XML -*- -->
 <launch>
 
-<node pkg="led_hydroball" name="led_controller" type="led_hydroball_node" output="screen"/>
+<node pkg="led_controller" name="led_controller" type="led_controller_node" output="screen"/>
 
 </launch>

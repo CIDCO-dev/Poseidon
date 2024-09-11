@@ -23,6 +23,7 @@
 #include "ClockDiagnostic.h"
 #include "ApiConnectionDiagnostic.h"
 #include "SerialNumberDiagnostic.h"
+#include "BinaryStreamGnssDiagnostic.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::connection_hdl;
@@ -47,6 +48,7 @@ public:
 																	(new ClockDiagnostic("Clock Diagnostic"))
 																	(new ApiConnectionDiagnostic("Api Connection Diagnostic"))
 																	(new SerialNumberDiagnostic("Serial Number Pattern Validation"))
+																	(new BinaryStreamGnssDiagnostic("Gnss binary stream Communication", 1))
 																	;
 	}
 	

@@ -1,5 +1,6 @@
 #include "loggerBase.h"
 #include "../../utils/string_utils.hpp"
+#include "../../utils/I2c_mutex.h"
 
 LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
 	
@@ -54,6 +55,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	// the led service needs to be launched before the logger
 	led_service::set_led_mode srv;
 	srv.request.mode = "ready";
+	
 	if(!ledClient.call(srv)){
 		ROS_INFO("could not call led_service");
 	}

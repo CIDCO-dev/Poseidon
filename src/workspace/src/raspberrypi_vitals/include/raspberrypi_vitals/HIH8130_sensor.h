@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <cstdint>
 #include "ros/ros.h"
+#include "../../utils/I2c_mutex.h"
 
 class HIH8130 {
 public:
@@ -22,33 +23,41 @@ public:
 
 	double get_humidity() {
 		uint8_t data[4];
+		
+		//I2cSync::lock_i2c_nb();
+		
+			if (write(fileDescriptor, &deviceAddress, 1) != 1) {
+				ROS_ERROR("HIH8130::get_humidity() Failed to write");
+			}
 
-		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-			ROS_ERROR("HIH8130::get_humidity() Failed to write");
-		}
+			usleep(100000);  // 100 ms
 
-		usleep(100000);  // 100 ms
-
-		if (read(fileDescriptor, data, 4) != 4) {
-			ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
-		}
-
+			if (read(fileDescriptor, data, 4) != 4) {
+				ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
+			}
+		
+		//I2cSync::unlock_i2c();
+		
 		uint16_t humidityRaw = ((data[0] & 0x3F) << 8) + data[1];
 		return (humidityRaw / (double)((1 << 14) - 2)) * 100.0;
 	}
 	
 	double get_temperature(){
 		uint8_t data[4];
+		
+		//I2cSync::lock_i2c_nb();
+		
+			if (write(fileDescriptor, &deviceAddress, 1) != 1) {
+				ROS_ERROR("HIH8130::get_temperature() Failed to write");
+			}
 
-		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-			ROS_ERROR("HIH8130::get_temperature() Failed to write");
-		}
+			usleep(100000);  // 100 ms
 
-		usleep(100000);  // 100 ms
-
-		if (read(fileDescriptor, data, 4) != 4) {
-			ROS_ERROR("HIH8130::get_temperature() Failed to read temperature");
-		}
+			if (read(fileDescriptor, data, 4) != 4) {
+				ROS_ERROR("HIH8130::get_temperature() Failed to read temperature");
+			}
+		
+		//I2cSync::unlock_i2c();
 		
 		uint16_t tempRaw = (data[2] << 6) + (data[3] >> 2);
 		return ((tempRaw / (double)((1 << 14) - 2)) * 165.0) - 40.0;

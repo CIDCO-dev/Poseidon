@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
-
+#include "../../utils/I2c_mutex.h"
 
 class LEDController {
 private:
@@ -30,9 +30,11 @@ private:
 		data[0] = LS0;
 		data[1] = states;
 		
-		if (write(file, data, 2) != 2){
-			ROS_ERROR("write error set led state");
-		}
+		//I2cSync::lock_i2c();
+			if (write(file, data, 2) != 2){
+				ROS_ERROR("write error set led state");
+			}
+		//I2cSync::unlock_i2c();
 	}
 
 public:
@@ -49,20 +51,22 @@ public:
 			std::cerr << "Failed to set I2C address." << std::endl;
 			exit(1);
 		}
-
-		// Initial configuration
-		if (write(file, &PSC0, 2) != 2){
-			ROS_ERROR("write error init config PSC0");
-		}
-		if (write(file, &PWM0, 2) != 2){
-			ROS_ERROR("write error init config PWM0");
-		}
-		if (write(file, &PSC1, 2) != 2){
-			ROS_ERROR("write error init config PSC1");
-		}
-		if (write(file, &PWM1, 2) != 2){
-			ROS_ERROR("write error init config PWM1");
-		}
+		
+		//I2cSync::lock_i2c();
+			// Initial configuration
+			if (write(file, &PSC0, 2) != 2){
+				ROS_ERROR("write error init config PSC0");
+			}
+			if (write(file, &PWM0, 2) != 2){
+				ROS_ERROR("write error init config PWM0");
+			}
+			if (write(file, &PSC1, 2) != 2){
+				ROS_ERROR("write error init config PSC1");
+			}
+			if (write(file, &PWM1, 2) != 2){
+				ROS_ERROR("write error init config PWM1");
+			}
+		//I2cSync::unlock_i2c();
 		
 		ledService = n.advertiseService("set_led", &LEDController::set_led, this);
 		

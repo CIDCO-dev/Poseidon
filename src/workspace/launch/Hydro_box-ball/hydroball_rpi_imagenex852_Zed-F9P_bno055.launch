@@ -11,6 +11,8 @@
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
+<node pkg="led_controller" name="led_controller" type="led_controller_node" output="screen"/>
+
 <node ns="imu" name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" respawn="true" respawn_delay="2" output="screen">
         <param name="device" type="string" value="/dev/i2c-1"/>
         <param name="address" type="int" value="40"/> <!-- 0x28 == 40 is the default for BNO055 -->

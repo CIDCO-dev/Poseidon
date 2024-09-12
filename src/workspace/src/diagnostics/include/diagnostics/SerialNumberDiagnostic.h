@@ -18,22 +18,22 @@ public:
 			this->value = "";
 			
 			char hostname[256];
-			int status = gethostname(hostname, 256);
+			int status = gethostname(hostname, 25);
 			std::string hostnameStr(hostname);
 			
 			if(status != 0){
-				this->value = "Could not get hostname \n";
+				this->value = "Could not get hostname \n No serial number set";
 				return;
 			}
 			
 			std::regex pattern("^[A-Za-z]{2,8}-\\d{6}-\\d{3}$");
 			if (std::regex_match(hostnameStr, pattern)) {
 				this->status = true;
-				this->value = "Valid serial number pattern";
+				this->value = "Valid serial number pattern: " + hostnameStr;
 			}
 			else{
 				this->status = false;
-				this->value = "Not valid serial number pattern";
+				this->value = "Not valid serial number pattern: " + hostnameStr;
 			}
 		}
 		catch(const std::exception& ex){

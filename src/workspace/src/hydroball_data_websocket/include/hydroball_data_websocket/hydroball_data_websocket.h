@@ -147,39 +147,6 @@ public:
         std::string jsonString = sb.GetString();
         srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
     }
-    /*
-    //use sendLoggingInfo() instead
-	void sendLoggingMode(connection_hdl & hdl, int loggingMode){
-		rapidjson::Document document;
-		document.SetObject();
-		rapidjson::Value LoggingMode(rapidjson::Type::kObjectType);
-		LoggingMode.AddMember("the_mode_is",loggingMode,document.GetAllocator());
-		document.AddMember("loggingMode",LoggingMode,document.GetAllocator());
-		
-		rapidjson::StringBuffer sb;
-        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
-        document.Accept(writer);
-        std::string jsonString = sb.GetString();
-        std::cout<<"cout: " << jsonString << "\n";
-        srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
-	}
-    void sendRecordingStatus(connection_hdl & hdl, bool isRecording){
-	rapidjson::Document document;
-	document.SetObject();
-	rapidjson::Value recordingStatus(rapidjson::Type::kObjectType);
-
-	recordingStatus.AddMember("status",isRecording,document.GetAllocator());
-
-	document.AddMember("recordingStatus",recordingStatus,document.GetAllocator());
-
-        rapidjson::StringBuffer sb;
-        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
-        document.Accept(writer);
-        std::string jsonString = sb.GetString();
-
-        srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
-    }
-	*/
 	
 	int getLoggingMode(){
 		logger_service::GetLoggingMode mode;

@@ -35,6 +35,7 @@
 #include "setting_msg/ConfigurationService.h"
 #include "binary_stream_msg/Stream.h"
 #include "raspberrypi_vitals_msg/sysinfo.h"
+#include "led_service/set_led_mode.h"
 
 //Poseidon utils
 #include "../../utils/timestamp.h"
@@ -108,7 +109,8 @@ class LoggerBase{
 	protected:
 		// ros
 		ros::NodeHandle node;
-		ros::ServiceClient	configurationClient;
+		ros::ServiceClient configurationClient;
+		ros::ServiceClient ledClient;
 		
 		// logger
 		std::string outputFolder;

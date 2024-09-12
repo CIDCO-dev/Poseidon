@@ -1,5 +1,6 @@
 #include "loggerBase.h"
 #include "../../utils/string_utils.hpp"
+#include "../../utils/I2c_mutex.h"
 
 LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
 	
@@ -20,6 +21,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	setLoggingModeService = node.advertiseService("set_logging_mode", &LoggerBase::setLoggingMode, this);
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+	ledClient = node.serviceClient<led_service::set_led_mode>("set_led");
 	
 	if (!node.getParam("/logger/fileExtensionForSonarDatagram", this->fileExtensionForSonarDatagram))
 	{
@@ -49,6 +51,14 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 		ROS_INFO_STREAM(outputFolder << " created.");
 	}
 	
+	
+	// the led service needs to be launched before the logger
+	led_service::set_led_mode srv;
+	srv.request.mode = "ready";
+	
+	if(!ledClient.call(srv)){
+		ROS_INFO("could not call led_service");
+	}
 }
 
 LoggerBase::~LoggerBase(){
@@ -217,15 +227,24 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
-		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){	
+		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
+			
+			led_service::set_led_mode srv;
+			srv.request.mode = "recording";
+			ledClient.call(srv);
 		}
+			
 		else if(loggerEnabled && !request.loggingEnabled){
 			//shutting down logging, finalize logfiles
 			loggerEnabled=false;
 			finalize();
+			
+			led_service::set_led_mode srv;
+			srv.request.mode = "ready";
+			ledClient.call(srv);
 		}
 
 		response.loggingStatus=loggerEnabled;
@@ -348,6 +367,7 @@ bool LoggerBase::setLoggingMode(logger_service::SetLoggingMode::Request & req,lo
 }
 
 void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
+	
 	logger_service::GetLoggingMode::Request modeReq;
 	logger_service::GetLoggingMode::Response modeRes;
 	getLoggingMode(modeReq,modeRes);

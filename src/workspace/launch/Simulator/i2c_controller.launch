@@ -1,0 +1,8 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+
+<node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen"/>
+<node pkg="power_management" name="power_management" type="power_management_node" output="screen"/>
+<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
+
+</launch>

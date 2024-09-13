@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <fcntl.h>
 #include <unistd.h>
+#include "i2c_controller_service/i2c_controller_service.h"
 
 using namespace std;
 
@@ -18,6 +19,8 @@ class HBV {
 	private:
 		ros::NodeHandle node;
 		ros::Publisher HBVTopic;
+		ros::ServiceClient i2c_ctrl_service_client;
+		i2c_controller_service::i2c_controller_service srv;
 
 		uint32_t sequenceNumber;
 		float upt;
@@ -65,6 +68,7 @@ class HBV {
 	public:
 		HBV() : sequenceNumber(0) {
 			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
+			i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
 		}
 
 		float getCpuTemp() {
@@ -122,6 +126,19 @@ class HBV {
 				msg.freeram = getFreeRam();
 				msg.freehdd = getFreeHdd();
 				msg.uptime = getUpTime();
+				
+				
+				srv.request.action2perform = "get_humidity";
+				if(i2c_ctrl_service_client.call(srv)){
+					ROS_INFO_STREAM("Vitals humidity call: " << srv.response.value);
+				}
+				else{
+					ROS_INFO_STREAM("Vitals humidity call failed:");
+				}
+				srv.request.action2perform = "get_temperature";
+				if(i2c_ctrl_service_client.call(srv)){
+					ROS_INFO_STREAM("Vitals temperature call: " << srv.response.value);
+				}
 				//msg.humidity = sensor.get_humidity();
 				//msg.temperature = sensor.get_temperature();
 				

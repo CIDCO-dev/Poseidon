@@ -50,6 +50,7 @@ public:
 		}
 		
 		else if(req.action2perform == "get_humidity"){
+			
 			if(!weather_sensor.get_humidity(res)){
 				return false;
 			}

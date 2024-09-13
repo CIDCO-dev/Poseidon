@@ -1,6 +1,0 @@
-<!-- -*- mode: XML -*- -->
-<launch>
-
-<node pkg="led_controller" name="led_controller" type="led_controller_node" output="screen"/>
-
-</launch>

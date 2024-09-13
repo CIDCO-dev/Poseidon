@@ -23,17 +23,17 @@ public:
 	bool get_humidity(i2c_controller_service::i2c_controller_service::Response &response) {
 		uint8_t data[4];
 		
-			if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-				ROS_ERROR("HIH8130::get_humidity() Failed to write");
-				return false;
-			}
+		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
+			ROS_ERROR("HIH8130::get_humidity() Failed to write");
+			return false;
+		}
 
-			usleep(100000);  // 100 ms
+		usleep(100000);  // 100 ms
 
-			if (read(fileDescriptor, data, 4) != 4) {
-				ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
-				return false;
-			}
+		if (read(fileDescriptor, data, 4) != 4) {
+			ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
+			return false;
+		}
 		
 		uint16_t humidityRaw = ((data[0] & 0x3F) << 8) + data[1];
 		response.value = (humidityRaw / (double)((1 << 14) - 2)) * 100.0;

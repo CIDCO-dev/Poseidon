@@ -30,11 +30,9 @@ private:
 		data[0] = LS0;
 		data[1] = states;
 		
-		//I2cSync::lock_i2c();
 			if (write(file, data, 2) != 2){
 				ROS_ERROR("write error set led state");
 			}
-		//I2cSync::unlock_i2c();
 	}
 
 public:
@@ -52,7 +50,6 @@ public:
 			exit(1);
 		}
 		
-		//I2cSync::lock_i2c();
 			// Initial configuration
 			if (write(file, &PSC0, 2) != 2){
 				ROS_ERROR("write error init config PSC0");
@@ -66,7 +63,6 @@ public:
 			if (write(file, &PWM1, 2) != 2){
 				ROS_ERROR("write error init config PWM1");
 			}
-		//I2cSync::unlock_i2c();
 		
 		ledService = n.advertiseService("set_led", &LEDController::set_led, this);
 		

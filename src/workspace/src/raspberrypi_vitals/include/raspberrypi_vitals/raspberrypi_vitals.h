@@ -11,7 +11,6 @@
 #include <cstdio>
 #include <fcntl.h>
 #include <unistd.h>
-#include "HIH8130_sensor.h"
 
 using namespace std;
 
@@ -111,12 +110,6 @@ class HBV {
 		void run(){
 			ros::Rate loop_rate(1);
 			
-			const char* i2cDevice = "/dev/i2c-1";
-			uint8_t sensorAddress = 0x27;
-			
-			HIH8130 sensor(i2cDevice, sensorAddress);
-			
-			
 			while (ros::ok()) {
 				raspberrypi_vitals_msg::sysinfo msg;
 
@@ -129,8 +122,8 @@ class HBV {
 				msg.freeram = getFreeRam();
 				msg.freehdd = getFreeHdd();
 				msg.uptime = getUpTime();
-				msg.humidity = sensor.get_humidity();
-				msg.temperature = sensor.get_temperature();
+				//msg.humidity = sensor.get_humidity();
+				//msg.temperature = sensor.get_temperature();
 				
 				
 				msg.vbat = 12.2;

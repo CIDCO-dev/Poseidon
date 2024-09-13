@@ -1,11 +1,10 @@
 #include "ros/ros.h"
-#include "led_service/set_led_mode.h"
 #include <iostream>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
-class LEDController {
+class PCA9533 {
 private:
 	const int I2C_ADDR = 0x62;
 	const char *I2C_DEVICE = "/dev/i2c-1"; 
@@ -17,11 +16,8 @@ private:
 	const uint8_t PSC1[2] = {0x03, 0x0F};
 	const uint8_t PWM1[2] = {0x04, 0x80};
 	const uint8_t LS0  = 0x05;
-	
-	ros::NodeHandle n;
-	ros::ServiceServer ledService;
 
-	void setLEDStates(uint8_t led0, uint8_t led1, uint8_t led2) {
+	bool setLEDStates(uint8_t led0, uint8_t led1, uint8_t led2) {
 		// Convert the LED states into an 8-bit value
 		uint8_t states = (0 << 6) | (led2 << 4) | (led1 << 2) | led0;
 		
@@ -29,13 +25,16 @@ private:
 		data[0] = LS0;
 		data[1] = states;
 		
-			if (write(file, data, 2) != 2){
-				ROS_ERROR("write error set led state");
-			}
+		if (write(file, data, 2) != 2){
+			ROS_ERROR("write error set led state");
+			return false;
+		}
+		
+		return true;
 	}
 
 public:
-	LEDController() {
+	PCA9533() {
 		// Open I2C bus
 		file = open(I2C_DEVICE, O_RDWR);
 		if (file < 0) {
@@ -63,15 +62,15 @@ public:
 				ROS_ERROR("write error init config PWM1");
 			}
 		
-		ledService = n.advertiseService("set_led", &LEDController::set_led, this);
-		
 		setLEDStates(0, 0, 0);
 
 	}
 
-	~LEDController() {
-		setLEDStates(0, 0, 0);
-		close(file);
+	~PCA9533() {
+		if(file>=0){
+			setLEDStates(0, 0, 0);
+			close(file);
+		}
 	}
 	
 	uint8_t readLEDState() {
@@ -92,18 +91,6 @@ public:
 		
 		return data;
 	}
-
-	void errorON() {
-		setLEDStates(1, 0, 0);
-	}
-
-	void setRecording() {
-		setLEDStates(0, 2, 0);
-	}
-	
-	void setReady(){
-		setLEDStates(0,1,0);
-	}
 	
 	bool errorIsON(){
 		
@@ -115,23 +102,31 @@ public:
 		return false;
 	}
 	
-	bool set_led(led_service::set_led_mode::Request &req, led_service::set_led_mode::set_led_mode::Response &res){
+	
+	bool set_led(const std::string &led_mode){
 		
-		if(req.mode == "error"){
-			errorON();
-		}
-		else if(req.mode == "recording"){
-			if(!errorIsON()){
-				setRecording();
+		if(led_mode == "error"){
+			if(!setLEDStates(1, 0, 0)){
+				return false;
 			}
 		}
-		else if(req.mode == "ready"){
+		else if(led_mode == "recording"){
 			if(!errorIsON()){
-				setReady();
+				if(!setLEDStates(0, 2, 0)){
+					return false;
+				}
+			}
+		}
+		else if(led_mode == "ready"){
+			if(!errorIsON()){
+				if(!setLEDStates(0, 1, 0)){
+					return false;
+				}
 			}
 		}
 		else{
-			ROS_ERROR_STREAM("led controller invalid request: " << req.mode);
+			ROS_ERROR_STREAM("led controller invalid request: " << led_mode);
+			return false;
 		}
 		
 		return true;

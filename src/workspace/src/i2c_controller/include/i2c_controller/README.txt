@@ -1,0 +1,9 @@
+action to perform :
+led_error
+led_ready
+led_recording
+get_humidity
+get_temperature
+get_voltage
+get_shuntVoltage
+get_batteryTemperature

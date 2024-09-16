@@ -1,6 +1,5 @@
 #include "loggerBase.h"
 #include "../../utils/string_utils.hpp"
-#include "../../utils/I2c_mutex.h"
 
 LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
 	
@@ -21,7 +20,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	setLoggingModeService = node.advertiseService("set_logging_mode", &LoggerBase::setLoggingMode, this);
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
-	ledClient = node.serviceClient<led_service::set_led_mode>("set_led");
+	i2cControllerServiceClient = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
 	
 	if (!node.getParam("/logger/fileExtensionForSonarDatagram", this->fileExtensionForSonarDatagram))
 	{
@@ -52,12 +51,12 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	}
 	
 	
-	// the led service needs to be launched before the logger
-	led_service::set_led_mode srv;
-	srv.request.mode = "ready";
+	// the i2c_controller_service needs to be launched before the logger
+	i2c_controller_service::i2c_controller_service srv;
+	srv.request.action2perform = "led_ready";
 	
-	if(!ledClient.call(srv)){
-		ROS_INFO("could not call led_service");
+	if(!i2cControllerServiceClient.call(srv)){
+		ROS_ERROR("Call to i2c_controller_service failed");
 	}
 }
 
@@ -232,9 +231,9 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 			loggerEnabled=true;
 			init();
 			
-			led_service::set_led_mode srv;
-			srv.request.mode = "recording";
-			ledClient.call(srv);
+			i2c_controller_service::i2c_controller_service srv;
+			srv.request.action2perform = "led_recording";
+			i2cControllerServiceClient.call(srv);
 		}
 			
 		else if(loggerEnabled && !request.loggingEnabled){
@@ -242,9 +241,9 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 			loggerEnabled=false;
 			finalize();
 			
-			led_service::set_led_mode srv;
-			srv.request.mode = "ready";
-			ledClient.call(srv);
+			i2c_controller_service::i2c_controller_service srv;
+			srv.request.action2perform = "led_ready";
+			i2cControllerServiceClient.call(srv);
 		}
 
 		response.loggingStatus=loggerEnabled;

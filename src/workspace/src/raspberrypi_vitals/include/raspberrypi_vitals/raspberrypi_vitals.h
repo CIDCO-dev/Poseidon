@@ -130,17 +130,13 @@ class HBV {
 				
 				srv.request.action2perform = "get_humidity";
 				if(i2c_ctrl_service_client.call(srv)){
-					ROS_INFO_STREAM("Vitals humidity call: " << srv.response.value);
+					//ROS_INFO_STREAM("Vitals humidity call: " << srv.response.value);
 				}
-				else{
-					ROS_INFO_STREAM("Vitals humidity call failed:");
-				}
+				
 				srv.request.action2perform = "get_temperature";
 				if(i2c_ctrl_service_client.call(srv)){
-					ROS_INFO_STREAM("Vitals temperature call: " << srv.response.value);
+					//ROS_INFO_STREAM("Vitals temperature call: " << srv.response.value);
 				}
-				//msg.humidity = sensor.get_humidity();
-				//msg.temperature = sensor.get_temperature();
 				
 				
 				msg.vbat = 12.2;

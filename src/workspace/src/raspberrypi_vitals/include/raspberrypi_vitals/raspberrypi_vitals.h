@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include "i2c_controller_service/i2c_controller_service.h"
 #include "power_management_msg/batteryMsg.h"
+#include "logger_service/ToggleLogging.h"
 
 using namespace std;
 
@@ -23,6 +24,8 @@ class HBV {
 		ros::Subscriber batteryTopic;
 		ros::ServiceClient i2c_ctrl_service_client;
 		i2c_controller_service::i2c_controller_service srv;
+		ros::ServiceClient loggerServiceClient;
+		logger_service::ToggleLogging loggerService;
 
 		uint32_t sequenceNumber;
 		float upt;
@@ -150,12 +153,43 @@ class HBV {
 				msg.vbat = 12.2;
 				msg.rh = 25;
 				msg.psi = 64;
-
+				
+				if(isIssue){
+					srv.request.action2perform = "led_error";
+					if(!i2c_ctrl_service_client.call(srv)){
+						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
+					}
+				}
+				
 				HBVTopic.publish(msg);
 				ros::spinOnce();
 				loop_rate.sleep();
 			}
 		}
+		
+	bool isIssue(raspberrypi_vitals_msg::sysinfo &msg){
+		
+		if(msg.freehdd < 1.0){
+			loggerService.request.loggingEnabled = false;
+			if(loggerServiceClient.call(loggerService)){
+				if(loggerService.response.loggingStatus){
+					ROS_ERROR("Rapberrypi vitals isIssue(), could not turn off logger");
+				}
+			}
+			else{
+				ROS_ERROR("Rapberrypi vitals isIssue(), logger service call failed");
+			}
+			
+			return true;
+		}
+		else if(msg.humidity > 50.0){
+			return true;
+		}
+		//TODO all other trigger
+		
+		
+		return false;
+	}
 };
 
 #endif

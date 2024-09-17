@@ -1,0 +1,3 @@
+float64 voltage
+float64 shuntVoltage
+float64 batteryTemperature

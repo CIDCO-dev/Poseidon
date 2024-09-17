@@ -6,7 +6,7 @@ float64 freehdd
 float64 uptime
 float64 vbat
 float64 rh
-float64 temp
 float64 psi
 float64 humidity
 float64 temperature
+float64 voltage

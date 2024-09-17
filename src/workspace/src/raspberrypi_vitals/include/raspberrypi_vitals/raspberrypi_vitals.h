@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "i2c_controller_service/i2c_controller_service.h"
+#include "power_management_msg/batteryMsg.h"
 
 using namespace std;
 
@@ -19,11 +20,13 @@ class HBV {
 	private:
 		ros::NodeHandle node;
 		ros::Publisher HBVTopic;
+		ros::Subscriber batteryTopic;
 		ros::ServiceClient i2c_ctrl_service_client;
 		i2c_controller_service::i2c_controller_service srv;
 
 		uint32_t sequenceNumber;
 		float upt;
+		double batteryVoltage = 0.0;
 
 		float readFloatFromFile(const string& filepath) {
 			ifstream file(filepath);
@@ -69,8 +72,13 @@ class HBV {
 		HBV() : sequenceNumber(0) {
 			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
 			i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
+			batteryTopic = node.subscribe("batteryStatus", 1000, &HBV::batteryCallback, this);
 		}
-
+		
+		void batteryCallback(const power_management_msg::batteryMsg& msg){
+			batteryVoltage = msg.voltage;
+		}
+		
 		float getCpuTemp() {
 			return readFloatFromFile("/sys/class/thermal/thermal_zone0/temp") / 1000.0;
 		}
@@ -130,18 +138,17 @@ class HBV {
 				
 				srv.request.action2perform = "get_humidity";
 				if(i2c_ctrl_service_client.call(srv)){
-					//ROS_INFO_STREAM("Vitals humidity call: " << srv.response.value);
+					msg.humidity = srv.response.value;
 				}
 				
 				srv.request.action2perform = "get_temperature";
 				if(i2c_ctrl_service_client.call(srv)){
-					//ROS_INFO_STREAM("Vitals temperature call: " << srv.response.value);
+					msg.temperature = srv.response.value;
 				}
 				
-				
+				msg.voltage = batteryVoltage;
 				msg.vbat = 12.2;
 				msg.rh = 25;
-				msg.temp = 12;
 				msg.psi = 64;
 
 				HBVTopic.publish(msg);

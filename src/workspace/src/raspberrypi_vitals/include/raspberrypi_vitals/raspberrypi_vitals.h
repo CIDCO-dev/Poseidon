@@ -154,7 +154,7 @@ class HBV {
 				msg.rh = 25;
 				msg.psi = 64;
 				
-				if(isIssue){
+				if(isIssue(msg)){
 					srv.request.action2perform = "led_error";
 					if(!i2c_ctrl_service_client.call(srv)){
 						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");

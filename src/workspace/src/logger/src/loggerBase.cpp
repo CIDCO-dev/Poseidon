@@ -10,7 +10,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
 	gnssStreamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
-	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
+	//hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
 	sonarStreamSubscriber = node.subscribe("sonar_bin_stream", 1000, &LoggerBase::sonarBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);

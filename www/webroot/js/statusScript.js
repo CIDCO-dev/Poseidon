@@ -51,6 +51,33 @@ function processState(state) {
 
     $("#freehddText").text(100 - state.telemetry.vitals[3] + "%");
     $("#freehdd").width(100 - state.telemetry.vitals[3] + "%");
+    
+        // Humidity
+    $("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-success" : "bg-gradient-danger")).addClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-danger" : "bg-gradient-success"));
+
+    $("#humidityText").text(state.telemetry.vitals[10] + "%");
+    $("#humidity").width(state.telemetry.vitals[10] + "%");
+    
+        // Temperature
+    var tempElement = $("#temperature");
+    var temperatureHBValue = state.telemetry.vitals[7];
+    tempElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
+    if (temperatureHBValue < 60) {
+        tempElement.addClass("bg-gradient-success");
+        } else if (temperatureHBValue >= 60 && temperatureHBValue <= 75) {
+            tempElement.addClass("bg-gradient-warning");
+        } else if (temperatureHBValue > 75) {
+            tempElement.addClass("bg-gradient-danger");
+        }
+    $("#temperatureText").text(state.telemetry.vitals[7] + "\u00B0" + "C");
+    $("#temperature").width(20 + state.telemetry.vitals[7] + "%");
+    
+      // Battery
+      var batteryVoltageFull = 12;
+    $("#battery").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[9] > 5 ? "bg-gradient-danger" : "bg-gradient-success")).addClass((state.telemetry.vitals[9] > 5 ? "bg-gradient-success" : "bg-gradient-danger"));
+
+    $("#batteryText").text( (state.telemetry.vitals[9]/batteryVoltageFull) * 100 + "%");
+    $("#battery").width((state.telemetry.vitals[9]/batteryVoltageFull) * 100 + "%");
 }
 
 var socket = new WebSocket("ws://" + window.location.hostname + ":9002");
@@ -58,4 +85,5 @@ var socket = new WebSocket("ws://" + window.location.hostname + ":9002");
 socket.onmessage = function (event) {
     var state = JSON.parse(event.data);
     processState(state);
+    console.log(state);
 }

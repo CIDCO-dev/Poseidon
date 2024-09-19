@@ -28,37 +28,38 @@ public:
 
 	bool readVoltage(i2c_controller_service::i2c_controller_service::Response &response) {
 	
-		int data=0;
+		uint8_t data[2];
 		
 		if(!readRegister(REGISTER_VOLTAGE, data)){
 			return false;
 		}
 		
-		response.value = (data * 3.125) / 1000.0;
+		//response.value = (data * 3.125) / 1000.0;
+		response.value = (data[0] * 256 + data[1]) * 3.125 / 1000;
 		return true;
 	}
 
 	bool readShuntVoltage(i2c_controller_service::i2c_controller_service::Response &response) {
 	
-		int data = 0;
+		uint8_t data[2];
 		
 		if(!readRegister(REGISTER_SHUNT, data)){
 			return false;
 		}
 		
-		response.value = (data * 5.0) / 1000.0;  
+		response.value = (data[0] * 256 + data[1]) * 5.0 / 1000.0;  
 		return true;
 	}
 
 	bool readTemperature(i2c_controller_service::i2c_controller_service::Response &response) {
 	
-		int data = 0;
+		uint8_t data[2];
 		
 		if(!readRegister(REGISTER_TEMPERATURE, data)){
 			return false;
 		}
 		
-		int raw_temperature = data >> 4;  
+		int raw_temperature = (data[0] * 256 + data[1]) >> 4;  
 
 		if (raw_temperature & 0x800) {
 			raw_temperature = -((~raw_temperature & 0xFFF) + 1);
@@ -73,24 +74,22 @@ private:
 	static constexpr int ina238_address = 0x40;
 	int file;
 
-	static constexpr int REGISTER_VOLTAGE = 0x05;
-	static constexpr int REGISTER_SHUNT = 0x04;
-	static constexpr int REGISTER_TEMPERATURE = 0x06;
+	int REGISTER_VOLTAGE = 0x05;
+	int REGISTER_SHUNT = 0x04;
+	int REGISTER_TEMPERATURE = 0x06;
 
-	bool readRegister(int reg, int data) {
-		uint8_t buffer[2];
+	bool readRegister(const int &reg, uint8_t (&data)[2]) {
 
 		if (write(file, &reg, 1) != 1) {
 			ROS_ERROR("Failed to write to the I2C bus.");
 			return false;
 		}
 
-		if (read(file, buffer, 2) != 2) {
+		if (read(file, data, 2) != 2) {
 			ROS_ERROR("Failed to read from the I2C bus.");
 			return false;
 		}
-
-		data = (buffer[0] << 8) | buffer[1];
+		
 		return true;
 	}
 };

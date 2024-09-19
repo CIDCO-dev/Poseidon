@@ -26,10 +26,9 @@ public:
 			srv.request.action2perform = "get_voltage";
 			
 			if(i2c_ctrl_service_client.call(srv)){
-				
-				//ROS_INFO_STREAM("PowerManagement voltage call: " << srv.response.value);
 				power_management_msg::batteryMsg msg;
 				msg.voltage = srv.response.value;
+				//ROS_INFO_STREAM("PowerManagement voltage call: " << msg.voltage);
 				powerManagementTopic.publish(msg);
 				
 			}

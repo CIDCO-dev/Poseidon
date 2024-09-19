@@ -248,7 +248,7 @@ public:
 			rapidjson::Value rh((int) state.vitals.rh);
 			rapidjson::Value temp((int) state.vitals.temperature);
 			rapidjson::Value psi((int) state.vitals.psi);
-			rapidjson::Value voltage((int) state.vitals.voltage);
+			rapidjson::Value voltage(state.vitals.voltage);
 			rapidjson::Value humidity((int) state.vitals.humidity);
 
 			vitalsArray.PushBack(cputemp, telemetry.GetAllocator()); //0

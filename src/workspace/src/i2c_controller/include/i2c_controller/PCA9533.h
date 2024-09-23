@@ -6,7 +6,7 @@
 
 class PCA9533 {
 private:
-	const int I2C_ADDR = 0x62;
+	constexpr int I2C_ADDR = 0x62;
 	const char *I2C_DEVICE = "/dev/i2c-1"; 
 	int file;
 	

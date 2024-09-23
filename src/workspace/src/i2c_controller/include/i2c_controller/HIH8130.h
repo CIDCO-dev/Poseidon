@@ -69,7 +69,7 @@ public:
 
 private:
 	int fileDescriptor;
-	uint8_t deviceAddress = 0x27;
+	constexpr uint8_t deviceAddress = 0x27;
 	const char* i2cDevice = "/dev/i2c-1";
 };
 

@@ -119,7 +119,7 @@ class LoggerBase{
 		std::mutex mtx;
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
-		bool hddFreeSpaceOK = true;
+		//bool hddFreeSpaceOK = true;
 		
 		// log rotation
 		std::mutex fileRotationMutex;

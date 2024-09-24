@@ -1,8 +1,14 @@
 <!-- -*- mode: XML -*- -->
 <launch>
+<arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
 
-<node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen"/>
-<node pkg="power_management" name="power_management" type="power_management_node" output="screen"/>
+<node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" respawn="true" respawn_delay="1"/>
+<node pkg="power_management" name="power_management" type="power_management_node" output="screen" respawn="true" respawn_delay="1"/>
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
+<node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1">
+<!--	file extension cannot be numbers only -> rosparam will think its a number instead of a string-->
+	<param name="fileExtensionForSonarDatagram" value=".img852"/>
+	<param name="fileExtensionForGpsDatagram" value=".ubx"/>
+</node>
 
 </launch>

@@ -222,11 +222,11 @@ bool LoggerBase::getLoggingStatus(logger_service::GetLoggingStatus::Request & re
 }
 
 
-bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
+bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request, logger_service::ToggleLogging::Response & response){
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
-		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){
+		if(!loggerEnabled && request.loggingEnabled){
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
@@ -235,7 +235,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 			srv.request.action2perform = "led_recording";
 			i2cControllerServiceClient.call(srv);
 		}
-			
+		
 		else if(loggerEnabled && !request.loggingEnabled){
 			//shutting down logging, finalize logfiles
 			loggerEnabled=false;
@@ -596,24 +596,6 @@ bool LoggerBase::send_job(std::string json){
 bool LoggerBase::can_reach_server(){
 	return HttpsClient::can_reach_server(this->host, this->port);
 }
-
-
-//void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
-//	
-//	if(vitals.freehdd < 1.0 ){
-//		
-//		this->hddFreeSpaceOK = false;
-//		
-//		logger_service::ToggleLogging::Request toggleRequest;
-//		toggleRequest.loggingEnabled = false;
-//		logger_service::ToggleLogging::Response toggleResponse;
-//		toggleLogging(toggleRequest, toggleResponse);
-//	}
-//	
-//	if(vitals.freehdd > 2.0 ){
-//		this->hddFreeSpaceOK = true;
-//	}
-//}
 
 void LoggerBase::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
 

@@ -26,6 +26,17 @@ class HBV {
 		i2c_controller_service::i2c_controller_service srv;
 		ros::ServiceClient loggerServiceClient;
 		logger_service::ToggleLogging loggerService;
+		
+/*		ros::Timer warningTimer;*/
+/*		ros::Timer errorTimer;*/
+/*		*/
+/*		void warningTimerCallback(const ros::TimerEvent& event) {*/
+/*			ROS_INFO("vitals warning Timer expired!");*/
+/*		}*/
+
+/*		void errorTimerCallback(const ros::TimerEvent& event) {*/
+/*			ROS_INFO("vitals error Timer expired!");*/
+/*		}*/
 
 		uint32_t sequenceNumber;
 		float upt;
@@ -70,12 +81,14 @@ class HBV {
 			}
 			return 0.0;
 		}
+		
 
 	public:
 		HBV() : sequenceNumber(0) {
 			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
 			i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
 			batteryTopic = node.subscribe("batteryStatus", 1000, &HBV::batteryCallback, this);
+			
 		}
 		
 		void batteryCallback(const power_management_msg::batteryMsg& msg){
@@ -143,10 +156,18 @@ class HBV {
 				if(i2c_ctrl_service_client.call(srv)){
 					msg.humidity = srv.response.value;
 				}
+				else{
+					ROS_ERROR("1- vitals could not call i2c controller");
+					msg.humidity = 100.0;
+				}
 				
 				srv.request.action2perform = "get_temperature";
 				if(i2c_ctrl_service_client.call(srv)){
 					msg.temperature = srv.response.value;
+				}
+				else{
+					ROS_ERROR("2- vitals could not call i2c controller");
+					msg.temperature = 100.0;
 				}
 				
 				msg.voltage = batteryVoltage;
@@ -154,7 +175,13 @@ class HBV {
 				msg.rh = 25;
 				msg.psi = 64;
 				
-				if(isIssue(msg)){
+				if(isCritical(msg)){
+					srv.request.action2perform = "led_warning";
+					if(!i2c_ctrl_service_client.call(srv)){
+						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_warning");
+					}
+				}
+				else if(isWarning(msg)){
 					srv.request.action2perform = "led_error";
 					if(!i2c_ctrl_service_client.call(srv)){
 						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
@@ -167,7 +194,7 @@ class HBV {
 			}
 		}
 		
-	bool isIssue(raspberrypi_vitals_msg::sysinfo &msg){
+	bool isCritical(raspberrypi_vitals_msg::sysinfo &msg){
 		
 		if(msg.freehdd < 1.0){
 			loggerService.request.loggingEnabled = false;
@@ -187,6 +214,11 @@ class HBV {
 		}
 		//TODO all other trigger
 		
+		
+		return false;
+	}
+	
+	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
 		
 		return false;
 	}

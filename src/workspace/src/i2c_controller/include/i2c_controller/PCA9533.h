@@ -4,9 +4,12 @@
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
+			// 0,1,2,3,4
+enum States {Off, Ready, Recording, Warning, Critical};
+
 class PCA9533 {
 private:
-	constexpr int I2C_ADDR = 0x62;
+	const int I2C_ADDR = 0x62;
 	const char *I2C_DEVICE = "/dev/i2c-1"; 
 	int file;
 	
@@ -17,7 +20,7 @@ private:
 	const uint8_t PWM1[2] = {0x04, 0x80};
 	const uint8_t LS0  = 0x05;
 
-	bool setLEDStates(uint8_t led0, uint8_t led1, uint8_t led2) {
+	bool set_led_state(uint8_t led0, uint8_t led1, uint8_t led2) {
 		// Convert the LED states into an 8-bit value
 		uint8_t states = (0 << 6) | (led2 << 4) | (led1 << 2) | led0;
 		
@@ -62,66 +65,100 @@ public:
 				ROS_ERROR("write error init config PWM1");
 			}
 		
-		setLEDStates(0, 0, 0);
+		set_led_state(0, 0, 0);
 
 	}
 
 	~PCA9533() {
 		if(file>=0){
-			setLEDStates(0, 0, 0);
+			set_led_state(0, 0, 0);
 			close(file);
 		}
 	}
 	
-	uint8_t readLEDState() {
+	bool get_state(i2c_controller_service::i2c_controller_service::Response &response){
+		
+		States state;
+		
+		if(!read_led_state(state)){
+			return false;
+		}
+
+		response.value = static_cast<double>(state);
+		return true;
+	}
+	
+	bool read_led_state(States &state) {
 		uint8_t data;
 		
 		if (write(file, &LS0, 1) != 1) {
 			ROS_ERROR("readLEDState Failed to write to led controller");
+			return false;
 		}
 		
 		usleep(100000);  // 100 ms
 		
 		if (read(file, &data, 1) != 1) {
 			ROS_ERROR("Failed to read led controller");
+			return false;
 		}
 		
 		// Data from the registers
-		//printf("LS0 Register: 0x%02X\n", data);
+		printf("LS0 Register: 0x%02X\n", data);
 		
-		return data;
-	}
-	
-	bool errorIsON(){
 		
-		uint8_t ledState = readLEDState();
-		ledState = ledState & 0x01;
-		if(ledState == 1){
+		if(data == 0x05){
+			std::cout<<"green and red \n";
+			state = Warning;
 			return true;
 		}
+		else if(data == 0x01){
+			std::cout<<"red  \n";
+			state = Critical;
+			return true;
+		}
+		else if(data == 0x04){
+			std::cout<<"green \n";
+			state = Ready;
+			return true;
+		}
+		else if(data == 0x08){
+			std::cout<<"green flashing \n";
+			state = Recording;
+			return true;
+		}
+		else if(data == 0x00){
+			std::cout<<"OFF \n";
+			state = Off;
+			return true;
+		}
+		else{
+			ROS_ERROR("unrecognized led state");
+		}
+		
 		return false;
 	}
-	
 	
 	bool set_led(const std::string &led_mode){
 		
 		if(led_mode == "error"){
-			if(!setLEDStates(1, 0, 0)){
+			if(!set_led_state(1, 0, 0)){
 				return false;
 			}
 		}
 		else if(led_mode == "recording"){
-			if(!errorIsON()){
-				if(!setLEDStates(0, 2, 0)){
-					return false;
-				}
+			if(!set_led_state(0, 2, 0)){
+				return false;
 			}
 		}
 		else if(led_mode == "ready"){
-			if(!errorIsON()){
-				if(!setLEDStates(0, 1, 0)){
-					return false;
-				}
+			if(!set_led_state(0, 1, 0)){
+				return false;
+			}
+		}
+		else if(led_mode == "warning"){
+			if(!set_led_state(1, 1, 0)){
+				return false;
 			}
 		}
 		else{

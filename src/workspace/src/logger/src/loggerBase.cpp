@@ -668,7 +668,7 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		}
 	}
 	// lost of fix signal
-	else if(bootstrappedGnssTime && gnss.status.status < 0 && gnssFix){
+	else if(bootstrappedGnssTime && gnss.status.status < 0){ //here we do not check gnssFix variable to send a nofix signal at every msg
 		gnssFix = false;
 		i2c_controller_service::i2c_controller_service srv;
 		srv.request.action2perform = "led_nofix";

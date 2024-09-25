@@ -27,12 +27,12 @@ private:
 			ROS_ERROR("i2cController Error while calling GetLoggingStatus service");
 		}
 		
-		std::cout<<"is_logger_recording() " << std::boolalpha << bool(status.response.status)<<"\n";
+		//std::cout<<"is_logger_recording() " << std::boolalpha << bool(status.response.status)<<"\n";
 		return status.response.status;
 	}
 	
 	void warning_timer_callback(const ros::TimerEvent& event) {
-		ROS_INFO("I2cController warning Timer expired!");
+		//ROS_INFO("I2cController warning Timer expired!");
 		
 		i2c_controller_service::i2c_controller_service::Request req;
 		i2c_controller_service::i2c_controller_service::Response res;
@@ -55,7 +55,7 @@ private:
 	}
 
 	void error_timer_callback(const ros::TimerEvent& event) {
-		ROS_INFO("I2cController error Timer expired!");
+		//ROS_INFO("I2cController error Timer expired!");
 		
 		i2c_controller_service::i2c_controller_service::Request req;
 		i2c_controller_service::i2c_controller_service::Response res;

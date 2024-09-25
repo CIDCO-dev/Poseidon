@@ -209,16 +209,32 @@ class HBV {
 			
 			return true;
 		}
-		else if(msg.humidity > 50.0){
+		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
 			return true;
 		}
-		//TODO all other trigger
+		/*
+			The CPU temperature on a Raspberry Pi must stay below 85 °C to keep it running with the best performance. 
+			The CPU will slow down (throttle) as it approaches this threshold, which can lead to a general slowness of the operating system.
+			https://raspberrytips.com/raspberry-pi-temperature/
+		*/
+		else if(msg.cputemp >= 80.0){
+			return true;
+		}
 		
 		
 		return false;
 	}
 	
 	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
+		if(msg.freehdd < 5.0){
+			return true;
+		}
+		else if(msg.voltage <= 11.9){
+			return true;
+		}
+		else if(msg.cputemp >= 75.0){
+			return true;
+		}
 		
 		return false;
 	}

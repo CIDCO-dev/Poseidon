@@ -104,36 +104,36 @@ public:
 		}
 		
 		// Data from the registers
-		printf("LS0 Register: 0x%02X\n", data);
+		//printf("LS0 Register: 0x%02X\n", data);
 		
 		
 		if(data == 0x05){
-			std::cout<<"green and red \n";
+			//std::cout<<"green and red \n";
 			state = Warning;
 			return true;
 		}
 		else if(data == 0x01){
-			std::cout<<"red  \n";
+			//std::cout<<"red  \n";
 			state = Critical;
 			return true;
 		}
 		else if(data == 0x04){
-			std::cout<<"green \n";
+			//std::cout<<"green \n";
 			state = Ready;
 			return true;
 		}
 		else if(data == 0x08){
-			std::cout<<"green flashing \n";
+			//std::cout<<"green flashing \n";
 			state = Recording;
 			return true;
 		}
 		else if(data == 0x00){
-			std::cout<<"OFF \n";
+			//std::cout<<"OFF \n";
 			state = Off;
 			return true;
 		}
 		else if(data == 0x0A){
-			std::cout<<"NoFix \n";
+			//std::cout<<"NoFix \n";
 			state = NoFix;
 			return true;
 		}

@@ -22,15 +22,15 @@ public:
 		while (ros::ok()) {
 			
 			i2c_controller_service::i2c_controller_service srv;
-			
 			srv.request.action2perform = "get_voltage";
 			
 			if(i2c_ctrl_service_client.call(srv)){
 				power_management_msg::batteryMsg msg;
 				msg.voltage = srv.response.value;
-				//ROS_INFO_STREAM("PowerManagement voltage call: " << msg.voltage);
 				powerManagementTopic.publish(msg);
-				
+			}
+			else{
+				ROS_ERROR("PowerManagement::run get_voltage service call failed");
 			}
 			
 			ros::spinOnce();

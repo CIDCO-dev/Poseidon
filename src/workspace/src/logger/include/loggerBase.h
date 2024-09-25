@@ -60,29 +60,18 @@
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 
+enum LoggingMode{Undefined, AlwaysOn, Manual, SpeedBased};
+
 class LoggerBase{
 	
-	public:
-		LoggerBase(std::string & outputFolder);
-		~LoggerBase();
-		
-		/* log management methods */
-		virtual void init()=0;
-		virtual void finalize()=0;
-		virtual void rotate()=0;
+	private:
+		/* logging utils */
 		void updateLogRotationInterval();
+		void updateLoggingMode();
 		
-		/* Tranformers */
-		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
-		
-		/* topic callbacks */
-		virtual void gnssCallback(const sensor_msgs::NavSatFix& gnss)=0;
-		virtual void imuCallback(const sensor_msgs::Imu& imu)=0;
-		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
-		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
+		/* callbacks */
 		void configurationCallBack(const setting_msg::Setting &setting);
 		void gnssBinStreamCallback(const binary_stream_msg::Stream& stream);
-		//void hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals);
 		void sonarBinStreamCallback(const binary_stream_msg::Stream& stream);
 		
 		/* Speed based logging */
@@ -95,18 +84,41 @@ class LoggerBase{
 		bool toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response);
 		bool getLoggingMode(logger_service::GetLoggingMode::Request &request, logger_service::GetLoggingMode::Response &response);
 		bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response);
-		void updateLoggingMode();
 		
-		/* log transfer */
-		 bool compress(std::string &zipFilename, std::vector<std::string> &filesVector);
-		void transfer();
+		/* api transfert */
 		std::string zip_to_base64(std::string zipPath);
 		std::string create_json_str(std::string &base64Zip);
 		bool send_job(std::string json);
-		bool can_reach_server();
 		void updateApiTransferConfig();
+	
+	public:
+		LoggerBase(std::string & outputFolder);
+		~LoggerBase();
 		
 	protected:
+		void processGnssFix(const sensor_msgs::NavSatFix& gnss);
+		
+		/* log management methods */
+		virtual void init()=0;
+		virtual void finalize()=0;
+		virtual void rotate()=0;
+		
+		
+		/* Tranformers */
+		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
+		
+		/* topic callbacks */
+		virtual void gnssCallback(const sensor_msgs::NavSatFix& gnss)=0;
+		virtual void imuCallback(const sensor_msgs::Imu& imu)=0;
+		virtual void sonarCallback(const geometry_msgs::PointStamped& sonar)=0;
+		virtual void lidarCallBack(const sensor_msgs::PointCloud2& lidar)=0;
+		
+		
+		/* log transfer */
+		bool compress(std::string &zipFilename, std::vector<std::string> &filesVector);
+		void transfer();
+		bool can_reach_server();
+		
 		// ros
 		ros::NodeHandle node;
 		ros::ServiceClient configurationClient;
@@ -115,11 +127,11 @@ class LoggerBase{
 		// logger
 		std::string outputFolder;
 		std::string separator;
-		int loggingMode = 1;
+		int loggingMode = AlwaysOn;
 		std::mutex mtx;
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
-		//bool hddFreeSpaceOK = true;
+		bool gnssFix = false;
 		
 		// log rotation
 		std::mutex fileRotationMutex;

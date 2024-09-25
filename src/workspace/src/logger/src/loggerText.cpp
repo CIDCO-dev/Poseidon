@@ -207,9 +207,8 @@ void LoggerText::rotate(){
 
 
 void LoggerText::gnssCallback(const sensor_msgs::NavSatFix& gnss){
-	if(!bootstrappedGnssTime && gnss.status.status >= 0){
-		bootstrappedGnssTime = true;
-	}
+	
+	processGnssFix(gnss);
 
 	if(bootstrappedGnssTime && loggerEnabled){
 

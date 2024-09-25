@@ -20,14 +20,14 @@ private:
 	ros::Timer ledWarningTimer;
 	ros::Timer ledErrorTimer;
 	
-	bool is_recording(){
+	bool is_logger_recording(){
 		logger_service::GetLoggingStatus status;
 
 		if(!getLoggingStatusService.call(status)){
 			ROS_ERROR("i2cController Error while calling GetLoggingStatus service");
 		}
 		
-		std::cout<<"is_recording() " << std::boolalpha<< status.response.status<<"\n";
+		std::cout<<"is_logger_recording() " << std::boolalpha << bool(status.response.status)<<"\n";
 		return status.response.status;
 	}
 	
@@ -40,15 +40,14 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 		
-		std::cout<<"warning_timer_callback get_led_state response : " << res.value <<"\n";
+		//std::cout<<"warning_timer_callback get_led_state response : " << res.value <<"\n";
 		
-		if(res.value != 4){
-			if(is_recording()){
+		if(res.value < 4){
+			if(is_logger_recording()){
 				req.action2perform = "led_recording";
 				read_chip(req, res);
 			}
 			else{
-				std::cout<<"set led ready \n";
 				req.action2perform = "led_ready";
 				read_chip(req, res);
 			}
@@ -64,8 +63,8 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 		
-		if(res.value != 3){
-			if(is_recording()){
+		if(res.value != 3 && res.value != 4){
+			if(is_logger_recording()){
 				req.action2perform = "led_recording";
 				read_chip(req, res);
 			}
@@ -80,12 +79,27 @@ private:
 		ledWarningTimer.stop();
 		ledWarningTimer = n.createTimer(ros::Duration(10.0), &I2cController::warning_timer_callback, this, true, true);
 	}
+	
 	void reset_timer_error(){
 		ledErrorTimer.stop();
 		ledErrorTimer = n.createTimer(ros::Duration(30.0), &I2cController::error_timer_callback, this, true, true);
 	}
 	
 	bool isErrorOn(){
+		
+		i2c_controller_service::i2c_controller_service::Request req;
+		i2c_controller_service::i2c_controller_service::Response res;
+		
+		req.action2perform = "get_led_state";
+		read_chip(req, res);
+		
+		if(res.value == 5){
+			return true;
+		}
+		return false;
+	}
+	
+	bool isNoFixOn(){
 		
 		i2c_controller_service::i2c_controller_service::Request req;
 		i2c_controller_service::i2c_controller_service::Response res;
@@ -138,6 +152,15 @@ public:
 		}
 		
 		else if(req.action2perform == "led_warning"){
+			if(!isErrorOn() && !isNoFixOn()){
+				reset_timer_warning();
+				if(!led_controller.set_led("warning")){
+					return false;
+				}
+			}
+		}
+		
+		else if(req.action2perform == "led_nofix"){
 			if(!isErrorOn()){
 				reset_timer_warning();
 				if(!led_controller.set_led("warning")){

@@ -4,8 +4,8 @@
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
-			// 0,1,2,3,4
-enum States {Off, Ready, Recording, Warning, Critical};
+			// 0,1,2,3,4,5
+enum States {Off, Ready, Recording, Warning, NoFix, Critical};
 
 class PCA9533 {
 private:
@@ -130,6 +130,11 @@ public:
 		else if(data == 0x00){
 			std::cout<<"OFF \n";
 			state = Off;
+			return true;
+		}
+		else if(data == 0x0A){
+			std::cout<<"NoFix \n";
+			state = NoFix;
 			return true;
 		}
 		else{

@@ -655,6 +655,7 @@ void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream)
 }
 
 void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
+	
 	// first initial fix
 	if(!bootstrappedGnssTime && gnss.status.status >= 0 && !gnssFix){
 		bootstrappedGnssTime = true;

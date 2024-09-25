@@ -1,6 +1,7 @@
 #include "state_controller/state_controller.h"
 
 void StateController::gnssCallback(const sensor_msgs::NavSatFix& gnss){
+	
 	if( gnss.status.service > 0) { 
 		stateMtx.lock();
 			state.position = gnss;

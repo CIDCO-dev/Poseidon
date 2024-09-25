@@ -163,7 +163,7 @@ public:
 		else if(req.action2perform == "led_nofix"){
 			if(!isErrorOn()){
 				reset_timer_warning();
-				if(!led_controller.set_led("warning")){
+				if(!led_controller.set_led("nofix")){
 					return false;
 				}
 			}

@@ -166,6 +166,11 @@ public:
 				return false;
 			}
 		}
+		else if(led_mode == "nofix"){
+			if(!set_led_state(2, 2, 0)){
+				return false;
+			}
+		}
 		else{
 			ROS_ERROR_STREAM("led controller invalid request: " << led_mode);
 			return false;

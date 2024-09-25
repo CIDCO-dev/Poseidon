@@ -174,6 +174,10 @@ public:
 			//If we don't have a fix, send an empty position array
 			rapidjson::Value positionArray(rapidjson::Type::kArrayType);
 			telemetry.AddMember("position", positionArray, telemetry.GetAllocator()); // empty position array
+			rapidjson::Value gnssStatus((int)state.position.status.status);
+			telemetry.AddMember("gnssFix", gnssStatus, telemetry.GetAllocator());
+			
+			
 		}
 	else {
 			// Else, send the whole position
@@ -184,6 +188,8 @@ public:
 			positionArray.PushBack(longitude, telemetry.GetAllocator());
 			positionArray.PushBack(latitude, telemetry.GetAllocator());
 			telemetry.AddMember("position", positionArray, telemetry.GetAllocator());
+			rapidjson::Value gnssStatus((int)state.position.status.status);
+			telemetry.AddMember("gnssFix", gnssStatus, telemetry.GetAllocator());
 		}
 
 		if(!state.imu.header.seq){

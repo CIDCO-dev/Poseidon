@@ -9,13 +9,13 @@ double GNSS::ellipsoidalHeight(uint32_t sequenceNumber){
 	return sin(sequenceNumber*42+100)*10;
 }
 
-void GNSS::message(uint32_t msgSequenceNumber,double longitude,double latitude){
+void GNSS::message(uint32_t msgSequenceNumber,double longitude,double latitude, int status){
 	sensor_msgs::NavSatFix msg;
 	msg.header.seq=msgSequenceNumber;
 	msg.header.stamp=ros::Time::now();
-	msg.status.service = 1;
-	msg.status.status = 1;
-	msg.header.stamp.nsec=0;
+	msg.status.service = status;
+	msg.status.status = status;
+	msg.header.stamp.nsec = 0;
 	msg.longitude=longitude;
 	msg.latitude=latitude;
 	msg.altitude=GNSS::ellipsoidalHeight(msgSequenceNumber);
@@ -23,7 +23,7 @@ void GNSS::message(uint32_t msgSequenceNumber,double longitude,double latitude){
 	gnssTopic.publish(msg);
 }
 
-void GNSS::talk(){
+void GNSS::talk(int status){
 	double earthRadius = 6371000;
 	double vesselSpeed = 2.0; // m/s, 2 m/s is about 4 knots
 	sequenceNumber++;
@@ -45,6 +45,6 @@ void GNSS::talk(){
 
         latitude  = 48.632697 + R2D(distanceCovered / earthRadius);
 
-	GNSS::message(sequenceNumber,longitude,latitude);
+	GNSS::message(sequenceNumber,longitude,latitude, status);
 	
 }

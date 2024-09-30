@@ -38,8 +38,9 @@ sudo bash -c 'echo "dtoverlay=pps-gpio,gpiopin=4" >> /boot/firmware/usercfg.txt'
 sudo bash -c 'echo "dtoverlay=uart0" >> /boot/firmware/usercfg.txt'
 sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
 
-echo "[+] Config I2C speed"
+echo "[+] Config I2C"
 sudo bash -c 'echo "dtparam=i2c_arm_baudrate=500000" >> /boot/firmware/usercfg.txt'
+sudo bash -c 'echo "dtparam=i2c4,pins_6_7" >> /boot/firmware/usercfg.txt'
 
 echo "[+] Config uart"
 sudo bash -c 'cat << EOF2 > /boot/firmware/cmdline.txt

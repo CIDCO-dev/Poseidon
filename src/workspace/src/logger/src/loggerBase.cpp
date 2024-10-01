@@ -1,6 +1,5 @@
 #include "loggerBase.h"
 #include "../../utils/string_utils.hpp"
-#include "../../utils/I2c_mutex.h"
 
 LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), transformListener(buffer){
 	
@@ -11,7 +10,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
 	gnssStreamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
-	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
+	//hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
 	sonarStreamSubscriber = node.subscribe("sonar_bin_stream", 1000, &LoggerBase::sonarBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
@@ -21,7 +20,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	setLoggingModeService = node.advertiseService("set_logging_mode", &LoggerBase::setLoggingMode, this);
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
-	ledClient = node.serviceClient<led_service::set_led_mode>("set_led");
+	i2cControllerServiceClient = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
 	
 	if (!node.getParam("/logger/fileExtensionForSonarDatagram", this->fileExtensionForSonarDatagram))
 	{
@@ -50,15 +49,6 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 		}
 		ROS_INFO_STREAM(outputFolder << " created.");
 	}
-	
-	
-	// the led service needs to be launched before the logger
-	led_service::set_led_mode srv;
-	srv.request.mode = "ready";
-	
-	if(!ledClient.call(srv)){
-		ROS_INFO("could not call led_service");
-	}
 }
 
 LoggerBase::~LoggerBase(){
@@ -74,9 +64,9 @@ void LoggerBase::updateLoggingMode(){
 		std::string strLoggingMode = srv.response.value;
 		try{
 			loggingMode = stod(strLoggingMode);
-			if(loggingMode != 1 && loggingMode != 2 && loggingMode != 3){
+			if(loggingMode != AlwaysOn && loggingMode != Manual && loggingMode != SpeedBased){
 				ROS_ERROR("Invalid logging mode, defaulting to Always On (1) \nValid modes are:\n Always On (1) \n Manual (2) \n Speed-Based (3)");
-				loggingMode = 1;
+				loggingMode = AlwaysOn;
 			}
 		}
 		catch(std::invalid_argument &err){
@@ -85,7 +75,7 @@ void LoggerBase::updateLoggingMode(){
 	}
 	else{
 		ROS_WARN("no logging mode define in config file, defaulting to Always on");
-		loggingMode = 1;
+		loggingMode = AlwaysOn;
 	}
 	
 }
@@ -223,28 +213,34 @@ bool LoggerBase::getLoggingStatus(logger_service::GetLoggingStatus::Request & re
 }
 
 
-bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,logger_service::ToggleLogging::Response & response){
+bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request, logger_service::ToggleLogging::Response & response){
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
-		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){
+		if(!loggerEnabled && request.loggingEnabled){
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
 			
-			led_service::set_led_mode srv;
-			srv.request.mode = "recording";
-			ledClient.call(srv);
+			i2c_controller_service::i2c_controller_service srv;
+			srv.request.action2perform = "led_recording";
+			if(!i2cControllerServiceClient.call(srv)){
+				ROS_ERROR("LoggerBase::toggleLogging(1) i2cController service call failed");
+				//XXX retry
+			}
 		}
-			
+		
 		else if(loggerEnabled && !request.loggingEnabled){
 			//shutting down logging, finalize logfiles
 			loggerEnabled=false;
 			finalize();
 			
-			led_service::set_led_mode srv;
-			srv.request.mode = "ready";
-			ledClient.call(srv);
+			i2c_controller_service::i2c_controller_service srv;
+			srv.request.action2perform = "led_ready";
+			if(!i2cControllerServiceClient.call(srv)){
+				ROS_ERROR("LoggerBase::toggleLogging(2) i2cController service call failed");
+				//XXX retry
+			}
 		}
 
 		response.loggingStatus=loggerEnabled;
@@ -274,7 +270,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 				mtx.lock();
 					ROS_ERROR("logging mode should be an integer 1-2-3 \n error catch in : LoggerBase::configurationCallBack()");
 					logger_service::SetLoggingMode defaultMode;
-				defaultMode.request.loggingMode = 1;
+				defaultMode.request.loggingMode = AlwaysOn;
 				setLoggingMode(defaultMode.request, defaultMode.response);
 				mtx.unlock();
 				}
@@ -297,7 +293,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			ROS_ERROR_STREAM("loggingModeCallBack error "<< setting.key << " is different than 1,2,3 \n"<<"defaulting to: always ON");
 			mtx.lock();
 			logger_service::SetLoggingMode defaultMode;
-			defaultMode.request.loggingMode = 1;
+			defaultMode.request.loggingMode = AlwaysOn;
 			setLoggingMode(defaultMode.request, defaultMode.response);
 			mtx.unlock();
 		}
@@ -598,24 +594,6 @@ bool LoggerBase::can_reach_server(){
 	return HttpsClient::can_reach_server(this->host, this->port);
 }
 
-
-void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
-	
-	if(vitals.freehdd < 1.0 ){
-		
-		this->hddFreeSpaceOK = false;
-		
-		logger_service::ToggleLogging::Request toggleRequest;
-		toggleRequest.loggingEnabled = false;
-		logger_service::ToggleLogging::Response toggleResponse;
-		toggleLogging(toggleRequest, toggleResponse);			
-	}
-	
-	if(vitals.freehdd > 2.0 ){
-		this->hddFreeSpaceOK = true;
-	}
-}
-
 void LoggerBase::gnssBinStreamCallback(const binary_stream_msg::Stream& stream){
 
 	if(bootstrappedGnssTime && loggerEnabled){
@@ -673,6 +651,39 @@ void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream)
 		}
 		
 		lastLidarTimestamp = timestamp;
+	}
+}
+
+void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
+	
+	// first initial fix
+	if(!bootstrappedGnssTime && gnss.status.status >= 0 && !gnssFix){
+		bootstrappedGnssTime = true;
+		gnssFix = true;
+		
+		i2c_controller_service::i2c_controller_service srv;
+		srv.request.action2perform = (loggerEnabled == true) ? "led_recording" : "led_ready";
+		if(!i2cControllerServiceClient.call(srv)){
+			ROS_ERROR("gnssCallback(1) i2cController service call failed");
+		}
+	}
+	// lost of fix signal
+	else if(bootstrappedGnssTime && gnss.status.status < 0){ //here we do not check gnssFix variable to send a nofix signal at every msg
+		gnssFix = false;
+		i2c_controller_service::i2c_controller_service srv;
+		srv.request.action2perform = "led_nofix";
+		if(!i2cControllerServiceClient.call(srv)){
+			ROS_ERROR("gnssCallback(2) i2cController service call failed");
+		}
+	}
+	// fix signal restored
+	else if(bootstrappedGnssTime && gnss.status.status >= 0 && !gnssFix){
+		gnssFix = true;
+		i2c_controller_service::i2c_controller_service srv;
+		srv.request.action2perform = (loggerEnabled == true) ? "led_recording" : "led_ready";
+		if(!i2cControllerServiceClient.call(srv)){
+			ROS_ERROR("gnssCallback(3) i2cController service call failed");
+		}
 	}
 }
 

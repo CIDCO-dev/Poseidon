@@ -11,7 +11,9 @@
 #include <cstdio>
 #include <fcntl.h>
 #include <unistd.h>
-#include "HIH8130_sensor.h"
+#include "i2c_controller_service/i2c_controller_service.h"
+#include "power_management_msg/batteryMsg.h"
+#include "logger_service/ToggleLogging.h"
 
 using namespace std;
 
@@ -19,9 +21,26 @@ class HBV {
 	private:
 		ros::NodeHandle node;
 		ros::Publisher HBVTopic;
+		ros::Subscriber batteryTopic;
+		ros::ServiceClient i2c_ctrl_service_client;
+		i2c_controller_service::i2c_controller_service srv;
+		ros::ServiceClient loggerServiceClient;
+		logger_service::ToggleLogging loggerService;
+		
+/*		ros::Timer warningTimer;*/
+/*		ros::Timer errorTimer;*/
+/*		*/
+/*		void warningTimerCallback(const ros::TimerEvent& event) {*/
+/*			ROS_INFO("vitals warning Timer expired!");*/
+/*		}*/
+
+/*		void errorTimerCallback(const ros::TimerEvent& event) {*/
+/*			ROS_INFO("vitals error Timer expired!");*/
+/*		}*/
 
 		uint32_t sequenceNumber;
 		float upt;
+		double batteryVoltage = 0.0;
 
 		float readFloatFromFile(const string& filepath) {
 			ifstream file(filepath);
@@ -62,12 +81,20 @@ class HBV {
 			}
 			return 0.0;
 		}
+		
 
 	public:
 		HBV() : sequenceNumber(0) {
 			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
+			i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
+			batteryTopic = node.subscribe("batteryStatus", 1000, &HBV::batteryCallback, this);
+			
 		}
-
+		
+		void batteryCallback(const power_management_msg::batteryMsg& msg){
+			batteryVoltage = msg.voltage;
+		}
+		
 		float getCpuTemp() {
 			return readFloatFromFile("/sys/class/thermal/thermal_zone0/temp") / 1000.0;
 		}
@@ -111,12 +138,6 @@ class HBV {
 		void run(){
 			ros::Rate loop_rate(1);
 			
-			const char* i2cDevice = "/dev/i2c-1";
-			uint8_t sensorAddress = 0x27;
-			
-			HIH8130 sensor(i2cDevice, sensorAddress);
-			
-			
 			while (ros::ok()) {
 				raspberrypi_vitals_msg::sysinfo msg;
 
@@ -129,20 +150,94 @@ class HBV {
 				msg.freeram = getFreeRam();
 				msg.freehdd = getFreeHdd();
 				msg.uptime = getUpTime();
-				msg.humidity = sensor.get_humidity();
-				msg.temperature = sensor.get_temperature();
 				
 				
+				srv.request.action2perform = "get_humidity";
+				if(i2c_ctrl_service_client.call(srv)){
+					msg.humidity = srv.response.value;
+				}
+				else{
+					ROS_ERROR("1- vitals could not call i2c controller");
+					msg.humidity = 100.0;
+				}
+				
+				srv.request.action2perform = "get_temperature";
+				if(i2c_ctrl_service_client.call(srv)){
+					msg.temperature = srv.response.value;
+				}
+				else{
+					ROS_ERROR("2- vitals could not call i2c controller");
+					msg.temperature = 100.0;
+				}
+				
+				msg.voltage = batteryVoltage;
 				msg.vbat = 12.2;
 				msg.rh = 25;
-				msg.temp = 12;
 				msg.psi = 64;
-
+				
+				if(isCritical(msg)){
+					srv.request.action2perform = "led_warning";
+					if(!i2c_ctrl_service_client.call(srv)){
+						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_warning");
+					}
+				}
+				else if(isWarning(msg)){
+					srv.request.action2perform = "led_error";
+					if(!i2c_ctrl_service_client.call(srv)){
+						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
+					}
+				}
+				
 				HBVTopic.publish(msg);
 				ros::spinOnce();
 				loop_rate.sleep();
 			}
 		}
+		
+	bool isCritical(raspberrypi_vitals_msg::sysinfo &msg){
+		
+		if(msg.freehdd < 1.0){
+			loggerService.request.loggingEnabled = false;
+			if(loggerServiceClient.call(loggerService)){
+				if(loggerService.response.loggingStatus){
+					ROS_ERROR("Rapberrypi vitals isIssue(), could not turn off logger");
+				}
+			}
+			else{
+				ROS_ERROR("Rapberrypi vitals isIssue(), logger service call failed");
+			}
+			
+			return true;
+		}
+		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
+			return true;
+		}
+		/*
+			The CPU temperature on a Raspberry Pi must stay below 85 °C to keep it running with the best performance. 
+			The CPU will slow down (throttle) as it approaches this threshold, which can lead to a general slowness of the operating system.
+			https://raspberrytips.com/raspberry-pi-temperature/
+		*/
+		else if(msg.cputemp >= 80.0){
+			return true;
+		}
+		
+		
+		return false;
+	}
+	
+	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
+		if(msg.freehdd < 5.0){
+			return true;
+		}
+		else if(msg.voltage <= 11.9){
+			return true;
+		}
+		else if(msg.cputemp >= 75.0){
+			return true;
+		}
+		
+		return false;
+	}
 };
 
 #endif

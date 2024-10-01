@@ -70,6 +70,7 @@ function connectWebSocket() {
     var msg = JSON.parse(event.data);
 
     if (msg.telemetry) {
+      //console.log("ok")
       processTelemetry(msg.telemetry);
       hideOverlay()
     }
@@ -182,8 +183,8 @@ function chartMetrics() {
 }
 
 function processTelemetry(state) {
-
-  // Update dashboard top marquees  
+  console.log(state.gnssFix);
+  // Update dashboard top marquees
 
   if (!state.position.length || !state.attitude.length || !state.depth.length) {
     $("#systemStatus").removeClass("d-none").addClass("d-block");
@@ -194,8 +195,14 @@ function processTelemetry(state) {
     $("#systemStatus").removeClass("d-block").addClass("d-none");
     $("#systemStatusText").text();
   }
-
-  if (state.position.length) {
+  
+  if (state.gnssFix < 0){
+    $("#gnssStatus").removeClass("bg-gradient-success").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
+    $("#gnssLongitudeValue").text(state.position[0].toFixed(2));
+    $("#gnssLatitudeValue").text(state.position[1].toFixed(2));
+    $("#gnssStatusText").text("No GNSS fix");
+  }
+  else if(state.position.length) {
     $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
     $("#gnssLongitudeValue").text(state.position[0].toFixed(8));
     $("#gnssLatitudeValue").text(state.position[1].toFixed(8));

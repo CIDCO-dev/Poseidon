@@ -11,6 +11,7 @@ add_definitions(-std=c++11 -Wall -g)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   raspberrypi_vitals_msg
+  i2c_controller_service
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

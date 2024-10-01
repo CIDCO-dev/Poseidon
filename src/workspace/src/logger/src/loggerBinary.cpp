@@ -107,10 +107,7 @@ void LoggerBinary::rotate(){
 
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	
-	if(!bootstrappedGnssTime && gnss.status.status >= 0){
-		//ROS_INFO_STREAM("LoggerBinary::gnssCallback -> bootstrappedGnssTime"); ok
-		bootstrappedGnssTime = true;
-	}
+	processGnssFix(gnss);
 	//ROS_INFO_STREAM("logger enabled: "<< loggerEnabled);
 	//ROS_INFO("LoggerBinary::gnssCallback, gnss status %d", gnss.status.status);
 	if(bootstrappedGnssTime && loggerEnabled){

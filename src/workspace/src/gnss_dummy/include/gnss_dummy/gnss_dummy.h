@@ -22,9 +22,9 @@ class GNSS{
 	public:
 		GNSS();
 
-		void talk();
+		void talk(int status);
 		double ellipsoidalHeight(uint32_t sequenceNumber);
-        void message(uint32_t msgSequenceNumber,double longitude,double latitude);
+        void message(uint32_t msgSequenceNumber,double longitude,double latitude, int status);
 };
 
 

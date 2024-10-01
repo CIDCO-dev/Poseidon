@@ -52,12 +52,15 @@
 
  <build_depend>roscpp</build_depend>
  <build_depend>raspberrypi_vitals_msg</build_depend>
+ <build_depend>i2c_controller_service</build_depend>
 
  <build_export_depend>roscpp</build_export_depend>
  <build_export_depend>raspberrypi_vitals_msg</build_export_depend>
+ <build_export_depend>i2c_controller_service</build_export_depend>
 
  <exec_depend>roscpp</exec_depend>
  <exec_depend>raspberrypi_vitals_msg</exec_depend>
+ <exec_depend>i2c_controller_service</exec_depend>
 
 
 

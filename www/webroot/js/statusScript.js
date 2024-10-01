@@ -29,15 +29,15 @@ function processState(state) {
 	var cputempElement = $("#cputemp");
 	var temperatureValue = state.telemetry.vitals[0];
 	cputempElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
-	if (temperatureValue < 60) {
+	if (temperatureValue < 75) {
 		cputempElement.addClass("bg-gradient-success");
-		} else if (temperatureValue >= 60 && temperatureValue <= 75) {
+		} else if (temperatureValue >= 75 && temperatureValue <= 80) {
 			cputempElement.addClass("bg-gradient-warning");
-		} else if (temperatureValue > 75) {
+		} else if (temperatureValue > 80) {
 			cputempElement.addClass("bg-gradient-danger");
 		}
 	$("#cputempText").text(state.telemetry.vitals[0] + "\u00B0" + "C");
-	$("#cputemp").width(20 + state.telemetry.vitals[0] + "%");
+	$("#cputemp").width(10 + state.telemetry.vitals[0] + "%");
 
 
 	// Memory
@@ -47,7 +47,16 @@ function processState(state) {
 	$("#freeram").width(100 - state.telemetry.vitals[2] + "%");
 
 	// HDD free space
-	$("#freehdd").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[3] > 20 ? "bg-gradient-danger" : "bg-gradient-success")).addClass((state.telemetry.vitals[3] > 20 ? "bg-gradient-success" : "bg-gradient-danger"));
+	if(state.telemetry.vitals[3] <= 1.0){
+		$("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-danger");
+	}
+	else if(state.telemetry.vitals[3] <= 5.0 && state.telemetry.vitals[3] > 1.0){
+		$("#freehdd").removeClass("bg-gradient-success").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
+	}
+	else{
+		$("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
+	}
+	
 
 	$("#freehddText").text(100 - state.telemetry.vitals[3] + "%");
 	$("#freehdd").width(100 - state.telemetry.vitals[3] + "%");
@@ -76,16 +85,16 @@ function processState(state) {
 	var voltageElement = $("#battery");
 	var voltage = state.telemetry.vitals[9];
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
-	if (voltage <= 11) {
+	if (voltage <= 11.0) {
 		voltageElement.addClass("bg-gradient-danger");
-		$("#battery").width(1 + "%");
-		} else if (voltage >= 11.5 && voltage <= 12.5) {
+		$("#battery").width(100 + "%");
+		} else if (voltage >= 11.9 && voltage < 13.0) {
 			voltageElement.addClass("bg-gradient-success");
-			$("#battery").width(99 + "%");
-		} else if (voltage > 11 && voltage <= 11.5) {
+			$("#battery").width(1 + "%");
+		} else if (voltage > 11.0 && voltage < 11.9) {
 			voltageElement.addClass("bg-gradient-warning");
-			$("#battery").width(50 + "%");
-		} else if (voltage > 12.5) {
+			$("#battery").width(80 + "%");
+		} else if (voltage > 13.0) {
 			voltageElement.addClass("bg-gradient-danger");
 			$("#battery").width(100 + "%");
 		}

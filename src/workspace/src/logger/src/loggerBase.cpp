@@ -10,7 +10,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
 	gnssStreamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
-	//hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
+	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
 	sonarStreamSubscriber = node.subscribe("sonar_bin_stream", 1000, &LoggerBase::sonarBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
@@ -49,6 +49,14 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 		}
 		ROS_INFO_STREAM(outputFolder << " created.");
 	}
+	
+	i2c_controller_service::i2c_controller_service srv;
+	srv.request.action2perform = "led_nofix";
+	if(!i2cControllerServiceClient.call(srv)){
+		ROS_ERROR("LoggerBase::LoggerBase i2cController service call failed");
+	}
+	
+	ROS_INFO("logger initialization finished");
 }
 
 LoggerBase::~LoggerBase(){
@@ -217,7 +225,7 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
-		if(!loggerEnabled && request.loggingEnabled){
+		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){
 			//Enabling logging, init logfiles
 			loggerEnabled=true;
 			init();
@@ -427,6 +435,23 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 		heading += 360.0;
 	}
 	
+}
+
+void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
+	
+	if(vitals.freehdd < 1.0 ){
+		
+		this->hddFreeSpaceOK = false;
+		
+		logger_service::ToggleLogging::Request toggleRequest;
+		toggleRequest.loggingEnabled = false;
+		logger_service::ToggleLogging::Response toggleResponse;
+		toggleLogging(toggleRequest, toggleResponse);
+	}
+	
+	if(vitals.freehdd > 2.0 ){
+		this->hddFreeSpaceOK = true;
+	}
 }
 
 void LoggerBase::transfer(){
@@ -656,36 +681,71 @@ void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream)
 
 void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 	
+	//std::cout<<"LoggerBase::processGnssFix: " << (int)gnss.status.status <<"\n";
+	reset_gnss_timer();
+	
+	// tell user we are waiting for acquiring fix
+	if(!bootstrappedGnssTime && gnss.status.status < 0){
+		i2c_controller_service::i2c_controller_service srv;
+		srv.request.action2perform = "led_nofix";
+		if(!i2cControllerServiceClient.call(srv)){
+			ROS_WARN("gnssCallback(0) i2cController service call failed");
+		}
+		//ROS_INFO("waiting for fix");
+	}
 	// first initial fix
 	if(!bootstrappedGnssTime && gnss.status.status >= 0 && !gnssFix){
+		mtx.lock();
 		bootstrappedGnssTime = true;
 		gnssFix = true;
+		mtx.unlock();
 		
 		i2c_controller_service::i2c_controller_service srv;
-		srv.request.action2perform = (loggerEnabled == true) ? "led_recording" : "led_ready";
+		srv.request.action2perform = (loggerEnabled == false) ? "gps_fix_ready" : "gps_fix_recording";
+		
 		if(!i2cControllerServiceClient.call(srv)){
 			ROS_ERROR("gnssCallback(1) i2cController service call failed");
 		}
+		ROS_INFO("first initial gps fix acquired");
 	}
 	// lost of fix signal
 	else if(bootstrappedGnssTime && gnss.status.status < 0){ //here we do not check gnssFix variable to send a nofix signal at every msg
+		ROS_WARN_STREAM_COND(gnssFix, "lost fix");
 		gnssFix = false;
 		i2c_controller_service::i2c_controller_service srv;
 		srv.request.action2perform = "led_nofix";
 		if(!i2cControllerServiceClient.call(srv)){
 			ROS_ERROR("gnssCallback(2) i2cController service call failed");
 		}
+		
 	}
 	// fix signal restored
 	else if(bootstrappedGnssTime && gnss.status.status >= 0 && !gnssFix){
 		gnssFix = true;
 		i2c_controller_service::i2c_controller_service srv;
-		srv.request.action2perform = (loggerEnabled == true) ? "led_recording" : "led_ready";
+		srv.request.action2perform = (loggerEnabled == false) ? "gps_fix_ready" : "gps_fix_recording";
 		if(!i2cControllerServiceClient.call(srv)){
 			ROS_ERROR("gnssCallback(3) i2cController service call failed");
 		}
+		ROS_INFO("Gps fix restored");
 	}
 }
+
+void LoggerBase::gnss_timer_callback(const ros::TimerEvent& event){
+	ROS_DEBUG_STREAM_COND(gnssFix, "LoggerBase::gnssTimerCallback() = lost fix");
+	sensor_msgs::NavSatFix msg;
+	gnssFix = false;
+	i2c_controller_service::i2c_controller_service srv;
+	srv.request.action2perform = "led_nofix";
+	if(!i2cControllerServiceClient.call(srv)){
+		ROS_ERROR("gnssCallback(2) i2cController service call failed");
+	}
+}
+
+void LoggerBase::reset_gnss_timer(){
+		noGnssTimer.stop();
+		noGnssTimer = node.createTimer(ros::Duration(1.0), &LoggerBase::gnss_timer_callback, this);
+	}
 
 // http transfer
 

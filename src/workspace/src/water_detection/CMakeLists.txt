@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   i2c_controller_service
 )
-find_library(WIRINGPI_LIB wiringPi)
+find_library(WIRINGPI_LIB wiringPi PATHS /usr/lib)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -134,7 +134,7 @@ include_directories(
 # Declare a C++ executable
 # With catkin_make all packages are built within a single CMake context
 # The recommended prefix ensures that target names across packages don't collide
- add_executable(${PROJECT_NAME}_node node/water_detection_node.cpp)
+add_executable(${PROJECT_NAME}_node node/water_detection_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

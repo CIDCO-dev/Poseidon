@@ -2,6 +2,7 @@
 #define raspberrypi_vitals
 
 #include "ros/ros.h"
+#include "ros/console.h"
 #include "raspberrypi_vitals_msg/sysinfo.h"
 #include <iostream>
 #include <fstream>
@@ -26,17 +27,6 @@ class HBV {
 		i2c_controller_service::i2c_controller_service srv;
 		ros::ServiceClient loggerServiceClient;
 		logger_service::ToggleLogging loggerService;
-		
-/*		ros::Timer warningTimer;*/
-/*		ros::Timer errorTimer;*/
-/*		*/
-/*		void warningTimerCallback(const ros::TimerEvent& event) {*/
-/*			ROS_INFO("vitals warning Timer expired!");*/
-/*		}*/
-
-/*		void errorTimerCallback(const ros::TimerEvent& event) {*/
-/*			ROS_INFO("vitals error Timer expired!");*/
-/*		}*/
 
 		uint32_t sequenceNumber;
 		float upt;
@@ -157,8 +147,8 @@ class HBV {
 					msg.humidity = srv.response.value;
 				}
 				else{
-					ROS_ERROR("1- vitals could not call i2c controller");
-					msg.humidity = 100.0;
+					//ROS_ERROR("1- vitals could not call i2c controller");
+					msg.humidity = 00.0; //XXX 
 				}
 				
 				srv.request.action2perform = "get_temperature";
@@ -166,8 +156,8 @@ class HBV {
 					msg.temperature = srv.response.value;
 				}
 				else{
-					ROS_ERROR("2- vitals could not call i2c controller");
-					msg.temperature = 100.0;
+					//ROS_ERROR("2- vitals could not call i2c controller");
+					msg.temperature = 00.0; //XXX
 				}
 				
 				msg.voltage = batteryVoltage;
@@ -176,17 +166,19 @@ class HBV {
 				msg.psi = 64;
 				
 				if(isCritical(msg)){
-					srv.request.action2perform = "led_warning";
+					srv.request.action2perform = "led_error";
 					if(!i2c_ctrl_service_client.call(srv)){
 						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_warning");
 					}
 				}
 				else if(isWarning(msg)){
-					srv.request.action2perform = "led_error";
+					srv.request.action2perform = "led_warning";
 					if(!i2c_ctrl_service_client.call(srv)){
 						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
 					}
 				}
+				
+				//ROS_INFO_STREAM_THROTTLE(60, msg);
 				
 				HBVTopic.publish(msg);
 				ros::spinOnce();
@@ -200,17 +192,17 @@ class HBV {
 			loggerService.request.loggingEnabled = false;
 			if(loggerServiceClient.call(loggerService)){
 				if(loggerService.response.loggingStatus){
-					ROS_ERROR("Rapberrypi vitals isIssue(), could not turn off logger");
+					ROS_ERROR("Rapberrypi vitals isCritical(), could not turn off logger");
 				}
 			}
 			else{
-				ROS_ERROR("Rapberrypi vitals isIssue(), logger service call failed");
+				ROS_ERROR("Rapberrypi vitals isCritical(), logger service call failed");
 			}
 			
 			return true;
 		}
 		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
-			return true;
+			//return true;
 		}
 		/*
 			The CPU temperature on a Raspberry Pi must stay below 85 °C to keep it running with the best performance. 
@@ -230,7 +222,7 @@ class HBV {
 			return true;
 		}
 		else if(msg.voltage <= 11.9){
-			return true;
+			// return true;
 		}
 		else if(msg.cputemp >= 75.0){
 			return true;

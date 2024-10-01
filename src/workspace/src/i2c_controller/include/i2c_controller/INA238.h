@@ -70,7 +70,7 @@ public:
 	}
 
 private:
-	const char* i2c_device = "/dev/i2c-1";
+	const char* i2c_device = "/dev/i2c-4";
 	static constexpr int ina238_address = 0x40;
 	int file;
 

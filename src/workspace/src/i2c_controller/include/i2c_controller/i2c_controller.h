@@ -5,7 +5,6 @@
 #include "HIH8130.h"
 #include "INA238.h"
 #include "PCA9533.h"
-//#include <mutex>
 
 
 class I2cController {
@@ -21,7 +20,6 @@ private:
 	ros::Timer ledWarningTimer;
 	ros::Timer ledErrorTimer;
 	
-	//std::mutex mtx;
 	
 	bool set_logger_recording_status(){
 		logger_service::GetLoggingStatus status;

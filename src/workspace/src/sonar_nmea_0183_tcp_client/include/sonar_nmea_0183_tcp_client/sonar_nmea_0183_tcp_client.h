@@ -386,6 +386,7 @@ public:
 	
 	configurationSubscriber = node.subscribe("configuration", 1000, &DeviceNmeaClient::configurationCallBack, this);
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+	configurationClient.waitForExistence();
 	
 	}
 	

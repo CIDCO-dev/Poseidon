@@ -31,6 +31,7 @@ class WifiConfig{
 		WifiConfig(){
 			configurationSubscriber = node.subscribe("configuration", 1000, &WifiConfig::configurationCallBack, this);
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+			configurationClient.waitForExistence();
 			get_wifi_config();
 			ROS_INFO_STREAM("Wifi config : wifiTransferEnabled: " << wifiTransferActivated  << " ssid: " << this->ssid << " password: " << this->wifiPassword);
 			if(wifiTransferActivated){

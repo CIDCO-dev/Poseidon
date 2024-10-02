@@ -20,7 +20,9 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	setLoggingModeService = node.advertiseService("set_logging_mode", &LoggerBase::setLoggingMode, this);
 	
 	configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+	configurationClient.waitForExistence();
 	i2cControllerServiceClient = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
+	i2cControllerServiceClient.waitForExistence();
 	
 	if (!node.getParam("/logger/fileExtensionForSonarDatagram", this->fileExtensionForSonarDatagram))
 	{
@@ -689,7 +691,7 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		i2c_controller_service::i2c_controller_service srv;
 		srv.request.action2perform = "led_nofix";
 		if(!i2cControllerServiceClient.call(srv)){
-			ROS_WARN("gnssCallback(0) i2cController service call failed");
+			ROS_WARN("processGnssFix(0) i2cController service call failed");
 		}
 		//ROS_INFO("waiting for fix");
 	}
@@ -704,7 +706,7 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		srv.request.action2perform = (loggerEnabled == false) ? "gps_fix_ready" : "gps_fix_recording";
 		
 		if(!i2cControllerServiceClient.call(srv)){
-			ROS_ERROR("gnssCallback(1) i2cController service call failed");
+			ROS_ERROR("processGnssFix(1) i2cController service call failed");
 		}
 		ROS_INFO("first initial gps fix acquired");
 	}
@@ -715,7 +717,7 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		i2c_controller_service::i2c_controller_service srv;
 		srv.request.action2perform = "led_nofix";
 		if(!i2cControllerServiceClient.call(srv)){
-			ROS_ERROR("gnssCallback(2) i2cController service call failed");
+			ROS_ERROR("processGnssFix(2) i2cController service call failed");
 		}
 		
 	}
@@ -725,20 +727,20 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		i2c_controller_service::i2c_controller_service srv;
 		srv.request.action2perform = (loggerEnabled == false) ? "gps_fix_ready" : "gps_fix_recording";
 		if(!i2cControllerServiceClient.call(srv)){
-			ROS_ERROR("gnssCallback(3) i2cController service call failed");
+			ROS_ERROR("processGnssFix(3) i2cController service call failed");
 		}
 		ROS_INFO("Gps fix restored");
 	}
 }
 
 void LoggerBase::gnss_timer_callback(const ros::TimerEvent& event){
-	ROS_DEBUG_STREAM_COND(gnssFix, "LoggerBase::gnssTimerCallback() = lost fix");
+	ROS_WARN_STREAM_COND(gnssFix, "LoggerBase::gnssTimerCallback() = lost fix");
 	sensor_msgs::NavSatFix msg;
 	gnssFix = false;
 	i2c_controller_service::i2c_controller_service srv;
 	srv.request.action2perform = "led_nofix";
 	if(!i2cControllerServiceClient.call(srv)){
-		ROS_ERROR("gnssCallback(2) i2cController service call failed");
+		ROS_ERROR("gnss_timer_callback() i2cController service call failed");
 	}
 }
 

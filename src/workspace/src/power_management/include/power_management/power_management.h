@@ -8,6 +8,7 @@ class PowerManagement {
 public:
 	PowerManagement(){
 		i2c_ctrl_service_client  = n.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
+		i2c_ctrl_service_client.waitForExistence();
 		//powerManagementTopic = n.advertise<power_management_msg::batteryMsg>("batteryStatus", 1000);
 	}
 

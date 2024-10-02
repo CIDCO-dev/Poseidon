@@ -13,6 +13,7 @@ public:
 		pinMode(waterInfiltrationPin, INPUT);
 		pinMode(immersionPin, INPUT);
 		i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
+		i2c_ctrl_service_client.waitForExistence();
 		
 	}
 	

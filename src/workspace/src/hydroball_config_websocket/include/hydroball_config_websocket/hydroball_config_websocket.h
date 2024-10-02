@@ -62,6 +62,7 @@ public:
 		configService   = n.advertiseService("get_configuration", &ConfigurationServer::getConfigurationService,this);
 		zeroImuService  = n.advertiseService("zero_imu_offsets", &ConfigurationServer::zeroImuOffsetService,this);
 		getStateClient  = n.serviceClient<state_controller_msg::GetStateService>("get_state");
+		getStateClient.waitForExistence();
 
 		readConfigurationFromFile();
 		broadcastImuTransform();

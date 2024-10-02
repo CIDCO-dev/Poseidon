@@ -65,6 +65,7 @@ class Imagenex852{
 			sonarTopicEnu = node.advertise<geometry_msgs::PointStamped>("depth_enu", 1000);
 			configSubscriber = node.subscribe("configuration", 1000, &Imagenex852::configurationChange,this);
 			configurationClient = node.serviceClient<setting_msg::ConfigurationService>("get_configuration");
+			configurationClient.waitForExistence();
 			ROS_INFO("Fetching sonar configuration...");
 			getConfiguration();
 		}

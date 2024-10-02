@@ -147,8 +147,8 @@ class HBV {
 					msg.humidity = srv.response.value;
 				}
 				else{
-					//ROS_ERROR("1- vitals could not call i2c controller");
-					msg.humidity = 00.0; //XXX 
+					ROS_ERROR("1- vitals could not call i2c controller");
+					msg.humidity = 100.0;
 				}
 				
 				srv.request.action2perform = "get_temperature";
@@ -156,8 +156,8 @@ class HBV {
 					msg.temperature = srv.response.value;
 				}
 				else{
-					//ROS_ERROR("2- vitals could not call i2c controller");
-					msg.temperature = 00.0; //XXX
+					ROS_ERROR("2- vitals could not call i2c controller");
+					msg.temperature = 100.0;
 				}
 				
 				msg.voltage = batteryVoltage;
@@ -177,8 +177,6 @@ class HBV {
 						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
 					}
 				}
-				
-				//ROS_INFO_STREAM_THROTTLE(60, msg);
 				
 				HBVTopic.publish(msg);
 				ros::spinOnce();
@@ -202,7 +200,7 @@ class HBV {
 			return true;
 		}
 		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
-			//return true;
+			return true;
 		}
 		/*
 			The CPU temperature on a Raspberry Pi must stay below 85 °C to keep it running with the best performance. 
@@ -222,7 +220,7 @@ class HBV {
 			return true;
 		}
 		else if(msg.voltage <= 11.9){
-			// return true;
+			return true;
 		}
 		else if(msg.cputemp >= 75.0){
 			return true;

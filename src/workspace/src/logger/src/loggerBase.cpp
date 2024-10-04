@@ -10,7 +10,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	configurationSubscriber = node.subscribe("configuration", 1000, &LoggerBase::configurationCallBack, this);
 	lidarSubscriber = node.subscribe("velodyne_points", 1000, &LoggerBase::lidarCallBack, this);
 	gnssStreamSubscriber = node.subscribe("gnss_bin_stream", 1000, &LoggerBase::gnssBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
-	hddVitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::hddVitalsCallback, this);
+	vitalsSubscriber = node.subscribe("vitals", 1000, &LoggerBase::vitalsCallback, this);
 	sonarStreamSubscriber = node.subscribe("sonar_bin_stream", 1000, &LoggerBase::sonarBinStreamCallback, this, ros::TransportHints().tcpNoDelay());
 	
 	getLoggingStatusService = node.advertiseService("get_logging_status", &LoggerBase::getLoggingStatus, this);
@@ -213,10 +213,6 @@ void LoggerBase::updateLogRotationInterval(){
 	
 }
 
-double LoggerBase::getSpeedThreshold(){
-	return speedThresholdKmh;
-}
-
 bool LoggerBase::getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response){
 	response.status = this->bootstrappedGnssTime && this->loggerEnabled;
 	return true;
@@ -379,12 +375,9 @@ void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
 	getLoggingMode(modeReq,modeRes);
 	int mode = modeRes.loggingMode;
 
-	speedThresholdKmh = getSpeedThreshold();
-
-	if(speedThresholdKmh < 0 && speedThresholdKmh > 100){
-		speedThresholdKmh = defaultSpeedThreshold;
-		std::string speed = std::to_string(speedThresholdKmh);
-		ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<<speed<<" Kmh");
+	if(this->speedThresholdKmh < 0 && this->speedThresholdKmh > 100){
+		this->speedThresholdKmh = defaultSpeedThreshold;
+		ROS_ERROR_STREAM("invalid speed threshold, defaulting to "<< this->speedThresholdKmh <<" Kmh");
 	}
 
 	double current_speed = speed.twist.twist.linear.y;
@@ -395,7 +388,6 @@ void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
 	if (kmhSpeedList.size() < 120){
 		kmhSpeedList.push_back(current_speed);
 	}
-
 	// Else, add the speed reading to the queue, compute the average,
 	// and enable/disable logging if using a speed-based logging trigger
 	else{
@@ -406,14 +398,14 @@ void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
 		logger_service::GetLoggingStatus::Response response;
 
 		bool isLogging = getLoggingStatus(request,response);
-		if ( mode == 3 && (averageSpeed > speedThresholdKmh && response.status == false) ){
+		if ( mode == 3 && (averageSpeed > this->speedThresholdKmh && response.status == false) ){
 			//ROS_INFO("speed threshold reached, enabling logging");
 			logger_service::ToggleLogging::Request toggleRequest;
 			toggleRequest.loggingEnabled = true;
 			logger_service::ToggleLogging::Response toggleResponse;
 			toggleLogging(toggleRequest, toggleResponse);
 		}
-		else if(mode == 3 && (averageSpeed < speedThresholdKmh && response.status == true)){
+		else if(mode == 3 && (averageSpeed < this->speedThresholdKmh && response.status == true)){
 			//ROS_INFO("speed below threshold, disabling logging");
 			logger_service::ToggleLogging::Request toggleRequest;
 			toggleRequest.loggingEnabled = false;
@@ -421,7 +413,9 @@ void LoggerBase::speedCallback(const nav_msgs::Odometry& speed){
 			toggleLogging(toggleRequest, toggleResponse);
 		}
 	}
-
+	
+	saveSpeed(speed);
+	
 }
 
 void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading){
@@ -439,7 +433,9 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 	
 }
 
-void LoggerBase::hddVitalsCallback(const raspberrypi_vitals_msg::sysinfo vitals){
+void LoggerBase::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vitals){
+	
+	saveVitals(vitals);
 	
 	if(vitals.freehdd < 1.0 ){
 		

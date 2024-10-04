@@ -146,7 +146,7 @@ public:
 	
 	bool set_led(const std::string &led_mode){
 	
-		std::cerr<<"led controler - set led : "<<led_mode <<"\n";
+		//std::cerr<<"led controler - set led : "<<led_mode <<"\n";
 		
 		if(led_mode == "error"){
 			if(!set_led_state(1, 0, 0)){

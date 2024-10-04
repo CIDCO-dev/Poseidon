@@ -281,7 +281,6 @@ void LoggerText::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 	
 	std::vector<geometry_msgs::Point32> points = lidarXYZ.points;
 	
-	
 	if(bootstrappedGnssTime && loggerEnabled){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
 		
@@ -294,5 +293,8 @@ void LoggerText::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 			fprintf(lidarOutputFile,"\n");
 		}
 	}
-	
 }
+
+void LoggerText::saveSpeed(const nav_msgs::Odometry& speed){}
+
+void LoggerText::saveVitals(const raspberrypi_vitals_msg::sysinfo& vitals){}

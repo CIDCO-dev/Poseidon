@@ -13,7 +13,7 @@ private:
 	ros::ServiceServer i2cControllerService;
 	ros::ServiceClient getLoggingStatusService;
 	
-	//HIH8130 weather_sensor;
+	HIH8130 weather_sensor;
 	INA238 power_sensor;
 	PCA9533 led_controller;
 	
@@ -150,7 +150,7 @@ public:
 	
 	bool read_chip(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
 		
-		ROS_INFO_STREAM("i2cController::read_chip() : " << req.action2perform);
+		//ROS_INFO_STREAM("i2cController::read_chip() : " << req.action2perform);
 		
 		if(req.action2perform == "get_led_state"){
 			if(!led_controller.get_state(res)){
@@ -212,17 +212,17 @@ public:
 			}
 		}
 		
-/*		else if(req.action2perform == "get_humidity"){*/
-/*			if(!weather_sensor.get_humidity(res)){*/
-/*				return false;*/
-/*			}*/
-/*		}*/
-/*		*/
-/*		else if(req.action2perform == "get_temperature"){*/
-/*			if(!weather_sensor.get_temperature(res)){*/
-/*				return false;*/
-/*			}*/
-/*		}*/
+		else if(req.action2perform == "get_humidity"){
+			if(!weather_sensor.get_humidity(res)){
+				return false;
+			}
+		}
+		
+		else if(req.action2perform == "get_temperature"){
+			if(!weather_sensor.get_temperature(res)){
+				return false;
+			}
+		}
 		
 		else if(req.action2perform == "get_voltage"){
 			if(!power_sensor.readVoltage(res)){

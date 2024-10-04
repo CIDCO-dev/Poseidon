@@ -12,6 +12,8 @@ class LoggerText : public LoggerBase{
 		void init()override;
 		void finalize()override;
 		void rotate()override;
+		void saveSpeed(const nav_msgs::Odometry& speed) override;
+		void saveVitals(const raspberrypi_vitals_msg::sysinfo& vitals) override;
 		
 		/* topic callbacks */
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss)override;
@@ -24,11 +26,15 @@ class LoggerText : public LoggerBase{
 		std::string imuFileName;
 		std::string sonarFileName;
 		std::string lidarFileName;
+		std::string speedFilename;
+		std::string vitalsFilename;
 
 		FILE * gnssOutputFile  = NULL;
 		FILE * imuOutputFile   = NULL;
 		FILE * sonarOutputFile = NULL;
 		FILE * lidarOutputFile = NULL;
+		FILE * speedOutputFile = NULL;
+		FILE * vitalsOutputFile = NULL;
 		
 		std::string separator;
 };

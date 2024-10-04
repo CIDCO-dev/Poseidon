@@ -13,6 +13,8 @@ class LoggerBinary : public LoggerBase{
 		void init()override;
 		void finalize()override;
 		void rotate()override;
+		void saveSpeed(const nav_msgs::Odometry& speed) override;
+		void saveVitals(const raspberrypi_vitals_msg::sysinfo& vitals) override;
 		
 		/* topic callbacks */
 		void gnssCallback(const sensor_msgs::NavSatFix& gnss) override;
@@ -24,6 +26,10 @@ class LoggerBinary : public LoggerBase{
 		std::string  outputFileName;
 		std::ofstream outputFile;
 		std::mutex fileLock;
+		
+		void readVitalsMsgFile();
+		std::vector<std::string> vitalsValueName;
+		std::vector<size_t> vitalsValueNameSize;
 
 
 };

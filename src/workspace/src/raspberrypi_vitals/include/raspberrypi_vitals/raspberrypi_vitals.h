@@ -187,6 +187,7 @@ class HBV {
 	bool isCritical(raspberrypi_vitals_msg::sysinfo &msg){
 		
 		if(msg.freehdd < 1.0){
+			ROS_ERROR("isCritical free hdd < 1 pourcent");
 			loggerService.request.loggingEnabled = false;
 			if(loggerServiceClient.call(loggerService)){
 				if(loggerService.response.loggingStatus){
@@ -200,6 +201,7 @@ class HBV {
 			return true;
 		}
 		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
+			ROS_ERROR("isCritical voltage <= 11v || voltage >=13v");
 			return true;
 		}
 		/*
@@ -208,6 +210,7 @@ class HBV {
 			https://raspberrytips.com/raspberry-pi-temperature/
 		*/
 		else if(msg.cputemp >= 80.0){
+			ROS_ERROR("isCritical cpu temp >= 80 C");
 			return true;
 		}
 		
@@ -217,12 +220,15 @@ class HBV {
 	
 	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
 		if(msg.freehdd < 5.0){
+			ROS_WARN("isWarning free hdd < 5 pourcent");
 			return true;
 		}
 		else if(msg.voltage <= 11.9){
+			ROS_WARN("isWarning voltage <= 11.9 v");
 			return true;
 		}
 		else if(msg.cputemp >= 75.0){
+			ROS_WARN("isWarning cpu temp >= 75 C");
 			return true;
 		}
 		

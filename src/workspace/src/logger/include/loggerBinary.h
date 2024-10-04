@@ -27,7 +27,7 @@ class LoggerBinary : public LoggerBase{
 		std::ofstream outputFile;
 		std::mutex fileLock;
 		
-		void readVitalsMsgFile();
+		void readVitalsMsgFile()override;
 		std::vector<std::string> vitalsValueName;
 		std::vector<size_t> vitalsValueNameSize;
 

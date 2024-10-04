@@ -117,6 +117,7 @@ class LoggerBase{
 		virtual void rotate()=0;
 		virtual void saveSpeed(const nav_msgs::Odometry& speed)=0;
 		virtual void saveVitals(const raspberrypi_vitals_msg::sysinfo& vitals)=0;
+		virtual void readVitalsMsgFile()=0;
 		
 		/* Tranformers */
 		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);

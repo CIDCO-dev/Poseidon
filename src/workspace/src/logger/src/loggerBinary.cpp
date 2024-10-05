@@ -1,6 +1,7 @@
 #include "loggerBinary.h"
 
 LoggerBinary::LoggerBinary(std::string & logFolder): LoggerBase(logFolder) {
+	readVitalsMsgFile();
 }
 
 LoggerBinary::~LoggerBinary(){
@@ -108,8 +109,7 @@ void LoggerBinary::rotate(){
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	
 	processGnssFix(gnss);
-	//ROS_INFO_STREAM("logger enabled: "<< loggerEnabled);
-	//ROS_INFO("LoggerBinary::gnssCallback, gnss status %d", gnss.status.status);
+
 	if(bootstrappedGnssTime && loggerEnabled){
 
 		if(!outputFile.is_open()){
@@ -167,7 +167,7 @@ void LoggerBinary::imuCallback(const sensor_msgs::Imu& imu){
 			PacketHeader hdr;
 			hdr.packetType=PACKET_ATTITUDE;
 			hdr.packetSize=sizeof(AttitudePacket);
-			hdr.packetTimestamp=TimeUtils::buildTimeStamp(imu.header.stamp.sec,imu.header.stamp.nsec);
+			hdr.packetTimestamp=timestamp;
 
 			AttitudePacket packet;
 			packet.heading=heading;
@@ -194,7 +194,7 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
 			PacketHeader hdr;
 			hdr.packetType=PACKET_DEPTH;
 			hdr.packetSize=sizeof(DepthPacket);
-			hdr.packetTimestamp=TimeUtils::buildTimeStamp(sonar.header.stamp.sec,sonar.header.stamp.nsec);
+			hdr.packetTimestamp=timestamp;
 
 			DepthPacket packet;
 
@@ -230,7 +230,7 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 			PacketHeader hdr;
 			hdr.packetType=PACKET_LIDAR;
 			hdr.packetSize= sizeof(LidarPacket) * points.size();  //(uint64_t) (sizeof(LidarPacket) * points.size());
-			hdr.packetTimestamp=TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
+			hdr.packetTimestamp=timestamp;
 
 			outputFile.write((char*)&hdr, sizeof(PacketHeader));
 			
@@ -247,4 +247,105 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 		lastLidarTimestamp = timestamp;
 		fileLock.unlock();
 	}
+}
+void LoggerBinary::saveSpeed(const nav_msgs::Odometry& speed){
+	
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = TimeUtils::buildTimeStamp(speed.header.stamp.sec, speed.header.stamp.nsec);
+
+		if(timestamp > lastSonarTimestamp){
+			
+			fileLock.lock();
+			
+			PacketHeader hdr;
+			hdr.packetType = PACKET_SPEED;
+			hdr.packetSize=sizeof(SpeedPacket);
+			hdr.packetTimestamp=timestamp;
+
+			SpeedPacket packet;
+
+			packet.speedKMH = speed.twist.twist.linear.y;
+
+			outputFile.write((char*)&hdr, sizeof(PacketHeader));
+			outputFile.write((char*)&packet, sizeof(SpeedPacket));
+			
+			lastSonarTimestamp = timestamp;
+			fileLock.unlock();
+		}
+	}
+}
+
+
+/*
+	Even if the content of the raspberry_vitals_msg::sysinfo changes 
+	the writer and the reader will be retrocompatible
+*/
+void LoggerBinary::saveVitals(const raspberrypi_vitals_msg::sysinfo& msg){
+	
+	
+	
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = TimeUtils::buildTimeStamp(msg.header.stamp.sec, msg.header.stamp.nsec);
+
+		if( (timestamp - lastVitalsTimestamp) > (60 * 1000000) ){
+			
+			fileLock.lock();
+			
+			PacketHeader hdr;
+			hdr.packetType=PACKET_VITALS;
+			hdr.packetSize=sizeof(VitalsPacket);
+			hdr.packetTimestamp = timestamp;
+
+			VitalsPacket vitalsPacket;
+			vitalsPacket.nbValues = this->vitalsValueName.size();
+			
+			outputFile.write((char*)&hdr, sizeof(PacketHeader));
+			outputFile.write((char*) &vitalsPacket, sizeof(vitalsPacket));
+			
+			char *p = const_cast<char*>(reinterpret_cast<const char*>(&msg));
+			p += sizeof(msg.header);
+			
+			
+			for(auto valueName : vitalsValueName){
+				
+				VitalPacket vitalPacket;
+				vitalPacket.valueNameSize = valueName.length();
+				vitalPacket.valueName = valueName ;
+				vitalPacket.value = *reinterpret_cast<double*>(p);
+				
+				outputFile.write((char*) &vitalPacket.valueNameSize, sizeof(vitalPacket.valueNameSize));
+				outputFile.write(valueName.c_str(), valueName.length());
+				outputFile.write((char*) &vitalPacket.value, sizeof(double));
+				
+				p += sizeof(double);
+			}
+
+			
+			lastVitalsTimestamp = timestamp;
+			fileLock.unlock();
+		}
+	}
+
+}
+
+void LoggerBinary::readVitalsMsgFile(){
+
+	std::ifstream file("/opt/Poseidon/src/workspace/src/raspberrypi_vitals_msg/msg/sysinfo.msg");
+	if (!file.is_open()) {
+		ROS_ERROR("Error opening file: /opt/Poseidon/src/workspace/src/raspberrypi_vitals_msg/msg/sysinfo.msg");
+		return;
+	}
+
+	std::string line, firstCol, word;
+	
+	while (std::getline(file, line)) {
+		std::istringstream ss(line);
+		ss >> firstCol >> word;
+		
+		vitalsValueName.push_back(word);
+		vitalsValueNameSize.push_back(word.length());
+	}
+	vitalsValueName.erase(vitalsValueName.begin());
+
+	file.close();
 }

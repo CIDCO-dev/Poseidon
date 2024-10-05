@@ -9,16 +9,16 @@ int main(int argc,char** argv){
 	int gnssFixChange = 0;
 	
 	while(ros::ok()){
-		if(gnssFixChange < 30){
-			gnss.talk(1);  // Send 1 signal
+		if(gnssFixChange < 60){
+			gnss.talk(-1);  // Send 1 signal
 			gnssFixChange++;  // Increment count
 		}
-		else if(gnssFixChange >= 30 && gnssFixChange < 60){
-			gnss.talk(-1);  // Send -1 signal
+		else if(gnssFixChange >= 60 && gnssFixChange < 90){
+			gnss.talk(1);  // Send -1 signal
 			gnssFixChange++;  // Increment count
 		}
 		else if(gnssFixChange >= 60){
-			gnssFixChange = 0;  // Reset count
+			gnssFixChange = 30;  // Reset count
 		}
 		
 		

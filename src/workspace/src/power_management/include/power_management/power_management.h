@@ -8,7 +8,8 @@ class PowerManagement {
 public:
 	PowerManagement(){
 		i2c_ctrl_service_client  = n.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
-		powerManagementTopic = n.advertise<power_management_msg::batteryMsg>("batteryStatus", 1000);
+		i2c_ctrl_service_client.waitForExistence();
+		//powerManagementTopic = n.advertise<power_management_msg::batteryMsg>("batteryStatus", 1000);
 	}
 
 	~PowerManagement() {
@@ -25,9 +26,9 @@ public:
 			srv.request.action2perform = "get_voltage";
 			
 			if(i2c_ctrl_service_client.call(srv)){
-				power_management_msg::batteryMsg msg;
-				msg.voltage = srv.response.value;
-				powerManagementTopic.publish(msg);
+				//power_management_msg::batteryMsg msg;
+				//msg.voltage = srv.response.value;
+				//powerManagementTopic.publish(msg);
 			}
 			else{
 				ROS_ERROR("PowerManagement::run get_voltage service call failed");
@@ -41,6 +42,6 @@ public:
 private:
 	ros::NodeHandle n;
 	ros::ServiceClient i2c_ctrl_service_client;
-	ros::Publisher powerManagementTopic;
+	//ros::Publisher powerManagementTopic;
 };
 

@@ -2,6 +2,7 @@
 #define raspberrypi_vitals
 
 #include "ros/ros.h"
+#include "ros/console.h"
 #include "raspberrypi_vitals_msg/sysinfo.h"
 #include <iostream>
 #include <fstream>
@@ -26,17 +27,6 @@ class HBV {
 		i2c_controller_service::i2c_controller_service srv;
 		ros::ServiceClient loggerServiceClient;
 		logger_service::ToggleLogging loggerService;
-		
-/*		ros::Timer warningTimer;*/
-/*		ros::Timer errorTimer;*/
-/*		*/
-/*		void warningTimerCallback(const ros::TimerEvent& event) {*/
-/*			ROS_INFO("vitals warning Timer expired!");*/
-/*		}*/
-
-/*		void errorTimerCallback(const ros::TimerEvent& event) {*/
-/*			ROS_INFO("vitals error Timer expired!");*/
-/*		}*/
 
 		uint32_t sequenceNumber;
 		float upt;
@@ -176,13 +166,13 @@ class HBV {
 				msg.psi = 64;
 				
 				if(isCritical(msg)){
-					srv.request.action2perform = "led_warning";
+					srv.request.action2perform = "led_error";
 					if(!i2c_ctrl_service_client.call(srv)){
 						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_warning");
 					}
 				}
 				else if(isWarning(msg)){
-					srv.request.action2perform = "led_error";
+					srv.request.action2perform = "led_warning";
 					if(!i2c_ctrl_service_client.call(srv)){
 						ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
 					}
@@ -197,19 +187,21 @@ class HBV {
 	bool isCritical(raspberrypi_vitals_msg::sysinfo &msg){
 		
 		if(msg.freehdd < 1.0){
+			ROS_ERROR("isCritical free hdd < 1 pourcent");
 			loggerService.request.loggingEnabled = false;
 			if(loggerServiceClient.call(loggerService)){
 				if(loggerService.response.loggingStatus){
-					ROS_ERROR("Rapberrypi vitals isIssue(), could not turn off logger");
+					ROS_ERROR("Rapberrypi vitals isCritical(), could not turn off logger");
 				}
 			}
 			else{
-				ROS_ERROR("Rapberrypi vitals isIssue(), logger service call failed");
+				ROS_ERROR("Rapberrypi vitals isCritical(), logger service call failed");
 			}
 			
 			return true;
 		}
 		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
+			ROS_ERROR("isCritical voltage <= 11v || voltage >=13v");
 			return true;
 		}
 		/*
@@ -218,6 +210,7 @@ class HBV {
 			https://raspberrytips.com/raspberry-pi-temperature/
 		*/
 		else if(msg.cputemp >= 80.0){
+			ROS_ERROR("isCritical cpu temp >= 80 C");
 			return true;
 		}
 		
@@ -227,12 +220,15 @@ class HBV {
 	
 	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
 		if(msg.freehdd < 5.0){
+			ROS_WARN("isWarning free hdd < 5 pourcent");
 			return true;
 		}
 		else if(msg.voltage <= 11.9){
+			ROS_WARN("isWarning voltage <= 11.9 v");
 			return true;
 		}
 		else if(msg.cputemp >= 75.0){
+			ROS_WARN("isWarning cpu temp >= 75 C");
 			return true;
 		}
 		

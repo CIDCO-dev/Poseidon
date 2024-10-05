@@ -13,6 +13,7 @@ public:
 		pinMode(waterInfiltrationPin, INPUT);
 		pinMode(immersionPin, INPUT);
 		i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
+		i2c_ctrl_service_client.waitForExistence();
 		
 	}
 	
@@ -42,6 +43,7 @@ public:
 			//}
 			
 			if(has_water_infiltration()){
+				ROS_ERROR("water infiltration detected");
 				srv.request.action2perform = "led_error";
 				if(!i2c_ctrl_service_client.call(srv)){
 					ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");

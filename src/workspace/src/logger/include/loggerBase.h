@@ -34,7 +34,7 @@
 #include "setting_msg/Setting.h"
 #include "setting_msg/ConfigurationService.h"
 #include "binary_stream_msg/Stream.h"
-//#include "raspberrypi_vitals_msg/sysinfo.h"
+#include "raspberrypi_vitals_msg/sysinfo.h"
 #include "i2c_controller_service/i2c_controller_service.h"
 
 //Poseidon utils
@@ -73,11 +73,7 @@ class LoggerBase{
 		void configurationCallBack(const setting_msg::Setting &setting);
 		void gnssBinStreamCallback(const binary_stream_msg::Stream& stream);
 		void sonarBinStreamCallback(const binary_stream_msg::Stream& stream);
-		
-		/* Speed based logging */
-		void updateSpeedThreshold();
-		double getSpeedThreshold();
-		void speedCallback(const nav_msgs::Odometry& speed);
+		void vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vitals);
 		
 		//Service callbacks
 		bool getLoggingStatus(logger_service::GetLoggingStatus::Request & req,logger_service::GetLoggingStatus::Response & response);
@@ -85,11 +81,28 @@ class LoggerBase{
 		bool getLoggingMode(logger_service::GetLoggingMode::Request &request, logger_service::GetLoggingMode::Response &response);
 		bool setLoggingMode(logger_service::SetLoggingMode::Request &request, logger_service::SetLoggingMode::Response &response);
 		
+		/* Speed based logging */
+		void updateSpeedThreshold();
+		void speedCallback(const nav_msgs::Odometry& speed);
+		
 		/* api transfert */
 		std::string zip_to_base64(std::string zipPath);
 		std::string create_json_str(std::string &base64Zip);
 		bool send_job(std::string json);
 		void updateApiTransferConfig();
+		
+		ros::ServiceServer getLoggingStatusService ;
+		ros::ServiceServer toggleLoggingService;
+		ros::ServiceServer getLoggingModeService ;
+		ros::ServiceServer setLoggingModeService;
+		ros::Subscriber vitalsSubscriber ;
+		ros::Subscriber speedSubscriber ;
+		ros::Subscriber configurationSubscriber;
+		
+		/* temporary */
+		void reset_gnss_timer();
+		void gnss_timer_callback(const ros::TimerEvent& event);
+		ros::Timer noGnssTimer;
 	
 	public:
 		LoggerBase(std::string & outputFolder);
@@ -102,7 +115,9 @@ class LoggerBase{
 		virtual void init()=0;
 		virtual void finalize()=0;
 		virtual void rotate()=0;
-		
+		virtual void saveSpeed(const nav_msgs::Odometry& speed)=0;
+		virtual void saveVitals(const raspberrypi_vitals_msg::sysinfo& vitals)=0;
+		virtual void readVitalsMsgFile()=0;
 		
 		/* Tranformers */
 		void imuTransform(const sensor_msgs::Imu& imu, double & roll , double & pitch, double & heading);
@@ -132,6 +147,7 @@ class LoggerBase{
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
 		bool gnssFix = false;
+		bool hddFreeSpaceOK = true;
 		
 		// log rotation
 		std::mutex fileRotationMutex;
@@ -142,6 +158,8 @@ class LoggerBase{
 		uint64_t lastImuTimestamp  =  0;
 		uint64_t lastSonarTimestamp = 0;
 		uint64_t lastLidarTimestamp = 0;
+		uint64_t lastSpeedTimestamp = 0;
+		uint64_t lastVitalsTimestamp = 0;
 
 		// Speed-triggered logging mode 
 		std::list<double> kmhSpeedList;
@@ -156,16 +174,7 @@ class LoggerBase{
 		ros::Subscriber gnssSubscriber ;
 		ros::Subscriber imuSubscriber ;
 		ros::Subscriber depthSubscriber;
-		ros::Subscriber speedSubscriber ;
-		ros::Subscriber configurationSubscriber;
 		ros::Subscriber lidarSubscriber ;
-		//ros::Subscriber hddVitalsSubscriber ;
-		
-		ros::ServiceServer getLoggingStatusService ;
-		ros::ServiceServer toggleLoggingService;
-		
-		ros::ServiceServer getLoggingModeService ;
-		ros::ServiceServer setLoggingModeService;
 		
 		// raw gnss binary stream
 		std::string  rawGnssFileName;

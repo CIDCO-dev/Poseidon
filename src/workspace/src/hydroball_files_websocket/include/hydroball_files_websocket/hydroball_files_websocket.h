@@ -5,7 +5,7 @@
 #include <mutex>
 #include <set>
 #include <thread>
-#include <glob.h>
+//#include <glob.h>
 #include <iostream>
 #include <istream>
 #include <vector>
@@ -289,7 +289,7 @@ private:
     
     ros::NodeHandle n;    
     ros::Subscriber stateTopic;
-    std::string glob_logFolder;
+    //std::string glob_logFolder;
     std::string logFolder;
     uint64_t lastTimestamp;
     std::string data_recived;

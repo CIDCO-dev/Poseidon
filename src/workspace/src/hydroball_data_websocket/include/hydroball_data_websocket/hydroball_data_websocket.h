@@ -54,6 +54,7 @@ public:
 		toggleLoggingService = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
 		getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
 		setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+		getLoggingStatusService.waitForExistence();
 	}
 
 	void on_message(connection_hdl hdl, server::message_ptr msg) {

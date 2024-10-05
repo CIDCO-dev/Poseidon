@@ -50,6 +50,7 @@ add_executable(logger_binary_node nodes/logger_binary_node.cpp)
 add_executable(poseidonReader src/poseidon_reader.cpp)
 add_executable(lidarGeoreferencer src/georefLog.cpp)
 add_executable(calib_printer src/calib_lidar_printer.cpp)
+add_executable(vital_printer src/vitals_printer.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(logger_text_node ${catkin_LIBRARIES} ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::system OpenSSL::SSL OpenSSL::Crypto)

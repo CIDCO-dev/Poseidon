@@ -10,7 +10,7 @@ enum States {Off, Ready, Recording, Warning, NoFix, Critical};
 class PCA9533 {
 private:
 	const int I2C_ADDR = 0x62;
-	const char *I2C_DEVICE = "/dev/i2c-1"; 
+	const char *I2C_DEVICE = "/dev/i2c-4"; 
 	int file;
 	
 	// PCA9533 Registers
@@ -145,6 +145,8 @@ public:
 	}
 	
 	bool set_led(const std::string &led_mode){
+	
+		//std::cerr<<"led controler - set led : "<<led_mode <<"\n";
 		
 		if(led_mode == "error"){
 			if(!set_led_state(1, 0, 0)){

@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   i2c_controller_service
 )
-find_library(WIRINGPI_LIB wiringPi PATHS /usr/lib)
+find_library(WIRINGPI_LIB wiringPi)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

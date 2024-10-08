@@ -46,8 +46,7 @@ private:
 	
 	/*
 		In order for the timer callbacks to override the led state 
-		we have to bypass the readChip function, because of the isIssue function
-		that prevent a led state change triggered by the user if he would be using the manual logging mode
+		we have to bypass the readChip function
 	*/
 	
 	void warning_timer_callback(const ros::TimerEvent& event) {

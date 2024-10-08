@@ -11,7 +11,6 @@ public:
 			exit(1);
 		}	
 		pinMode(waterInfiltrationPin, INPUT);
-		pinMode(immersionPin, INPUT);
 		i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
 		i2c_ctrl_service_client.waitForExistence();
 		
@@ -19,15 +18,6 @@ public:
 	
 	~WaterDetector(){}
 	
-	bool is_immersed(){
-		if(inverseImmersionSignal){
-			return !digitalRead(immersionPin);
-		}
-		else{
-			return digitalRead(immersionPin);
-		}
-		
-	}
 	
 	bool has_water_infiltration(){
 		return digitalRead(waterInfiltrationPin);
@@ -36,11 +26,6 @@ public:
 	void run(){
 		ros::Rate loop_rate(10);
 		while (ros::ok()) {
-			
-			//TODO
-			//if(is_immersed()){
-				
-			//}
 			
 			if(has_water_infiltration()){
 				ROS_ERROR("water infiltration detected");
@@ -58,8 +43,6 @@ public:
 
 private:
 	int waterInfiltrationPin = 18;
-	int immersionPin = 17;
-	bool inverseImmersionSignal = false;
 	ros::NodeHandle node;
 	ros::ServiceClient i2c_ctrl_service_client;
 	i2c_controller_service::i2c_controller_service srv;

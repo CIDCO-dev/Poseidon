@@ -33,7 +33,8 @@ Config()
 {
 echo "[+] Installing GPIO DEPS"
 pip3 install RPi.GPIO | tee -a log.txt
-sudo apt install wiringpi | tee -a log.txt
+sudo apt install wiringpi libwirinpi2 libwirinpi-dev | tee -a log.txt
+sudo ln -s /usr/lib/aarch64-linux-gnu/libwiringPi.so.2 /usr/lib/libwiringPi.so | tee -a log.txt
 
 echo "Configuring network"
 # install network-manager and install as service

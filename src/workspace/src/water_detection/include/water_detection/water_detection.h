@@ -5,7 +5,7 @@
 
 class WaterDetector {
 public:
-	WaterDetector(bool _inverseImmersionSignal = false): inverseImmersionSignal(_inverseImmersionSignal) {
+	WaterDetector(bool _inverseImmersionSignal = false){
 		if (wiringPiSetup() == -1) {
 			ROS_ERROR("WiringPi initialization failed!");
 			exit(1);
@@ -34,7 +34,6 @@ public:
 					ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
 				}
 			}
-			
 			
 			ros::spinOnce();
 			loop_rate.sleep();

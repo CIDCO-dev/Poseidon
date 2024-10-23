@@ -17,7 +17,7 @@
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
-<node pkg="water_detection" name="water_detection" type="water_detection_node" output="screen" respawn="true" respawn_delay="1"/>
+<!--<node pkg="water_detection" name="water_detection" type="water_detection_node" output="screen" respawn="true" respawn_delay="1"/>-->
 
 <node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1">
 <!--	file extension cannot be numbers only -> rosparam will think its a number instead of a string-->

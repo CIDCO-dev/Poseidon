@@ -196,11 +196,12 @@ public:
 			rapidjson::Value setting(rapidjson::Type::kObjectType);
 
 			rapidjson::Value key;
-			key = rapidjson::StringRef(i->first.c_str());
+			key.SetString(trimSpaces(i->first).c_str(), document.GetAllocator());
 
 			rapidjson::Value value;
-			value = rapidjson::StringRef(i->second.c_str());
-
+			value.SetString(trimSpaces(i->second).c_str(), document.GetAllocator());
+			
+			
 			setting.AddMember("key",key,document.GetAllocator());
 			setting.AddMember("value",value,document.GetAllocator());
 			confArray.PushBack(setting,document.GetAllocator());
@@ -212,7 +213,7 @@ public:
 		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
 		document.Accept(writer);
 		std::string jsonString = sb.GetString();
-
+		
 		srv.send(hdl,jsonString,websocketpp::frame::opcode::text);
 	}
 
@@ -225,7 +226,7 @@ public:
 					std::string value = document["configuration"][i]["value"].GetString();
 
 					if(configuration.find(key) != configuration.end()){
-						configuration[key]=value;
+						configuration[trimSpaces(key)] = trimSpaces(value);
 					}
 					else{
 						std::cout << "Key not found" << std::endl;
@@ -363,7 +364,7 @@ public:
 		
 		for (char c : result) {
 			if (isalnum(c)) {// Check if character is alphanumeric
-				ssid += c;	
+				ssid += c;
 			}
 		}
 		

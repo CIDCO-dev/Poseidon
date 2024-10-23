@@ -22,7 +22,6 @@ class HBV {
 	private:
 		ros::NodeHandle node;
 		ros::Publisher HBVTopic;
-		ros::Subscriber batteryTopic;
 		ros::ServiceClient i2c_ctrl_service_client;
 		i2c_controller_service::i2c_controller_service srv;
 		ros::ServiceClient loggerServiceClient;
@@ -77,12 +76,6 @@ class HBV {
 		HBV() : sequenceNumber(0) {
 			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
 			i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
-			batteryTopic = node.subscribe("batteryStatus", 1000, &HBV::batteryCallback, this);
-			
-		}
-		
-		void batteryCallback(const power_management_msg::batteryMsg& msg){
-			batteryVoltage = msg.voltage;
 		}
 		
 		float getCpuTemp() {
@@ -160,7 +153,16 @@ class HBV {
 					msg.temperature = 100.0;
 				}
 				
-				msg.voltage = batteryVoltage;
+				srv.request.action2perform = "get_voltage";
+				if(i2c_ctrl_service_client.call(srv)){
+					msg.voltage = srv.response.value;
+				}
+				else{
+					ROS_ERROR("3- vitals could not call i2c controller");
+					msg.voltage = 15.0;
+				}
+				
+				
 				msg.vbat = 12.2;
 				msg.rh = 25;
 				msg.psi = 64;
@@ -184,28 +186,26 @@ class HBV {
 			}
 		}
 		
+		
+	/*
+	 for the function isCritical ans isWarning each threshold changes needs to be reflected in the UI
+	*/
 	bool isCritical(raspberrypi_vitals_msg::sysinfo &msg){
 		
-		if(msg.freehdd < 1.0){
-			ROS_ERROR("isCritical free hdd < 1 pourcent");
-			loggerService.request.loggingEnabled = false;
-			if(loggerServiceClient.call(loggerService)){
-				if(loggerService.response.loggingStatus){
-					ROS_ERROR("Rapberrypi vitals isCritical(), could not turn off logger");
-				}
-			}
-			else{
-				ROS_ERROR("Rapberrypi vitals isCritical(), logger service call failed");
-			}
-			
+		/*
+			the logger will stop recording data if freehdd is < 1%
+			this gives 4% of hdd time acquisition for the user to react accordingly
+		*/
+		if(msg.freehdd < 5.0){
+			ROS_ERROR("isCritical free hdd < 5 pourcent");
 			return true;
 		}
 		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
-			ROS_ERROR("isCritical voltage <= 11v || voltage >=13v");
+			ROS_ERROR_STREAM("isCritical voltage <= 11v || voltage >= 13v	voltage: "  << msg.voltage <<"v");
 			return true;
 		}
 		/*
-			The CPU temperature on a Raspberry Pi must stay below 85 °C to keep it running with the best performance. 
+			The CPU temperature on a Raspberry Pi must stay below 85 °C to keep it running with the best performance.
 			The CPU will slow down (throttle) as it approaches this threshold, which can lead to a general slowness of the operating system.
 			https://raspberrytips.com/raspberry-pi-temperature/
 		*/
@@ -214,13 +214,12 @@ class HBV {
 			return true;
 		}
 		
-		
 		return false;
 	}
 	
 	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
-		if(msg.freehdd < 5.0){
-			ROS_WARN("isWarning free hdd < 5 pourcent");
+		if(msg.freehdd < 20.0){
+			ROS_WARN("isWarning free hdd < 20 pourcent");
 			return true;
 		}
 		else if(msg.voltage <= 11.9){

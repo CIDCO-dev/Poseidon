@@ -1,7 +1,7 @@
 #include "loggerText.h"
 
 LoggerText::LoggerText(std::string & logFolder, std::string separator):LoggerBase(logFolder), separator(separator){
-
+	readVitalsMsgFile();
 }
 
 LoggerText::~LoggerText(){
@@ -17,65 +17,16 @@ void LoggerText::init(){
 		fileRotationMutex.lock();
 
 		//Make sure the files are not already opened...
-		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile && !lidarOutputFile && !rawGnssOutputFile.is_open()){
+		if(!gnssOutputFile && !imuOutputFile && !sonarOutputFile && !lidarOutputFile && !rawGnssOutputFile.is_open() && !rawGnssOutputFile.is_open() && !vitalsOutputFile && !speedOutputFile){
 
 			std::string dateString = TimeUtils::getStringDate();
 			
-			//Open GNSS file
-			gnssFileName = dateString + "_gnss.txt";
-
-			std::string gnssFilePath = tmpLoggingFolder + "/"  + gnssFileName;
-
-			gnssOutputFile= fopen(gnssFilePath.c_str(),"a");
-
-			if(!gnssOutputFile){
-				fileRotationMutex.unlock();
-				throw std::invalid_argument(std::string("Couldn't open GNSS log file ") + gnssFileName);
-			}
-
-			//Open IMU file
-			imuFileName = dateString + "_imu.txt";
-
-			std::string imuFilePath = tmpLoggingFolder + "/" + imuFileName;
-
-			imuOutputFile = fopen(imuFilePath.c_str(),"a");
-
-			if(!imuOutputFile){
-				fileRotationMutex.unlock();
-				throw std::invalid_argument(std::string("Couldn't open IMU log file ") + imuFileName);
-			}
-
-			//Open sonar file
-			sonarFileName = dateString + "_sonar.txt";
-
-			std::string sonarFilePath = tmpLoggingFolder + "/" + sonarFileName;
-
-			sonarOutputFile = fopen(sonarFilePath.c_str(),"a");
-
-			if(!sonarOutputFile){
-			fileRotationMutex.unlock();
-			throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
-			}
-			
-			//Open lidar file
-			lidarFileName = dateString + "_lidar.txt";
-
-			std::string lidarFilePath = tmpLoggingFolder + "/" + lidarFileName;
-
-			lidarOutputFile = fopen(lidarFilePath.c_str(),"a");
-
-			if(!lidarOutputFile){
-				fileRotationMutex.unlock();
-				throw std::invalid_argument(std::string("Couldn't open lidar log file ") + lidarFileName);
-			}
-			
-			
-			
-			fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",
-									separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
-			fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
-			fprintf(sonarOutputFile,"Timestamp%sDepth\n",separator.c_str());
-			fprintf(lidarOutputFile,"Timestamp%sPoints\n",separator.c_str());
+			initGnssFile(dateString);
+			initImuFile(dateString);
+			initSonarFile(dateString);
+			initLidarFile(dateString);
+			initSpeedFile(dateString);
+			initVitalsFile(dateString);
 			
 			rawGnssFileName = dateString + this->fileExtensionForGpsDatagram;
 			rawGnssOutputFile.open(tmpLoggingFolder + "/" + rawGnssFileName,std::ios::binary|std::ios::trunc);
@@ -99,6 +50,114 @@ void LoggerText::init(){
 	}
 }
 
+void LoggerText::initGnssFile(std::string &dateString){
+	//Open GNSS file
+	gnssFileName = dateString + "_gnss.txt";
+
+	std::string gnssFilePath = tmpLoggingFolder + "/"  + gnssFileName;
+
+	gnssOutputFile= fopen(gnssFilePath.c_str(),"a");
+
+	if(!gnssOutputFile){
+		fileRotationMutex.unlock();
+		throw std::invalid_argument(std::string("Couldn't open GNSS log file ") + gnssFileName);
+	}
+	
+	fprintf(gnssOutputFile,"Timestamp%sLongitude%sLatitude%sEllipsoidalHeight%sStatus%sService\n",
+									separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
+}
+
+void LoggerText::initImuFile(std::string &dateString){
+//Open IMU file
+	imuFileName = dateString + "_imu.txt";
+
+	std::string imuFilePath = tmpLoggingFolder + "/" + imuFileName;
+
+	imuOutputFile = fopen(imuFilePath.c_str(),"a");
+
+	if(!imuOutputFile){
+		fileRotationMutex.unlock();
+		throw std::invalid_argument(std::string("Couldn't open IMU log file ") + imuFileName);
+	}
+	
+	fprintf(imuOutputFile,"Timestamp%sHeading%sPitch%sRoll\n",separator.c_str(),separator.c_str(),separator.c_str());
+	
+}
+
+void LoggerText::initSonarFile(std::string &dateString){
+//Open sonar file
+	sonarFileName = dateString + "_sonar.txt";
+
+	std::string sonarFilePath = tmpLoggingFolder + "/" + sonarFileName;
+
+	sonarOutputFile = fopen(sonarFilePath.c_str(),"a");
+
+	if(!sonarOutputFile){
+		fileRotationMutex.unlock();
+		throw std::invalid_argument(std::string("Couldn't open sonar log file ") + sonarFileName);
+	}
+	
+	fprintf(sonarOutputFile,"Timestamp%sDepth\n",separator.c_str());
+}
+
+void LoggerText::initLidarFile(std::string &dateString){
+//Open lidar file
+	lidarFileName = dateString + "_lidar.txt";
+
+	std::string lidarFilePath = tmpLoggingFolder + "/" + lidarFileName;
+
+	lidarOutputFile = fopen(lidarFilePath.c_str(),"a");
+
+	if(!lidarOutputFile){
+		fileRotationMutex.unlock();
+		throw std::invalid_argument(std::string("Couldn't open lidar log file ") + lidarFileName);
+	}
+	
+	fprintf(lidarOutputFile,"Timestamp%sPoints\n",separator.c_str());
+}
+
+void LoggerText::initSpeedFile(std::string &dateString){
+//Open speed file
+	speedFilename = dateString + "_speed.txt";
+
+	std::string speedFilePath = tmpLoggingFolder + "/" + speedFilename;
+
+	speedOutputFile = fopen(speedFilePath.c_str(),"a");
+
+	if(!speedOutputFile){
+		fileRotationMutex.unlock();
+		throw std::invalid_argument(std::string("Couldn't open vitals log file ") + speedFilename);
+	}
+	
+	fprintf(speedOutputFile,"Timestamp%sSpeed\n",separator.c_str());
+}
+
+void LoggerText::initVitalsFile(std::string &dateString){
+//Open vitals file
+	vitalsFilename = dateString + "_vitals.txt";
+
+	std::string vitalsFilePath = tmpLoggingFolder + "/" + vitalsFilename;
+
+	vitalsOutputFile = fopen(vitalsFilePath.c_str(),"a");
+
+
+	if(!vitalsOutputFile){
+		fileRotationMutex.unlock();
+		throw std::invalid_argument(std::string("Couldn't open speed log file ") + vitalsFilename);
+	}
+	
+	for (size_t i = 0; i < vitalsHeader.size(); ++i) {
+		if (i == vitalsHeader.size() - 1) {
+			fprintf(vitalsOutputFile, "%s", vitalsHeader[i].c_str());
+		}
+		else{
+			fprintf(vitalsOutputFile, "%s%s", vitalsHeader[i].c_str(), separator.c_str());
+		}
+	}
+	fprintf(vitalsOutputFile, "\n");
+}
+
+
 /*
  * Closes the logging files and moves them to the web server's record directory to be accessible to download
  */
@@ -112,6 +171,8 @@ void LoggerText::finalize(){
 	std::string newLidarPath;
 	std::string newRawGnssPath;
 	std::string newRawSonarPath;
+	std::string newSpeedPath;
+	std::string newVitalsPath;
 	
 	if(gnssOutputFile){
 		//close
@@ -175,13 +236,34 @@ void LoggerText::finalize(){
 		rename(oldPath.c_str(), newRawSonarPath.c_str());
 	}
 	
+	if(speedOutputFile){
+		//close
+		fclose(speedOutputFile);
+		speedOutputFile = NULL;
+
+		
+		std::string oldPath = tmpLoggingFolder + "/"  + speedFilename;
+		newSpeedPath = outputFolder + "/" + speedFilename;
+		rename(oldPath.c_str(), newSpeedPath.c_str());
+	}
+	
+	if(vitalsOutputFile){
+		//close
+		fclose(vitalsOutputFile);
+		vitalsOutputFile = NULL;
+		
+		std::string oldPath = tmpLoggingFolder + "/"  + vitalsFilename;
+		newVitalsPath = outputFolder + "/" + vitalsFilename;
+		rename(oldPath.c_str(), newVitalsPath.c_str());
+	}
+	
 	fileRotationMutex.unlock();
 
 	std::string zipFilename = gnssFileName.substr(0, 17) + std::string(".zip");
 	
 	if(activatedTransfer){
 	
-		std::vector<std::string> files{newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath, newRawSonarPath};
+		std::vector<std::string> files{newGnssPath, newImuPath, newSonarPath, newLidarPath, newRawGnssPath, newRawSonarPath, newSpeedPath, newVitalsPath};
 	
 		bool noError = compress(zipFilename, files);
 		if(noError && can_reach_server()){
@@ -207,9 +289,8 @@ void LoggerText::rotate(){
 
 
 void LoggerText::gnssCallback(const sensor_msgs::NavSatFix& gnss){
-	if(!bootstrappedGnssTime && gnss.status.status >= 0){
-		bootstrappedGnssTime = true;
-	}
+	
+	processGnssFix(gnss);
 
 	if(bootstrappedGnssTime && loggerEnabled){
 
@@ -282,7 +363,6 @@ void LoggerText::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 	
 	std::vector<geometry_msgs::Point32> points = lidarXYZ.points;
 	
-	
 	if(bootstrappedGnssTime && loggerEnabled){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
 		
@@ -295,5 +375,75 @@ void LoggerText::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 			fprintf(lidarOutputFile,"\n");
 		}
 	}
+}
+
+void LoggerText::saveSpeed(const nav_msgs::Odometry& speed){
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = TimeUtils::buildTimeStamp(speed.header.stamp.sec, speed.header.stamp.nsec);
+
+		if(timestamp > lastSonarTimestamp){
+			fprintf(speedOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(speed.header.stamp.sec, speed.header.stamp.nsec).c_str(),separator.c_str(),speed.twist.twist.linear.y);
+			lastSonarTimestamp = timestamp;
+		}
+	}
+}
+
+void LoggerText::saveVitals(const raspberrypi_vitals_msg::sysinfo& msg){
 	
+	if(bootstrappedGnssTime && loggerEnabled){
+		uint64_t timestamp = TimeUtils::buildTimeStamp(msg.header.stamp.sec, msg.header.stamp.nsec);
+
+		if( (timestamp - lastVitalsTimestamp) > (60 * 1000000) ){
+			
+			fprintf(vitalsOutputFile,"%s%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f\n",
+				TimeUtils::getTimestampString(msg.header.stamp.sec, msg.header.stamp.nsec).c_str(),
+				separator.c_str(),
+				msg.cputemp,
+				separator.c_str(),
+				msg.cpuload,
+				separator.c_str(),
+				msg.freeram,
+				separator.c_str(),
+				msg.freehdd,
+				separator.c_str(),
+				msg.uptime,
+				separator.c_str(),
+				msg.vbat,
+				separator.c_str(),
+				msg.rh,
+				separator.c_str(),
+				msg.psi,
+				separator.c_str(),
+				msg.humidity,
+				separator.c_str(),
+				msg.temperature,
+				separator.c_str(),
+				msg.voltage
+				);
+			
+			lastVitalsTimestamp = timestamp;
+		}
+	}
+	
+}
+
+void LoggerText::readVitalsMsgFile(){
+
+	std::ifstream file("/opt/Poseidon/src/workspace/src/raspberrypi_vitals_msg/msg/sysinfo.msg");
+	if (!file.is_open()) {
+		ROS_ERROR("Error opening file: /opt/Poseidon/src/workspace/src/raspberrypi_vitals_msg/msg/sysinfo.msg");
+		return;
+	}
+
+	std::string line, firstCol, word;
+	
+	while (std::getline(file, line)) {
+		std::istringstream ss(line);
+		ss >> firstCol >> word;
+		
+		this->vitalsHeader.push_back(word);
+	}
+	this->vitalsHeader[0] = "timeStamp";
+
+	file.close();
 }

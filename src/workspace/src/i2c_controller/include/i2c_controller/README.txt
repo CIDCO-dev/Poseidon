@@ -1,0 +1,14 @@
+action to perform :
+led_error
+led_ready
+led_recording
+led_warning
+led_nofix
+get_led_state
+gps_fix_ready
+gps_fix_recording
+get_humidity
+get_temperature
+get_voltage
+get_shuntVoltage
+get_batteryTemperature

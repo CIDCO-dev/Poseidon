@@ -5,11 +5,10 @@
 #include <fcntl.h>
 #include <cstdint>
 #include "ros/ros.h"
-#include "../../utils/I2c_mutex.h"
 
 class HIH8130 {
 public:
-	HIH8130(const char* i2cDevice, uint8_t address) : deviceAddress(address) {
+	HIH8130(){
 		if ((fileDescriptor = open(i2cDevice, O_RDWR)) < 0) {
 			ROS_ERROR("HIH8130 Failed to open the I2C bus");
 			exit(1);
@@ -21,55 +20,58 @@ public:
 		}
 	}
 
-	double get_humidity() {
+	bool get_humidity(i2c_controller_service::i2c_controller_service::Response &response) {
 		uint8_t data[4];
 		
-		//I2cSync::lock_i2c_nb();
-		
-			if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-				ROS_ERROR("HIH8130::get_humidity() Failed to write");
-			}
+		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
+			ROS_ERROR("HIH8130::get_humidity() Failed to write");
+			return false;
+		}
 
-			usleep(100000);  // 100 ms
+		usleep(100000);  // 100 ms
 
-			if (read(fileDescriptor, data, 4) != 4) {
-				ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
-			}
-		
-		//I2cSync::unlock_i2c();
+		if (read(fileDescriptor, data, 4) != 4) {
+			ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
+			return false;
+		}
 		
 		uint16_t humidityRaw = ((data[0] & 0x3F) << 8) + data[1];
-		return (humidityRaw / (double)((1 << 14) - 2)) * 100.0;
+		response.value = (humidityRaw / (double)((1 << 14) - 2)) * 100.0;
+		return true;
 	}
 	
-	double get_temperature(){
+	bool get_temperature(i2c_controller_service::i2c_controller_service::Response &response){
 		uint8_t data[4];
-		
-		//I2cSync::lock_i2c_nb();
 		
 			if (write(fileDescriptor, &deviceAddress, 1) != 1) {
 				ROS_ERROR("HIH8130::get_temperature() Failed to write");
+				return false;
 			}
 
 			usleep(100000);  // 100 ms
 
 			if (read(fileDescriptor, data, 4) != 4) {
 				ROS_ERROR("HIH8130::get_temperature() Failed to read temperature");
+				return false;
 			}
 		
-		//I2cSync::unlock_i2c();
-		
 		uint16_t tempRaw = (data[2] << 6) + (data[3] >> 2);
-		return ((tempRaw / (double)((1 << 14) - 2)) * 165.0) - 40.0;
+		response.value = ((tempRaw / (double)((1 << 14) - 2)) * 165.0) - 40.0;
+		return true;
 		
 	}
 
 	~HIH8130() {
-		close(fileDescriptor);
+		if (fileDescriptor >= 0) {
+			close(fileDescriptor);
+		}
 	}
 
 private:
+	
 	int fileDescriptor;
-	uint8_t deviceAddress;
+	const uint8_t deviceAddress = 0x27;
+	const char* i2cDevice = "/dev/i2c-4";
+	
 };
 

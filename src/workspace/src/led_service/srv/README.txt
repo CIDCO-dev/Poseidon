@@ -1,4 +1,0 @@
-mode:
-error
-recording
-ready

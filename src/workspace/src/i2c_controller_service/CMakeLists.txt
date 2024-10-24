@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(led_service)
+project(i2c_controller_service)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -57,7 +57,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
 	FILES
-	set_led_mode.srv
+	i2c_controller_service.srv
  )
 
 ## Generate actions in the 'action' folder

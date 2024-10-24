@@ -146,11 +146,11 @@ class ZEDF9P{
 		
 		bool bootstrappedGnssTime = false;
 
-                ros::NodeHandle n;
+		ros::NodeHandle n;
 
-                ros::Subscriber gnssSubscriber;
-                ros::Publisher speedPublisher;
-                ros::Publisher gnssBinStreamPublisher;
+		ros::Subscriber gnssSubscriber;
+		ros::Publisher speedPublisher;
+		ros::Publisher gnssBinStreamPublisher;
 
 
 

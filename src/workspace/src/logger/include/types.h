@@ -4,8 +4,10 @@
 
 #define PACKET_POSITION 1
 #define PACKET_ATTITUDE 2
-#define PACKET_DEPTH    3
-#define PACKET_LIDAR    4
+#define PACKET_DEPTH	3
+#define PACKET_LIDAR	4
+#define PACKET_SPEED	5
+#define PACKET_VITALS   6
 
 
 /* Packet structs */
@@ -55,35 +57,10 @@ typedef struct{
 
 } PositionPacket;
 #pragma pack()
-/*
-#pragma pack(1)
-typedef struct{
-        // Orientation quaternion 
-        double orientation_w;
-        double orientation_x;
-        double orientation_y;
-        double orientation_z;
 
-        double orientation_covariance[9];
-
-        double angular_velocity_x;
-        double angular_velocity_y;
-        double angular_velocity_z;
-
-        double angular_velocity_covariance[9];
-
-        double linear_acceleration_x;
-        double linear_acceleration_y;
-        double linear_acceleration_z;
-
-        double linear_acceleration_covariance[9];
-} AttitudePacket;
-#pragma pack()
-*/
 
 #pragma pack(1)
 typedef struct{
-        // Orientation quaternion 
         double heading;
         double pitch;
         double roll;
@@ -105,4 +82,24 @@ typedef struct {
 	double laser_y;
 	double laser_z;
 } LidarPacket;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct {
+	double speedKMH;
+} SpeedPacket;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct {
+	int nbValues;
+} VitalsPacket;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct {
+	int valueNameSize;
+	std::string valueName;
+	double value;
+} VitalPacket;
 #pragma pack()

@@ -11,12 +11,8 @@ public:
 		i2c_ctrl_service_client.waitForExistence();
 	}
 
-	~PowerManagement() {
-		
-	}
+	~PowerManagement() {}
 
-	
-	
 	void run(){
 		ros::Rate loop_rate(1);
 		while (ros::ok()) {
@@ -25,11 +21,10 @@ public:
 			srv.request.action2perform = "get_voltage";
 			
 			if(i2c_ctrl_service_client.call(srv)){
-/*
-				if(srv.response.value < Threshold){
+				if(srv.response.value < 11.0){
+					ROS_WARN("Launching shutdown procedure");
 					graceful_shutdown();
 				}
-*/
 			}
 			else{
 				ROS_ERROR("PowerManagement::run get_voltage service call failed");
@@ -43,11 +38,11 @@ public:
 private:
 	ros::NodeHandle n;
 	ros::ServiceClient i2c_ctrl_service_client;
-	
 	void graceful_shutdown(){
-		if (system("sh /opt/Poseidon/src/workspace/src/power_management/include/power_management") == -1) {
-			ROS_ERROR("Failed to stop ROS service.");
+		if (system("systemctl stop ros") == -1) {
+			ROS_ERROR("Failed to stop ros service.");
 		}
+		
 	}
 };
 

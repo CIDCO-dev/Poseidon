@@ -200,8 +200,8 @@ class HBV {
 			ROS_ERROR("isCritical free hdd < 5 pourcent");
 			return true;
 		}
-		else if(msg.voltage <= 11.0 || msg.voltage >= 13.0){
-			ROS_ERROR_STREAM("isCritical voltage <= 11v || voltage >= 13v	voltage: "  << msg.voltage <<"v");
+		else if(msg.voltage <= 11.3 || msg.voltage >= 13.0){
+			ROS_ERROR_STREAM("isCritical voltage <= 11.3v || voltage >= 13v	voltage: "  << msg.voltage <<"v");
 			return true;
 		}
 		/*

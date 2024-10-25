@@ -49,7 +49,7 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	
 	if(!std::filesystem::exists(outputFolder)){
 		if (!std::filesystem::create_directory(outputFolder)) {
-			ROS_ERROR_STREAM("failed creating: " << outputFolder);
+			ROS_ERROR_STREAM("Failed creating: " << outputFolder);
 		}
 		ROS_INFO_STREAM(outputFolder << " created.");
 	}
@@ -298,7 +298,6 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 				logger_service::ToggleLogging::Response toggleResponse;
 				toggleLogging(toggleRequest, toggleResponse);
 				//ROS_INFO_STREAM(toggleResponse.loggingStatus << "  LoggerBase::configurationCallBack() \n");
-
 			}
 		}
 		else{
@@ -593,8 +592,6 @@ bool LoggerBase::send_job(std::string json){
 		}
 		
 		boost::beast::error_code ec;
-		
-		//std::cout<<res <<"\n";
 		
 		if(res.result() == boost::beast::http::status::ok){
 			stream.shutdown(ec);

@@ -85,7 +85,7 @@ void LoggerText::initImuFile(std::string &dateString){
 }
 
 void LoggerText::initSonarFile(std::string &dateString){
-//Open sonar file
+	//Open sonar file
 	sonarFileName = dateString + "_sonar.txt";
 
 	std::string sonarFilePath = tmpLoggingFolder + "/" + sonarFileName;
@@ -101,7 +101,7 @@ void LoggerText::initSonarFile(std::string &dateString){
 }
 
 void LoggerText::initLidarFile(std::string &dateString){
-//Open lidar file
+	//Open lidar file
 	lidarFileName = dateString + "_lidar.txt";
 
 	std::string lidarFilePath = tmpLoggingFolder + "/" + lidarFileName;
@@ -117,7 +117,7 @@ void LoggerText::initLidarFile(std::string &dateString){
 }
 
 void LoggerText::initSpeedFile(std::string &dateString){
-//Open speed file
+	//Open speed file
 	speedFilename = dateString + "_speed.txt";
 
 	std::string speedFilePath = tmpLoggingFolder + "/" + speedFilename;
@@ -133,7 +133,7 @@ void LoggerText::initSpeedFile(std::string &dateString){
 }
 
 void LoggerText::initVitalsFile(std::string &dateString){
-//Open vitals file
+	//Open vitals file
 	vitalsFilename = dateString + "_vitals.txt";
 
 	std::string vitalsFilePath = tmpLoggingFolder + "/" + vitalsFilename;
@@ -320,7 +320,7 @@ void LoggerText::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 				gnss.status.service
 			);
 
-			lastGnssTimestamp = timestamp; //XXX unused lastGnssTimestamp variable
+			lastGnssTimestamp = timestamp;
 		}
 	}
 }

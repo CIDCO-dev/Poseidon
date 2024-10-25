@@ -34,7 +34,7 @@ public:
 			return false;
 		}
 		
-		response.value = (data[0] * 256 + data[1]) * 3.125 / 1000;
+		response.value = ((data[0] * 256 + data[1]) * 3.125 / 1000) + 0.47;  // the 0.47 is added because of a diode that consume voltage and falsify value from battery
 		return true;
 	}
 

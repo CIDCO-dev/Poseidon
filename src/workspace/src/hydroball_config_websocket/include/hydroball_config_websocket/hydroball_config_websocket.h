@@ -344,7 +344,6 @@ public:
 				ROS_ERROR("Error in updating hotspotSSID");
 			}
 		}
-		
 	}
 	
 	bool isSameSSID(){

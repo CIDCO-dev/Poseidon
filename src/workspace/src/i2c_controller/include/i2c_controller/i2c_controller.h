@@ -58,6 +58,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value <= 3){
 			if(!set_logger_recording_status()){
 				ROS_ERROR("i2cController warning timer callback could not set led state");
@@ -74,6 +75,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value != 3 && res.value != 4){
 			if(!set_logger_recording_status()){
 				ROS_ERROR("i2cController error timer callback could not set led state");
@@ -83,12 +85,12 @@ private:
 	
 	void reset_timer_warning(){
 		ledWarningTimer.stop();
-		ledWarningTimer = n.createTimer(ros::Duration(10.0), &I2cController::warning_timer_callback, this, true, true);
+		ledWarningTimer = n.createTimer(ros::Duration(5.0), &I2cController::warning_timer_callback, this, true, true);
 	}
 	
 	void reset_timer_error(){
 		ledErrorTimer.stop();
-		ledErrorTimer = n.createTimer(ros::Duration(30.0), &I2cController::error_timer_callback, this, true, true);
+		ledErrorTimer = n.createTimer(ros::Duration(10.0), &I2cController::error_timer_callback, this, true, true);
 	}
 	
 	bool isErrorOn(){
@@ -99,7 +101,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 
-		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value == 5){
 			return true;
 		}
@@ -114,7 +116,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 
-		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value == 4){
 			return true;
 		}
@@ -128,7 +130,8 @@ private:
 		
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
-
+		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value == 3){
 			return true;
 		}
@@ -196,14 +199,14 @@ public:
 				}
 			}
 		}
-		else if(req.action2perform == "gps_fix_ready"){
+		else if(req.action2perform == "gps_fix_ready"){ // this part allow the logger node to override the led_nofix signal
 			if(!isErrorOn() && !isWarningOn()){
 				if(!led_controller.set_led("ready")){
 					return false;
 				}
 			}
 		}
-		else if(req.action2perform == "gps_fix_recording"){
+		else if(req.action2perform == "gps_fix_recording"){ // this part allow the logger node to override the led_nofix signal
 			if(!isErrorOn() && !isWarningOn()){
 				if(!led_controller.set_led("recording")){
 					return false;

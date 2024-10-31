@@ -1,4 +1,3 @@
-
 #ifndef wifi_config
 #define wifi_config
 
@@ -16,11 +15,16 @@
 #include <sstream>
 #include <fstream>
 
+/*
+	The hotspot ssid setting can be changed in the hydroball_config_websocket
+*/
+
 
 /*
 	you cannot delete a connection as it would require a seperate webpage to manage connection individually
-	instead of deleting a connection, disable it and/or change password
+	instead of deleting a connection, disable it and/or change password via the web UI
 */
+
 
 class WifiConfig{
 	

@@ -188,19 +188,24 @@ class HBV {
 		
 		
 	/*
-	 for the function isCritical ans isWarning each threshold changes needs to be reflected in the UI
+		for the function isCritical ans isWarning each threshold changes needs to be reflected in the UI
 	*/
 	bool isCritical(raspberrypi_vitals_msg::sysinfo &msg){
+		
+		/*
+			In the case scenario that the hardware is not eqquipped with a newer board version
+			no led warning or critical warning shoul be triggered
+		*/
 		
 		/*
 			the logger will stop recording data if freehdd is < 1%
 			this gives 4% of hdd time acquisition for the user to react accordingly
 		*/
-		if(msg.freehdd < 5.0){
+		if(msg.freehdd < 5.0 && msg.freehdd > 0.0){
 			ROS_ERROR("isCritical free hdd < 5 pourcent");
 			return true;
 		}
-		else if(msg.voltage <= 11.3 || msg.voltage >= 13.0){
+		else if( (msg.voltage <= 11.3 && msg.voltage > 0.0) || msg.voltage >= 13.0){
 			ROS_ERROR_STREAM("isCritical voltage <= 11.3v || voltage >= 13v	voltage: "  << msg.voltage <<"v");
 			return true;
 		}
@@ -217,12 +222,17 @@ class HBV {
 		return false;
 	}
 	
+	
+	/*
+		In the case scenario that the hardware is not eqquipped with a newer board version
+		no led warning or critical warning shoul be triggered
+	*/
 	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
-		if(msg.freehdd < 20.0){
+		if(msg.freehdd < 20.0 && msg.freehdd > 0.0){
 			ROS_WARN("isWarning free hdd < 20 pourcent");
 			return true;
 		}
-		else if(msg.voltage <= 11.9){
+		else if(msg.voltage <= 11.9 && msg.voltage > 0.0){
 			ROS_WARN("isWarning voltage <= 11.9 v");
 			return true;
 		}

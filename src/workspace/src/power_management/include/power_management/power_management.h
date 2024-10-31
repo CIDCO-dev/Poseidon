@@ -21,10 +21,15 @@ public:
 			srv.request.action2perform = "get_voltage";
 			
 			if(i2c_ctrl_service_client.call(srv)){
+				
 				/*
 					vital node will trigger a critical warning at 11.3V and a warning at 11.9v
+					In the case scenario that by accident this node is in the launfile of a an equippement
+					that is not eqquipped with a newer board version, the graceful shutdown should not be triggered
+					by the i2cController::read_chip_v0 function
 				*/
-				if(srv.response.value < 11.0){
+				
+				if(srv.response.value < 11.0 && srv.response.value > 0.0){
 					ROS_WARN("Launching shutdown procedure");
 					graceful_shutdown();
 				}

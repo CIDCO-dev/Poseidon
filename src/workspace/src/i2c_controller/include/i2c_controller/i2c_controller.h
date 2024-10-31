@@ -20,6 +20,8 @@ private:
 	ros::Timer ledWarningTimer;
 	ros::Timer ledErrorTimer;
 	
+	double boardVersion;
+	bool (I2cController::*functionVersion)(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res);
 	
 	bool set_logger_recording_status(){
 		logger_service::GetLoggingStatus status;
@@ -137,21 +139,60 @@ private:
 		}
 		return false;
 	}
+	
+	bool checkDevicePresence(int i2cBus, const int address) {
+		int file;
+		std::string filename = "/dev/i2c-" + std::to_string(i2cBus);
 
+		// Open the I2C bus
+		if ((file = open(filename.c_str(), O_RDWR)) < 0) {
+			std::cerr << "Error: Could not open I2C bus." << std::endl;
+			return false;
+		}
+
+		// Set the I2C slave address
+		if (ioctl(file, I2C_SLAVE, address) < 0) {
+			std::cerr << "Error: Could not set I2C address." << std::endl;
+			close(file);
+			return false;
+		}
+
+		// Try to read a byte from the device
+		char buffer;
+		if (read(file, &buffer, 1) != 1) {
+			std::cerr << "Error: Device not found or communication error." << std::endl;
+			close(file);
+			return false;
+		}
+
+		// Close the I2C bus and return success
+		close(file);
+		return true;
+	}
+	
+	
 public:
-	I2cController() {
+	I2cController(double &_boardVersion):boardVersion(_boardVersion) {
+		
 		i2cControllerService = n.advertiseService("i2c_controller_service", &I2cController::read_chip, this);
 		getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
 		getLoggingStatusService.waitForExistence();
+		
+		if(boardVersion > 2.0){
+			functionVersion = &I2cController::read_chip_v1;
+		}
+		else{
+			functionVersion = &I2cController::read_chip_v0;
+		}
 	}
 
-	~I2cController() {
-	}
-	
-	
+	~I2cController() {}
 	
 	bool read_chip(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
-		
+		(this->*functionVersion)(req, res);
+	}
+	
+	bool read_chip_v1(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
 		//ROS_INFO_STREAM("i2cController::read_chip() : " << req.action2perform);
 		
 		if(req.action2perform == "get_led_state"){
@@ -252,4 +293,9 @@ public:
 		return true;
 	}
 
+	bool read_chip_v0(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
+		res.value = -666.0;
+		return true;
+		
+	}
 };

@@ -19,6 +19,7 @@ public:
 			exit(1);
 		}
 	}
+	
 
 	bool get_humidity(i2c_controller_service::i2c_controller_service::Response &response) {
 		uint8_t data[4];
@@ -70,7 +71,7 @@ public:
 private:
 	
 	int fileDescriptor;
-	const uint8_t deviceAddress = 0x27;
+	const int deviceAddress = 0x27;
 	const char* i2cDevice = "/dev/i2c-4";
 	
 };

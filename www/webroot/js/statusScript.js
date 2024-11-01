@@ -47,10 +47,10 @@ function processState(state) {
 	$("#freeram").width(100 - state.telemetry.vitals[2] + "%");
 
 	// HDD free space
-	if(state.telemetry.vitals[3] <= 1.0){
+	if(state.telemetry.vitals[3] <= 5.0){
 		$("#freehdd").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-danger");
 	}
-	else if(state.telemetry.vitals[3] <= 5.0 && state.telemetry.vitals[3] > 1.0){
+	else if(state.telemetry.vitals[3] <= 20.0 && state.telemetry.vitals[3] > 5.0){
 		$("#freehdd").removeClass("bg-gradient-success").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
 	}
 	else{

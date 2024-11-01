@@ -20,6 +20,8 @@ private:
 	ros::Timer ledWarningTimer;
 	ros::Timer ledErrorTimer;
 	
+	double boardVersion;
+	bool (I2cController::*functionVersion)(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res);
 	
 	bool set_logger_recording_status(){
 		logger_service::GetLoggingStatus status;
@@ -46,8 +48,7 @@ private:
 	
 	/*
 		In order for the timer callbacks to override the led state 
-		we have to bypass the readChip function, because of the isIssue function
-		that prevent a led state change triggered by the user if he would be using the manual logging mode
+		we have to bypass the readChip function
 	*/
 	
 	void warning_timer_callback(const ros::TimerEvent& event) {
@@ -59,6 +60,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value <= 3){
 			if(!set_logger_recording_status()){
 				ROS_ERROR("i2cController warning timer callback could not set led state");
@@ -75,6 +77,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value != 3 && res.value != 4){
 			if(!set_logger_recording_status()){
 				ROS_ERROR("i2cController error timer callback could not set led state");
@@ -84,12 +87,12 @@ private:
 	
 	void reset_timer_warning(){
 		ledWarningTimer.stop();
-		ledWarningTimer = n.createTimer(ros::Duration(10.0), &I2cController::warning_timer_callback, this, true, true);
+		ledWarningTimer = n.createTimer(ros::Duration(5.0), &I2cController::warning_timer_callback, this, true, true);
 	}
 	
 	void reset_timer_error(){
 		ledErrorTimer.stop();
-		ledErrorTimer = n.createTimer(ros::Duration(30.0), &I2cController::error_timer_callback, this, true, true);
+		ledErrorTimer = n.createTimer(ros::Duration(10.0), &I2cController::error_timer_callback, this, true, true);
 	}
 	
 	bool isErrorOn(){
@@ -100,7 +103,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 
-		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value == 5){
 			return true;
 		}
@@ -115,7 +118,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 
-		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value == 4){
 			return true;
 		}
@@ -129,27 +132,67 @@ private:
 		
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
-
+		
+		// the led states are defined in the enum below the includes of PCA9533.h
 		if(res.value == 3){
 			return true;
 		}
 		return false;
 	}
+	
+	bool checkDevicePresence(int i2cBus, const int address) {
+		int file;
+		std::string filename = "/dev/i2c-" + std::to_string(i2cBus);
 
+		// Open the I2C bus
+		if ((file = open(filename.c_str(), O_RDWR)) < 0) {
+			std::cerr << "Error: Could not open I2C bus." << std::endl;
+			return false;
+		}
+
+		// Set the I2C slave address
+		if (ioctl(file, I2C_SLAVE, address) < 0) {
+			std::cerr << "Error: Could not set I2C address." << std::endl;
+			close(file);
+			return false;
+		}
+
+		// Try to read a byte from the device
+		char buffer;
+		if (read(file, &buffer, 1) != 1) {
+			std::cerr << "Error: Device not found or communication error." << std::endl;
+			close(file);
+			return false;
+		}
+
+		// Close the I2C bus and return success
+		close(file);
+		return true;
+	}
+	
+	
 public:
-	I2cController() {
+	I2cController(double &_boardVersion):boardVersion(_boardVersion) {
+		
 		i2cControllerService = n.advertiseService("i2c_controller_service", &I2cController::read_chip, this);
 		getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
 		getLoggingStatusService.waitForExistence();
+		
+		if(boardVersion > 2.0){
+			functionVersion = &I2cController::read_chip_v1;
+		}
+		else{
+			functionVersion = &I2cController::read_chip_v0;
+		}
 	}
 
-	~I2cController() {
-	}
-	
-	
+	~I2cController() {}
 	
 	bool read_chip(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
-		
+		(this->*functionVersion)(req, res);
+	}
+	
+	bool read_chip_v1(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
 		//ROS_INFO_STREAM("i2cController::read_chip() : " << req.action2perform);
 		
 		if(req.action2perform == "get_led_state"){
@@ -197,14 +240,14 @@ public:
 				}
 			}
 		}
-		else if(req.action2perform == "gps_fix_ready"){
+		else if(req.action2perform == "gps_fix_ready"){ // this part allow the logger node to override the led_nofix signal
 			if(!isErrorOn() && !isWarningOn()){
 				if(!led_controller.set_led("ready")){
 					return false;
 				}
 			}
 		}
-		else if(req.action2perform == "gps_fix_recording"){
+		else if(req.action2perform == "gps_fix_recording"){ // this part allow the logger node to override the led_nofix signal
 			if(!isErrorOn() && !isWarningOn()){
 				if(!led_controller.set_led("recording")){
 					return false;
@@ -250,4 +293,9 @@ public:
 		return true;
 	}
 
+	bool read_chip_v0(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
+		res.value = -666.0;
+		return true;
+		
+	}
 };

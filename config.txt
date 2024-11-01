@@ -1,8 +1,10 @@
 apiKey SECRET
+apiPort 8080
 apiServer localhost
 apiUrlPath /
-apiPort 8080
+geofence MULTIPOLYGON(((-180 -90, -180 90, 180 90, 180 -90, -180 -90)))
 headingOffset 0
+hotspotSSID default
 logRotationIntervalSeconds 3600
 loggingMode 2
 pitchOffset 0
@@ -10,10 +12,9 @@ rollOffset 0
 sonarAbsorbtion 20
 sonarPulseLength 120
 sonarRange 20
+sonarSerialBaudRate 9600
 sonarStartGain 16
 speedThresholdKmh 6.0
 wifiPassword qwerty1234
 wifiSSID cidco
 wifiTransferEnabled true
-sonarSerialBaudRate 9600
-hotspotSSID default

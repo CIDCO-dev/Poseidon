@@ -38,16 +38,18 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	
 	updateLogRotationInterval();
 	updateApiTransferConfig();
-	ROS_INFO_STREAM("File transfert activated: " << this->activatedTransfer << ", API server: "
+	
+	ROS_INFO_STREAM("File transfert activated: " << std::boolalpha << this->activatedTransfer << ", API server: "
 					<< this->host <<", API url: "<< this->target <<" , API port: "<< this->port);
 	
 	updateSpeedThreshold();
 	updateLoggingMode();
+	
 	ROS_INFO_STREAM("Logging mode set to : "<< loggingMode <<" , "<<"Speed threshold set to : "<< speedThresholdKmh);
 	
 	if(!std::filesystem::exists(outputFolder)){
 		if (!std::filesystem::create_directory(outputFolder)) {
-			ROS_ERROR_STREAM("failed creating: " << outputFolder);
+			ROS_ERROR_STREAM("Failed creating: " << outputFolder);
 		}
 		ROS_INFO_STREAM(outputFolder << " created.");
 	}
@@ -112,13 +114,13 @@ void LoggerBase::updateSpeedThreshold(){
 }
 
 void LoggerBase::updateApiTransferConfig(){
-	setting_msg::ConfigurationService srv;
 
+	setting_msg::ConfigurationService srv;
 	srv.request.key = "apiServer";
 
 	if(configurationClient.call(srv)){
 		try{
-			this->host = trimSpaces(srv.response.value);
+			this->host = srv.response.value;
 			if(this->host.size() > 0){
 				this->activatedTransfer = true;
 			}
@@ -144,7 +146,7 @@ void LoggerBase::updateApiTransferConfig(){
 
 	if(configurationClient.call(srv)){
 		try{
-			this->target = trimSpaces(srv.response.value);
+			this->target = srv.response.value;
 		}
 		catch(const std::exception& ex){
 			ROS_ERROR_STREAM(ex.what());
@@ -160,7 +162,7 @@ void LoggerBase::updateApiTransferConfig(){
 	srv.request.key = "apiKey";
 	if(configurationClient.call(srv)){
 		try{
-			this->apiKey = trimSpaces(srv.response.value);
+			this->apiKey = srv.response.value;
 		}
 		catch(const std::exception& ex){
 			ROS_ERROR_STREAM(ex.what());
@@ -176,7 +178,7 @@ void LoggerBase::updateApiTransferConfig(){
 	srv.request.key = "apiPort";
 	if(configurationClient.call(srv)){
 		try{
-			this->port = trimSpaces(srv.response.value);
+			this->port = srv.response.value;
 		}
 		catch(const std::exception& ex){
 			ROS_ERROR_STREAM(ex.what());
@@ -292,7 +294,6 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 				logger_service::ToggleLogging::Response toggleResponse;
 				toggleLogging(toggleRequest, toggleResponse);
 				//ROS_INFO_STREAM(toggleResponse.loggingStatus << "  LoggerBase::configurationCallBack() \n");
-
 			}
 		}
 		else{
@@ -305,40 +306,39 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 		}
 	}
 	else if(setting.key == "apiServer"){
-		std::string temp = setting.value;
-		if(trimSpaces(temp) == ""){
+		
+		if(setting.value == ""){
 			this->activatedTransfer = false;
+			ROS_INFO_STREAM("LoggerBase::configurationCallBack() File transfert activated status: " << std::boolalpha << this->activatedTransfer << "\n");
 		}
 		else{
-			this->host = trimSpaces(temp);
+			this->host = setting.value;
 			this->activatedTransfer = true;
+			ROS_INFO_STREAM("LoggerBase::configurationCallBack(2) File transfert activated status: " << std::boolalpha << this->activatedTransfer << "\n");
 		}
 	}
 	else if(setting.key == "apiUrlPath"){
-		std::string temp = setting.value;
-		if(trimSpaces(temp) == ""){
+		if(setting.value == ""){
 			this->target = "/";
 		}
 		else{
-			this->target = trimSpaces(temp);
+			this->target = setting.value;
 		}
 	}
 	else if(setting.key == "apiPort"){
-		std::string temp = setting.value;
-		if(trimSpaces(temp) == ""){
+		if(setting.value == ""){
 			this->port = "8080";
 		}
 		else{
-			std::cout<<"port : " << this->port <<"\n";
+			this->port = setting.value;
 		}
 	}
 	else if(setting.key == "apiKey"){
-		std::string temp = setting.value;
-		if(trimSpaces(temp) == ""){
+		if(setting.value == ""){
 			this->apiKey = "SECRET";
 		}
 		else{
-			this->apiKey = trimSpaces(temp);
+			this->apiKey = setting.value;
 		}
 	}
 	else if(setting.key == "logRotationIntervalSeconds"){
@@ -436,6 +436,11 @@ void LoggerBase::imuTransform(const sensor_msgs::Imu& imu, double & roll , doubl
 void LoggerBase::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vitals){
 	
 	saveVitals(vitals);
+	
+	/*
+		the vital node will trigger a warning at 20% and a critical warning at 5%
+		logger will stopped when there is less than 1% hdd to prevent serious issues
+	*/
 	
 	if(vitals.freehdd < 1.0 ){
 		
@@ -589,8 +594,6 @@ bool LoggerBase::send_job(std::string json){
 		
 		boost::beast::error_code ec;
 		
-		//std::cout<<res <<"\n";
-		
 		if(res.result() == boost::beast::http::status::ok){
 			stream.shutdown(ec);
 			if(ec && ec != boost::asio::error::eof && ec != boost::asio::ssl::error::stream_errors::stream_truncated){
@@ -715,7 +718,6 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		if(!i2cControllerServiceClient.call(srv)){
 			ROS_ERROR("processGnssFix(2) i2cController service call failed");
 		}
-		
 	}
 	// fix signal restored
 	else if(bootstrappedGnssTime && gnss.status.status >= 0 && !gnssFix){
@@ -744,90 +746,4 @@ void LoggerBase::reset_gnss_timer(){
 		noGnssTimer.stop();
 		noGnssTimer = node.createTimer(ros::Duration(1.0), &LoggerBase::gnss_timer_callback, this);
 	}
-
-// http transfer
-
-//bool LoggerBase::send_job(std::string json){
-//	bool status = false;
-//	
-//	try{
-//		int version = 11;
-//		
-//		// The io_context is required for all I/O
-//		boost::asio::io_context ioService;
-
-//		// These objects perform our I/O
-//		boost::asio::ip::tcp::resolver resolver(ioService);
-//		boost::beast::tcp_stream stream(ioService);
-
-//		// Look up the domain name
-//		auto const results = resolver.resolve(this->host, this->port);
-
-//		// Make the connection on the IP address we get from a lookup
-//		stream.connect(results);
-
-//		// Set up an HTTP GET request message
-//		boost::beast::http::request<boost::beast::http::string_body> req{boost::beast::http::verb::post, this->target, version};
-//		req.set(boost::beast::http::field::host, this->host);
-//		req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-
-//		req.body() = json;
-//		req.prepare_payload();
-//		
-//		std::cout<<req<<"\n";
-//		
-//		//Send the HTTP request to the remote host
-//		boost::beast::http::write(stream, req);
-//		
-//		
-////		size_t bytes_written = 0;
-////		while (bytes_written < json.size()) {
-////			size_t chunk_size = std::min<size_t>(json.size() - bytes_written, 1024); // Chunk size of 1024 bytes
-////			boost::asio::write(stream, boost::asio::buffer(&json[bytes_written], chunk_size));
-////			bytes_written += chunk_size;
-////		}
-
-//		
-
-//		// This buffer is used for reading and must be persisted
-//		boost::beast::flat_buffer buffer;
-
-//		// Declare a container to hold the response
-//		boost::beast::http::response<boost::beast::http::dynamic_body> res;
-
-//		// Receive the HTTP response
-//		boost::beast::http::read(stream, buffer, res);
-//		boost::beast::error_code ec;
-//		
-//		std::cout<<res <<"\n";
-//		
-//		if (res.result() == boost::beast::http::status::temporary_redirect) {
-//			// Extract new location
-//			std::string new_location = res.base().at("Location").to_string();
-//			std::cout<<"redirect : " << new_location <<"\n";
-//		}
-
-//		if(res.result() == boost::beast::http::status::ok){
-//			stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-//			if(ec && ec != boost::beast::errc::not_connected){
-//				throw boost::beast::system_error{ec};
-//			}
-//			status = true;
-//		}
-//		else{
-//		 	stream.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-//			if(ec && ec != boost::beast::errc::not_connected){
-//				throw boost::beast::system_error{ec};
-//			}
-//			status = false;
-//			ROS_ERROR_STREAM("send_job() response: " << res.result());
-//		}
-
-//	}
-//	catch(std::exception const& e)
-//	{
-//		ROS_ERROR_STREAM("Post request error: " << e.what());
-//	}
-//	return status;
-//}
 

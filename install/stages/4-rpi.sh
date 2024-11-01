@@ -42,6 +42,9 @@ echo "[+] Config I2C"
 sudo bash -c 'echo "dtparam=i2c_arm_baudrate=500000" >> /boot/firmware/usercfg.txt'
 sudo bash -c 'echo "dtparam=i2c4,pins_6_7" >> /boot/firmware/usercfg.txt'
 
+echo "[+] Turn off SPI"
+sudo sed -i "s/dtparam=spi=on/dtparam=spi=off/g" /boot/firmware/suscfg.txt
+
 echo "[+] Config uart"
 sudo bash -c 'cat << EOF2 > /boot/firmware/cmdline.txt
 net.ifnames=0 dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc

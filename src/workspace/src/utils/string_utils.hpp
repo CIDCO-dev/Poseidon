@@ -19,8 +19,7 @@ std::string & rtrim(std::string & str)
 }
 
 //Does not remove spaces in the middle only at beginning and end of string
-std::string trimSpaces(std::string & str){
-	
+std::string trimSpaces(std::string str){
 	return ltrim(rtrim(str));
 }
 

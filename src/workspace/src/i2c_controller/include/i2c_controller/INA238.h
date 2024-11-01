@@ -34,8 +34,7 @@ public:
 			return false;
 		}
 		
-		//response.value = (data * 3.125) / 1000.0;
-		response.value = (data[0] * 256 + data[1]) * 3.125 / 1000;
+		response.value = ((data[0] * 256 + data[1]) * 3.125 / 1000) + 0.47;  // the 0.47 is added because of a diode that consume voltage and falsify value from battery
 		return true;
 	}
 
@@ -47,7 +46,7 @@ public:
 			return false;
 		}
 		
-		response.value = (data[0] * 256 + data[1]) * 5.0 / 1000.0;  
+		response.value = (data[0] * 256 + data[1]) * 5.0 / 1000.0;
 		return true;
 	}
 
@@ -71,15 +70,16 @@ public:
 
 private:
 	const char* i2c_device = "/dev/i2c-4";
-	static constexpr int ina238_address = 0x40;
+	const int ina238_address = 0x40;
 	int file;
 
 	int REGISTER_VOLTAGE = 0x05;
 	int REGISTER_SHUNT = 0x04;
 	int REGISTER_TEMPERATURE = 0x06;
 
+	
 	bool readRegister(const int &reg, uint8_t (&data)[2]) {
-
+		
 		if (write(file, &reg, 1) != 1) {
 			ROS_ERROR("Failed to write to the I2C bus.");
 			return false;
@@ -89,6 +89,7 @@ private:
 			ROS_ERROR("Failed to read from the I2C bus.");
 			return false;
 		}
+		
 		
 		return true;
 	}

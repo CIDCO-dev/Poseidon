@@ -35,9 +35,14 @@ sudo bash -c 'cat << EOF3 > /etc/systemd/system/ros.service
 [Unit]
 Description=Launch ROS on boot.
 After=gpsd.service hwrtc.service
+
 [Service]
 Type=simple
+KillSignal=SIGINT
 ExecStart=/opt/Poseidon/launchROSService.sh
+ExecStop=/usr/bin/pkill -INT roslaunch
+TimeoutStopSec=60
+ExecStopPost=/sbin/shutdown now
 [Install]
 WantedBy=multi-user.target
 EOF3'

@@ -62,12 +62,18 @@ function processState(state) {
 	$("#freehdd").width(100 - state.telemetry.vitals[3] + "%");
 	
 	// Humidity
+	if (state.telemetry.vitals[10] === -666) {
+        $("#humidity").parent().hide();
+    } else {
 	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-success" : "bg-gradient-danger")).addClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-danger" : "bg-gradient-success"));
 
 	$("#humidityText").text(state.telemetry.vitals[10] + "%");
 	$("#humidity").width(state.telemetry.vitals[10] + "%");
-	
+	}
 	// Temperature
+	if (state.telemetry.vitals[7] === -666) {
+        $("#temperature").parent().hide();
+    } else {
 	var tempElement = $("#temperature");
 	var temperatureHBValue = state.telemetry.vitals[7];
 	tempElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
@@ -80,8 +86,12 @@ function processState(state) {
 		}
 	$("#temperatureText").text(state.telemetry.vitals[7] + "\u00B0" + "C");
 	$("#temperature").width(20 + state.telemetry.vitals[7] + "%");
-	
+	}
+
 	// Battery
+	if (state.telemetry.vitals[9] === -666) {
+        $("#battery").parent().hide();
+    } else {
 	var voltageElement = $("#battery");
 	var voltage = state.telemetry.vitals[9];
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
@@ -99,7 +109,7 @@ function processState(state) {
 			$("#battery").width(100 + "%");
 		}
 	$("#batteryText").text(state.telemetry.vitals[9] + "V");
-	
+	}
 }
 
 var socket = new WebSocket("ws://" + window.location.hostname + ":9002");

@@ -76,6 +76,7 @@ class HBV {
 		HBV() : sequenceNumber(0) {
 			HBVTopic = node.advertise<raspberrypi_vitals_msg::sysinfo>("vitals", 1000);
 			i2c_ctrl_service_client  = node.serviceClient<i2c_controller_service::i2c_controller_service>("i2c_controller_service");
+			i2c_ctrl_service_client.waitForExistence();
 		}
 		
 		float getCpuTemp() {

@@ -13,9 +13,6 @@ private:
 	ros::ServiceServer i2cControllerService;
 	ros::ServiceClient getLoggingStatusService;
 	
-/*	HIH8130 *weather_sensor = nullptr;*/
-/*	INA238 *power_sensor= nullptr;*/
-/*	PCA9533 *led_controller= nullptr;*/
 	HIH8130 weather_sensor;
 	INA238 power_sensor;
 	PCA9533 led_controller;

@@ -153,7 +153,15 @@ public:
 				std::string key;
 				std::string value;
 
-				ss >> key >> value;
+				if (std::count(line.begin(), line.end(), ' ') < 2){
+					ss >> key >> value;
+				}
+				//XXX maybe use a filePath instead of the file content
+				else {
+					size_t split_position = line.find(' ');
+					key = line.substr(0, split_position);
+					value = line.substr(split_position + 1);
+				}
 
 				if(key.size() > 0 && value.size() > 0){
 					configuration[key]=value;

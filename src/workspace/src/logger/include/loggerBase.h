@@ -42,6 +42,7 @@
 #include "../../utils/QuaternionUtils.h"
 #include "../../utils/Constants.hpp"
 #include "../../utils/HttpClient.hpp"
+#include "../../utils/Geofence.hpp"
 
 
 //Boost lib
@@ -133,6 +134,14 @@ class LoggerBase{
 		bool compress(std::string &zipFilename, std::vector<std::string> &filesVector);
 		void transfer();
 		bool can_reach_server();
+		
+		/* Geofence */
+		void updateGeofence(const sensor_msgs::NavSatFix& gnss);
+		void updateGeofenceFromConfig();
+		void updateGeofenceFromWKT(std::string geofenceWKT);
+		Geofence gf;
+		bool insideGeofence = false;
+		bool enableGeofence = false;
 		
 		// ros
 		ros::NodeHandle node;

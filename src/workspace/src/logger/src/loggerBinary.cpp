@@ -109,6 +109,7 @@ void LoggerBinary::rotate(){
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	
 	processGnssFix(gnss);
+	updateGeofence(gnss);
 
 	if(bootstrappedGnssTime && loggerEnabled){
 
@@ -202,8 +203,13 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
 			packet.depth_y=sonar.point.y;
 			packet.depth_z=sonar.point.z;
 
-			outputFile.write((char*)&hdr, sizeof(PacketHeader));
-			outputFile.write((char*)&packet, sizeof(DepthPacket));
+			if (this->enableGeofence && not this->insideGeofence){
+				ROS_INFO("Not logging as we are outside active geofence");
+			}
+			else {
+				outputFile.write((char *) &hdr, sizeof(PacketHeader));
+				outputFile.write((char *) &packet, sizeof(DepthPacket));
+			}
 			
 			lastSonarTimestamp = timestamp;
 			fileLock.unlock();

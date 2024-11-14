@@ -2,7 +2,7 @@ import smbus
 import time
 
 # Créer une instance de la classe SMBus pour accéder à l'I2C bus
-bus = smbus.SMBus(4)  # Utilisez 0 pour les anciens modèles Raspberry Pi
+bus = smbus.SMBus(1)  # Utilisez 0 pour les anciens modèles Raspberry Pi
 
 # Adresse I2C du capteur HIH8130 (peut varier, vérifiez votre documentation)
 SENSOR_ADDRESS = 0x27

@@ -6,11 +6,11 @@ int main(int argc, char **argv){
 	
 	double boardVersion = 2.0;
 	
-	if(argc < 3){
+	if(argc < 2){
 		ROS_ERROR("i2c_controller_node, Missing board version parameter in launch file");
 	}
-	else if(argc == 4){ // ROS is adding 2 param to each node
-		
+	else if(argc == 2){
+	
 		try{
 			boardVersion = std::stod(argv[1]);
 		}

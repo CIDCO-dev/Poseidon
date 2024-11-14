@@ -53,16 +53,16 @@ public:
 		
 			// Initial configuration
 			if (write(file, &PSC0, 2) != 2){
-				//ROS_ERROR("write error init config PSC0");
+				ROS_ERROR("write error init config PSC0");
 			}
 			if (write(file, &PWM0, 2) != 2){
-				//ROS_ERROR("write error init config PWM0");
+				ROS_ERROR("write error init config PWM0");
 			}
 			if (write(file, &PSC1, 2) != 2){
-				//ROS_ERROR("write error init config PSC1");
+				ROS_ERROR("write error init config PSC1");
 			}
 			if (write(file, &PWM1, 2) != 2){
-				//ROS_ERROR("write error init config PWM1");
+				ROS_ERROR("write error init config PWM1");
 			}
 		
 		set_led_state(0, 0, 0);
@@ -145,6 +145,7 @@ public:
 	}
 	
 	bool set_led(const std::string &led_mode){
+	
 		//std::cerr<<"led controler - set led : "<<led_mode <<"\n";
 		
 		if(led_mode == "error"){
@@ -172,12 +173,6 @@ public:
 				return false;
 			}
 		}
-		else if(led_mode == "off"){
-			if(!set_led_state(0, 0, 0)){
-				return false;
-			}
-		}
-		
 		else{
 			ROS_ERROR_STREAM("led controller invalid request: " << led_mode);
 			return false;

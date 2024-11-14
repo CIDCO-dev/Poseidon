@@ -114,7 +114,7 @@ void LoggerBase::updateSpeedThreshold(){
 	}
 }
 
-void LoggerBase::updateGeofenceFromWKT(std::string wkt){
+void LoggerBase::updateGeofenceFromWKT(std::string & wkt){
 	if (trimSpaces(wkt).empty()){
 		this->enableGeofence = false;
 		return;
@@ -123,7 +123,7 @@ void LoggerBase::updateGeofenceFromWKT(std::string wkt){
 		ROS_INFO_STREAM("Already using this geofence: " << wkt);
 	}
 	else {
-		ROS_INFO_STREAM("Updating new geofence: " << wkt);
+		//ROS_INFO_STREAM("Updating new geofence: " << wkt);
 		try{
 			this->gf = Geofence(wkt);
 			this->enableGeofence = true;
@@ -311,7 +311,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			}
 			catch(std::invalid_argument &err){
 				mtx.lock();
-					ROS_ERROR("logging mode should be an integer 1-2-3 \n error catch in : LoggerBase::configurationCallBack()");
+					//ROS_ERROR("logging mode should be an integer 1-2-3 \n error catch in : LoggerBase::configurationCallBack()");
 					logger_service::SetLoggingMode defaultMode;
 				defaultMode.request.loggingMode = AlwaysOn;
 				setLoggingMode(defaultMode.request, defaultMode.response);
@@ -332,7 +332,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 			}
 		}
 		else{
-			ROS_ERROR_STREAM("loggingModeCallBack error "<< setting.key << " is different than 1,2,3 \n"<<"defaulting to: always ON");
+			//ROS_ERROR_STREAM("loggingModeCallBack error "<< setting.key << " is different than 1,2,3 \n"<<"defaulting to: always ON");
 			mtx.lock();
 			logger_service::SetLoggingMode defaultMode;
 			defaultMode.request.loggingMode = AlwaysOn;
@@ -720,7 +720,7 @@ void LoggerBase::sonarBinStreamCallback(const binary_stream_msg::Stream& stream)
 			std::copy(v.begin(), v.end(), arr);
 			
 			if (this->enableGeofence && not this->insideGeofence){
-				ROS_INFO("Not logging as we are outside active geofence");
+				//ROS_INFO("Not logging as we are outside active geofence");
 			}
 			else {
 				rawSonarOutputFile.write((char *) arr, stream.vector_length);

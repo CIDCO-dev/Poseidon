@@ -291,7 +291,6 @@ void LoggerText::rotate(){
 void LoggerText::gnssCallback(const sensor_msgs::NavSatFix& gnss){
 	
 	processGnssFix(gnss);
-	updateGeofence(gnss);
 
 	if(bootstrappedGnssTime && loggerEnabled){
 
@@ -350,12 +349,7 @@ void LoggerText::sonarCallback(const geometry_msgs::PointStamped& sonar){
 		uint64_t timestamp = TimeUtils::buildTimeStamp(sonar.header.stamp.sec, sonar.header.stamp.nsec);
 
 		if(timestamp > lastSonarTimestamp){
-			if (this->enableGeofence && not this->insideGeofence){
-				ROS_INFO("Not logging as we are outside active geofence");
-			}
-			else {
-				fprintf(sonarOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec).c_str(),separator.c_str(),sonar.point.z);
-			}
+			fprintf(sonarOutputFile,"%s%s%.3f\n",TimeUtils::getTimestampString(sonar.header.stamp.sec, sonar.header.stamp.nsec).c_str(),separator.c_str(),sonar.point.z);
 			lastSonarTimestamp = timestamp;
 		}
 	}

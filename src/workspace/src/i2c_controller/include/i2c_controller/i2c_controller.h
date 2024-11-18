@@ -61,7 +61,7 @@ private:
 		read_chip(req, res);
 		
 		// the led states are defined in the enum below the includes of PCA9533.h
-		if(res.value <= 3){
+		if(res.value <= Warning){
 			if(!set_logger_recording_status()){
 				ROS_ERROR("i2cController warning timer callback could not set led state");
 			}
@@ -77,8 +77,7 @@ private:
 		req.action2perform = "get_led_state";
 		read_chip(req, res);
 		
-		// the led states are defined in the enum below the includes of PCA9533.h
-		if(res.value != 3 && res.value != 4){
+		if(res.value != Warning && res.value != NoFix){
 			if(!set_logger_recording_status()){
 				ROS_ERROR("i2cController error timer callback could not set led state");
 			}
@@ -184,6 +183,10 @@ public:
 		else{
 			functionVersion = &I2cController::read_chip_v0;
 		}
+		
+		i2cControllerService = n.advertiseService("i2c_controller_service", &I2cController::read_chip, this);
+		getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
+		getLoggingStatusService.waitForExistence();
 	}
 
 	~I2cController() {}
@@ -294,7 +297,7 @@ public:
 	}
 
 	bool read_chip_v0(i2c_controller_service::i2c_controller_service::Request &req, i2c_controller_service::i2c_controller_service::Response &res){
-		res.value = -666.0;
+		res.value = -555.0;
 		return true;
 		
 	}

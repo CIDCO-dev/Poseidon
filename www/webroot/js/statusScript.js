@@ -62,7 +62,7 @@ function processState(state) {
 	$("#freehdd").width(100 - state.telemetry.vitals[3] + "%");
 	
 	// Humidity
-	if (state.telemetry.vitals[10] === -666) {
+	if (state.telemetry.vitals[10] === -555) {
         $("#humidity").parent().hide();
     } else {
 	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-success" : "bg-gradient-danger")).addClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-danger" : "bg-gradient-success"));
@@ -71,7 +71,7 @@ function processState(state) {
 	$("#humidity").width(state.telemetry.vitals[10] + "%");
 	}
 	// Temperature
-	if (state.telemetry.vitals[7] === -666) {
+	if (state.telemetry.vitals[7] === -555) {
         $("#temperature").parent().hide();
     } else {
 	var tempElement = $("#temperature");
@@ -89,7 +89,7 @@ function processState(state) {
 	}
 
 	// Battery
-	if (state.telemetry.vitals[9] === -666) {
+	if (state.telemetry.vitals[9] === -555) {
         $("#battery").parent().hide();
     } else {
 	var voltageElement = $("#battery");

@@ -289,7 +289,8 @@ void LoggerText::rotate(){
 
 
 void LoggerText::gnssCallback(const sensor_msgs::NavSatFix& gnss){
-	/*processGnssFix(gnss);*/	
+	
+	processGnssFix(gnss);
 	updateGeofence(gnss);
 	if(!bootstrappedGnssTime && gnss.status.status >= 0){
 		bootstrappedGnssTime = true;

@@ -114,21 +114,21 @@ void LoggerBase::updateSpeedThreshold(){
 	}
 }
 
-void LoggerBase::updateGeofenceFromWKT(std::string & wkt){
-	if (trimSpaces(wkt).empty()){
+void LoggerBase::updateGeofenceFromWKT(std::string geofenceWKT){
+	if (trimSpaces(geofenceWKT).empty()){
 		this->enableGeofence = false;
 		return;
 	}
-	if (wkt == this->gf.geofence){
+	if (geofenceWKT == this->gf.geofence){
 		//ROS_INFO_STREAM("Already using this geofence: " << wkt);
 	}
 	else {
 		//ROS_INFO_STREAM("Updating new geofence: " << wkt);
 		try{
-			this->gf = Geofence(wkt);
+			this->gf = Geofence(geofenceWKT);
 			this->enableGeofence = true;
 		} catch(std::exception &e){
-			ROS_ERROR_STREAM("Problem: " << e.what() << " with wkt: " << wkt);
+			ROS_ERROR_STREAM("Problem: " << e.what() << " with wkt: " << geofenceWKT);
 			this->enableGeofence = false;
 		}
 	}
@@ -320,7 +320,7 @@ void LoggerBase::configurationCallBack(const setting_msg::Setting &setting){
 
 			logger_service::GetLoggingStatus::Request request;
 			logger_service::GetLoggingStatus::Response response;
-			bool isLogging = getLoggingStatus(request,response);
+			getLoggingStatus(request,response);
 
 			if (setting.value == "1" && response.status != true){ 
 				ROS_INFO("Logging set to always ON");
@@ -796,5 +796,6 @@ void LoggerBase::gnss_timer_callback(const ros::TimerEvent& event){
 void LoggerBase::reset_gnss_timer(){
 		noGnssTimer.stop();
 		noGnssTimer = node.createTimer(ros::Duration(1.0), &LoggerBase::gnss_timer_callback, this);
-	}
+}
+
 

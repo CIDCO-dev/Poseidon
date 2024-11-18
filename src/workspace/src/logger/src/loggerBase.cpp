@@ -120,7 +120,7 @@ void LoggerBase::updateGeofenceFromWKT(std::string & wkt){
 		return;
 	}
 	if (wkt == this->gf.geofence){
-		ROS_INFO_STREAM("Already using this geofence: " << wkt);
+		//ROS_INFO_STREAM("Already using this geofence: " << wkt);
 	}
 	else {
 		//ROS_INFO_STREAM("Updating new geofence: " << wkt);
@@ -758,7 +758,7 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		if(!i2cControllerServiceClient.call(srv)){
 			ROS_ERROR("processGnssFix(1) i2cController service call failed");
 		}
-		ROS_INFO("first initial gps fix acquired");
+		//ROS_INFO("first initial gps fix acquired");
 	}
 	// lost of fix signal
 	else if(bootstrappedGnssTime && gnss.status.status < 0){ //here we do not check gnssFix variable to send a nofix signal at every msg
@@ -778,7 +778,7 @@ void LoggerBase::processGnssFix(const sensor_msgs::NavSatFix& gnss){
 		if(!i2cControllerServiceClient.call(srv)){
 			ROS_ERROR("processGnssFix(3) i2cController service call failed");
 		}
-		ROS_INFO("Gps fix restored");
+		//ROS_INFO("Gps fix restored");
 	}
 }
 

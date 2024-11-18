@@ -173,9 +173,9 @@ private:
 public:
 	I2cController(double &_boardVersion):boardVersion(_boardVersion) {
 		
-		i2cControllerService = n.advertiseService("i2c_controller_service", &I2cController::read_chip, this);
-		getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
-		getLoggingStatusService.waitForExistence();
+		//i2cControllerService = n.advertiseService("i2c_controller_service", &I2cController::read_chip, this);
+		//getLoggingStatusService = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
+		//getLoggingStatusService.waitForExistence();
 		
 		if(boardVersion > 2.0){
 			functionVersion = &I2cController::read_chip_v1;

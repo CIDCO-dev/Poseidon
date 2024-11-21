@@ -92,14 +92,14 @@ public:
 		uint8_t data;
 		
 		if (write(file, &LS0, 1) != 1) {
-			ROS_ERROR("readLEDState Failed to write to led controller");
+			//ROS_ERROR("readLEDState Failed to write to led controller");
 			return false;
 		}
 		
 		usleep(100000);  // 100 ms
 		
 		if (read(file, &data, 1) != 1) {
-			ROS_ERROR("Failed to read led controller");
+			//ROS_ERROR("Failed to read led controller");
 			return false;
 		}
 		

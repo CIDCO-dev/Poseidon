@@ -81,12 +81,12 @@ private:
 	bool readRegister(const int &reg, uint8_t (&data)[2]) {
 		
 		if (write(file, &reg, 1) != 1) {
-			ROS_ERROR("Failed to write to the I2C bus.");
+			//ROS_ERROR("Failed to write to the I2C bus.");
 			return false;
 		}
 
 		if (read(file, data, 2) != 2) {
-			ROS_ERROR("Failed to read from the I2C bus.");
+			//ROS_ERROR("Failed to read from the I2C bus.");
 			return false;
 		}
 		

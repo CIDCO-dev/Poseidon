@@ -1,4 +1,5 @@
-var socket;
+var configSocket; // WebSocket pour les configurations
+var telemetrySocket; // WebSocket pour les données de télémétrie
 
 //Init map
 var latlon = Array(2);
@@ -146,24 +147,78 @@ function processState(msg) {
   }
 }
 
+function processConfig(config) {
+  console.log(config);
+  var form = document.getElementById('formContent');
 
+  var geofenceData = null;
+  
+  form.innerHTML = '';
+  var newHTML = '';
+  var endNewHTML = '';
 
-// Init websocket
+  config.forEach(function (item, index) {
+    if (item.key === "loggingMode") {
+      // Votre logique existante ici...
+    } else if (item.key === "geofence") {
+      geofenceData = item.value; // suppose that geofence data is in a suitable format
+    } else {
+      newHTML += '<div class="row"> <div class="col-md-2"><label for="' + item.key + '">' + item.key + '</label> </div><div class="col-md-10"> <input id="' + item.key + '" class="form-control configurationField" type="text" value="' + item.value + '"/> </div></div>';
+    }
+  });
 
-socket = new WebSocket("ws://" + window.location.hostname + ":9002");
+  newHTML += endNewHTML;
+  form.innerHTML = newHTML;
 
-socket.onmessage = function (event) {
-  //console.log(event.data);
-  var msg = JSON.parse(event.data);
-
-  // Traitement des messages contenant des informations de télémétrie
-  if (msg.telemetry) {
-      processState(msg);
-  } 
-  // Traitement des messages contenant des informations d'enregistrement
-  else if (msg.recordingInfo && msg.loggingMode) {
-      console.log("Not used message");
-  } else {
-      console.log("Invalid message or missing telemetry data");
+  if (geofenceData) {
+    drawGeofence(geofenceData);
   }
 }
+
+function drawGeofence(geofencePoints) {
+  var latLngs = geofencePoints.map(function(point) {
+    return [point.lat, point.lng];
+  });
+  
+  var geofencePolygon = L.polygon(latLngs, { color: 'green' }).addTo(map); // Assurez-vous que la variable 'map' est votre instance de carte Leaflet
+  map.fitBounds(geofencePolygon.getBounds());
+}
+
+function processConfigMessage(msg) {
+  if (msg.configuration) {
+      processConfig(msg.configuration);
+  }
+}
+
+function getConfig() {
+    var cmd = { command: "getConfiguration" };
+    configSocket.send(JSON.stringify(cmd));
+}
+
+function initWebSockets() {
+  // Initialisation du WebSocket pour la configuration
+  configSocket = new WebSocket("ws://" + window.location.hostname + ":9004"); // Assurez-vous que le port est correct
+  configSocket.onmessage = function (event) {
+      var msg = JSON.parse(event.data);
+      processConfigMessage(msg);
+  };
+  configSocket.onopen = function (event) {
+      getConfig();
+  };
+
+  // Initialisation du WebSocket pour la télémétrie
+  telemetrySocket = new WebSocket("ws://" + window.location.hostname + ":9005"); // Assurez-vous que le port est correct
+  telemetrySocket.onmessage = function (event) {
+      var msg = JSON.parse(event.data);
+      if (msg.telemetry) {
+        processState(msg);
+      }; 
+  };
+  telemetrySocket.onopen = function (event) {
+      // Peut-être envoyer une commande pour commencer à recevoir les données de télémétrie
+  };
+}
+
+// Init websocket
+initWebSockets();
+

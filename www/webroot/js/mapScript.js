@@ -153,7 +153,17 @@ function processState(msg) {
 socket = new WebSocket("ws://" + window.location.hostname + ":9002");
 
 socket.onmessage = function (event) {
-  console.log(event.data);
+  //console.log(event.data);
   var msg = JSON.parse(event.data);
-  processState(msg);
+
+  // Traitement des messages contenant des informations de télémétrie
+  if (msg.telemetry) {
+      processState(msg);
+  } 
+  // Traitement des messages contenant des informations d'enregistrement
+  else if (msg.recordingInfo && msg.loggingMode) {
+      console.log("Not used message");
+  } else {
+      console.log("Invalid message or missing telemetry data");
+  }
 }

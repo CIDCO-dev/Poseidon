@@ -148,41 +148,34 @@ function processState(msg) {
 }
 
 function processConfig(config) {
-  console.log(config);
-  var form = document.getElementById('formContent');
+  var geofenceData;
 
-  var geofenceData = null;
-  
-  form.innerHTML = '';
-  var newHTML = '';
-  var endNewHTML = '';
-
-  config.forEach(function (item, index) {
-    if (item.key === "loggingMode") {
-      // Votre logique existante ici...
-    } else if (item.key === "geofence") {
-      geofenceData = item.value; // suppose that geofence data is in a suitable format
-    } else {
-      newHTML += '<div class="row"> <div class="col-md-2"><label for="' + item.key + '">' + item.key + '</label> </div><div class="col-md-10"> <input id="' + item.key + '" class="form-control configurationField" type="text" value="' + item.value + '"/> </div></div>';
-    }
+  config.forEach(function (item) {
+      switch (item.key) {
+          case "geofence":
+              geofenceData = item.value; // capture la définition du geofence
+              drawGeofence(geofenceData); // dessine le geofence sur la carte
+              break;
+          // Traitez d'autres clés de configuration ici
+      }
   });
-
-  newHTML += endNewHTML;
-  form.innerHTML = newHTML;
-
-  if (geofenceData) {
-    drawGeofence(geofenceData);
-  }
 }
 
-function drawGeofence(geofencePoints) {
-  var latLngs = geofencePoints.map(function(point) {
-    return [point.lat, point.lng];
-  });
-  
-  var geofencePolygon = L.polygon(latLngs, { color: 'green' }).addTo(map); // Assurez-vous que la variable 'map' est votre instance de carte Leaflet
-  map.fitBounds(geofencePolygon.getBounds());
+
+function drawGeofence(wktString) {
+  var wicket = new Wkt.Wkt();
+  wicket.read(wktString);
+  var geofence = wicket.toObject(); // Convertit le WKT en objet Leaflet
+
+  // Assurez-vous que l'objet est correctement stylisé et ajouté à la carte
+  geofence.setStyle({
+      color: 'green',
+      weight: 2
+  }).addTo(map);
+
+  map.fitBounds(geofence.getBounds()); // Zoom sur le geofence
 }
+
 
 function processConfigMessage(msg) {
   if (msg.configuration) {
@@ -207,7 +200,7 @@ function initWebSockets() {
   };
 
   // Initialisation du WebSocket pour la télémétrie
-  telemetrySocket = new WebSocket("ws://" + window.location.hostname + ":9005"); // Assurez-vous que le port est correct
+  telemetrySocket = new WebSocket("ws://" + window.location.hostname + ":9002"); // Assurez-vous que le port est correct
   telemetrySocket.onmessage = function (event) {
       var msg = JSON.parse(event.data);
       if (msg.telemetry) {

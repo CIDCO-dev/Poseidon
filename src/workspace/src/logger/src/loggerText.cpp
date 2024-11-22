@@ -126,7 +126,7 @@ void LoggerText::initSpeedFile(std::string &dateString){
 
 	if(!speedOutputFile){
 		fileRotationMutex.unlock();
-		throw std::invalid_argument(std::string("Couldn't open vitals log file ") + speedFilename);
+		throw std::invalid_argument(std::string("Couldn't open speed log file ") + speedFilename);
 	}
 	
 	fprintf(speedOutputFile,"Timestamp%sSpeed\n",separator.c_str());
@@ -143,18 +143,12 @@ void LoggerText::initVitalsFile(std::string &dateString){
 
 	if(!vitalsOutputFile){
 		fileRotationMutex.unlock();
-		throw std::invalid_argument(std::string("Couldn't open speed log file ") + vitalsFilename);
+		throw std::invalid_argument(std::string("Couldn't open vital log file ") + vitalsFilename);
 	}
 	
-	for (size_t i = 0; i < vitalsHeader.size(); ++i) {
-		if (i == vitalsHeader.size() - 1) {
-			fprintf(vitalsOutputFile, "%s", vitalsHeader[i].c_str());
-		}
-		else{
-			fprintf(vitalsOutputFile, "%s%s", vitalsHeader[i].c_str(), separator.c_str());
-		}
-	}
-	fprintf(vitalsOutputFile, "\n");
+	fprintf(vitalsOutputFile,"Timestamp%sCPU Temp%sCPU Used%sFREE RAM%sFREE HDD%sUptime%sHumidity%sSystem Temp%sSupply Voltage\n",
+									separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str(),separator.c_str());
+
 }
 
 
@@ -405,7 +399,7 @@ void LoggerText::saveVitals(const raspberrypi_vitals_msg::sysinfo& msg){
 
 		if( (timestamp - lastVitalsTimestamp) > (60 * 1000000) ){
 			
-			fprintf(vitalsOutputFile,"%s%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f\n",
+			fprintf(vitalsOutputFile,"%s%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f%s%.3f\n",
 				TimeUtils::getTimestampString(msg.header.stamp.sec, msg.header.stamp.nsec).c_str(),
 				separator.c_str(),
 				msg.cputemp,
@@ -417,12 +411,6 @@ void LoggerText::saveVitals(const raspberrypi_vitals_msg::sysinfo& msg){
 				msg.freehdd,
 				separator.c_str(),
 				msg.uptime,
-				separator.c_str(),
-				msg.vbat,
-				separator.c_str(),
-				msg.rh,
-				separator.c_str(),
-				msg.psi,
 				separator.c_str(),
 				msg.humidity,
 				separator.c_str(),

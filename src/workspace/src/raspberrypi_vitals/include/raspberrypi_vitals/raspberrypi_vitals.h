@@ -164,10 +164,6 @@ class HBV {
 				}
 				
 				
-				msg.vbat = 12.2;
-				msg.rh = 25;
-				msg.psi = 64;
-				
 				if(isCritical(msg)){
 					srv.request.action2perform = "led_error";
 					if(!i2c_ctrl_service_client.call(srv)){

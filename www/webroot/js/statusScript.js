@@ -64,6 +64,7 @@ function processState(state) {
 	// Humidity
 	if (state.telemetry.vitals[10] === -555) {
         $("#humidity").parent().hide();
+		$("#humidityText").parent().hide();
     } else {
 	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-success" : "bg-gradient-danger")).addClass((state.telemetry.vitals[10] > 40 ? "bg-gradient-danger" : "bg-gradient-success"));
 
@@ -73,6 +74,7 @@ function processState(state) {
 	// Temperature
 	if (state.telemetry.vitals[7] === -555) {
         $("#temperature").parent().hide();
+		$("#temperatureText").parent().hide();
     } else {
 	var tempElement = $("#temperature");
 	var temperatureHBValue = state.telemetry.vitals[7];
@@ -91,6 +93,7 @@ function processState(state) {
 	// Battery
 	if (state.telemetry.vitals[9] === -555) {
         $("#battery").parent().hide();
+		$("#batteryText").parent().hide();
     } else {
 	var voltageElement = $("#battery");
 	var voltage = state.telemetry.vitals[9];

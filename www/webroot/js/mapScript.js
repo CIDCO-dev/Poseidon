@@ -163,18 +163,25 @@ function processConfig(config) {
 
 
 function drawGeofence(wktString) {
-  var wicket = new Wkt.Wkt();
-  wicket.read(wktString);
-  var geofence = wicket.toObject(); // Convertit le WKT en objet Leaflet
+  var wkt = new Wkt.Wkt();
 
-  // Assurez-vous que l'objet est correctement stylisé et ajouté à la carte
-  geofence.setStyle({
-      color: 'green',
-      weight: 2
-  }).addTo(map);
+  try {
+      wkt.read(wktString);
+      var geofence = wkt.toObject({
+          color: 'green',  // Couleur de la ligne
+          fillColor: '#b0de5c',  // Couleur de remplissage
+          fillOpacity: 0.5,  // Transparence
+          weight: 2  // Épaisseur de la ligne
+      });
 
-  map.fitBounds(geofence.getBounds()); // Zoom sur le geofence
+      // Ajout à la carte
+      geofence.addTo(map);
+      map.fitBounds(geofence.getBounds());
+  } catch (e) {
+      console.error('Error parsing WKT', e);
+  }
 }
+
 
 
 function processConfigMessage(msg) {

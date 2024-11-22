@@ -251,7 +251,7 @@ public:
 			rapidjson::Value freeram((int) state.vitals.freeram);
 			rapidjson::Value freehdd((int) state.vitals.freehdd);
 			rapidjson::Value uptime((int) state.vitals.uptime);
-			rapidjson::Value psi((int) state.vitals.psi);
+			rapidjson::Value temp((int) state.vitals.temperature);
 			rapidjson::Value voltage(state.vitals.voltage);
 			rapidjson::Value humidity((int) state.vitals.humidity);
 
@@ -260,9 +260,9 @@ public:
 			vitalsArray.PushBack(freeram, telemetry.GetAllocator());
 			vitalsArray.PushBack(freehdd, telemetry.GetAllocator());
 			vitalsArray.PushBack(uptime, telemetry.GetAllocator()); //4
-			vitalsArray.PushBack(psi, telemetry.GetAllocator());
-			vitalsArray.PushBack(voltage, telemetry.GetAllocator());
-			vitalsArray.PushBack(humidity, telemetry.GetAllocator());
+			vitalsArray.PushBack(temp, telemetry.GetAllocator()); //5
+			vitalsArray.PushBack(voltage, telemetry.GetAllocator());//6
+			vitalsArray.PushBack(humidity, telemetry.GetAllocator());//7
 			telemetry.AddMember("vitals", vitalsArray, telemetry.GetAllocator());
 		}
 

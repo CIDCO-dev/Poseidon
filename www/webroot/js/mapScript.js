@@ -175,8 +175,8 @@ function drawGeofence(wktString) {
       });
 
       // Ajout à la carte
-      geofence.addTo(map);
-      map.fitBounds(geofence.getBounds());
+      geofence.addTo(navMap);
+      navMap.fitBounds(geofence.getBounds());
   } catch (e) {
       console.error('Error parsing WKT', e);
   }

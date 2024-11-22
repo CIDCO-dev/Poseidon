@@ -1,54 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="DataLogger Control Panel">
   <meta name="author" content="CIDCO">
-
   <title>DataLogger - Map</title>
   <link rel="shortcut icon" href="img/cidco_logo-removebg.png">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="vendor/googleapi/fonts.css" rel="stylesheet">
-
   <link href="js/Chart.min.css" rel="stylesheet">
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
-
-  <link href="/leaflet/leaflet.css" type="text/css" />
-  <link href="/leaflet/gh-pages.css" type="text/css" />
-
-  <script src="/leaflet/leaflet.js" type="text/javascript"></script>
-  <script src="/leaflet/catiline.js" type="text/javascript"></script>
-  <script src="/leaflet/leaflet.shpfile.js" type="text/javascript"></script>
-  <script src="/leaflet/leaflet-heat.js" type="text/javascript"></script>
-  <script src="/leaflet/leaflet.hotline.js" type="text/javascript"></script>
-
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="leaflet/leaflet.css" />
 </head>
-
 <body id="page-top">
-
   <!-- Topbar -->
   <nav id="topNav" class="navbar sticky-top navbar-expand navbar-light bg-white topbar static-top shadow">
-
     <!-- Sidebar Toggle (Topbar) -->
     <div id="sidebarToggleTop" class="ml-2 btn text-primary">
       <i class="fa fa-2x fa-bars"></i>
     </div>
-
-	<!-- Cidco logo (Topbar) -->
+    <!-- Cidco logo (Topbar) -->
     <div id="cidcologo" class="ml-2 btn text-primary">
        <img src="/img/cidco_logo-removebg.png" width="40" height="40"> 
     </div>
-	
-    <!-- <div class="border-right-warning float-right d-inline ml-auto">
-      <div class="text-lg font-weight-bold text-dark"> Logging mode <div id="modeWidget"
-          class="h5 mb-0 font-weight-bold"></div>
-      </div>
-    </div> -->
     <div id="RecIcon" class="border-right-warning d-inline float-right ml-auto text-success">
       <i class="gg-record" href="#" onclick="toggleRecording()"></i>
     </div>
@@ -57,112 +35,92 @@
 
   <!-- Page Wrapper -->
   <div id="wrapper">
-
-    <div class="wrapper sidebar mr-4" id="navWrap">
-      <!-- Sidebar -->
-      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar">
-
-        <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-          <div class="sidebar-brand-text mx-3">DataLogger <sup>2<sup></div>
-          <i id="homeIcon" class="ml-3 fa fa-2x fa-heading" aria-hidden="true" style="display: none;"><sup>2</sup></i>
+   <div class="wrapper sidebar mr-4" id="navWrap">
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar">
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-text mx-3">DataLogger <sup>2</sup></div>
+      </a>
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item">
+        <a class="nav-link" href="index.html">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Dashboard</span>
         </a>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider my-0">
-
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item">
-          <a class="nav-link" href="index.html">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="map.html">
-            <i class="fas fa-fw fa-globe-americas"></i>
-            <span>Map</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="status.html">
-            <i class="fas fa-fw fa-globe-americas"></i>
-            <span>System Status</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="data.html">
-            <i class="fas fa-fw fa-database"></i>
-            <span>Download Data</span></a>
-        </li>
-        <li class="nav-item" id="utils">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-            aria-expanded="true" aria-controls="collapseUtilities">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>System Configuration</span>
-          </a>
-          <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-            data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header">Configuration Utilities:</h6>
-              <a class="collapse-item" href="calibration.html">Calibration</a>
-              <a class="collapse-item" href="diagnostics.html">Diagnostics</a>
-              <a class="collapse-item" href="settings.html">Settings</a>
-            </div>
-          </div>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block">
-
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-          <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
-
-      </ul>
-      <!-- End of Sidebar -->
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="map.html">
+          <i class="fas fa-fw fa-globe-americas"></i>
+          <span>Map</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="status.html">
+          <i class="fas fa-fw fa-globe-americas"></i>
+          <span>System Status</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="data.html">
+          <i class="fas fa-fw fa-database"></i>
+          <span>Download Data</span>
+        </a>
+      </li>
+      <li class="nav-item" id="utils">
+		  <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+			aria-expanded="true" aria-controls="collapseUtilities">
+			<i class="fas fa-fw fa-wrench"></i>
+			<span>System Configuration</span>
+		  </a>
+		  <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+			data-parent="#accordionSidebar">
+			<div class="bg-white py-2 collapse-inner rounded">
+			  <h6 class="collapse-header">Configuration Utilities:</h6>
+			  <a class="collapse-item" href="calibration.html">Calibration</a>
+			  <a class="collapse-item" href="diagnostics.html">Diagnostics</a>
+			  <a class="collapse-item" href="settings.html">Settings</a>
+			</div>
+		  </div>
+		</li>
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+    </ul>
     </div>
+    <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
-
       <!-- Main Content -->
       <div id="content" class="pt-3">
-
         <!-- Begin Page Content -->
         <div class="container-fluid">
-
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-2">
             <h1 class="h3 mb-0 text-gray-800">Map</h1>
           </div>
           <hr class="hr hr-blurry mt-0" />
-
-          <!-- Gauges row -->
-          <div class="row">
-
-            <!-- Content Column -->
-
-            <!-- Map Card -->
-            <div class="col-lg-12 mb-8">
-
-              <!-- Project Card Example -->
-              <div class="card shadow mb-6">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Map</h6>
-                </div>
-
-                <div class="card-body">
-
-                  <div id="navMap" style="width: 100%; height: 700px;" class="card-body">
-
-                  </div>
-                </div>
+          <!-- Map Card -->
+          <div class="col-lg-12 mb-8">
+            <div class="card shadow mb-6">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Map</h6>
+              </div>
+              <div class="card-body">
+                <div id="navMap" style="width: 100%; height: 700px;" class="card-body"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <!-- Footer -->
-      <footer class="sticky-footer bg-white footer">
+      <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
             <span>Copyright &copy; CIDCO</span>
@@ -172,7 +130,6 @@
       <!-- End of Footer -->
     </div>
     <!-- /.container-fluid -->
-
   </div>
   <!-- End of Main Content -->
 
@@ -181,37 +138,31 @@
     <i class="fas fa-angle-up"></i>
   </a>
 
-
   <!-- Bootstrap core JavaScript-->
-  <script src="vendor/jquery/jquery.min.js" type="text/javascript"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
-  <script src="vendor/jquery-easing/jquery.easing.min.js" type="text/javascript"></script>
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Custom scripts for all pages-->
-  <script src="js/sb-admin-2.min.js" type="text/javascript"></script>
+  <script src="js/sb-admin-2.min.js"></script>
 
-  <!-- Page level plugins -->
-  <script src="js/Chart.min.js" type="text/javascript"></script>
-  <script src="js/gauge.min.js" type="text/javascript"></script>
+  <!-- Leaflet JavaScript -->
+  <script src="leaflet/leaflet.js"></script>
+  <script src="/leaflet/catiline.js" type="text/javascript"></script>
+  <script src="/leaflet/leaflet.shpfile.js" type="text/javascript"></script>
+  <script src="/leaflet/leaflet-heat.js" type="text/javascript"></script>
+  <script src="/leaflet/leaflet.hotline.js" type="text/javascript"></script>
 
-  <!-- Page level custom scripts -->
-  <!-- <script src="js/demo/chart-area-demo.js"></script> -->
-  <!-- <script src="js/demo/chart-pie-demo.js"></script> -->
-  <script src="js/poseidon.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wicket/1.3.6/wicket.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wicket/1.3.6/wicket-leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/terraformer/1.0.9/terraformer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/terraformer-wkt-parser/1.2.0/terraformer-wkt-parser.min.js"></script>
 
-  <!-- Custom script -->
-  <script src="js/script.js" type="text/javascript"></script>
 
-  <script src="js/recordingScript.js" type="text/javascript"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/wicket/1.3.6/wicket.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-wkt/1.3.1/Wicket-leaflet.min.js"></script>
-
-  <!-- page script -->
-  <script src="js/mapScript.js" type="text/javascript"></script>
-
+<script src="js/mapScript.js"></script>
 </body>
-
 </html>
+

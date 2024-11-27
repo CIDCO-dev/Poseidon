@@ -45,7 +45,7 @@ var hotqp = [];
 var curentweight = 23;
 var smootf = 5;
 
-var shpfile = new L.Shapefile("map/TM_WORLD_BORDERS-0.3.zip", {
+var shpfile = new L.Shapefile("map/ne_10m_bathymetry_L_0.zip", {
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
       layer.bindPopup(Object.keys(feature.properties).map(function (k) {
@@ -58,9 +58,12 @@ var shpfile = new L.Shapefile("map/TM_WORLD_BORDERS-0.3.zip", {
 });
 
 shpfile.addTo(navMap);
+
 shpfile.once("data:loaded", function () {
   console.log("finished loaded shapefile");
 });
+
+
 
 var currentZoom = navMap.getZoom();
 

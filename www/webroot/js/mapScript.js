@@ -2,6 +2,7 @@ var configSocket; // WebSocket pour les configurations
 var telemetrySocket; // WebSocket pour les données de télémétrie
 
 //Init map
+var autoPan = true;
 var latlon = Array(2);
 var currentpolyline = Array(10);
 var currentpolyline1 = Array(10);
@@ -32,6 +33,7 @@ var polycolor = "";
 //Chart.defaults.global.defaultFontColor = '#858796'
 
 L.control.scale().addTo(navMap);
+var legend = L.control({position: 'bottomright'});
 
 var polynew = new L.polyline([]).addTo(navMap);
 var polyline = new L.polyline([]).addTo(navMap);
@@ -63,7 +65,24 @@ shpfile.once("data:loaded", function () {
   console.log("finished loaded shapefile");
 });
 
+legend.onAdd = function (navMap) {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML +=
+                '<i style="background: blue"></i> Bathymetry<br>' +
+                '<i style="background: green"></i> Geofence<br>';
+            return div;
+        };
 
+        legend.addTo(navMap);
+
+var panControl = L.control({position: 'topright'});
+    panControl.onAdd = function (navMap) {
+        var btn = L.DomUtil.create('button', '');
+        btn.innerHTML = 'Auto Pan On';
+        btn.onclick = toggleAutoPan;
+        return btn;
+    };
+    panControl.addTo(navMap);
 
 var currentZoom = navMap.getZoom();
 
@@ -124,8 +143,9 @@ function processState(msg) {
           curentweight = (23 - currentZoom) * 6 + 23;
 
           // Positionne la carte sur la position GPS
-          navMap.panTo([msg.telemetry.position[1], msg.telemetry.position[0]]);
-
+          if (autoPan) {
+               navMap.panTo([msg.telemetry.position[1], msg.telemetry.position[0]]);
+          }
           // Dessine la ligne parcourue
           latlon = [msg.telemetry.position[1], msg.telemetry.position[0]];
           qp = [msg.telemetry.position[1], msg.telemetry.position[0], msg.telemetry.depth[0]];
@@ -197,6 +217,11 @@ function getConfig() {
     var cmd = { command: "getConfiguration" };
     configSocket.send(JSON.stringify(cmd));
 }
+
+function toggleAutoPan() {
+        autoPan = !autoPan;
+        this.innerHTML = autoPan ? 'Auto Pan On' : 'Auto Pan Off'; // Mettre à jour le texte du bouton
+    }
 
 function initWebSockets() {
   // Initialisation du WebSocket pour la configuration

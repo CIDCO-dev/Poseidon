@@ -138,8 +138,10 @@ class LoggerBase{
 		void updateGeofence(const sensor_msgs::NavSatFix& gnss);
 		void updateGeofenceFromConfig();
 		void updateGeofenceFromWKT(std::string geofenceWKT);
-
-	protected:
+		Geofence gf;
+		bool insideGeofence = false;
+		bool enableGeofence = false;
+		
 		// ros
 		ros::NodeHandle node;
 		ros::ServiceClient configurationClient;
@@ -154,12 +156,7 @@ class LoggerBase{
 		bool bootstrappedGnssTime = false;
 		bool gnssFix = false;
 		bool hddFreeSpaceOK = true;
-
-		// Geofence
-		Geofence gf;
-		bool insideGeofence = false;
-		bool enableGeofence = false;
-
+		
 		// log rotation
 		std::mutex fileRotationMutex;
 		ros::Time lastRotationTime;

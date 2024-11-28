@@ -25,14 +25,14 @@ public:
 		uint8_t data[4];
 		
 		if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-			ROS_ERROR("HIH8130::get_humidity() Failed to write");
+			//ROS_ERROR("HIH8130::get_humidity() Failed to write");
 			return false;
 		}
 
 		usleep(100000);  // 100 ms
 
 		if (read(fileDescriptor, data, 4) != 4) {
-			ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
+			//ROS_ERROR("HIH8130::get_humidity() Failed to read humidity");
 			return false;
 		}
 		
@@ -45,14 +45,14 @@ public:
 		uint8_t data[4];
 		
 			if (write(fileDescriptor, &deviceAddress, 1) != 1) {
-				ROS_ERROR("HIH8130::get_temperature() Failed to write");
+				//ROS_ERROR("HIH8130::get_temperature() Failed to write");
 				return false;
 			}
 
 			usleep(100000);  // 100 ms
 
 			if (read(fileDescriptor, data, 4) != 4) {
-				ROS_ERROR("HIH8130::get_temperature() Failed to read temperature");
+				//ROS_ERROR("HIH8130::get_temperature() Failed to read temperature");
 				return false;
 			}
 		

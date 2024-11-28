@@ -141,36 +141,41 @@ public:
 	}
 
 	//Read configuration from file
-	void readConfigurationFromFile() {
-	    std::ifstream in(configFilePath);
-	    if (!in.is_open()) {
-	        throw std::invalid_argument("Cannot open file " + configFilePath);
-	    }
-	
-	    std::string line;
-	    while (std::getline(in, line)) {
-	        std::string key;
-	        // Trouvez la position du premier espace pour séparer la clé de la valeur
-	        size_t firstSpace = line.find(' ');
-	
-	        if (firstSpace != std::string::npos) {
-	            key = line.substr(0, firstSpace);
-	            // Tout après le premier espace est considéré comme la valeur
-	            std::string value = line.substr(firstSpace + 1);
-	
-	            if (!key.empty() && !value.empty()) {
-	                configuration[key] = value;
-	            }
-	        }
-	    }
+	void readConfigurationFromFile(){
+		std::ifstream in;
 
-	    in.close();
+		in.open(configFilePath);
+
+		if(in.is_open()){
+			std::string line;
+			while(std::getline(in,line)){
+				std::stringstream ss(line);
+				std::string key;
+				std::string value;
+
+				if (std::count(line.begin(), line.end(), ' ') < 2){
+					ss >> key >> value;
+				}
+				//XXX maybe use a filePath instead of the file content
+				else {
+					size_t split_position = line.find(' ');
+					key = line.substr(0, split_position);
+					value = line.substr(split_position + 1);
+				}
+
+				if(key.size() > 0 && value.size() > 0){
+					configuration[key]=value;
+				}
+			}
+
+			in.close();
+		}
+		else{
+			throw std::invalid_argument(std::string("Cannot open file ") + configFilePath);
+		}
 	}
 
-
-
-
-
+	//Write configuration to file
 	void writeConfigurationToFile(){
 		std::ofstream out;
 

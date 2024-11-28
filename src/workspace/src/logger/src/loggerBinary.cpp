@@ -107,14 +107,10 @@ void LoggerBinary::rotate(){
 }
 
 void LoggerBinary::gnssCallback(const sensor_msgs::NavSatFix& gnss){
-	/*processGnssFix(gnss);*/
+	
+	processGnssFix(gnss);
 	updateGeofence(gnss);
-	if(!bootstrappedGnssTime && gnss.status.status >= 0){
-		//ROS_INFO_STREAM("LoggerBinary::gnssCallback -> bootstrappedGnssTime"); ok
-		bootstrappedGnssTime = true;
-	}
-	//ROS_INFO_STREAM("logger enabled: "<< loggerEnabled);
-	//ROS_INFO("LoggerBinary::gnssCallback, gnss status %d", gnss.status.status);
+
 	if(bootstrappedGnssTime && loggerEnabled){
 
 		if(!outputFile.is_open()){
@@ -172,7 +168,7 @@ void LoggerBinary::imuCallback(const sensor_msgs::Imu& imu){
 			PacketHeader hdr;
 			hdr.packetType=PACKET_ATTITUDE;
 			hdr.packetSize=sizeof(AttitudePacket);
-			hdr.packetTimestamp=TimeUtils::buildTimeStamp(imu.header.stamp.sec,imu.header.stamp.nsec);
+			hdr.packetTimestamp=timestamp;
 
 			AttitudePacket packet;
 			packet.heading=heading;
@@ -199,16 +195,14 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
 			PacketHeader hdr;
 			hdr.packetType=PACKET_DEPTH;
 			hdr.packetSize=sizeof(DepthPacket);
-			/*hdr.packetTimestamp=timestamp;*/
-			hdr.packetTimestamp=TimeUtils::buildTimeStamp(sonar.header.stamp.sec,sonar.header.stamp.nsec);
+			hdr.packetTimestamp=timestamp;
 
 			DepthPacket packet;
 
 			packet.depth_x=sonar.point.x;
 			packet.depth_y=sonar.point.y;
 			packet.depth_z=sonar.point.z;
-			/*outputFile.write((char*)&hdr, sizeof(PacketHeader));
-			outputFile.write((char*)&packet, sizeof(DepthPacket));*/
+
 			if (this->enableGeofence && not this->insideGeofence){
 				ROS_INFO("Not logging as we are outside active geofence");
 			}
@@ -216,6 +210,7 @@ void LoggerBinary::sonarCallback(const geometry_msgs::PointStamped& sonar){
 				outputFile.write((char *) &hdr, sizeof(PacketHeader));
 				outputFile.write((char *) &packet, sizeof(DepthPacket));
 			}
+			
 			lastSonarTimestamp = timestamp;
 			fileLock.unlock();
 		}
@@ -241,8 +236,7 @@ void LoggerBinary::lidarCallBack(const sensor_msgs::PointCloud2& lidar){
 			PacketHeader hdr;
 			hdr.packetType=PACKET_LIDAR;
 			hdr.packetSize= sizeof(LidarPacket) * points.size();  //(uint64_t) (sizeof(LidarPacket) * points.size());
-			/*hdr.packetTimestamp=timestamp;*/
-			hdr.packetTimestamp=TimeUtils::buildTimeStamp(lidar.header.stamp.sec, lidar.header.stamp.nsec);
+			hdr.packetTimestamp=timestamp;
 
 			outputFile.write((char*)&hdr, sizeof(PacketHeader));
 			

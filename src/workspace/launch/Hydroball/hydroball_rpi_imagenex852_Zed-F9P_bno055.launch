@@ -11,7 +11,7 @@
 
 <arg name="boardVersion" value="2.1"/>
 
-<node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" args="$(arg boarVersion)" respawn="true" respawn_delay="1"/>
+<node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" args="$(arg boardVersion)" respawn="true" respawn_delay="1"/>
 
 <node pkg="power_management" name="power_management" type="power_management_node" output="screen"/>
 

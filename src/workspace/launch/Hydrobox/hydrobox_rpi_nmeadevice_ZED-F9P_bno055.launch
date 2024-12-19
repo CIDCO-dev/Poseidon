@@ -9,7 +9,9 @@
 <arg name="loggerPath" value="/opt/Poseidon/www/webroot/record/"/>
 <arg name="configPath" value="/opt/Poseidon/config.txt"/>
 
-<node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" respawn="true" respawn_delay="1"/>
+<arg name="boardVersion" value="2.2"/>
+
+<node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" args="$(arg boardVersion)" respawn="true" respawn_delay="1"/>
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 

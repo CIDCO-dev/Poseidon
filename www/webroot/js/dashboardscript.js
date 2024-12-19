@@ -182,6 +182,7 @@ function chartMetrics() {
   }).draw();
 }
 
+/*
 function processTelemetry(state) {
   console.log(state.gnssFix);
   // Update dashboard top marquees
@@ -271,6 +272,72 @@ function processTelemetry(state) {
 function getLoggingInfo() {
   var cmd = { command: "getLoggingInfo" };
   socket.send(JSON.stringify(cmd));
+}
+  */
+function processTelemetry(state) {
+  console.log(state.gnssFix);
+  
+  // Vérification de l'état GNSS
+  if (state.gnssFix < 0 || !state.position.length) {
+    $("#gnssStatus").removeClass("bg-gradient-success bg-gradient-warning").addClass("bg-gradient-danger");
+    $("#gnssLongitudeValue").text("");
+    $("#gnssLatitudeValue").text("");
+    $("#gnssStatusText").text("No GNSS Data...");
+  } else {
+    $("#gnssStatus").removeClass("bg-gradient-danger bg-gradient-warning").addClass("bg-gradient-success");
+    $("#gnssLongitudeValue").text(state.position[0].toFixed(8));
+    $("#gnssLatitudeValue").text(state.position[1].toFixed(8));
+    $("#gnssStatusText").text("");
+  }
+
+  // Vérification de l'état de l'IMU
+  if (!state.attitude.length) {
+    $("#imuStatus").removeClass("bg-gradient-success bg-gradient-warning").addClass("bg-gradient-danger");
+    $("#imuHeadingValue").text("");
+    $("#imuPitchValue").text("");
+    $("#imuRollValue").text("");
+    $("#imuStatusText").text("No IMU Data");
+  } else {
+    $("#imuStatus").removeClass("bg-gradient-danger bg-gradient-warning").addClass("bg-gradient-success");
+    $("#imuHeadingValue").text(state.attitude[0].toFixed(3));
+    $("#imuPitchValue").text(state.attitude[1].toFixed(3));
+    $("#imuRollValue").text(state.attitude[2].toFixed(3));
+    $("#imuStatusText").text("");
+  }
+
+  // Vérification de l'état du sonar
+  if (!state.depth.length) {
+    $("#sonarStatus").removeClass("bg-gradient-success bg-gradient-warning").addClass("bg-gradient-danger");
+    $("#sonarDepthValue").text("");
+    $("#sonarStatusText").text("No Sonar Data");
+  } else {
+    $("#sonarStatus").removeClass("bg-gradient-danger bg-gradient-warning").addClass("bg-gradient-success");
+    $("#sonarDepthValue").text(state.depth[0].toFixed(2));
+    $("#sonarStatusText").text("");
+  }
+
+  // Mettre à jour les graphiques
+  imu_x.push(state.attitude.length ? state.attitude[1] : 0);
+  imu_x.shift();
+
+  imu_y.push(state.attitude.length ? state.attitude[2] : 0);
+  imu_y.shift();
+
+  depth.push(state.depth.length ? -state.depth[0] : 0);
+  depth.shift();
+
+  attitudeChart.update();
+  depthChart.update();
+
+  // Mise à jour du gauge si des données de cap sont disponibles
+  headingGauge.value = state.attitude.length ? state.attitude[0] : 0;
+  
+  // Gestion de l'espace libre sur le disque
+  if (state.vitals[3] < 1) {
+    $("#hddFreeSpaceOK").removeClass("d-none").addClass("d-block alert alert-danger");
+  } else {
+    $("#hddFreeSpaceOK").removeClass("d-block alert alert-danger").addClass("d-none");
+  }
 }
 
 function processRecordingInfo(isLogging, mode) {

@@ -53,16 +53,16 @@ public:
 		
 			// Initial configuration
 			if (write(file, &PSC0, 2) != 2){
-				ROS_ERROR("write error init config PSC0");
+				//ROS_ERROR("write error init config PSC0");
 			}
 			if (write(file, &PWM0, 2) != 2){
-				ROS_ERROR("write error init config PWM0");
+				//ROS_ERROR("write error init config PWM0");
 			}
 			if (write(file, &PSC1, 2) != 2){
-				ROS_ERROR("write error init config PSC1");
+				//ROS_ERROR("write error init config PSC1");
 			}
 			if (write(file, &PWM1, 2) != 2){
-				ROS_ERROR("write error init config PWM1");
+				//ROS_ERROR("write error init config PWM1");
 			}
 		
 		set_led_state(0, 0, 0);
@@ -92,14 +92,14 @@ public:
 		uint8_t data;
 		
 		if (write(file, &LS0, 1) != 1) {
-			ROS_ERROR("readLEDState Failed to write to led controller");
+			//ROS_ERROR("readLEDState Failed to write to led controller");
 			return false;
 		}
 		
 		usleep(100000);  // 100 ms
 		
 		if (read(file, &data, 1) != 1) {
-			ROS_ERROR("Failed to read led controller");
+			//ROS_ERROR("Failed to read led controller");
 			return false;
 		}
 		
@@ -173,6 +173,12 @@ public:
 				return false;
 			}
 		}
+		else if(led_mode == "off"){
+			if(!set_led_state(0, 0, 0)){
+				return false;
+			}
+		}
+		
 		else{
 			ROS_ERROR_STREAM("led controller invalid request: " << led_mode);
 			return false;

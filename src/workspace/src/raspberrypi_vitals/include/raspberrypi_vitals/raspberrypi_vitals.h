@@ -163,20 +163,40 @@ class HBV {
 					msg.voltage = -555.0;
 				}
 				
-				
-				if(isCritical(msg)){
+				std::pair<bool, std::string> criticalResult = isCritical(msg);
+				std::pair<bool, std::string> warningResult = isWarning(msg);
+
+				if(criticalResult.first){
 					srv.request.action2perform = "led_error";
 					if(!i2c_ctrl_service_client.call(srv)){
 						//ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_warning");
+						msg.status = criticalResult.second;
 					}
-				}
-				else if(isWarning(msg)){
+				
+				else if(warningResult.first)){
 					srv.request.action2perform = "led_warning";
 					if(!i2c_ctrl_service_client.call(srv)){
 						//ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
+						msg.status = warningResult.second;
 					}
 				}
+
+				srv.request.action2perform = "isErrorOn";
+				if(i2c_ctrl_service_client.call(srv)){
+					msg.IsErrorOn = srv.response.value;
+				}
 				
+                srv.request.action2perform = "isNoFixOn";
+				if(i2c_ctrl_service_client.call(srv)){
+					msg.isNoFixOn = srv.response.value;
+				}
+
+				srv.request.action2perform = "isWarningOn";
+				if(i2c_ctrl_service_client.call(srv)){
+					msg.isWarningOn = srv.response.value;
+				}
+
+
 				HBVTopic.publish(msg);
 				ros::spinOnce();
 				loop_rate.sleep();
@@ -187,7 +207,7 @@ class HBV {
 	/*
 		for the function isCritical ans isWarning each threshold changes needs to be reflected in the UI
 	*/
-	bool isCritical(raspberrypi_vitals_msg::sysinfo &msg){
+	std::pair<bool, std::string> isCritical(raspberrypi_vitals_msg::sysinfo &msg){
 		
 		/*
 			In the case scenario that the hardware is not eqquipped with a newer board version
@@ -200,11 +220,15 @@ class HBV {
 		*/
 		if(msg.freehdd < 5.0 && msg.freehdd > 0.0){
 			//ROS_ERROR("isCritical free hdd < 5 pourcent");
-			return true;
+			return std::make_pair(true, "Hard Disk Full");
 		}
-		else if( (msg.voltage <= 11.3 && msg.voltage > 0.0) || msg.voltage >= 13.0){
+		else if( (msg.voltage <= 11.3 && msg.voltage > 0.0){
 			//ROS_ERROR_STREAM("isCritical voltage <= 11.3v || voltage >= 13v	voltage: "  << msg.voltage <<"v");
-			return true;
+			return std::make_pair(true, "Battery Under Voltage Detected");
+		}
+		else if(msg.voltage >= 13.8){
+			//ROS_ERROR_STREAM("isCritical voltage <= 11.3v || voltage >= 13v	voltage: "  << msg.voltage <<"v");
+			return std::make_pair(true, "Battery Overvoltage Detected");
 		}
 		/*
 			The CPU temperature on a Raspberry Pi must stay below 85 °C to keep it running with the best performance.
@@ -213,10 +237,10 @@ class HBV {
 		*/
 		else if(msg.cputemp >= 80.0){
 			//ROS_ERROR("isCritical cpu temp >= 80 C");
-			return true;
+			return std::make_pair(true, "CPU Over Temperature");
 		}
 		
-		return false;
+		return std::make_pair(false, "Normal");
 	}
 	
 	
@@ -224,21 +248,21 @@ class HBV {
 		In the case scenario that the hardware is not eqquipped with a newer board version
 		no led warning or critical warning shoul be triggered
 	*/
-	bool isWarning(raspberrypi_vitals_msg::sysinfo &msg){
+	std::pair<bool, std::string> isWarning(raspberrypi_vitals_msg::sysinfo &msg){
 		if(msg.freehdd < 20.0 && msg.freehdd > 0.0){
 			//ROS_WARN("isWarning free hdd < 20 pourcent");
-			return true;
+			return std::make_pair(true, "Low Hard Disk Space");
 		}
 		else if(msg.voltage <= 11.9 && msg.voltage > 0.0){
 			//ROS_WARN("isWarning voltage <= 11.9 v");
-			return true;
+			return std::make_pair(true, "Battery Low Volgage Detected");
 		}
 		else if(msg.cputemp >= 75.0){
 			//ROS_WARN("isWarning cpu temp >= 75 C");
-			return true;
+			return std::make_pair(true, "CPU Higi Temperature");
 		}
 		
-		return false;
+		return std::make_pair(false, "Normal");;
 	}
 };
 

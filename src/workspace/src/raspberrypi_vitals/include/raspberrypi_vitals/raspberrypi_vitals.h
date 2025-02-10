@@ -174,7 +174,7 @@ class HBV {
 					}
 				}
 				
-				else if(warningResult.first)){
+				else if(warningResult.first){
 					srv.request.action2perform = "led_warning";
 					if(!i2c_ctrl_service_client.call(srv)){
 						//ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
@@ -223,7 +223,7 @@ class HBV {
 			//ROS_ERROR("isCritical free hdd < 5 pourcent");
 			return std::make_pair(true, "Hard Disk Full");
 		}
-		else if( (msg.voltage <= 11.3 && msg.voltage > 0.0){
+		else if(msg.voltage <= 11.3 && msg.voltage > 0.0){
 			//ROS_ERROR_STREAM("isCritical voltage <= 11.3v || voltage >= 13v	voltage: "  << msg.voltage <<"v");
 			return std::make_pair(true, "Battery Under Voltage Detected");
 		}

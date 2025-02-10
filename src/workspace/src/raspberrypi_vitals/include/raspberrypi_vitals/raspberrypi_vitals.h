@@ -170,16 +170,18 @@ class HBV {
 					srv.request.action2perform = "led_error";
 					if(!i2c_ctrl_service_client.call(srv)){
 						//ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_warning");
-						msg.status = criticalResult.second;
+						
 					}
+					msg.status = criticalResult.second;
 				}
 				
 				else if(warningResult.first){
 					srv.request.action2perform = "led_warning";
 					if(!i2c_ctrl_service_client.call(srv)){
 						//ROS_ERROR("Rapberrypi vitals run(), I2C controller service call failed: led_error");
-						msg.status = warningResult.second;
+						
 					}
+					msg.status = warningResult.second;
 				}
 
 				srv.request.action2perform = "isErrorOn";

@@ -7,7 +7,5 @@ float64 uptime
 float64 humidity
 float64 temperature
 float64 voltage
-bool  IsErrorOn
-bool  isWarningOn
-bool  isNoFixOn
+int8  ledstate
 string status

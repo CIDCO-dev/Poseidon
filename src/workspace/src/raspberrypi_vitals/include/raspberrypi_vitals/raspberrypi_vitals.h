@@ -184,21 +184,11 @@ class HBV {
 					msg.status = warningResult.second;
 				}
 
-				srv.request.action2perform = "isErrorOn";
+				srv.request.action2perform = "get_led_state";
 				if(i2c_ctrl_service_client.call(srv)){
-					msg.IsErrorOn = srv.response.value;
+					msg.ledstate = srv.response.value;
 				}
 				
-                srv.request.action2perform = "isNoFixOn";
-				if(i2c_ctrl_service_client.call(srv)){
-					msg.isNoFixOn = srv.response.value;
-				}
-
-				srv.request.action2perform = "isWarningOn";
-				if(i2c_ctrl_service_client.call(srv)){
-					msg.isWarningOn = srv.response.value;
-				}
-
 
 				HBVTopic.publish(msg);
 				ros::spinOnce();

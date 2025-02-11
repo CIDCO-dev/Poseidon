@@ -148,21 +148,34 @@ function processState(msg) {
           }
           // Dessine la ligne parcourue
           latlon = [msg.telemetry.position[1], msg.telemetry.position[0]];
-          qp = [msg.telemetry.position[1], msg.telemetry.position[0], msg.telemetry.depth[0]];
+          qp = [
+            msg.telemetry.position[1],
+            msg.telemetry.position[0],
+            msg.telemetry.depth.length > 0 ? msg.telemetry.depth[0] : 0 // Default Value if the sonar value is not present (ex: 0)
+            ];
+        
           currentpolyline.push(latlon);
           quakePoints.push(qp);
           polyline.remove();
           hotlineLayer.remove();
           polyline = L.polyline([currentpolyline], { weight: 2, opacity: 1, smoothFactor: smootf, color: 'red' }).addTo(navMap);
           hotlineLayer = L.hotline(quakePoints, {
-              min: 7,
-              max: 10,
-              palette: { 0.0: '#ff0000', 0.2: '#ffff00', 0.4: '#00ff00', 0.6: '#00ffff', 0.8: '#0000ff', 0.9: '#8000ff', 1.0: '#000000' },
-              smoothFactor: smootf,
-              weight: curentweight,
-              outlineColor: '#000000',
-              outlineWidth: 0
-          }).addTo(navMap);
+            min: 7,
+            max: 10,
+            palette: {
+                0.0: '#ff0000',
+                0.2: '#ffff00',
+                0.4: '#00ff00',
+                0.6: '#00ffff',
+                0.8: '#0000ff',
+                0.9: '#8000ff',
+                1.0: '#000000'
+            },
+            smoothFactor: smootf,
+            weight: curentweight,
+            outlineColor: '#000000',
+            outlineWidth: 0
+        }).addTo(navMap);
           polyLatLngs = polyline.getLatLngs();
       }
   } else {

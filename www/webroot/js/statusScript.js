@@ -105,7 +105,7 @@ function processState(state) {
 	if (voltage <= 11.0) {
 		voltageElement.addClass("bg-gradient-danger");
 		$("#battery").width(voltage * 4 + "%");
-		} else if (voltage >= 11.9 && voltage < 13.0) {
+		} else if (voltage >= 11.9 && voltage < 13.8) {
 			voltageElement.addClass("bg-gradient-success");
 			$("#battery").width(voltage * 4 + "%");
 		} else if (voltage > 11.0 && voltage < 11.9) {

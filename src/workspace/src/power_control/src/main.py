@@ -3,65 +3,102 @@ import rospy
 import RPi.GPIO as GPIO
 import subprocess
 import time
+from std_msgs.msg import String  # To receive LED control commands
 
-# Numéros de GPIO en BCM
-GPIO_OUT = 16   # La broche à mettre à 1 au démarrage
-GPIO_IN  = 22   # La broche à surveiller pour le shutdown
-GPIO_Pulse = 23 # Broche pour la pulse 
+# GPIO numbers (BCM mode)
+GPIO_OUT = 16   # Pin set to HIGH on startup
+GPIO_IN  = 22   # Pin monitored for shutdown
+GPIO_Pulse = 23 # Pin for pulse signal
 
-def shutdown_callback(channel):
-    """
-    Callback appelée quand GPIO_IN passe à l'état HAUT (détection front montant).
-    On déclenche un shutdown du Raspberry Pi.
-    """
-    rospy.logwarn("GPIO {} est passé à 1 : déclenchement du shutdown...".format(GPIO_IN))
-    #GPIO.output(GPIO_OUT, GPIO.LOW)
-    #GPIO.cleanup()
-    # Lancer la commande de shutdown
+GPIO_RED = 26   # Red LED
+GPIO_GREEN = 27 # Green LED
+
+# Initialize GPIO
+GPIO.setmode(GPIO.BCM)
+
+# Main output
+GPIO.setup(GPIO_OUT, GPIO.OUT)
+GPIO.output(GPIO_OUT, GPIO.HIGH)
+
+# Input for shutdown button
+GPIO.setup(GPIO_IN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(GPIO_IN, GPIO.FALLING, callback=lambda _: shutdown_callback(), bouncetime=300)
+
+# Pulse LED
+GPIO.setup(GPIO_Pulse, GPIO.OUT)
+
+# Red and Green LEDs
+GPIO.setup(GPIO_RED, GPIO.OUT)
+GPIO.setup(GPIO_GREEN, GPIO.OUT)
+GPIO.output(GPIO_RED, GPIO.LOW)
+GPIO.output(GPIO_GREEN, GPIO.LOW)
+
+# Blinking state management
+blinking = False
+led_state = "off"
+
+def shutdown_callback():
+    """ Callback triggered when GPIO_IN detects a rising edge, shutting down the Raspberry Pi. """
+    rospy.logwarn("GPIO {} detected: Initiating shutdown...".format(GPIO_IN))
     subprocess.call(["shutdown", "now"])
 
 def on_shutdown():
-    """
-    Cette fonction s'exécute quand ROS arrête ce nœud (SIGINT ou autre).
-    On repasse la broche GPIO_OUT à 0 avant de terminer.
-    """
-    rospy.loginfo("Arrêt du nœud : on repasse GPIO {} à 0.".format(GPIO_OUT))
+    """ Function executed when ROS shuts down the node. It turns off all LEDs before exiting. """
+    rospy.loginfo("Shutdown: Turning off all LEDs.")
     GPIO.output(GPIO_OUT, GPIO.LOW)
+    GPIO.output(GPIO_RED, GPIO.LOW)
+    GPIO.output(GPIO_GREEN, GPIO.LOW)
     GPIO.cleanup()
 
+def set_led_state(state):
+    """ Turns LEDs on/off based on the given state """
+    global blinking, led_state
+    led_state = state
+    blinking = False
+
+    if state == "off":
+        GPIO.output(GPIO_RED, GPIO.LOW)
+        GPIO.output(GPIO_GREEN, GPIO.LOW)
+    elif state == "ready":
+        GPIO.output(GPIO_RED, GPIO.LOW)
+        GPIO.output(GPIO_GREEN, GPIO.HIGH)
+    elif state == "recording":
+        blinking = True  # Green LED blinking at 1Hz
+    elif state == "warning":
+        GPIO.output(GPIO_RED, GPIO.HIGH)
+        GPIO.output(GPIO_GREEN, GPIO.HIGH)
+    elif state == "error":
+        GPIO.output(GPIO_RED, GPIO.HIGH)
+        GPIO.output(GPIO_GREEN, GPIO.LOW)
+    elif state == "nofix":
+        blinking = True  # Both LEDs blinking at 1Hz
+
+def led_control_callback(msg):
+    """ ROS callback to update LED state based on received message """
+    rospy.loginfo(f"Received LED state: {msg.data}")
+    set_led_state(msg.data)
+
 def main():
-    # Initialisation du nœud ROS
+    """ Main ROS loop """
     rospy.init_node('gpio_control_node', anonymous=True)
-
-    # Configuration des GPIO
-    GPIO.setmode(GPIO.BCM)
-    
-    # Sortie
-    GPIO.setup(GPIO_OUT, GPIO.OUT)
-    GPIO.output(GPIO_OUT, GPIO.HIGH)  # Met la broche 16 à l'état haut
-
-    # Entrée
-    GPIO.setup(GPIO_IN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    # Détecter le front montant sur GPIO_IN et appeler shutdown_callback
-    GPIO.add_event_detect(GPIO_IN, GPIO.FALLING, callback=shutdown_callback, bouncetime=300)
-
-    #Pulse
-    GPIO.setup(GPIO_Pulse, GPIO.OUT)
-
-    # Définir la fonction à exécuter au shutdown du nœud 
     rospy.on_shutdown(on_shutdown)
 
-    rospy.loginfo("Nœud GPIO démarré : GPIO {}=HIGH. Surveillance GPIO {}.".format(GPIO_OUT, GPIO_IN))
+    # Subscribe to the topic to receive LED state commands
+    rospy.Subscriber("led_control", String, led_control_callback)
 
-    # Boucle pour garder le nœud ROS actif
-    # (on dort ici pour libérer le CPU, ROS gère l'événement d'interruption pour la broche 22)
-    rate = rospy.Rate(1)  # 10 Hz
+    rospy.loginfo("GPIO control node started, waiting for LED commands.")
+
+    rate = rospy.Rate(1)  # 1Hz frequency for blinking LEDs
     pulse = False
-    while not rospy.is_shutdown():
-        rate.sleep()
-        pulse = not pulse; 
-        GPIO.output(GPIO_Pulse, pulse)
-        
 
-if __name__ == "__main__":
-    main()
+    while not rospy.is_shutdown():
+        pulse = not pulse
+        GPIO.output(GPIO_Pulse, pulse)
+
+        # Handle blinking LED states
+        if blinking:
+            if led_state == "recording":
+                GPIO.output(GPIO_RED, GPIO.LOW)
+                GPIO.output(GPIO_GREEN, not GPIO.input(GPIO_GREEN))  # Green blinking
+            elif led_state == "nofix":
+                GPIO.output(GPIO_RED, not GPIO.input(GPIO_RED))

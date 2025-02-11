@@ -1,1 +1,0 @@
-# GPS Adapter Board

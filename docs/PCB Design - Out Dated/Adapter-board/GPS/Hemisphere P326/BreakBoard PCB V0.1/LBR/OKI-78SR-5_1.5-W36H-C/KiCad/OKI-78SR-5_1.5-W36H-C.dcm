@@ -1,9 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP OKI-78SR-5_1.5-W36H-C
-D Switching Regulator 7-36Vin 5Vo 1.5A Non-Isolated DC-DC Converter, 5V dc Output, 1.5A
-K
-F http://www.mouser.com/ds/2/281/oki-78sr-56393.pdf
-$ENDCMP
-#
-#End Doc Library

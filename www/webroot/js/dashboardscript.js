@@ -343,14 +343,17 @@ function processTelemetry(state) {
 if(state.vitals[8] == 5){//Error
   $("#systemStatus").addClass("d-block").removeClass("d-none").addClass("bg-gradient-danger").removeClass("bg-gradient-warning");
   $("#systemStatusText").text(state.status);
+  $("#systemStatusTitle").text("Error:");
 }
 else if(state.vitals[8] == 4){//NoFix
   $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
   $("#systemStatusText").text(state.status);
+  $("#systemStatusTitle").text("NoFix");
 }
 else if(state.vitals[8] == 3){//Warning
   $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
   $("#systemStatusText").text(state.status);
+  $("#systemStatusTitle").text("Warning:");
 }
 else{
   $("#systemStatus").removeClass("d-block").addClass("d-none").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");

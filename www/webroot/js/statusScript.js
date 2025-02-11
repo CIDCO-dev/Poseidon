@@ -100,16 +100,16 @@ function processState(state) {
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
 	if (voltage <= 11.0) {
 		voltageElement.addClass("bg-gradient-danger");
-		$("#battery").width(100 + "%");
+		$("#battery").width(voltage * 4 + "%");
 		} else if (voltage >= 11.9 && voltage < 13.0) {
 			voltageElement.addClass("bg-gradient-success");
-			$("#battery").width(1 + "%");
+			$("#battery").width(voltage * 4 + "%");
 		} else if (voltage > 11.0 && voltage < 11.9) {
 			voltageElement.addClass("bg-gradient-warning");
-			$("#battery").width(80 + "%");
+			$("#battery").width(voltage * 4 + "%");
 		} else if (voltage > 13.0) {
 			voltageElement.addClass("bg-gradient-danger");
-			$("#battery").width(100 + "%");
+			$("#battery").width(voltage * 4 + "%");
 		}
 	$("#batteryText").text(state.telemetry.vitals[6] + "V");
 	}

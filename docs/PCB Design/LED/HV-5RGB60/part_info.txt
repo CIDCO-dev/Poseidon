@@ -1,0 +1,9 @@
+Manufacturer=Inolux
+PartNumber=HV-5RGB60
+PartCategory=LED
+PackageCategory=Other
+PinCount=4
+Version=1.1
+Released=2019-08-21 14:25:05
+Downloaded=2023-03-13 20:39:24
+3D=Y

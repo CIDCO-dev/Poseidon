@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP PCA9533DP_02,118
+D NXP PCA9533DP/02,118, LED Display Controller 4-Segments, 2.5 V, 3.3 V, 5 V, 8-Pin TSSOP
+K
+F http://www.nxp.com/docs/en/data-sheet/PCA9533.pdf
+$ENDCMP
+#
+#End Doc Library

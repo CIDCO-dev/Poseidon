@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "HV5RGB25"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "HV5RGB25")
+        (spec "default")
+    )
+)

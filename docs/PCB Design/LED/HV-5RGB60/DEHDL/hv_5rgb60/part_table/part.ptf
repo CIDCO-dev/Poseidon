@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'HV_5RGB60'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Inolux", "HV-5RGB60" (!) = "", "HV5RGB25", "Other", "743-HV-5RGB60", "https://www.mouser.co.uk/ProductDetail/Inolux/HV-5RGB60?qs=qSfuJ%252Bfl%2Fd7yi2o6d75%2FlQ%3D%3D", "Standard LEDs - Through Hole RGB LED", "http://www.inolux-corp.com/datasheet/Inolux%20Lamp/TH%20Lamp/HV-5RGBXX%205mm%20Full-Color%20Series.pdf", "8.9 mm"
+END_PART
+
+END.

@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "HV-5RGB60"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2018-12-22-18:41:22)
+    (mountForm default
+        (footprintRef "HV5RGB25")
+        (spec "System")
+    )
+)

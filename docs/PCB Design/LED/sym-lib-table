@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "PCA9533DP_02_118")(type "KiCad")(uri "${KIPRJMOD}/PCA9533DP_02,118/KiCad/PCA9533DP_02_118.kicad_sym")(options "")(descr ""))
+  (lib (name "HV-5RGB60")(type "KiCad")(uri "${KIPRJMOD}/HV-5RGB60/KiCad/HV-5RGB60.kicad_sym")(options "")(descr ""))
+)

@@ -23,7 +23,8 @@ function processState(state) {
 
 
 	// CPU load
-	$("#cpuload").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[1] < 90 ? "bg-gradient-danger" : "bg-gradient-success")).addClass((state.telemetry.vitals[1] < 90 ? "bg-gradient-success" : "bg-gradient-danger"));
+	$("#cpuload").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[1] < 90 ? "bg-gradient-danger" : "bg-gradient-success"))
+													.addClass((state.telemetry.vitals[1] < 90 ? "bg-gradient-success" : "bg-gradient-danger"));
 
 	$("#cpuloadText").text(state.telemetry.vitals[1] + "%");
 	$("#cpuload").width(state.telemetry.vitals[1] + "%");
@@ -70,7 +71,8 @@ function processState(state) {
         $("#humidity").parent().hide();
 		$("#humidityText").parent().hide();
     } else {
-	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-success" : "bg-gradient-danger")).addClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-danger" : "bg-gradient-success"));
+	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-success" : "bg-gradient-warning"))
+													.addClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-warning" : "bg-gradient-success"));
 
 	$("#humidityText").text(state.telemetry.vitals[7] + "%");
 	$("#humidity").width(state.telemetry.vitals[7] + "%");
@@ -84,11 +86,11 @@ function processState(state) {
 	var temperatureHBValue = state.telemetry.vitals[5];
 	tempElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
 	if (temperatureHBValue < 60) {
-		tempElement.addClass("bg-gradient-success");
+		tempElement.addClass("bg-gradient-success").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger");
 		} else if (temperatureHBValue >= 60 && temperatureHBValue <= 75) {
-			tempElement.addClass("bg-gradient-warning");
+			tempElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
 		} else if (temperatureHBValue > 75) {
-			tempElement.addClass("bg-gradient-danger");
+			tempElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
 		}
 	$("#temperatureText").text(state.telemetry.vitals[5] + "\u00B0" + "C");
 	$("#temperature").width(20 + state.telemetry.vitals[5] + "%");
@@ -103,16 +105,16 @@ function processState(state) {
 	var voltage = state.telemetry.vitals[6];
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
 	if (voltage <= 11.0) {
-		voltageElement.addClass("bg-gradient-danger");
+		voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
 		$("#battery").width(voltage * 4 + "%");
 		} else if (voltage >= 11.9 && voltage < 13.8) {
-			voltageElement.addClass("bg-gradient-success");
+			voltageElement.addClass("bg-gradient-success").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");
 		} else if (voltage > 11.0 && voltage < 11.9) {
-			voltageElement.addClass("bg-gradient-warning");
+			voltageElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
 			$("#battery").width(voltage * 4 + "%");
 		} else if (voltage > 13.0) {
-			voltageElement.addClass("bg-gradient-danger");
+			voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");
 		}
 	$("#batteryText").text(state.telemetry.vitals[6] + "V");

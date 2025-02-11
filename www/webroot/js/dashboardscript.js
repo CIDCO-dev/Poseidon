@@ -57,12 +57,6 @@ function connectWebSocket() {
 
   socket = new WebSocket("ws://" + window.location.hostname + ":9002");
 
-  /*socket.onopen = function (event) {
-    //init display
-    getLoggingInfo();
-    console.log("socket connected.")
-  };*/
-
   socket.onmessage = function (event) {
     //console.log(event.data);
     resetTimer(); // keep alive
@@ -182,98 +176,6 @@ function chartMetrics() {
   }).draw();
 }
 
-/*
-function processTelemetry(state) {
-  console.log(state.gnssFix);
-  // Update dashboard top marquees
-
-  if (!state.position.length || !state.attitude.length || !state.depth.length) {
-    $("#systemStatus").removeClass("d-none").addClass("d-block");
-
-    $("#systemStatusText").text("Check connexion with sensors and reload the page.");
-  }
-  else {
-    $("#systemStatus").removeClass("d-block").addClass("d-none");
-    $("#systemStatusText").text();
-  }
-  
-  if (state.gnssFix < 0){
-    $("#gnssStatus").removeClass("bg-gradient-success").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
-    $("#gnssLongitudeValue").text(state.position[0].toFixed(2));
-    $("#gnssLatitudeValue").text(state.position[1].toFixed(2));
-    $("#gnssStatusText").text("No GNSS fix");
-  }
-  else if(state.position.length) {
-    $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-    $("#gnssLongitudeValue").text(state.position[0].toFixed(8));
-    $("#gnssLatitudeValue").text(state.position[1].toFixed(8));
-    $("#gnssStatusText").text("");
-  }
-  else {
-    $("#gnssStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-    $("#gnssLongitudeValue").text("");
-    $("#gnssLatitudeValue").text("");
-    $("#gnssStatusText").text("No GNSS Data...");
-  }
-
-  if (state.attitude.length) {
-    $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-    $("#imuHeadingValue").text(state.attitude[0].toFixed(3));
-    $("#imuPitchValue").text(state.attitude[1].toFixed(3));
-    $("#imuRollValue").text(state.attitude[2].toFixed(3));
-    $("#imuStatusText").text("");
-  }
-  else {
-    $("#imuStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-    $("#imuHeadingValue").text("");
-    $("#imuPitchValue").text("");
-    $("#imuRollValue").text("");
-    $("#imuStatusText").text("No IMU Data");
-  }
-
-  if (state.depth.length) {
-    $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-danger").addClass("bg-gradient-success");
-    $("#sonarDepthValue").text(state.depth[0].toFixed(2));
-    $("#sonarStatusText").text("");
-  }
-  else {
-    $("#sonarStatus").removeClass("bg-gradient-warning").removeClass("bg-gradient-success").addClass("bg-gradient-danger");
-    $("#sonarDepthValue").text("");
-    $("#sonarStatusText").text("No Sonar Data");
-    // Hide sonar card if no sonar data
-    //$('#sonarCard').addClass("d-none"); 
-  }
-
-  // Update attitude/depth plot
-
-  imu_x.push(state.attitude[1]);
-  imu_x.shift();
-
-  imu_y.push(state.attitude[2]);
-  imu_y.shift();
-
-  //Display depth as negative Z 
-  depth.push(-1 * state.depth[0]);
-  depth.shift();
-
-  attitudeChart.update();
-  depthChart.update();
-
-  headingGauge.value = (state.attitude[0]);
-
-  if (state.vitals[3] < 1) {
-    $("#hddFreeSpaceOK").removeClass("d-none").addClass("d-block alert alert-danger");
-  }
-  else {
-    $("#hddFreeSpaceOK").removeClass("d-block alert alert-danger").addClass("d-none");
-  }
-}// End function processTelemetry
-
-function getLoggingInfo() {
-  var cmd = { command: "getLoggingInfo" };
-  socket.send(JSON.stringify(cmd));
-}
-  */
 function processTelemetry(state) {
   //console.log(state.gnssFix);
   
@@ -363,8 +265,7 @@ else{
 }
 
 function processRecordingInfo(isLogging, mode) {
-  //console.log(isLogging);
-  //console.log(mode);
+
   if (mode == "1") {
     hideLoggingButton();
     $("#modeWidget").text("always ON"); 

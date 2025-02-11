@@ -1,9 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP HV-5RGB60
-D Standard LEDs - Through Hole RGB LED
-K
-F http://www.inolux-corp.com/datasheet/Inolux%20Lamp/TH%20Lamp/HV-5RGBXX%205mm%20Full-Color%20Series.pdf
-$ENDCMP
-#
-#End Doc Library

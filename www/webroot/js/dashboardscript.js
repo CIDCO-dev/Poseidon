@@ -340,17 +340,17 @@ function processTelemetry(state) {
   }
 
   //led color
-if(state.telemetry.vitals[8] == 5){//Error
+if(state.vitals[8] == 5){//Error
   $("#systemStatus").addClass("d-block").removeClass("d-none").addClass("bg-gradient-danger").removeClass("bg-gradient-warning");
-  $("#systemStatusText").text(state.telemetry.status);
+  $("#systemStatusText").text(state.status);
 }
-else if(state.telemetry.vitals[8] == 4){//NoFix
+else if(state.vitals[8] == 4){//NoFix
   $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
-  $("#systemStatusText").text(state.telemetry.status);
+  $("#systemStatusText").text(state.status);
 }
-else if(state.telemetry.vitals[8] == 3){//Warning
+else if(state.vitals[8] == 3){//Warning
   $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
-  $("#systemStatusText").text(state.telemetry.status);
+  $("#systemStatusText").text(state.status);
 }
 else{
   $("#systemStatus").removeClass("d-block").addClass("d-none").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");

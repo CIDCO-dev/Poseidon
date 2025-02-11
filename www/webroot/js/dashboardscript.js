@@ -338,6 +338,25 @@ function processTelemetry(state) {
   } else {
     $("#hddFreeSpaceOK").removeClass("d-block alert alert-danger").addClass("d-none");
   }
+
+  //led color
+if(state.telemetry.vitals[8] == 5){//Error
+  $("#systemStatus").addClass("d-block").removeClass("d-none").addClass("bg-gradient-danger").removeClass("bg-gradient-warning");
+  $("#systemStatusText").text(state.telemetry.status);
+}
+else if(state.telemetry.vitals[8] == 4){//NoFix
+  $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
+  $("#systemStatusText").text(state.telemetry.status);
+}
+else if(state.telemetry.vitals[8] == 3){//Warning
+  $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
+  $("#systemStatusText").text(state.telemetry.status);
+}
+else{
+  $("#systemStatus").removeClass("d-block").addClass("d-none").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");
+  $("#systemStatusText").text();
+}
+
 }
 
 function processRecordingInfo(isLogging, mode) {
@@ -444,35 +463,4 @@ if ($(window).width() < 766) {
   $("#btnRecording").parent().css('height', '100%');
 }
 
-//led color
-if(state.telemetry.vitals[8] == 5){//Error
-  $("#systemStatus").addClass("d-block").removeClass("d-none").addClass("bg-gradient-danger").removeClass("bg-gradient-warning");
-  $("#systemStatusText").text(state.telemetry.status);
-}
-else if(state.telemetry.vitals[8] == 4){//NoFix
-  $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
-  $("#systemStatusText").text(state.telemetry.status);
-}
-else if(state.telemetry.vitals[8] == 3){//Warning
-  $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
-  $("#systemStatusText").text(state.telemetry.status);
-}
-else{
-  $("#systemStatus").removeClass("d-block").addClass("d-none").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");
-  $("#systemStatusText").text();
-}
 
-
-$("#freehddText").text(100 - state.telemetry.vitals[3] + "%");
-$("#freehdd").width(100 - state.telemetry.vitals[3] + "%");
-
-
-if (!state.position.length || !state.attitude.length || !state.depth.length) {
-  $("#systemStatus").removeClass("d-none").addClass("d-block");
-
-  $("#systemStatusText").text("Check connexion with sensors and reload the page.");
-}
-else {
-  $("#systemStatus").removeClass("d-block").addClass("d-none");
-  $("#systemStatusText").text();
-}

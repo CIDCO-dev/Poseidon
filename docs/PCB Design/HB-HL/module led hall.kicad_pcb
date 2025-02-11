@@ -2701,8 +2701,8 @@
 		(layer "Edge.Cuts")
 		(uuid "02c03bb3-a817-40d8-8726-5ab928427947")
 	)
-	(gr_text "V.0.3"
-		(at 80.75 103.25 -90)
+	(gr_text "HB-HL\nV.0.3"
+		(at 80.59 100.19 270)
 		(layer "B.SilkS")
 		(uuid "78db3874-32ad-4e84-a75d-d1de7d050dcd")
 		(effects
@@ -2711,11 +2711,11 @@
 				(thickness 0.3)
 				(bold yes)
 			)
-			(justify left bottom mirror)
+			(justify bottom mirror)
 		)
 	)
 	(gr_text "CIDCO.CA"
-		(at 82.95 105.7 -90)
+		(at 85.13 105.36 -90)
 		(layer "B.SilkS")
 		(uuid "e6941e8a-e9e0-4491-b450-1287032bea50")
 		(effects

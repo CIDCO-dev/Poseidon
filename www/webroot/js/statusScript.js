@@ -1,6 +1,6 @@
 function processState(state) {
 	if (!state || !state.telemetry) {
-        console.error("Données invalides reçues:", state);
+        
         return;
     }
 

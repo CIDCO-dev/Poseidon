@@ -13,29 +13,7 @@ GPIO_Pulse = 23 # Pin for pulse signal
 GPIO_RED = 26   # Red LED
 GPIO_GREEN = 27 # Green LED
 
-# Initialize GPIO
-GPIO.setmode(GPIO.BCM)
 
-# Main output
-GPIO.setup(GPIO_OUT, GPIO.OUT)
-GPIO.output(GPIO_OUT, GPIO.HIGH)
-
-# Input for shutdown button
-GPIO.setup(GPIO_IN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(GPIO_IN, GPIO.FALLING, callback=lambda _: shutdown_callback(), bouncetime=300)
-
-# Pulse LED
-GPIO.setup(GPIO_Pulse, GPIO.OUT)
-
-# Red and Green LEDs
-GPIO.setup(GPIO_RED, GPIO.OUT)
-GPIO.setup(GPIO_GREEN, GPIO.OUT)
-GPIO.output(GPIO_RED, GPIO.LOW)
-GPIO.output(GPIO_GREEN, GPIO.LOW)
-
-# Blinking state management
-blinking = False
-led_state = "off"
 
 def shutdown_callback():
     """ Callback triggered when GPIO_IN detects a rising edge, shutting down the Raspberry Pi. """
@@ -86,7 +64,29 @@ def main():
     # Subscribe to the topic to receive LED state commands
     rospy.Subscriber("led_control", String, led_control_callback)
 
-    rospy.loginfo("GPIO control node started, waiting for LED commands.")
+    # Initialize GPIO
+    GPIO.setmode(GPIO.BCM)
+
+    # Main output
+    GPIO.setup(GPIO_OUT, GPIO.OUT)
+    GPIO.output(GPIO_OUT, GPIO.HIGH)
+
+    # Input for shutdown button
+    GPIO.setup(GPIO_IN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(GPIO_IN, GPIO.FALLING, callback=lambda _: shutdown_callback(), bouncetime=300)
+
+    # Pulse LED
+    GPIO.setup(GPIO_Pulse, GPIO.OUT)
+
+    # Red and Green LEDs
+    GPIO.setup(GPIO_RED, GPIO.OUT)
+    GPIO.setup(GPIO_GREEN, GPIO.OUT)
+    GPIO.output(GPIO_RED, GPIO.LOW)
+    GPIO.output(GPIO_GREEN, GPIO.LOW)
+
+    # Blinking state management
+    blinking = False
+    led_state = "off"
 
     rate = rospy.Rate(1)  # 1Hz frequency for blinking LEDs
     pulse = False

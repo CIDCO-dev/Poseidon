@@ -57,11 +57,11 @@ function connectWebSocket() {
 
   socket = new WebSocket("ws://" + window.location.hostname + ":9002");
 
-  socket.onopen = function (event) {
+  /*socket.onopen = function (event) {
     //init display
     getLoggingInfo();
     console.log("socket connected.")
-  };
+  };*/
 
   socket.onmessage = function (event) {
     //console.log(event.data);
@@ -275,7 +275,7 @@ function getLoggingInfo() {
 }
   */
 function processTelemetry(state) {
-  console.log(state.gnssFix);
+  //console.log(state.gnssFix);
   
   // Vérification de l'état GNSS
   if (state.gnssFix < 0 || !state.position.length) {

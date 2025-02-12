@@ -5385,265 +5385,6 @@
 				)
 			)
 		)
-		(symbol "PCA9533DP_02_118:PCA9533DP_02,118"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "U"
-				(at 24.13 7.62 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Value" "PCA9533DP_02,118"
-				(at 24.13 5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Footprint" "SOP65P490X110-8N"
-				(at 24.13 -94.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "http://www.nxp.com/docs/en/data-sheet/PCA9533.pdf"
-				(at 24.13 -194.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(property "Description" "NXP PCA9533DP/02,118, LED Display Controller 4-Segments, 2.5 V, 3.3 V, 5 V, 8-Pin TSSOP"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Height" "1.1"
-				(at 24.13 -394.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(property "Mouser Part Number" "771-PCA9533DP/02118"
-				(at 24.13 -494.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/NXP-Semiconductors/PCA9533DP-02118?qs=18PanXkg8EfFFpXHjEHjJg%3D%3D"
-				(at 24.13 -594.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(property "Manufacturer_Name" "NXP"
-				(at 24.13 -694.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(property "Manufacturer_Part_Number" "PCA9533DP/02,118"
-				(at 24.13 -794.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(symbol "PCA9533DP_02,118_1_1"
-				(rectangle
-					(start 5.08 2.54)
-					(end 22.86 -10.16)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin output line
-					(at 0 0 0)
-					(length 5.08)
-					(name "LED0"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 0 -2.54 0)
-					(length 5.08)
-					(name "LED1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 0 -5.08 0)
-					(length 5.08)
-					(name "LED2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 0 -7.62 0)
-					(length 5.08)
-					(name "VSS"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 27.94 -7.62 180)
-					(length 5.08)
-					(name "LED3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin bidirectional line
-					(at 27.94 -5.08 180)
-					(length 5.08)
-					(name "SCL"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin bidirectional line
-					(at 27.94 -2.54 180)
-					(length 5.08)
-					(name "SDA"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 27.94 0 180)
-					(length 5.08)
-					(name "VDD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-		)
 		(symbol "PDQE20-Q24-S5-D:PDQE20-Q24-S5-D"
 			(pin_names
 				(offset 1.016)
@@ -6086,7 +5827,7 @@
 				)
 			)
 		)
-		(symbol "Transistor_FET:2N7000"
+		(symbol "Transistor_FET:2N7002"
 			(pin_names hide)
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -6100,7 +5841,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "2N7000"
+			(property "Value" "2N7002"
 				(at 5.08 0 0)
 				(effects
 					(font
@@ -6109,7 +5850,7 @@
 					(justify left)
 				)
 			)
-			(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
 				(at 5.08 -1.905 0)
 				(effects
 					(font
@@ -6120,8 +5861,8 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://www.vishay.com/docs/70226/70226.pdf"
-				(at 0 0 0)
+			(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
+				(at 5.08 -3.81 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -6130,7 +5871,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "0.2A Id, 200V Vds, N-Channel MOSFET, 2.6V Logic Level, TO-92"
+			(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
 				(at 0 0 0)
 				(effects
 					(font
@@ -6139,7 +5880,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "N-Channel MOSFET Logic-Level"
+			(property "ki_keywords" "N-Channel Switching MOSFET"
 				(at 0 0 0)
 				(effects
 					(font
@@ -6148,7 +5889,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "TO?92*"
+			(property "ki_fp_filters" "SOT?23*"
 				(at 0 0 0)
 				(effects
 					(font
@@ -6157,7 +5898,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "2N7000_0_1"
+			(symbol "2N7002_0_1"
 				(polyline
 					(pts
 						(xy 0.254 0) (xy -2.54 0)
@@ -6324,11 +6065,11 @@
 					)
 				)
 			)
-			(symbol "2N7000_1_1"
-				(pin passive line
-					(at 2.54 -5.08 90)
+			(symbol "2N7002_1_1"
+				(pin input line
+					(at -5.08 0 0)
 					(length 2.54)
-					(name "S"
+					(name "G"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -6343,10 +6084,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at -5.08 0 0)
+				(pin passive line
+					(at 2.54 -5.08 90)
 					(length 2.54)
-					(name "G"
+					(name "S"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -8353,6 +8094,16 @@
 	)
 	(wire
 		(pts
+			(xy 248.92 154.94) (xy 250.19 154.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c7d79ea-758b-4cea-88cb-8551fb64c4b9")
+	)
+	(wire
+		(pts
 			(xy 223.52 39.37) (xy 223.52 26.67)
 		)
 		(stroke
@@ -8690,6 +8441,16 @@
 			(type default)
 		)
 		(uuid "5707faa9-56ae-4470-a72f-4284f433ddec")
+	)
+	(wire
+		(pts
+			(xy 226.06 154.94) (xy 227.33 154.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "594c9dc5-31f6-4570-b014-750ba8007acf")
 	)
 	(wire
 		(pts
@@ -9413,6 +9174,16 @@
 	)
 	(wire
 		(pts
+			(xy 69.85 63.5) (xy 71.12 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aa8c7593-8260-43dd-b2f7-f71be0c516bf")
+	)
+	(wire
+		(pts
 			(xy 191.77 113.03) (xy 191.77 124.46)
 		)
 		(stroke
@@ -9673,6 +9444,16 @@
 	)
 	(wire
 		(pts
+			(xy 78.74 60.96) (xy 78.74 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d0c088fc-9013-4580-b966-9a8bd66ef802")
+	)
+	(wire
+		(pts
 			(xy 52.07 29.21) (xy 52.07 30.48)
 		)
 		(stroke
@@ -9930,16 +9711,6 @@
 			(type default)
 		)
 		(uuid "f0975955-9b9d-4e18-b228-9eb85c2b8655")
-	)
-	(wire
-		(pts
-			(xy 222.25 166.37) (xy 229.87 166.37)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f105b219-1da7-49f5-b11a-612d5aa661ac")
 	)
 	(wire
 		(pts
@@ -10874,28 +10645,6 @@
 			)
 		)
 	)
-	(global_label "SCK4"
-		(shape input)
-		(at 257.81 163.83 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "532cf90b-1c6e-44c1-a61b-247d277904f0")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 265.6748 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "PPS"
 		(shape input)
 		(at 226.06 29.21 0)
@@ -11052,7 +10801,7 @@
 	)
 	(global_label "Red"
 		(shape input)
-		(at 229.87 158.75 180)
+		(at 219.71 160.02 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -11062,7 +10811,7 @@
 		)
 		(uuid "6f6b2aac-5e71-481f-8181-e1a6bdf74571")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 223.3772 158.75 0)
+			(at 213.2172 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11156,6 +10905,50 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Green-g"
+		(shape input)
+		(at 82.55 71.12 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9709ab05-8084-4a53-b31d-a53ebfae268b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 71.461 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Green-g"
+		(shape input)
+		(at 248.92 154.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9ab7f13c-bb09-40e7-aef2-5a59ee9d837a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 237.831 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -11622,31 +11415,31 @@
 			)
 		)
 	)
-	(global_label "SDA4"
+	(global_label "Red_g"
 		(shape input)
-		(at 257.81 161.29 0)
+		(at 226.06 154.94 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left)
+			(justify right)
 		)
-		(uuid "cfe701f8-e310-436e-a723-c2217822647c")
+		(uuid "ccd0c9f2-2380-4ac3-a944-f508ab7252c2")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 265.4934 161.29 0)
+			(at 217.4506 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 				(hide yes)
 			)
 		)
 	)
 	(global_label "Green"
 		(shape input)
-		(at 229.87 161.29 180)
+		(at 242.57 160.02 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -11656,7 +11449,7 @@
 		)
 		(uuid "d32f5203-f818-494c-a45d-68ce9561e758")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 221.5024 161.29 0)
+			(at 234.2024 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11772,6 +11565,28 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Red_g"
+		(shape input)
+		(at 82.55 68.58 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "eb19ab8d-fe21-46e9-9b46-5d468f1578f3")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 73.9406 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -12898,6 +12713,81 @@
 		)
 	)
 	(symbol
+		(lib_id "Transistor_FET:2N7002")
+		(at 224.79 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "28f4c02e-0ae5-4bc9-8ab2-49f405a92149")
+		(property "Reference" "Q1"
+			(at 229.362 157.734 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2N7000"
+			(at 228.854 162.814 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 229.87 161.925 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
+			(at 229.87 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
+			(at 224.79 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "647a1633-57a4-4d33-aee6-03b9d13485af")
+		)
+		(pin "2"
+			(uuid "59442805-29ae-4022-ab6b-252fbadb3dbb")
+		)
+		(pin "3"
+			(uuid "b761f3cd-df1f-40cf-ae05-d523da7847a5")
+		)
+		(instances
+			(project "HydroBall"
+				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
+					(reference "Q1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Mechanical:Fiducial")
 		(at 21.59 149.86 0)
 		(unit 1)
@@ -13430,7 +13320,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_FET:2N7000")
+		(lib_id "Transistor_FET:2N7002")
 		(at 157.48 158.75 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -13440,7 +13330,7 @@
 		(fields_autoplaced yes)
 		(uuid "386c8cc6-403a-45ce-ae1a-203b39e81961")
 		(property "Reference" "Q2"
-			(at 163.83 158.115 0)
+			(at 163.83 157.4799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13449,7 +13339,7 @@
 			)
 		)
 		(property "Value" "2N7000"
-			(at 163.83 160.655 0)
+			(at 163.83 160.0199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13457,7 +13347,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-3"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
 			(at 162.56 160.655 0)
 			(effects
 				(font
@@ -13468,8 +13358,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.vishay.com/docs/70226/70226.pdf"
-			(at 157.48 158.75 0)
+		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
+			(at 162.56 162.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13478,7 +13368,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
 			(at 157.48 158.75 0)
 			(effects
 				(font
@@ -14243,150 +14133,6 @@
 		)
 	)
 	(symbol
-		(lib_id "PCA9533DP_02_118:PCA9533DP_02,118")
-		(at 229.87 158.75 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "57c8de7e-e346-44a1-8792-605641d38565")
-		(property "Reference" "U7"
-			(at 243.84 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "PCA9533DP_02,118"
-			(at 243.84 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "KiCad:SOIC127P600X175-8N"
-			(at 254 253.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://www.nxp.com/docs/en/data-sheet/PCA9533.pdf"
-			(at 254 353.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 229.87 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Height" "1.1"
-			(at 254 553.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Mouser Part Number" "771-PCA9533DP/02118"
-			(at 254 653.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/NXP-Semiconductors/PCA9533DP-02118?qs=18PanXkg8EfFFpXHjEHjJg%3D%3D"
-			(at 254 753.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer_Name" "NXP"
-			(at 254 853.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer_Part_Number" "PCA9533DP/02,118"
-			(at 254 953.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "5d6aa41e-5cd6-4b64-8441-830fdb21b747")
-		)
-		(pin "2"
-			(uuid "e596d230-74e0-4f69-998d-3505a93bef9d")
-		)
-		(pin "3"
-			(uuid "5e057cae-28d4-46db-b221-f36c9d89f2db")
-		)
-		(pin "4"
-			(uuid "5a217039-44dd-4ca9-9213-8e30666de591")
-		)
-		(pin "5"
-			(uuid "9c961788-3408-40d3-a7d5-a2563dfa9cb4")
-		)
-		(pin "6"
-			(uuid "2c1eabce-5fe5-4379-a6a7-9cc6c9e27d64")
-		)
-		(pin "7"
-			(uuid "33a480cc-ae74-42d6-a509-7fe086f4cee0")
-		)
-		(pin "8"
-			(uuid "2a5c4baa-eadb-4173-ac28-b3d70e04ebb1")
-		)
-		(instances
-			(project "HydroBall"
-				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
-					(reference "U7")
-					(unit 1)
-				)
-			)
-			(project "LED"
-				(path "/595ec3ef-f732-4639-977f-e506273f99f4"
-					(reference "U?")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "imu:BNO055")
 		(at 179.07 154.94 0)
 		(unit 1)
@@ -14811,7 +14557,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 78.74 68.58 180)
+		(at 69.85 63.5 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -14820,7 +14566,7 @@
 		(fields_autoplaced yes)
 		(uuid "6006d897-6309-403d-a3a5-1263ea18db9b")
 		(property "Reference" "#PWR030"
-			(at 78.74 64.77 0)
+			(at 69.85 59.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14829,7 +14575,7 @@
 			)
 		)
 		(property "Value" "+3.3V"
-			(at 78.74 73.66 0)
+			(at 69.85 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14837,7 +14583,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 78.74 68.58 0)
+			(at 69.85 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14846,7 +14592,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 78.74 68.58 0)
+			(at 69.85 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14855,7 +14601,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 78.74 68.58 0)
+			(at 69.85 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16046,6 +15792,81 @@
 		)
 	)
 	(symbol
+		(lib_id "Transistor_FET:2N7002")
+		(at 247.65 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7d7d6987-d18f-4f8b-90e6-7ee4431bbffc")
+		(property "Reference" "Q3"
+			(at 251.968 157.988 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2N7000"
+			(at 251.714 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 252.73 161.925 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
+			(at 252.73 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
+			(at 247.65 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d6f3b05b-f9d4-403c-ac3b-4b3cef4cab5a")
+		)
+		(pin "2"
+			(uuid "3238a63a-f115-419f-8da5-763ff5b171dc")
+		)
+		(pin "3"
+			(uuid "8681269f-17dc-4314-aab3-057125de97b2")
+		)
+		(instances
+			(project "HydroBall"
+				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
+					(reference "Q3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Connector_Generic:Conn_01x05")
 		(at 92.71 121.92 180)
 		(unit 1)
@@ -16449,72 +16270,6 @@
 			(project "HydroBall"
 				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
 					(reference "C13")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3.3V")
-		(at 257.81 158.75 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "91f77892-e39b-4574-a0d5-155a19cd9167")
-		(property "Reference" "#PWR031"
-			(at 257.81 162.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 257.81 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 257.81 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 257.81 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 257.81 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9e34023e-ebde-4ccb-8854-16f6b206ebba")
-		)
-		(instances
-			(project "HydroBall"
-				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
-					(reference "#PWR031")
 					(unit 1)
 				)
 			)
@@ -18652,7 +18407,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 222.25 166.37 0)
+		(at 227.33 165.1 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18660,7 +18415,7 @@
 		(dnp no)
 		(uuid "d199012e-8fa2-4433-b9a7-4fa395a24523")
 		(property "Reference" "#PWR032"
-			(at 222.25 172.72 0)
+			(at 227.33 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18669,7 +18424,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 226.06 168.91 0)
+			(at 231.14 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18677,7 +18432,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 222.25 166.37 0)
+			(at 227.33 165.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18686,7 +18441,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 222.25 166.37 0)
+			(at 227.33 165.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18695,7 +18450,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 222.25 166.37 0)
+			(at 227.33 165.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18793,6 +18548,71 @@
 			(project "HydroBall"
 				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
 					(reference "J2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 250.19 165.1 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d72e831e-b81a-42d3-8b3e-97501fb79be1")
+		(property "Reference" "#PWR031"
+			(at 250.19 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 254 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 250.19 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 250.19 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 250.19 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "48cf08c4-19cf-45b7-9068-a60160a8410b")
+		)
+		(instances
+			(project "HydroBall"
+				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
+					(reference "#PWR031")
 					(unit 1)
 				)
 			)
@@ -19067,7 +18887,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_US")
-		(at 78.74 64.77 180)
+		(at 74.93 63.5 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -19075,7 +18895,7 @@
 		(dnp no)
 		(uuid "e7510a38-faac-4818-b86b-8a56889fcdcb")
 		(property "Reference" "R4"
-			(at 81.28 62.992 90)
+			(at 70.612 65.024 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19084,7 +18904,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 75.946 63.5 90)
+			(at 77.216 65.024 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19093,7 +18913,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_1206_3216Metric"
-			(at 77.724 64.516 90)
+			(at 74.676 64.516 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19102,7 +18922,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 78.74 64.77 0)
+			(at 74.93 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19111,7 +18931,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 78.74 64.77 0)
+			(at 74.93 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)

@@ -9,8 +9,6 @@
 	(paper "A4")
 	(layers
 		(0 "F.Cu" signal)
-		(1 "In1.Cu" signal)
-		(2 "In2.Cu" signal)
 		(31 "B.Cu" signal)
 		(32 "B.Adhes" user "B.Adhesive")
 		(33 "F.Adhes" user "F.Adhesive")
@@ -57,30 +55,8 @@
 				(thickness 0.035)
 			)
 			(layer "dielectric 1"
-				(type "prepreg")
-				(thickness 0.1)
-				(material "FR4")
-				(epsilon_r 4.5)
-				(loss_tangent 0.02)
-			)
-			(layer "In1.Cu"
-				(type "copper")
-				(thickness 0.035)
-			)
-			(layer "dielectric 2"
 				(type "core")
-				(thickness 1.24)
-				(material "FR4")
-				(epsilon_r 4.5)
-				(loss_tangent 0.02)
-			)
-			(layer "In2.Cu"
-				(type "copper")
-				(thickness 0.035)
-			)
-			(layer "dielectric 3"
-				(type "prepreg")
-				(thickness 0.1)
+				(thickness 1.51)
 				(material "FR4")
 				(epsilon_r 4.5)
 				(loss_tangent 0.02)
@@ -223,7 +199,7 @@
 		(property ki_fp_filters "Connector*:*_2x??_*")
 		(path "/a6efb3b8-c639-41a6-aa41-d5a5ea06b7eb")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr through_hole)
 		(fp_line
 			(start -4.68 -0.5)
@@ -705,7 +681,7 @@
 		(property ki_fp_filters "Connector*:*_1x??-1MP*")
 		(path "/97b5ad8f-803f-4b04-b2e7-1587a63cb8d3")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 6.07 4.71)
@@ -1165,7 +1141,7 @@
 		(property ki_fp_filters "MountingHole*")
 		(path "/390f6dc3-7780-44a2-b98d-1c7c97e92551")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -1279,7 +1255,7 @@
 		(property ki_fp_filters "MountingHole*")
 		(path "/8b304f85-0539-4725-b59e-39fa80c56820")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -1397,7 +1373,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/e49922e9-826e-40be-9b38-e1b253c55845")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 0.727064 0.91)
@@ -1616,7 +1592,7 @@
 		(property ki_fp_filters "C_*")
 		(path "/97d40ace-69e1-408b-bc6d-e29946dca295")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 0.711252 0.91)
@@ -1835,7 +1811,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/877969d0-6e90-43a5-8468-6bbaf3475d72")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 0.727064 0.91)
@@ -2054,7 +2030,7 @@
 		(property ki_fp_filters "R_*")
 		(path "/7091a189-387e-4ac6-9c39-a7be9681613f")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 0.727064 0.91)
@@ -2273,7 +2249,7 @@
 		(property ki_fp_filters "SOT?23W*")
 		(path "/8d8dac6f-0edc-4e11-b7e0-6839d7263a34")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 1.075 1.61)
@@ -2546,7 +2522,7 @@
 		(property ki_fp_filters "C_*")
 		(path "/f9f08e06-0300-49bc-b26a-170be552de39")
 		(sheetname "Racine")
-		(sheetfile "module led et hall.kicad_sch")
+		(sheetfile "module led hall.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 0.711252 0.91)
@@ -2775,14 +2751,6 @@
 		(layer "F.Cu")
 		(net 1)
 		(uuid "71b1aa5c-012c-48d5-9862-e1bed4218aa2")
-	)
-	(segment
-		(start 114.5 97)
-		(end 113.122035 97)
-		(width 0.4)
-		(layer "In1.Cu")
-		(net 1)
-		(uuid "88b45219-3d11-4b90-b575-0976d3ea7399")
 	)
 	(segment
 		(start 114.5 97)
@@ -3167,14 +3135,6 @@
 		(layer "B.Cu")
 		(net 8)
 		(uuid "8a1c434f-a691-4c43-80c0-46cb3e4da509")
-	)
-	(segment
-		(start 108.5975 87.1)
-		(end 108.6075 87.11)
-		(width 0.4)
-		(layer "F.Cu")
-		(net 9)
-		(uuid "af44e7f0-e714-4d23-b5f7-15cac2072ed9")
 	)
 	(segment
 		(start 98.55 85.38)

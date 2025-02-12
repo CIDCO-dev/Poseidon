@@ -1,0 +1,55 @@
+### Footprint positions - created on 2025-02-12T15:18:41-0500 ###
+### Printed by KiCad version 8.0.6
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val                           Package                                                        PosX       PosY       Rot  Side
+BT1       Battery_Cell                  BatteryHolder_Keystone_1058_1x2032                         109.7600   -74.9600  -90.0000  top
+C6        0.1uf_/50v                    C_1206_3216Metric                                          119.1500  -128.4000    0.0000  top
+C7        4.7uf/50v                     C_1206_3216Metric                                          130.9200  -107.5950   90.0000  top
+C8        4.7uf/50v                     C_1206_3216Metric                                          114.8200  -107.8550   90.0000  top
+C10       1nf/2kv                       C_1206_3216Metric                                          127.7750  -120.8000  -90.0000  top
+C12       100nf                         C_1206_3216Metric                                          119.7250  -138.1500    0.0000  top
+C13       100uf/16v                     CP_Elec_6.3x9.9                                            129.4600   -94.3200   90.0000  top
+C17       100nF                         C_1206_3216Metric                                          164.5700   -69.5700    0.0000  top
+C19       0.22uF                        C_1206_3216Metric                                          164.6200   -66.8800    0.0000  top
+D2        B550C                         D_SMC                                                      123.0100  -107.7800   90.0000  top
+F1        2A                            Fuse_1206_3216Metric                                       107.2400   -98.6800    0.0000  top
+FID1      Fiducial                      Fiducial_0.75mm_Mask2.25mm                                 103.9100   -60.8400    0.0000  top
+FID2      Fiducial                      Fiducial_0.75mm_Mask2.25mm                                 170.1000   -92.3750    0.0000  top
+FID3      Fiducial                      Fiducial_0.75mm_Mask2.25mm                                 108.6250  -140.9750    0.0000  top
+IC1       HIH8130-021-001               SOIC127P600X206-8N                                         159.1100   -69.4700  -90.0000  top
+J1        Conn_01x05                    JST_XH_B6B-XH-AM_1x06_P2.50mm_Vertical                     119.7500   -51.7050    0.0000  top
+J2        Conn_01x07                    JST_XH_B7B-XH-AM_1x07_P2.50mm_Vertical                     138.8750   -51.6800    0.0000  top
+J3        Conn_01x05                    JST_XH_B5B-XH-AM_1x05_P2.50mm_Vertical                     160.6500   -51.5550    0.0000  top
+J4        Conn_01x05                    JST_XH_B5B-XH-AM_1x05_P2.50mm_Vertical                     154.4250   -61.5050    0.0000  top
+J5        Conn_01x06                    JST_XH_B5B-XH-AM_1x05_P2.50mm_Vertical                     171.6000   -85.9800   90.0000  top
+J6        Conn_01x05                    JST_XH_B5B-XH-AM_1x05_P2.50mm_Vertical                     119.7500   -61.4800    0.0000  top
+J7        Conn_01x05                    JST_XH_B5B-XH-AM_1x05_P2.50mm_Vertical                     136.8500   -61.4300    0.0000  top
+J9        Conn_01x03                    PhoenixContact_MSTBVA_2,5_4-G-5,08_1x04_P5.08mm_Vertical   107.3100  -122.0800   90.0000  top
+J11       Conn_02x05_Top_Bottom         PinHeader_2x06_P2.54mm_Vertical                            104.0500   -42.9750    0.0000  top
+J13       Conn_01x06                    JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical                     170.7900   -61.5300    0.0000  top
+J14       Conn_02x04_Counter_Clockwise  PinHeader_2x04_P2.54mm_Vertical                            124.0000   -98.1000  -90.0000  top
+L1        2.2uH/4A                      L_1210_3225Metric                                          113.7500  -119.3000  -90.0000  top
+Q1        2N7000                        SOT-23                                                     144.5025   -69.1700  -90.0000  top
+Q2        2N7000                        SOT-23                                                     170.1500   -70.3425  180.0000  top
+Q3        2N7000                        SOT-23                                                     141.0700   -68.9875   90.0000  top
+R1        4.7k                          R_1206_3216Metric                                          165.0500   -92.5250    0.0000  top
+R2        4.7k                          R_1206_3216Metric                                          165.0000   -90.1250    0.0000  top
+R3        1k                            R_1206_3216Metric                                          110.8775   -45.7500    0.0000  top
+R4        1k                            R_1206_3216Metric                                          109.9500   -49.2625   90.0000  top
+R10       0.033R/2W                     R_2512_6332Metric                                          119.2250  -118.0250  -90.0000  top
+R11       100r                          R_1206_3216Metric                                          117.4750  -124.6625  -90.0000  top
+R12       100r                          R_1206_3216Metric                                          121.1750  -124.7500   90.0000  top
+R15       100r                          R_1206_3216Metric                                          129.0500  -126.2500  180.0000  top
+R16       3.57k                         R_1206_3216Metric                                          132.9250  -121.2000  -90.0000  top
+R17       1.5K                          R_1206_3216Metric                                          133.1000  -131.8250  -90.0000  top
+R20       1k                            R_1206_3216Metric                                          169.8100   -66.6900  180.0000  top
+R21       1k                            R_1206_3216Metric                                          164.6225   -72.0700  180.0000  top
+R22       4.7k                          R_1206_3216Metric                                          114.8750   -49.2750   90.0000  top
+R23       4.7k                          R_1206_3216Metric                                          112.5500   -49.2875   90.0000  top
+U1        ~                             zed-f9p                                                    134.3850   -96.3350    0.0000  top
+U2        ~                             bno055                                                     134.2350   -74.9600    0.0000  top
+U4        INA238AIDGSR                  SOP50P490X110-10N                                          119.7500  -133.1250   90.0000  top
+U8        DS3231MZ                      SOIC-8_3.9x4.9mm_P1.27mm                                   112.3750   -54.8650    0.0000  top
+logo1     LOGO                          logo_cidco                                                 151.1100  -116.5200    0.0000  top
+## End

@@ -1,0 +1,8 @@
+### Footprint positions - created on 2025-02-12T13:56:36-0500 ###
+### Printed by KiCad version 8.0.6
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val                     Package                                     PosX       PosY       Rot  Side
+D1        LED_ABGR                LED_D5.0mm-4_RGB                         98.3386   -99.9549    0.0000  top
+J2        Conn_01x04_MountingPin  TE_84952-4_1x04-1MP_P1.0mm_Horizontal   100.0500   -85.5400  180.0000  top
+## End

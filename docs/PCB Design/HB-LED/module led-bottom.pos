@@ -1,0 +1,7 @@
+### Footprint positions - created on 2025-02-12T13:56:36-0500 ###
+### Printed by KiCad version 8.0.6
+## Unit = mm, Angle = deg.
+## Side : bottom
+# Ref     Val       Package                PosX       PosY       Rot  Side
+logo1     LOGO      logo_cidco         101.0000   -89.5000  -90.0000  bottom
+## End

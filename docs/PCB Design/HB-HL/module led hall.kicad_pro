@@ -58,7 +58,18 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "silk_edge_clearance|105701850|80830000|02c03bb3-a817-40d8-8726-5ab928427947|5a701b5b-62c2-4691-95b0-a261ef0e1a87",
+        "silk_edge_clearance|106120000|80959370|02c03bb3-a817-40d8-8726-5ab928427947|66c2f0e6-c7c2-40fe-81d8-528b70c75828",
+        "silk_edge_clearance|118237212|91790000|02c03bb3-a817-40d8-8726-5ab928427947|55edab1b-66b9-49c9-ace5-16f2aeed60cd",
+        "silk_edge_clearance|118624068|107290000|02c03bb3-a817-40d8-8726-5ab928427947|5e400bc1-5fc2-4bc4-b237-b1335c312d16",
+        "silk_edge_clearance|118768375|93090000|02c03bb3-a817-40d8-8726-5ab928427947|6687f7e6-fab9-4041-81e6-f8df9479b4ec",
+        "silk_edge_clearance|119020000|93816183|02c03bb3-a817-40d8-8726-5ab928427947|842f17b5-a030-419a-abbd-d610cb1f3184",
+        "silk_edge_clearance|119076347|106007745|02c03bb3-a817-40d8-8726-5ab928427947|0dd97233-541e-431a-afde-55bc6138e906",
+        "silk_edge_clearance|93980000|80927517|02c03bb3-a817-40d8-8726-5ab928427947|57c11d7a-6325-431d-b1a2-d9b13ef18a68",
+        "unconnected_items|95560000|84540000|259d2583-cd6e-472f-bc1d-f799d2f3990f|b3334701-8c0e-43f6-b58d-0b11ec4cb3a6",
+        "via_dangling|100000000|100000000|25747776-b8df-44e0-ba9e-621e3e6ff49d|00000000-0000-0000-0000-000000000000"
+      ],
       "meta": {
         "version": 2
       },
@@ -454,7 +465,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "module led et hall.kicad_pro",
+    "filename": "module led hall.kicad_pro",
     "version": 1
   },
   "net_settings": {

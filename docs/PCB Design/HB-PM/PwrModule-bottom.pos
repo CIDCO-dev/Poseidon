@@ -1,0 +1,27 @@
+### Footprint positions - created on 2025-02-12T14:43:57-0500 ###
+### Printed by KiCad version 8.0.6
+## Unit = mm, Angle = deg.
+## Side : bottom
+# Ref     Val             Package                          PosX       PosY       Rot  Side
+C1        1uf             C_1206_3216Metric            106.2550   -78.3300  180.0000  bottom
+C2        0.1uf           C_1206_3216Metric            106.2550   -81.6800  180.0000  bottom
+F1        Fuse            Fuse_1206_3216Metric         113.8200   -88.7600  180.0000  bottom
+FID1      Fiducial        Fiducial_0.75mm_Mask2.25mm   124.0000   -83.0000  180.0000  bottom
+FID3      Fiducial        Fiducial_0.75mm_Mask2.25mm   116.0000   -58.0000  180.0000  bottom
+FID5      Fiducial        Fiducial_0.75mm_Mask2.25mm   111.2000   -82.2000  180.0000  bottom
+Q1        2N7002          SOT-23                       104.6700   -84.6075  180.0000  bottom
+Q2        DMP3010LK3Q-13  TO-252-2                     117.4300   -80.7500   90.0000  bottom
+Q3        2N7002          SOT-23                       110.8525   -43.3800  180.0000  bottom
+Q4        2N7002          SOT-23                       111.7200   -48.8825  -90.0000  bottom
+Q5        2N7002          SOT-23                       111.4100   -56.6525  -90.0000  bottom
+Q6        2N7002          SOT-23                       104.8000   -61.3625  -90.0000  bottom
+R1        1k              R_1206_3216Metric            109.3175   -85.1700    0.0000  bottom
+R2        1k              R_1206_3216Metric            123.9900   -89.0500   90.0000  bottom
+R3        1k              R_1206_3216Metric            118.5375   -66.0000  180.0000  bottom
+R4        1k              R_1206_3216Metric            117.0825   -49.9200    0.0000  bottom
+R5        1k              R_1206_3216Metric            111.7925   -52.4500  180.0000  bottom
+R6        1k              R_1206_3216Metric            117.0675   -53.6900    0.0000  bottom
+R7        1k              R_1206_3216Metric            106.3000   -64.8000    0.0000  bottom
+R8        4.7k            R_1206_3216Metric            111.2300   -78.1375  -90.0000  bottom
+U1        ATtiny424-SS    SOIC-14_3.9x8.7mm_P1.27mm    107.3250   -71.2400    0.0000  bottom
+## End

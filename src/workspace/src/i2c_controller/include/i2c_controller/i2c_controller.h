@@ -4,7 +4,7 @@
 #include "logger_service/GetLoggingStatus.h"
 #include "HIH8130.h"
 #include "INA238.h"
-#include "PCA9533.h"
+#include "LED_Ctrl.h"
 
 
 class I2cController {
@@ -15,7 +15,7 @@ private:
 	
 	HIH8130 weather_sensor;
 	INA238 power_sensor;
-	PCA9533 led_controller;
+	LED_Ctrl led_controller;
 	
 	ros::Timer ledWarningTimer;
 	ros::Timer ledErrorTimer;

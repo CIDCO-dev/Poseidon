@@ -1,0 +1,8 @@
+"Id";"Référence";"Empreinte";"Quantité";"Désignation";"Fournisseur et réf";
+1;"J1";"IDC-Header_2x03_P2.54mm_Vertical";1;"Conn_02x03_Top_Bottom";;;
+2;"J2";"TE_84952-4_1x04-1MP_P1.0mm_Horizontal";1;"Conn_01x04_MountingPin";;;
+3;"R3,R4";"R_1206_3216Metric";2;"80R";;;
+4;"C1";"C_1206_3216Metric";1;"10pf";;;
+5;"R2";"R_1206_3216Metric";1;"150R";;;
+6;"U2";"SOT-23W";1;"A3213LLHLT-T";;;
+7;"C2";"C_1206_3216Metric";1;"0.1uf";;;

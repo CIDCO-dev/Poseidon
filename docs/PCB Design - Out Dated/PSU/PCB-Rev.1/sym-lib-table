@@ -1,4 +1,0 @@
-(sym_lib_table
-  (lib (name psu-pcb-cache)(type Legacy)(uri ${KIPRJMOD}/psu-pcb-cache.lib)(options "")(descr ""))
-  (lib (name psu-pcb-rescue)(type Legacy)(uri ${KIPRJMOD}/psu-pcb-rescue.lib)(options "")(descr ""))
-)

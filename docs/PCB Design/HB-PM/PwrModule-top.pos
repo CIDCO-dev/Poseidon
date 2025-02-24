@@ -1,0 +1,13 @@
+### Footprint positions - created on 2025-02-12T14:43:57-0500 ###
+### Printed by KiCad version 8.0.6
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val                           Package                                PosX       PosY       Rot  Side
+FID2      Fiducial                      Fiducial_0.75mm_Mask2.25mm         124.0000   -83.0000    0.0000  top
+FID4      Fiducial                      Fiducial_0.75mm_Mask2.25mm         116.0000   -58.0000    0.0000  top
+FID6      Fiducial                      Fiducial_0.75mm_Mask2.25mm         111.2000   -82.2000    0.0000  top
+J1        Conn_02x03_Top_Bottom         IDC-Header_2x03_P2.54mm_Vertical   107.5000   -97.0000  180.0000  top
+J11       Conn_02x05_Top_Bottom         PinHeader_2x06_P2.54mm_Vertical    104.0500   -42.9750    0.0000  top
+J14       Conn_02x04_Counter_Clockwise  PinHeader_2x04_P2.54mm_Vertical    124.0000   -98.1000  -90.0000  top
+logo1     LOGO                          logo_cidco                         110.7000   -66.2700    0.0000  top
+## End

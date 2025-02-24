@@ -4,7 +4,7 @@ apiServer localhost
 apiUrlPath /
 geofence MULTIPOLYGON(((-180 -90, -180 90, 180 90, 180 -90, -180 -90)))
 headingOffset 0
-hotspotSSID default
+hotspotSSID HydroB
 logRotationIntervalSeconds 3600
 loggingMode 2
 pitchOffset 0

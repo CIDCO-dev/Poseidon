@@ -1,0 +1,8 @@
+### Footprint positions - created on 2025-02-12T14:18:38-0500 ###
+### Printed by KiCad version 8.0.6
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val                     Package                                     PosX       PosY       Rot  Side
+J1        Conn_02x03_Top_Bottom   IDC-Header_2x03_P2.54mm_Vertical        114.5000   -97.0000    0.0000  top
+J2        Conn_01x04_MountingPin  TE_84952-4_1x04-1MP_P1.0mm_Horizontal   100.0500   -85.5400  180.0000  top
+## End

@@ -254,6 +254,9 @@ public:
 			rapidjson::Value temp((int) state.vitals.temperature);
 			rapidjson::Value voltage(state.vitals.voltage);
 			rapidjson::Value humidity((int) state.vitals.humidity);
+			rapidjson::Value ledstate( state.vitals.ledstate);
+			rapidjson::Value status;
+			status.SetString(state.vitals.status.c_str(), telemetry.GetAllocator());
 
 			vitalsArray.PushBack(cputemp, telemetry.GetAllocator()); //0
 			vitalsArray.PushBack(cpuload, telemetry.GetAllocator());
@@ -263,7 +266,10 @@ public:
 			vitalsArray.PushBack(temp, telemetry.GetAllocator()); //5
 			vitalsArray.PushBack(voltage, telemetry.GetAllocator());//6
 			vitalsArray.PushBack(humidity, telemetry.GetAllocator());//7
+			vitalsArray.PushBack(ledstate, telemetry.GetAllocator());
+
 			telemetry.AddMember("vitals", vitalsArray, telemetry.GetAllocator());
+			telemetry.AddMember("status", status, telemetry.GetAllocator());
 		}
 
 		document.AddMember("telemetry", telemetry, document.GetAllocator());

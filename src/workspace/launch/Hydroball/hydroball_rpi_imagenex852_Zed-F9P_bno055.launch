@@ -41,6 +41,8 @@
 <!--<node pkg="sonar_imagenex852" type="main.py" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>-->
 <node pkg="sonar_imagenex852_c" type="sonar_imagenex852_c_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
 
+<node pkg="power_control" type="main.py" name="Pwr_Ctrl" output="screen" respawn="true" respawn_delay="1"/>
+
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
 
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>

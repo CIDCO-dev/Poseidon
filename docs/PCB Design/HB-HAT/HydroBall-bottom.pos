@@ -1,0 +1,14 @@
+### Footprint positions - created on 2025-02-12T15:18:41-0500 ###
+### Printed by KiCad version 8.0.6
+## Unit = mm, Angle = deg.
+## Side : bottom
+# Ref     Val               Package                               PosX       PosY       Rot  Side
+C5        330uf/50v         CP_Radial_D10.0mm_P5.00mm         127.7300  -110.2700   90.0000  bottom
+C9        330uf/50v         CP_Radial_D10.0mm_P5.00mm         116.9700  -110.5200   90.0000  bottom
+FID4      Fiducial          Fiducial_0.75mm_Mask2.25mm        170.1000   -92.3750  180.0000  bottom
+FID5      Fiducial          Fiducial_0.75mm_Mask2.25mm        103.9100   -60.8400  180.0000  bottom
+FID6      Fiducial          Fiducial_0.75mm_Mask2.25mm        108.6250  -140.9750  180.0000  bottom
+J8        Raspberry_Pi_2_3  PinSocket_2x20_P2.54mm_Vertical   121.2000   -44.7500  -90.0000  bottom
+PS1       PDQE20-Q24-S5-D   CONV_PDQE20-Q24-S5-D              122.8550  -126.2750    0.0000  bottom
+logo1     LOGO              logo_cidco                        155.9669  -116.4949  180.0000  bottom
+## End

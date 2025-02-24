@@ -7,3 +7,5 @@ float64 uptime
 float64 humidity
 float64 temperature
 float64 voltage
+int8  ledstate
+string status

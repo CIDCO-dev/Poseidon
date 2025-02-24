@@ -1,1 +1,0 @@
-Docs/user_manual

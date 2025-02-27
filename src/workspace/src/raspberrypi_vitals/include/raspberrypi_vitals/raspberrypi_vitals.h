@@ -168,6 +168,13 @@ class HBV {
 					msg.voltage = srv.response.value;
 				}
 
+				if (debug_mode) ROS_WARN("RPI_Vitals: call led state");
+				srv.request.action2perform = "get_led_state";
+				if (!i2c_ctrl_service_client.call(srv)) {
+				} else {
+					msg.ledstate = srv.response.value;
+				}
+
 				std::pair<bool, std::string> criticalResult = isCritical(msg);
 				std::pair<bool, std::string> warningResult = isWarning(msg);
 
@@ -182,7 +189,10 @@ class HBV {
 					if (!i2c_ctrl_service_client.call(srv)) {
 					}
 					msg.status = warningResult.second;
+				} else {
+					msg.status = "Normal";
 				}
+
 
 				HBVTopic.publish(msg);
 				ros::spinOnce();

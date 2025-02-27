@@ -31,7 +31,7 @@ int main(void)
     SYSTEM_Initialize();
     Led_SetLow();   
     Pwr_off_SetLow();
-    Pwr_ctl_SetLow();         
+    Pwr_ctl_SetHigh();         
              
 
     //DELAY_milliseconds(10000);
@@ -78,7 +78,7 @@ int main(void)
                 // Si Pwr_ctl est déjà 1, on appelle Pwr_off_SetHigh()
                 if (sign_release)
                 {
-                    Pwr_off_SetHigh();
+                    Pwr_off_SetLow();
                     
                    
                     sign_release = 0;
@@ -87,7 +87,7 @@ int main(void)
                 else 
                 {
                 // Entre 1 et 10 secondes
-                Pwr_ctl_SetHigh();
+                Pwr_ctl_SetLow();
                 
                 sign_release = 0;
                 
@@ -97,7 +97,7 @@ int main(void)
             {
                 // Plus de 10 secondes => on remet Pwr_ctl et Pwr_off à Low
                 Pwr_off_SetLow();
-                Pwr_ctl_SetLow();
+                Pwr_ctl_SetHigh();
                 //Led_SetLow(); 
                 // (À adapter selon votre besoin)
             }
@@ -118,7 +118,7 @@ int main(void)
                     Led_SetLow();
                 }
                 
-            if (Pwr_ctl_val)
+            if (!(Pwr_ctl_val))
                 {
                     uint32_t now3 = pwr_timeout();
                     // 1) Première fois que l?on détecte l?appui => on démarre la fenêtre de shutdown
@@ -142,7 +142,7 @@ int main(void)
                     if ((now3 - g_shutdownTimerStart) >= 35000UL)
                     {
                         // Alors on coupe réellement l?alim :
-                        Pwr_ctl_SetLow();
+                        Pwr_ctl_SetHigh();
                         Pwr_off_SetLow();
                         sign_release = 0;
                         g_isShuttingDown = false;  // On sort de la phase d?arrêt (car alim coupée)
@@ -151,7 +151,7 @@ int main(void)
                 }
             }         
             //séquence de démmarage
-            else if ((Pwr_ctl_val) && (Pwr_mon_val))
+            else if ((!(Pwr_ctl_val)) && (Pwr_mon_val))
             {
                 // Dans ce bloc, on considère qu'on est en phase d'arrêt ou de préparation à l'arrêt.
                 // Ex: Clignotement LED (ici 1 Hz, juste en exemple)
@@ -167,7 +167,7 @@ int main(void)
                 
             }
 
-            else if ((Pwr_ctl_val) && (!Pwr_mon_val))
+            else if ((!(Pwr_ctl_val)) && (!Pwr_mon_val))
             {
                 sign_release = 1;
                 Led_SetLow();

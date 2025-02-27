@@ -58,7 +58,7 @@ void PIN_MANAGER_Initialize()
   /* PINxCTRL registers Initialization */
     PORTA.PIN0CTRL = 0x0;
     PORTA.PIN1CTRL = 0x0;
-    PORTA.PIN2CTRL = 0x80;
+    PORTA.PIN2CTRL = 0x0;
     PORTA.PIN3CTRL = 0x80;
     PORTA.PIN4CTRL = 0x80;
     PORTA.PIN5CTRL = 0x0;

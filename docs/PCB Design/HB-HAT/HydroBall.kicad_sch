@@ -11909,7 +11909,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "330uf/50v"
+		(property "Value" "47uf/50v"
 			(at 33.02 135.89 90)
 			(effects
 				(font
@@ -13884,7 +13884,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "4.7uf/50v"
+		(property "Value" "10uf/50v"
 			(at 27.94 135.89 90)
 			(effects
 				(font
@@ -14736,7 +14736,7 @@
 				)
 			)
 		)
-		(property "Value" "1nf/2kv"
+		(property "Value" "4.7nf/2kv"
 			(at 53.34 100.33 90)
 			(effects
 				(font
@@ -16224,7 +16224,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100uf/16v"
+		(property "Value" "DNP"
 			(at 82.55 121.92 90)
 			(effects
 				(font
@@ -16352,15 +16352,15 @@
 		(fields_autoplaced yes)
 		(uuid "95844f4b-9c2c-4d31-ac24-ea819a974830")
 		(property "Reference" "PS1"
-			(at 52.07 105.41 0)
+			(at 52.07 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "PDQE20-Q24-S5-D"
-			(at 52.07 107.95 0)
+		(property "Value" "REC20K-2405SZ"
+			(at 52.07 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16539,15 +16539,15 @@
 		(fields_autoplaced yes)
 		(uuid "9c4a23c7-71ac-4264-88a4-3d82d9b445a3")
 		(property "Reference" "L1"
-			(at 24.13 106.68 90)
+			(at 24.13 105.41 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "2.2uH/4A"
-			(at 24.13 109.22 90)
+		(property "Value" "22uH/4A"
+			(at 24.13 107.95 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17261,7 +17261,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3.57k"
+		(property "Value" "DNP"
 			(at 80.01 128.27 0)
 			(effects
 				(font
@@ -17813,7 +17813,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "330uf/50v"
+		(property "Value" "150uf/50v"
 			(at 20.32 135.89 90)
 			(effects
 				(font
@@ -18143,7 +18143,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1.5K"
+		(property "Value" "169K"
 			(at 80.01 138.43 0)
 			(effects
 				(font
@@ -18212,7 +18212,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "4.7uf/50v"
+		(property "Value" "DNP"
 			(at 24.13 135.89 90)
 			(effects
 				(font
@@ -19584,7 +19584,7 @@
 				)
 			)
 		)
-		(property "Value" "100r"
+		(property "Value" "0R"
 			(at 78.74 133.35 90)
 			(effects
 				(font

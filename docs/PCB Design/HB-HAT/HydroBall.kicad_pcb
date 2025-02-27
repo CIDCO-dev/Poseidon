@@ -2087,7 +2087,7 @@
 				)
 			)
 		)
-		(property "Value" "100r"
+		(property "Value" "0R"
 			(at 0 1.82 0)
 			(layer "F.Fab")
 			(uuid "b355a3fe-ce92-426c-9a76-481178cc26cb")
@@ -3080,7 +3080,7 @@
 				)
 			)
 		)
-		(property "Value" "1nf/2kv"
+		(property "Value" "4.7nf/2kv"
 			(at 0 1.85 -90)
 			(layer "F.Fab")
 			(uuid "b4039d37-ce1a-4514-b1f1-b83d5e4b75ab")
@@ -3290,7 +3290,7 @@
 				)
 			)
 		)
-		(property "Value" "100uf/16v"
+		(property "Value" "DNP"
 			(at 0 4.35 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -3732,7 +3732,7 @@
 				)
 			)
 		)
-		(property "Value" "4.7uf/50v"
+		(property "Value" "DNP"
 			(at -9.875 -8.975 90)
 			(layer "F.Fab")
 			(uuid "aa7f4600-bb26-48ae-856f-fa7ee6e56a4c")
@@ -6929,7 +6929,7 @@
 				)
 			)
 		)
-		(property "Value" "3.57k"
+		(property "Value" "DNP"
 			(at 0 1.82 90)
 			(layer "F.Fab")
 			(uuid "041c5ad4-0cad-446f-b4ab-361e7b1d64b7")
@@ -10794,7 +10794,7 @@
 				)
 			)
 		)
-		(property "Value" "4.7uf/50v"
+		(property "Value" "10uf/50v"
 			(at 0 1.85 90)
 			(layer "F.Fab")
 			(uuid "c9b75c73-c7b3-4116-8c43-d128df4be663")
@@ -12057,7 +12057,7 @@
 				)
 			)
 		)
-		(property "Value" "2.2uH/4A"
+		(property "Value" "22uH/4A"
 			(at 0 2.28 90)
 			(layer "F.Fab")
 			(uuid "06884eb6-6e58-4b8a-b0c1-4d09dae233a0")
@@ -12912,7 +12912,7 @@
 				)
 			)
 		)
-		(property "Value" "1.5K"
+		(property "Value" "169K"
 			(at 0 1.82 90)
 			(layer "F.Fab")
 			(uuid "39c4352e-b74e-4f13-9a97-587b7a97c260")
@@ -15932,7 +15932,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "330uf/50v"
+		(property "Value" "150uf/50v"
 			(at 2.5 -6.25 90)
 			(layer "B.Fab")
 			(uuid "5706eb90-0804-4cf9-b021-b96c2bc3282c")
@@ -18431,7 +18431,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "PDQE20-Q24-S5-D"
+		(property "Value" "REC20K-2405SZ"
 			(at 0.635 -13.97 0)
 			(layer "B.Fab")
 			(uuid "0e4d66cb-99be-4029-82db-fe7c0348760f")
@@ -19583,7 +19583,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "330uf/50v"
+		(property "Value" "47uf/50v"
 			(at 2.5 -6.25 90)
 			(layer "B.Fab")
 			(uuid "72b53a59-0598-458c-b09e-99564785818d")

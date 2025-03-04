@@ -31,7 +31,7 @@ class HBV {
 		float upt;
 		double batteryVoltage = 0.0;
 		bool debug_mode = false; // Set to 'false' to disable debug warnings
-		bool debug_mode_warning_critical = true; // Set to 'false' to disable debug warnings
+		bool debug_mode_warning_critical = false; // Set to 'false' to disable debug warnings
 		
 		float readFloatFromFile(const string& filepath) {
 			ifstream file(filepath);
@@ -206,25 +206,25 @@ class HBV {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [CRITICAL] Hard Disk Full detected (free HDD: %.2f%%)", msg.freehdd);
 				}
-				return std::make_pair(true, "Hard Disk Full");
+				return std::make_pair(true, "[CRITICAL] Hard Disk Full detected (free HDD: %.2f%%)", msg.freehdd);
 			}
 			else if (msg.voltage <= 11.3 && msg.voltage > 0.0) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [CRITICAL] Battery Under Voltage detected (voltage: %.2fV)", msg.voltage);
 				}
-				return std::make_pair(true, "Battery Under Voltage");
+				return std::make_pair(true, "[CRITICAL] Battery Under Voltage detected (voltage: %.2fV)", msg.voltage);
 			}
 			else if (msg.voltage >= 13.8) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [CRITICAL] Battery Overvoltage detected (voltage: %.2fV)", msg.voltage);
 				}
-				return std::make_pair(true, "Battery Overvoltage");
+				return std::make_pair(true, "[CRITICAL] Battery Overvoltage detected (voltage: %.2fV)", msg.voltage);
 			}
 			else if (msg.cputemp >= 80.0) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [CRITICAL] CPU Over Temperature detected (CPU Temp: %.2f°C)", msg.cputemp);
 				}
-				return std::make_pair(true, "CPU Over Temperature");
+				return std::make_pair(true, "[CRITICAL] CPU Over Temperature detected (CPU Temp: %.2f°C)", msg.cputemp);
 			}
 			else {
 				return std::make_pair(false, "Normal");
@@ -236,19 +236,19 @@ class HBV {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [WARNING] Battery Low Voltage detected (voltage: %.2fV)", msg.voltage);
 				}
-				return std::make_pair(true, "Battery Low Voltage");
+				return std::make_pair(true, "[WARNING] Battery Low Voltage detected (voltage: %.2fV)", msg.voltage);
 			}
 			else if (msg.freehdd < 20.0 && msg.freehdd > 0.0) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [WARNING] Low Hard Disk Space detected (free HDD: %.2f%%)", msg.freehdd);
 				}
-				return std::make_pair(true, "Low Hard Disk Space");
+				return std::make_pair(true, "[WARNING] Low Hard Disk Space detected (free HDD: %.2f%%)", msg.freehdd);
 			}
 			else if (msg.cputemp >= 75.0) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [WARNING] High CPU Temperature detected (CPU Temp: %.2f°C)", msg.cputemp);
 				}
-				return std::make_pair(true, "High CPU Temperature");
+				return std::make_pair(true, "[WARNING] High CPU Temperature detected (CPU Temp: %.2f°C)", msg.cputemp);
 			}
 			else {
 				return std::make_pair(false, "Normal");

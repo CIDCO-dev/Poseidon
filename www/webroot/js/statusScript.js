@@ -68,14 +68,30 @@ function processState(state) {
 	
 	// Humidity
 	if (state.telemetry.vitals[7] === -555) {
-        $("#humidity").parent().hide();
+		$("#humidity").parent().hide();
 		$("#humidityText").parent().hide();
-    } else {
-	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[7] < 60 ? "bg-gradient-success" : "bg-gradient-warning"))
-													.addClass((state.telemetry.vitals[7] < 60 ? "bg-gradient-warning" : "bg-gradient-success"));
-
-	$("#humidityText").text(state.telemetry.vitals[7] + "%");
-	$("#humidity").width(state.telemetry.vitals[7] + "%");
+	} else {
+		
+		$("#humidity").parent().show();
+		$("#humidityText").parent().show();
+	
+		var humidity = state.telemetry.vitals[7];
+		$("#humidityText").text(humidity + "%");
+		$("#humidity").width(humidity + "%");
+	
+		
+		$("#humidity").removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
+	
+		if (humidity < 40) {
+			// Vert de 0 à 40%
+			$("#humidity").addClass("bg-gradient-success");
+		} else if (humidity >= 40 && humidity <= 60) {
+			// Jaune de 40 à 60%
+			$("#humidity").addClass("bg-gradient-warning");
+		} else {
+			// Rouge pour plus de 60%
+			$("#humidity").addClass("bg-gradient-danger");
+		}
 	}
 	// Temperature
 	if (state.telemetry.vitals[5] === -555) {

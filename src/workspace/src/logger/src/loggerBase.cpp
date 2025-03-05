@@ -56,11 +56,15 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 	}
 	
 	i2c_controller_service::i2c_controller_service srv;
+ 
 	srv.request.action2perform = "led_nofix";
 	if(!i2cControllerServiceClient.call(srv)){
 		ROS_ERROR("LoggerBase::LoggerBase i2cController service call failed");
 	}
-	
+	//srv.request.action2perform = "led_ready";
+	//if(!i2cControllerServiceClient.call(srv)){
+	//	ROS_ERROR("LoggerBase::LoggerBase i2cController service call failed");
+	//}
 	ROS_INFO("logger initialization finished");
 }
 

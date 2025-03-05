@@ -71,8 +71,8 @@ function processState(state) {
         $("#humidity").parent().hide();
 		$("#humidityText").parent().hide();
     } else {
-	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-success" : "bg-gradient-warning"))
-													.addClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-warning" : "bg-gradient-success"));
+	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[7] < 60 ? "bg-gradient-success" : "bg-gradient-warning"))
+													.addClass((state.telemetry.vitals[7] < 60 ? "bg-gradient-warning" : "bg-gradient-success"));
 
 	$("#humidityText").text(state.telemetry.vitals[7] + "%");
 	$("#humidity").width(state.telemetry.vitals[7] + "%");

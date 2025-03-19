@@ -123,13 +123,13 @@ function processState(state) {
 	if (voltage <= 11.7) {
 		voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
 		$("#battery").width(((voltage)/16) * 100 + "%");
-	} else if (voltage >= 11.9 && voltage < 13.0) {
+	} else if (voltage >= 11.9 && voltage < 13.5) {
 			voltageElement.addClass("bg-gradient-success").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");
 	} else if (voltage >= 11.7 && voltage < 11.9) {
 			voltageElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
 			$("#battery").width(voltage * 4 + "%");
-	} else if (voltage >= 13.0 && voltage < 15.4) {
+	} else if (voltage >= 13.5 && voltage < 15.4) {
 			voltageElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
 			$("#battery").width(voltage * 4 + "%");
 	} else if (voltage >= 15.4) {

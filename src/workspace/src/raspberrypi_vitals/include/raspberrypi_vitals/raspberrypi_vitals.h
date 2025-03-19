@@ -210,14 +210,14 @@ class HBV {
 				sprintf(buffer, "[CRITICAL] Hard Disk Full detected (free HDD: %.2f%%)", msg.freehdd);
 				return std::make_pair(true, std::string(buffer));
 			}
-			else if (msg.voltage <= 11.3 && msg.voltage > 0.0) {
+			else if (msg.voltage <= 11.7 && msg.voltage > 0.0) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [CRITICAL] Battery Under Voltage detected (voltage: %.2fV)", msg.voltage);
 				}
 				sprintf(buffer, "[CRITICAL] Battery Under Voltage detected (voltage: %.2fV)", msg.voltage);
 				return std::make_pair(true, std::string(buffer));
 			}
-			else if (msg.voltage >= 13.8) {
+			else if (msg.voltage >= 15.4) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [CRITICAL] Battery Overvoltage detected (voltage: %.2fV)", msg.voltage);
 				}
@@ -238,7 +238,14 @@ class HBV {
 		
 		std::pair<bool, std::string> isWarning(raspberrypi_vitals_msg::sysinfo &msg) {
 			char buffer[256];
-			if (msg.voltage <= 11.9 && msg.voltage > 0.0) {
+			if (msg.voltage <= 15.4 && msg.voltage > 13.0) {
+				if (debug_mode_warning_critical) {
+					ROS_WARN("RPI_Vitals: [INFO] Battery is charging... (voltage: %.2fV)", msg.voltage);
+				}
+				sprintf(buffer, "[INFO]  Battery is charging... (voltage: %.2fV)", msg.voltage);
+				return std::make_pair(true, std::string(buffer));
+			}
+			else if (msg.voltage <= 11.9 && msg.voltage > 0.0) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [WARNING] Battery Low Voltage detected (voltage: %.2fV)", msg.voltage);
 				}

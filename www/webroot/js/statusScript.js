@@ -122,7 +122,7 @@ function processState(state) {
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
 	if (voltage <= 11.7) {
 		voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
-		$("#battery").width(voltage * 4 + "%");
+		$("#battery").width(((voltage)/16) * 100 + "%");
 	} else if (voltage >= 11.9 && voltage < 13.0) {
 			voltageElement.addClass("bg-gradient-success").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");

@@ -238,7 +238,7 @@ class HBV {
 		
 		std::pair<bool, std::string> isWarning(raspberrypi_vitals_msg::sysinfo &msg) {
 			char buffer[256];
-			if (msg.voltage <= 15.4 && msg.voltage > 13.0) {
+			if (msg.voltage <= 15.4 && msg.voltage > 13.5) {
 				if (debug_mode_warning_critical) {
 					ROS_WARN("RPI_Vitals: [INFO] Battery is charging... (voltage: %.2fV)", msg.voltage);
 				}

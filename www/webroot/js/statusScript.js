@@ -120,19 +120,22 @@ function processState(state) {
 	var voltageElement = $("#battery");
 	var voltage = state.telemetry.vitals[6];
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
-	if (voltage <= 11.0) {
+	if (voltage <= 11.7) {
 		voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
 		$("#battery").width(voltage * 4 + "%");
-		} else if (voltage >= 11.9 && voltage < 13.8) {
+	} else if (voltage >= 11.9 && voltage < 13.0) {
 			voltageElement.addClass("bg-gradient-success").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");
-		} else if (voltage > 11.0 && voltage < 11.9) {
+	} else if (voltage >= 11.7 && voltage < 11.9) {
 			voltageElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
 			$("#battery").width(voltage * 4 + "%");
-		} else if (voltage > 13.0) {
+	} else if (voltage >= 13.0 && voltage < 15.4) {
+			voltageElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
+			$("#battery").width(voltage * 4 + "%");
+	} else if (voltage >= 15.4) {
 			voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");
-		}
+	}
 	$("#batteryText").text(state.telemetry.vitals[6] + "V");
 	}
 }

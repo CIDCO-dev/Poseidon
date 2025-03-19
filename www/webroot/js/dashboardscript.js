@@ -255,7 +255,13 @@ else if(state.vitals[8] == 4){//NoFix
 else if(state.vitals[8] == 3){//Warning
   $("#systemStatus").addClass("d-block").removeClass("d-none").removeClass("bg-gradient-danger").addClass("bg-gradient-warning");
   $("#systemStatusText").text(state.status);
-  $("#systemStatusTitle").text("Warning:");
+  let match = state.status.match(/\[(.*?)\]/);
+  let titleText = "Warning:";
+  let extractedText = match[1];
+  if (extractedText === "INFO") {
+    titleText = "Info:";
+  }
+  $("#systemStatusTitle").text(titleText);
 }
 else{
   $("#systemStatus").removeClass("d-block").addClass("d-none").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");

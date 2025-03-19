@@ -7445,6 +7445,12 @@
 		(uuid "31f4e933-330d-41af-949e-3e7b3e678fbb")
 	)
 	(junction
+		(at 152.4 158.75)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "36c54ff8-d8b6-4a8b-b2f6-a7ef7626fc59")
+	)
+	(junction
 		(at 50.8 74.93)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7619,12 +7625,6 @@
 		(uuid "96e3b7b5-11e9-46a9-9a1e-768e2098daa5")
 	)
 	(junction
-		(at 152.4 158.75)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a27b450d-c783-4b31-be2a-ffb3d05a8a2d")
-	)
-	(junction
 		(at 92.71 86.36)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7685,12 +7685,6 @@
 		(uuid "bea2ce0d-611a-43cf-b65e-f930d19ca571")
 	)
 	(junction
-		(at 160.02 153.67)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c7357df0-4438-48c1-a2ab-16b1e14c010b")
-	)
-	(junction
 		(at 36.83 111.76)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7725,6 +7719,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e7d12052-376e-4597-bdc8-eec159b4a92c")
+	)
+	(junction
+		(at 160.02 153.67)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ea9ada74-1cf9-48ad-99ea-f719e922192c")
 	)
 	(junction
 		(at 57.15 191.77)
@@ -11909,7 +11909,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "330uf/50v"
+		(property "Value" "47uf/50v"
 			(at 33.02 135.89 90)
 			(effects
 				(font
@@ -12713,81 +12713,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_FET:2N7002")
-		(at 224.79 160.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "28f4c02e-0ae5-4bc9-8ab2-49f405a92149")
-		(property "Reference" "Q1"
-			(at 229.362 157.734 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2N7000"
-			(at 228.854 162.814 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 229.87 161.925 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
-			(at 229.87 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
-			(at 224.79 160.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "647a1633-57a4-4d33-aee6-03b9d13485af")
-		)
-		(pin "2"
-			(uuid "59442805-29ae-4022-ab6b-252fbadb3dbb")
-		)
-		(pin "3"
-			(uuid "b761f3cd-df1f-40cf-ae05-d523da7847a5")
-		)
-		(instances
-			(project "HydroBall"
-				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
-					(reference "Q1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Mechanical:Fiducial")
 		(at 21.59 149.86 0)
 		(unit 1)
@@ -13320,82 +13245,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_FET:2N7002")
-		(at 157.48 158.75 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "386c8cc6-403a-45ce-ae1a-203b39e81961")
-		(property "Reference" "Q2"
-			(at 163.83 157.4799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2N7000"
-			(at 163.83 160.0199 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 162.56 160.655 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
-			(at 162.56 162.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
-			(at 157.48 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "7d205055-233e-48f2-a5e6-4d424d7cf007")
-		)
-		(pin "2"
-			(uuid "e06e5c50-a9ae-4083-8de5-25f352c1d750")
-		)
-		(pin "3"
-			(uuid "005b53e4-64e1-4e01-ae27-6da42c3daccc")
-		)
-		(instances
-			(project "HydroBall"
-				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
-					(reference "Q2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector_Generic:Conn_01x05")
 		(at 162.56 35.56 90)
 		(unit 1)
@@ -13884,7 +13733,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "4.7uf/50v"
+		(property "Value" "10uf/50v"
 			(at 27.94 135.89 90)
 			(effects
 				(font
@@ -13996,6 +13845,82 @@
 			(project "HydroBall"
 				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
 					(reference "#PWR021")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:2N7002")
+		(at 247.65 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "525f4407-1600-4cbf-9cea-fae8cdb3e8da")
+		(property "Reference" "Q3"
+			(at 254 158.7499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2N7002"
+			(at 254 161.2899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 252.73 161.925 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
+			(at 252.73 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
+			(at 247.65 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "d40b71df-1182-4f9e-80e4-23dc90530165")
+		)
+		(pin "3"
+			(uuid "fabcdaed-8ab7-493e-b363-5d9c91e1b52e")
+		)
+		(pin "1"
+			(uuid "05ab75a2-77e5-49df-b214-bce9fb9875fc")
+		)
+		(instances
+			(project ""
+				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
+					(reference "Q3")
 					(unit 1)
 				)
 			)
@@ -14338,6 +14263,82 @@
 			(project "HydroBall"
 				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
 					(reference "C19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:2N7002")
+		(at 157.48 158.75 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5e71fe2f-0f0a-4197-ae14-dacb0a13d9aa")
+		(property "Reference" "Q1"
+			(at 163.83 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2N7002"
+			(at 163.83 160.0199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 162.56 160.655 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
+			(at 162.56 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
+			(at 157.48 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "2d284f4e-5d7d-4062-b45b-5061a2f785e2")
+		)
+		(pin "2"
+			(uuid "a42ba750-adf2-4d04-9139-038e6296a0a9")
+		)
+		(pin "1"
+			(uuid "a900b1e9-f82f-4b9c-a8ce-b01ceafd0636")
+		)
+		(instances
+			(project ""
+				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
+					(reference "Q1")
 					(unit 1)
 				)
 			)
@@ -14736,7 +14737,7 @@
 				)
 			)
 		)
-		(property "Value" "1nf/2kv"
+		(property "Value" "4.7nf/2kv"
 			(at 53.34 100.33 90)
 			(effects
 				(font
@@ -15792,81 +15793,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_FET:2N7002")
-		(at 247.65 160.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7d7d6987-d18f-4f8b-90e6-7ee4431bbffc")
-		(property "Reference" "Q3"
-			(at 251.968 157.988 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2N7000"
-			(at 251.714 162.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 252.73 161.925 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
-			(at 252.73 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
-			(at 247.65 160.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d6f3b05b-f9d4-403c-ac3b-4b3cef4cab5a")
-		)
-		(pin "2"
-			(uuid "3238a63a-f115-419f-8da5-763ff5b171dc")
-		)
-		(pin "3"
-			(uuid "8681269f-17dc-4314-aab3-057125de97b2")
-		)
-		(instances
-			(project "HydroBall"
-				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
-					(reference "Q3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector_Generic:Conn_01x05")
 		(at 92.71 121.92 180)
 		(unit 1)
@@ -16224,7 +16150,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100uf/16v"
+		(property "Value" "DNP"
 			(at 82.55 121.92 90)
 			(effects
 				(font
@@ -16352,15 +16278,15 @@
 		(fields_autoplaced yes)
 		(uuid "95844f4b-9c2c-4d31-ac24-ea819a974830")
 		(property "Reference" "PS1"
-			(at 52.07 105.41 0)
+			(at 52.07 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "PDQE20-Q24-S5-D"
-			(at 52.07 107.95 0)
+		(property "Value" "REC20K-2405SZ"
+			(at 52.07 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16539,15 +16465,15 @@
 		(fields_autoplaced yes)
 		(uuid "9c4a23c7-71ac-4264-88a4-3d82d9b445a3")
 		(property "Reference" "L1"
-			(at 24.13 106.68 90)
+			(at 24.13 105.41 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "2.2uH/4A"
-			(at 24.13 109.22 90)
+		(property "Value" "22uH/4A"
+			(at 24.13 107.95 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17261,7 +17187,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3.57k"
+		(property "Value" "DNP"
 			(at 80.01 128.27 0)
 			(effects
 				(font
@@ -17813,7 +17739,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "330uf/50v"
+		(property "Value" "150uf/50v"
 			(at 20.32 135.89 90)
 			(effects
 				(font
@@ -18143,7 +18069,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1.5K"
+		(property "Value" "169K"
 			(at 80.01 138.43 0)
 			(effects
 				(font
@@ -18212,7 +18138,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "4.7uf/50v"
+		(property "Value" "DNP"
 			(at 24.13 135.89 90)
 			(effects
 				(font
@@ -19584,7 +19510,7 @@
 				)
 			)
 		)
-		(property "Value" "100r"
+		(property "Value" "0R"
 			(at 78.74 133.35 90)
 			(effects
 				(font
@@ -19861,6 +19787,82 @@
 			(project "HydroBall"
 				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
 					(reference "#PWR047")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:2N7002")
+		(at 224.79 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "fefd715d-b1dd-427b-a99d-4de35c667ec7")
+		(property "Reference" "Q2"
+			(at 231.14 158.7499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2N7002"
+			(at 231.14 161.2899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 229.87 161.925 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF"
+			(at 229.87 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"
+			(at 224.79 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "66207276-9c07-4784-a896-865c94d5d3a8")
+		)
+		(pin "2"
+			(uuid "7e2a8de4-6146-40b5-a4e9-28c2a8146167")
+		)
+		(pin "1"
+			(uuid "1e55938f-b0fe-4878-a8be-d9400870ca2e")
+		)
+		(instances
+			(project ""
+				(path "/072973dc-7419-47fb-90d2-54b6b9afca16"
+					(reference "Q2")
 					(unit 1)
 				)
 			)

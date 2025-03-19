@@ -11,21 +11,10 @@
 
 <arg name="boardVersion" value="2.1"/>
 
+<node pkg="power_control" type="main.py" name="Pwr_Ctrl" output="screen" respawn="true" respawn_delay="1"/>
+
 <node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" args="$(arg boardVersion)" respawn="true" respawn_delay="1"/>
 
-<node pkg="power_management" name="power_management" type="power_management_node" output="screen"/>
-
-<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="log" respawn="true" respawn_delay="1"/>
-
-<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
-
-<!--<node pkg="water_detection" name="water_detection" type="water_detection_node" output="screen" respawn="true" respawn_delay="1"/>-->
-
-<node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1">
-<!--	file extension cannot be numbers only -> rosparam will think its a number instead of a string-->
-	<param name="fileExtensionForSonarDatagram" value=".img852"/>
-	<param name="fileExtensionForGpsDatagram" value=".ubx"/>
-</node>
 
 <node ns="imu" name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" respawn="true" respawn_delay="2" output="screen">
         <param name="device" type="string" value="/dev/i2c-1"/>
@@ -41,14 +30,27 @@
 <!--<node pkg="sonar_imagenex852" type="main.py" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>-->
 <node pkg="sonar_imagenex852_c" type="sonar_imagenex852_c_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
 
-<node pkg="power_control" type="main.py" name="Pwr_Ctrl" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="power_management" name="power_management" type="power_management_node" output="screen"/>
+
+<node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="log" respawn="true" respawn_delay="1"/>
+
+
 
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
+
+<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen" respawn="true" respawn_delay="1"/>
 
 <node pkg="hydroball_data_websocket" name="hydroball_data_websocket" type="hydroball_data_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
 <node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen" respawn_delay="1"/>
+
+<node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1">
+<!--	file extension cannot be numbers only -> rosparam will think its a number instead of a string-->
+	<param name="fileExtensionForSonarDatagram" value=".img852"/>
+	<param name="fileExtensionForGpsDatagram" value=".ubx"/>
+</node>
 
 </launch>

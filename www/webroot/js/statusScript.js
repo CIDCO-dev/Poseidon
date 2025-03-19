@@ -68,14 +68,30 @@ function processState(state) {
 	
 	// Humidity
 	if (state.telemetry.vitals[7] === -555) {
-        $("#humidity").parent().hide();
+		$("#humidity").parent().hide();
 		$("#humidityText").parent().hide();
-    } else {
-	$("#humidity").removeClass("bg-gradient-warning").removeClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-success" : "bg-gradient-warning"))
-													.addClass((state.telemetry.vitals[7] > 40 ? "bg-gradient-warning" : "bg-gradient-success"));
-
-	$("#humidityText").text(state.telemetry.vitals[7] + "%");
-	$("#humidity").width(state.telemetry.vitals[7] + "%");
+	} else {
+		
+		$("#humidity").parent().show();
+		$("#humidityText").parent().show();
+	
+		var humidity = state.telemetry.vitals[7];
+		$("#humidityText").text(humidity + "%");
+		$("#humidity").width(humidity + "%");
+	
+		
+		$("#humidity").removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
+	
+		if (humidity < 40) {
+			// Vert de 0 à 40%
+			$("#humidity").addClass("bg-gradient-success");
+		} else if (humidity >= 40 && humidity <= 60) {
+			// Jaune de 40 à 60%
+			$("#humidity").addClass("bg-gradient-warning");
+		} else {
+			// Rouge pour plus de 60%
+			$("#humidity").addClass("bg-gradient-danger");
+		}
 	}
 	// Temperature
 	if (state.telemetry.vitals[5] === -555) {
@@ -104,19 +120,22 @@ function processState(state) {
 	var voltageElement = $("#battery");
 	var voltage = state.telemetry.vitals[6];
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
-	if (voltage <= 11.0) {
+	if (voltage <= 11.7) {
 		voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
-		$("#battery").width(voltage * 4 + "%");
-		} else if (voltage >= 11.9 && voltage < 13.8) {
+		$("#battery").width(((voltage)/16) * 100 + "%");
+	} else if (voltage >= 11.9 && voltage < 13.5) {
 			voltageElement.addClass("bg-gradient-success").removeClass("bg-gradient-danger").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");
-		} else if (voltage > 11.0 && voltage < 11.9) {
+	} else if (voltage >= 11.7 && voltage < 11.9) {
 			voltageElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
 			$("#battery").width(voltage * 4 + "%");
-		} else if (voltage > 13.0) {
+	} else if (voltage >= 13.5 && voltage < 15.4) {
+			voltageElement.addClass("bg-gradient-warning").removeClass("bg-gradient-success").removeClass("bg-gradient-danger");
+			$("#battery").width(voltage * 4 + "%");
+	} else if (voltage >= 15.4) {
 			voltageElement.addClass("bg-gradient-danger").removeClass("bg-gradient-success").removeClass("bg-gradient-warning");
 			$("#battery").width(voltage * 4 + "%");
-		}
+	}
 	$("#batteryText").text(state.telemetry.vitals[6] + "V");
 	}
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/debug/Hydroball_PWR_CTL.debug.elf">                 
+  <executable name="dist/default/production/Hydroball_PWR_CTL.production.elf">                 
     <memory name="program">              
       <units>bytes</units>                 
       <length>4096</length>                 
-      <used>1428</used>                     
-      <free>2668</free>                     
+      <used>1430</used>                     
+      <free>2666</free>                     
     </memory>                              
     <memory name="data">                 
       <units>bytes</units>                 

@@ -36,13 +36,19 @@ setsn()
 
   echo "$sn" | sudo tee /etc/hostname >/dev/null
 
-  sudo sed -i "s/^127.0.1.1.*/127.0.1.1 $sn/" /etc/hosts
+  if grep -q "^127.0.1.1" /etc/hosts; then
+      sudo sed -i "s/^127.0.1.1.*/127.0.1.1 $sn/" /etc/hosts
+  else
+      sudo sed -i "1a 127.0.1.1 $sn" /etc/hosts
+  fi
 
   sudo systemctl restart systemd-hostnamed
 
   echo "Hostname successfully set to: $(hostname)"
 
 }
+
+      sudo sed -i "s/^hotspotSSID .*/hotspotSSEW_SSID/" "$CONFIG_FILE"
 
 sethotspot()
 {
@@ -62,6 +68,8 @@ sethotspot()
 
 modifyConfig()
 {
+
+  
   CONFIG_FILE="/opt/Poseidon/config.txt"
   NEW_SSID=$1
   

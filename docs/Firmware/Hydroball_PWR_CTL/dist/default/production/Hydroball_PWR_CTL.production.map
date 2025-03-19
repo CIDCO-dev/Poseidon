@@ -1,9 +1,9 @@
 Archive member included to satisfy reference by file (symbol)
 
 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_udivmodsi4.o)
-                              build/default/debug/main.o (__udivmodsi4)
+                              build/default/production/main.o (__udivmodsi4)
 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_copy_data.o)
-                              build/default/debug/mcc_generated_files/system/src/config_bits.o (__do_copy_data)
+                              build/default/production/mcc_generated_files/system/src/config_bits.o (__do_copy_data)
 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
                               C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o (exit)
 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(_Exit.o)
@@ -15,46 +15,46 @@ Discarded input sections
 
  .data          0x0000000000000000        0x0 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
  .bss           0x0000000000000000        0x0 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
- .text          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/system.o
- .data          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/system.o
- .bss           0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/system.o
- .text          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/config_bits.o
- .data          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/config_bits.o
- .bss           0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/config_bits.o
- .text          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/clock.o
- .data          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/clock.o
- .bss           0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/clock.o
- .text          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .data          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .bss           0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .text          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/pins.o
- .data          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/pins.o
- .bss           0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/pins.o
+ .text          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/system.o
+ .data          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/system.o
+ .bss           0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/system.o
+ .text          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/config_bits.o
+ .data          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/config_bits.o
+ .bss           0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/config_bits.o
+ .text          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/clock.o
+ .data          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/clock.o
+ .bss           0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/clock.o
+ .text          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .data          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .bss           0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .text          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/pins.o
+ .data          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/pins.o
+ .bss           0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/pins.o
  .text.Auto_on_SetInterruptHandler
-                0x0000000000000000        0xa build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000000000        0xa build/default/production/mcc_generated_files/system/src/pins.o
  .text.Signal_SetInterruptHandler
-                0x0000000000000000        0xa build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000000000        0xa build/default/production/mcc_generated_files/system/src/pins.o
  .text.Pwr_mon_SetInterruptHandler
-                0x0000000000000000        0xa build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000000000        0xa build/default/production/mcc_generated_files/system/src/pins.o
  .text.Pulse_SetInterruptHandler
-                0x0000000000000000        0xa build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000000000        0xa build/default/production/mcc_generated_files/system/src/pins.o
  .text.Led_SetInterruptHandler
-                0x0000000000000000        0xa build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000000000        0xa build/default/production/mcc_generated_files/system/src/pins.o
  .text.Pwr_ctl_SetInterruptHandler
-                0x0000000000000000        0xa build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000000000        0xa build/default/production/mcc_generated_files/system/src/pins.o
  .text.Pwr_off_SetInterruptHandler
-                0x0000000000000000        0xa build/default/debug/mcc_generated_files/system/src/pins.o
- .text          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/protected_io.o
- .data          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/protected_io.o
- .bss           0x0000000000000000        0x0 build/default/debug/mcc_generated_files/system/src/protected_io.o
- .text          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/timer/src/delay.o
- .data          0x0000000000000000        0x0 build/default/debug/mcc_generated_files/timer/src/delay.o
- .bss           0x0000000000000000        0x0 build/default/debug/mcc_generated_files/timer/src/delay.o
+                0x0000000000000000        0xa build/default/production/mcc_generated_files/system/src/pins.o
+ .text          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/protected_io.o
+ .data          0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/protected_io.o
+ .bss           0x0000000000000000        0x0 build/default/production/mcc_generated_files/system/src/protected_io.o
+ .text          0x0000000000000000        0x0 build/default/production/mcc_generated_files/timer/src/delay.o
+ .data          0x0000000000000000        0x0 build/default/production/mcc_generated_files/timer/src/delay.o
+ .bss           0x0000000000000000        0x0 build/default/production/mcc_generated_files/timer/src/delay.o
  .text.DELAY_microseconds
-                0x0000000000000000       0x2c build/default/debug/mcc_generated_files/timer/src/delay.o
- .text          0x0000000000000000        0x0 build/default/debug/main.o
- .data          0x0000000000000000        0x0 build/default/debug/main.o
- .bss           0x0000000000000000        0x0 build/default/debug/main.o
+                0x0000000000000000       0x2c build/default/production/mcc_generated_files/timer/src/delay.o
+ .text          0x0000000000000000        0x0 build/default/production/main.o
+ .data          0x0000000000000000        0x0 build/default/production/main.o
+ .bss           0x0000000000000000        0x0 build/default/production/main.o
  .text          0x0000000000000000        0x0 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_udivmodsi4.o)
  .data          0x0000000000000000        0x0 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_udivmodsi4.o)
  .bss           0x0000000000000000        0x0 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_udivmodsi4.o)
@@ -135,19 +135,17 @@ Address of section .data set to 0x803e00
                 0x0000000000008000                __RODATA_PM_OFFSET__ = 0x8000
 LOAD C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
                 0x0000000000000001                __MPLAB_BUILD = 0x1
-LOAD build/default/debug/mcc_generated_files/system/src/system.o
-LOAD build/default/debug/mcc_generated_files/system/src/config_bits.o
-LOAD build/default/debug/mcc_generated_files/system/src/clock.o
-LOAD build/default/debug/mcc_generated_files/system/src/interrupt.o
-LOAD build/default/debug/mcc_generated_files/system/src/pins.o
-LOAD build/default/debug/mcc_generated_files/system/src/protected_io.o
-LOAD build/default/debug/mcc_generated_files/timer/src/delay.o
-LOAD build/default/debug/main.o
+LOAD build/default/production/mcc_generated_files/system/src/system.o
+LOAD build/default/production/mcc_generated_files/system/src/config_bits.o
+LOAD build/default/production/mcc_generated_files/system/src/clock.o
+LOAD build/default/production/mcc_generated_files/system/src/interrupt.o
+LOAD build/default/production/mcc_generated_files/system/src/pins.o
+LOAD build/default/production/mcc_generated_files/system/src/protected_io.o
+LOAD build/default/production/mcc_generated_files/timer/src/delay.o
+LOAD build/default/production/main.o
 START GROUP
 LOAD c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libm.a
 END GROUP
-                0x0000000000000001                __MPLAB_DEBUG = 0x1
-                0x0000000000000001                __DEBUG = 0x1
 START GROUP
 LOAD c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a
 LOAD c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libm.a
@@ -366,7 +364,7 @@ END GROUP
 
 .fuse           0x0000000000820000        0x9
  *(.fuse)
- .fuse          0x0000000000820000        0x9 build/default/debug/mcc_generated_files/system/src/config_bits.o
+ .fuse          0x0000000000820000        0x9 build/default/production/mcc_generated_files/system/src/config_bits.o
                 0x0000000000820000                __fuse
  *(.lfuse)
  *(.hfuse)
@@ -404,14 +402,14 @@ END GROUP
 
 .comment        0x0000000000000000       0x5b
  *(.comment)
- .comment       0x0000000000000000       0x2f build/default/debug/mcc_generated_files/system/src/system.o
+ .comment       0x0000000000000000       0x2f build/default/production/mcc_generated_files/system/src/system.o
                                          0x30 (size before relaxing)
- .comment       0x000000000000002f       0x30 build/default/debug/mcc_generated_files/system/src/config_bits.o
- .comment       0x000000000000002f       0x30 build/default/debug/mcc_generated_files/system/src/clock.o
- .comment       0x000000000000002f       0x30 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .comment       0x000000000000002f       0x30 build/default/debug/mcc_generated_files/system/src/pins.o
- .comment       0x000000000000002f       0x30 build/default/debug/mcc_generated_files/timer/src/delay.o
- .comment       0x000000000000002f       0x30 build/default/debug/main.o
+ .comment       0x000000000000002f       0x30 build/default/production/mcc_generated_files/system/src/config_bits.o
+ .comment       0x000000000000002f       0x30 build/default/production/mcc_generated_files/system/src/clock.o
+ .comment       0x000000000000002f       0x30 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .comment       0x000000000000002f       0x30 build/default/production/mcc_generated_files/system/src/pins.o
+ .comment       0x000000000000002f       0x30 build/default/production/mcc_generated_files/timer/src/delay.o
+ .comment       0x000000000000002f       0x30 build/default/production/main.o
  .comment       0x000000000000002f       0x2c c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
                                          0x2d (size before relaxing)
  .comment       0x000000000000005b       0x2d c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(_Exit.o)
@@ -452,87 +450,87 @@ END GROUP
 .debug_aranges  0x0000000000000000      0x188
  *(.debug_aranges)
  .debug_aranges
-                0x0000000000000000       0x20 build/default/debug/mcc_generated_files/system/src/system.o
+                0x0000000000000000       0x20 build/default/production/mcc_generated_files/system/src/system.o
  .debug_aranges
-                0x0000000000000020       0x18 build/default/debug/mcc_generated_files/system/src/config_bits.o
+                0x0000000000000020       0x18 build/default/production/mcc_generated_files/system/src/config_bits.o
  .debug_aranges
-                0x0000000000000038       0x20 build/default/debug/mcc_generated_files/system/src/clock.o
+                0x0000000000000038       0x20 build/default/production/mcc_generated_files/system/src/clock.o
  .debug_aranges
-                0x0000000000000058       0x20 build/default/debug/mcc_generated_files/system/src/interrupt.o
+                0x0000000000000058       0x20 build/default/production/mcc_generated_files/system/src/interrupt.o
  .debug_aranges
-                0x0000000000000078       0xa8 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000000078       0xa8 build/default/production/mcc_generated_files/system/src/pins.o
  .debug_aranges
-                0x0000000000000120       0x20 build/default/debug/mcc_generated_files/system/src/protected_io.o
+                0x0000000000000120       0x20 build/default/production/mcc_generated_files/system/src/protected_io.o
  .debug_aranges
-                0x0000000000000140       0x28 build/default/debug/mcc_generated_files/timer/src/delay.o
+                0x0000000000000140       0x28 build/default/production/mcc_generated_files/timer/src/delay.o
  .debug_aranges
-                0x0000000000000168       0x20 build/default/debug/main.o
+                0x0000000000000168       0x20 build/default/production/main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0x481d
+.debug_info     0x0000000000000000     0x47c2
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x0000000000000000     0x1b84 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
- .debug_info    0x0000000000001b84      0x2f4 build/default/debug/mcc_generated_files/system/src/system.o
- .debug_info    0x0000000000001e78      0x844 build/default/debug/mcc_generated_files/system/src/config_bits.o
- .debug_info    0x00000000000026bc      0x7e5 build/default/debug/mcc_generated_files/system/src/clock.o
- .debug_info    0x0000000000002ea1      0x40c build/default/debug/mcc_generated_files/system/src/interrupt.o
- .debug_info    0x00000000000032ad      0xb2c build/default/debug/mcc_generated_files/system/src/pins.o
- .debug_info    0x0000000000003dd9       0x9c build/default/debug/mcc_generated_files/system/src/protected_io.o
- .debug_info    0x0000000000003e75      0x463 build/default/debug/mcc_generated_files/timer/src/delay.o
- .debug_info    0x00000000000042d8      0x545 build/default/debug/main.o
+ .debug_info    0x0000000000001b84      0x2e7 build/default/production/mcc_generated_files/system/src/system.o
+ .debug_info    0x0000000000001e6b      0x837 build/default/production/mcc_generated_files/system/src/config_bits.o
+ .debug_info    0x00000000000026a2      0x7d8 build/default/production/mcc_generated_files/system/src/clock.o
+ .debug_info    0x0000000000002e7a      0x3ff build/default/production/mcc_generated_files/system/src/interrupt.o
+ .debug_info    0x0000000000003279      0xb1f build/default/production/mcc_generated_files/system/src/pins.o
+ .debug_info    0x0000000000003d98       0x9c build/default/production/mcc_generated_files/system/src/protected_io.o
+ .debug_info    0x0000000000003e34      0x456 build/default/production/mcc_generated_files/timer/src/delay.o
+ .debug_info    0x000000000000428a      0x538 build/default/production/main.o
 
 .debug_abbrev   0x0000000000000000     0x20bc
  *(.debug_abbrev)
  .debug_abbrev  0x0000000000000000     0x1a0e C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
- .debug_abbrev  0x0000000000001a0e       0x58 build/default/debug/mcc_generated_files/system/src/system.o
- .debug_abbrev  0x0000000000001a66       0x97 build/default/debug/mcc_generated_files/system/src/config_bits.o
- .debug_abbrev  0x0000000000001afd      0x11d build/default/debug/mcc_generated_files/system/src/clock.o
- .debug_abbrev  0x0000000000001c1a       0xfa build/default/debug/mcc_generated_files/system/src/interrupt.o
- .debug_abbrev  0x0000000000001d14      0x14a build/default/debug/mcc_generated_files/system/src/pins.o
- .debug_abbrev  0x0000000000001e5e       0x14 build/default/debug/mcc_generated_files/system/src/protected_io.o
- .debug_abbrev  0x0000000000001e72      0x12b build/default/debug/mcc_generated_files/timer/src/delay.o
- .debug_abbrev  0x0000000000001f9d      0x11f build/default/debug/main.o
+ .debug_abbrev  0x0000000000001a0e       0x58 build/default/production/mcc_generated_files/system/src/system.o
+ .debug_abbrev  0x0000000000001a66       0x97 build/default/production/mcc_generated_files/system/src/config_bits.o
+ .debug_abbrev  0x0000000000001afd      0x11d build/default/production/mcc_generated_files/system/src/clock.o
+ .debug_abbrev  0x0000000000001c1a       0xfa build/default/production/mcc_generated_files/system/src/interrupt.o
+ .debug_abbrev  0x0000000000001d14      0x14a build/default/production/mcc_generated_files/system/src/pins.o
+ .debug_abbrev  0x0000000000001e5e       0x14 build/default/production/mcc_generated_files/system/src/protected_io.o
+ .debug_abbrev  0x0000000000001e72      0x12b build/default/production/mcc_generated_files/timer/src/delay.o
+ .debug_abbrev  0x0000000000001f9d      0x11f build/default/production/main.o
 
 .debug_line     0x0000000000000000      0xe4c
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x0000000000000000      0x14e C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
- .debug_line    0x000000000000014e       0xb7 build/default/debug/mcc_generated_files/system/src/system.o
- .debug_line    0x0000000000000205       0xfe build/default/debug/mcc_generated_files/system/src/config_bits.o
- .debug_line    0x0000000000000303      0x179 build/default/debug/mcc_generated_files/system/src/clock.o
- .debug_line    0x000000000000047c      0x191 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .debug_line    0x000000000000060d      0x3d9 build/default/debug/mcc_generated_files/system/src/pins.o
- .debug_line    0x00000000000009e6       0x6d build/default/debug/mcc_generated_files/system/src/protected_io.o
- .debug_line    0x0000000000000a53      0x13e build/default/debug/mcc_generated_files/timer/src/delay.o
- .debug_line    0x0000000000000b91      0x2bb build/default/debug/main.o
+ .debug_line    0x000000000000014e       0xb7 build/default/production/mcc_generated_files/system/src/system.o
+ .debug_line    0x0000000000000205       0xfe build/default/production/mcc_generated_files/system/src/config_bits.o
+ .debug_line    0x0000000000000303      0x179 build/default/production/mcc_generated_files/system/src/clock.o
+ .debug_line    0x000000000000047c      0x191 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .debug_line    0x000000000000060d      0x3d9 build/default/production/mcc_generated_files/system/src/pins.o
+ .debug_line    0x00000000000009e6       0x6d build/default/production/mcc_generated_files/system/src/protected_io.o
+ .debug_line    0x0000000000000a53      0x13e build/default/production/mcc_generated_files/timer/src/delay.o
+ .debug_line    0x0000000000000b91      0x2bb build/default/production/main.o
 
 .debug_frame    0x0000000000000000      0x294
  *(.debug_frame)
- .debug_frame   0x0000000000000000       0x24 build/default/debug/mcc_generated_files/system/src/system.o
- .debug_frame   0x0000000000000024       0x24 build/default/debug/mcc_generated_files/system/src/clock.o
- .debug_frame   0x0000000000000048       0x24 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .debug_frame   0x000000000000006c      0x1d0 build/default/debug/mcc_generated_files/system/src/pins.o
- .debug_frame   0x000000000000023c       0x34 build/default/debug/mcc_generated_files/timer/src/delay.o
- .debug_frame   0x0000000000000270       0x24 build/default/debug/main.o
+ .debug_frame   0x0000000000000000       0x24 build/default/production/mcc_generated_files/system/src/system.o
+ .debug_frame   0x0000000000000024       0x24 build/default/production/mcc_generated_files/system/src/clock.o
+ .debug_frame   0x0000000000000048       0x24 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .debug_frame   0x000000000000006c      0x1d0 build/default/production/mcc_generated_files/system/src/pins.o
+ .debug_frame   0x000000000000023c       0x34 build/default/production/mcc_generated_files/timer/src/delay.o
+ .debug_frame   0x0000000000000270       0x24 build/default/production/main.o
 
 .debug_str      0x0000000000000000      0xc9d
  *(.debug_str)
  .debug_str     0x0000000000000000      0xbcd C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
- .debug_str     0x0000000000000bcd       0x3a build/default/debug/mcc_generated_files/system/src/system.o
- .debug_str     0x0000000000000c07        0x0 build/default/debug/mcc_generated_files/system/src/config_bits.o
- .debug_str     0x0000000000000c07       0x13 build/default/debug/mcc_generated_files/system/src/clock.o
- .debug_str     0x0000000000000c1a       0x13 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .debug_str     0x0000000000000c2d       0x25 build/default/debug/mcc_generated_files/system/src/pins.o
- .debug_str     0x0000000000000c52       0x26 build/default/debug/mcc_generated_files/timer/src/delay.o
- .debug_str     0x0000000000000c78       0x25 build/default/debug/main.o
+ .debug_str     0x0000000000000bcd       0x3a build/default/production/mcc_generated_files/system/src/system.o
+ .debug_str     0x0000000000000c07        0x0 build/default/production/mcc_generated_files/system/src/config_bits.o
+ .debug_str     0x0000000000000c07       0x13 build/default/production/mcc_generated_files/system/src/clock.o
+ .debug_str     0x0000000000000c1a       0x13 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .debug_str     0x0000000000000c2d       0x25 build/default/production/mcc_generated_files/system/src/pins.o
+ .debug_str     0x0000000000000c52       0x26 build/default/production/mcc_generated_files/timer/src/delay.o
+ .debug_str     0x0000000000000c78       0x25 build/default/production/main.o
 
 .debug_loc      0x0000000000000000      0x4f9
  *(.debug_loc)
- .debug_loc     0x0000000000000000       0xf6 build/default/debug/mcc_generated_files/system/src/clock.o
- .debug_loc     0x00000000000000f6       0x2a build/default/debug/mcc_generated_files/system/src/interrupt.o
- .debug_loc     0x0000000000000120      0x15d build/default/debug/mcc_generated_files/timer/src/delay.o
- .debug_loc     0x000000000000027d      0x27c build/default/debug/main.o
+ .debug_loc     0x0000000000000000       0xf6 build/default/production/mcc_generated_files/system/src/clock.o
+ .debug_loc     0x00000000000000f6       0x2a build/default/production/mcc_generated_files/system/src/interrupt.o
+ .debug_loc     0x0000000000000120      0x15d build/default/production/mcc_generated_files/timer/src/delay.o
+ .debug_loc     0x000000000000027d      0x27c build/default/production/main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -554,16 +552,16 @@ END GROUP
 
 .debug_ranges   0x0000000000000000      0x170
  *(.debug_ranges)
- .debug_ranges  0x0000000000000000       0x10 build/default/debug/mcc_generated_files/system/src/system.o
- .debug_ranges  0x0000000000000010       0x10 build/default/debug/mcc_generated_files/system/src/clock.o
- .debug_ranges  0x0000000000000020       0x10 build/default/debug/mcc_generated_files/system/src/interrupt.o
- .debug_ranges  0x0000000000000030       0x98 build/default/debug/mcc_generated_files/system/src/pins.o
- .debug_ranges  0x00000000000000c8       0x18 build/default/debug/mcc_generated_files/timer/src/delay.o
- .debug_ranges  0x00000000000000e0       0x90 build/default/debug/main.o
+ .debug_ranges  0x0000000000000000       0x10 build/default/production/mcc_generated_files/system/src/system.o
+ .debug_ranges  0x0000000000000010       0x10 build/default/production/mcc_generated_files/system/src/clock.o
+ .debug_ranges  0x0000000000000020       0x10 build/default/production/mcc_generated_files/system/src/interrupt.o
+ .debug_ranges  0x0000000000000030       0x98 build/default/production/mcc_generated_files/system/src/pins.o
+ .debug_ranges  0x00000000000000c8       0x18 build/default/production/mcc_generated_files/timer/src/delay.o
+ .debug_ranges  0x00000000000000e0       0x90 build/default/production/main.o
 
 .debug_macro
  *(.debug_macro)
-OUTPUT(dist/default/debug/Hydroball_PWR_CTL.debug.elf elf32-avr)
+OUTPUT(dist/default/production/Hydroball_PWR_CTL.production.elf elf32-avr)
 LOAD linker stubs
 LOAD data_init
 
@@ -575,222 +573,222 @@ LOAD data_init
 .bss.Pwr_off_InterruptHandler
                 0x0000000000803e0c        0x2
  .bss.Pwr_off_InterruptHandler
-                0x0000000000803e0c        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000803e0c        0x2 build/default/production/mcc_generated_files/system/src/pins.o
 
 .bss.Pwr_ctl_InterruptHandler
                 0x0000000000803e0e        0x2
  .bss.Pwr_ctl_InterruptHandler
-                0x0000000000803e0e        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000803e0e        0x2 build/default/production/mcc_generated_files/system/src/pins.o
 
 .bss.Led_InterruptHandler
                 0x0000000000803e10        0x2
  .bss.Led_InterruptHandler
-                0x0000000000803e10        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000803e10        0x2 build/default/production/mcc_generated_files/system/src/pins.o
 
 .bss.Pulse_InterruptHandler
                 0x0000000000803e12        0x2
  .bss.Pulse_InterruptHandler
-                0x0000000000803e12        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000803e12        0x2 build/default/production/mcc_generated_files/system/src/pins.o
 
 .bss.Pwr_mon_InterruptHandler
                 0x0000000000803e14        0x2
  .bss.Pwr_mon_InterruptHandler
-                0x0000000000803e14        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000803e14        0x2 build/default/production/mcc_generated_files/system/src/pins.o
 
 .bss.Signal_InterruptHandler
                 0x0000000000803e16        0x2
  .bss.Signal_InterruptHandler
-                0x0000000000803e16        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000803e16        0x2 build/default/production/mcc_generated_files/system/src/pins.o
 
 .bss.Auto_on_InterruptHandler
                 0x0000000000803e18        0x2
  .bss.Auto_on_InterruptHandler
-                0x0000000000803e18        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
+                0x0000000000803e18        0x2 build/default/production/mcc_generated_files/system/src/pins.o
 
 .bss.g_isShuttingDown
                 0x0000000000803e1a        0x1
  .bss.g_isShuttingDown
-                0x0000000000803e1a        0x1 build/default/debug/main.o
+                0x0000000000803e1a        0x1 build/default/production/main.o
 
 .bss.g_shutdownTimerStart
                 0x0000000000803e00        0x4
  .bss.g_shutdownTimerStart
-                0x0000000000803e00        0x4 build/default/debug/main.o
+                0x0000000000803e00        0x4 build/default/production/main.o
 
 .bss.sign_release
                 0x0000000000803e1b        0x1
  .bss.sign_release
-                0x0000000000803e1b        0x1 build/default/debug/main.o
+                0x0000000000803e1b        0x1 build/default/production/main.o
                 0x0000000000803e1b                sign_release
 
 .bss.pwr_timeMs
                 0x0000000000803e04        0x4
  .bss.pwr_timeMs
-                0x0000000000803e04        0x4 build/default/debug/main.o
+                0x0000000000803e04        0x4 build/default/production/main.o
                 0x0000000000803e04                pwr_timeMs
 
 .bss.g_timeMs   0x0000000000803e08        0x4
- .bss.g_timeMs  0x0000000000803e08        0x4 build/default/debug/main.o
+ .bss.g_timeMs  0x0000000000803e08        0x4 build/default/production/main.o
                 0x0000000000803e08                g_timeMs
 
-.text.main      0x0000000000000092      0x244
- .text.main     0x0000000000000092      0x244 build/default/debug/main.o
+.text.main      0x0000000000000092      0x246
+ .text.main     0x0000000000000092      0x246 build/default/production/main.o
                 0x0000000000000092                main
 
 .text.PIN_MANAGER_Initialize
-                0x00000000000002d6       0xe0
+                0x00000000000002d8       0xe0
  .text.PIN_MANAGER_Initialize
-                0x00000000000002d6       0xe0 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x00000000000002d6                PIN_MANAGER_Initialize
+                0x00000000000002d8       0xe0 build/default/production/mcc_generated_files/system/src/pins.o
+                0x00000000000002d8                PIN_MANAGER_Initialize
 
 .text.__vector_6
-                0x00000000000003b6       0x80
+                0x00000000000003b8       0x80
  .text.__vector_6
-                0x00000000000003b6       0x80 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x00000000000003b6                __vector_6
+                0x00000000000003b8       0x80 build/default/production/mcc_generated_files/system/src/pins.o
+                0x00000000000003b8                __vector_6
 
 .text.__vector_7
-                0x0000000000000436       0x72
+                0x0000000000000438       0x72
  .text.__vector_7
-                0x0000000000000436       0x72 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x0000000000000436                __vector_7
+                0x0000000000000438       0x72 build/default/production/mcc_generated_files/system/src/pins.o
+                0x0000000000000438                __vector_7
 
 .text.libgcc.div
-                0x00000000000004a8       0x44
+                0x00000000000004aa       0x44
  .text.libgcc.div
-                0x00000000000004a8       0x44 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_udivmodsi4.o)
-                0x00000000000004a8                __udivmodsi4
+                0x00000000000004aa       0x44 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_udivmodsi4.o)
+                0x00000000000004aa                __udivmodsi4
 
 .text.CLOCK_Initialize
-                0x00000000000004ec       0x3e
+                0x00000000000004ee       0x3e
  .text.CLOCK_Initialize
-                0x00000000000004ec       0x3e build/default/debug/mcc_generated_files/system/src/clock.o
-                0x00000000000004ec                CLOCK_Initialize
+                0x00000000000004ee       0x3e build/default/production/mcc_generated_files/system/src/clock.o
+                0x00000000000004ee                CLOCK_Initialize
 
 .text.CPUINT_Initialize
-                0x000000000000052a       0x16
+                0x000000000000052c       0x16
  .text.CPUINT_Initialize
-                0x000000000000052a       0x16 build/default/debug/mcc_generated_files/system/src/interrupt.o
-                0x000000000000052a                CPUINT_Initialize
+                0x000000000000052c       0x16 build/default/production/mcc_generated_files/system/src/interrupt.o
+                0x000000000000052c                CPUINT_Initialize
 
 .text.DELAY_milliseconds
-                0x0000000000000540       0x14
+                0x0000000000000542       0x14
  .text.DELAY_milliseconds
-                0x0000000000000540       0x14 build/default/debug/mcc_generated_files/timer/src/delay.o
-                0x0000000000000540                DELAY_milliseconds
+                0x0000000000000542       0x14 build/default/production/mcc_generated_files/timer/src/delay.o
+                0x0000000000000542                DELAY_milliseconds
 
-.text.exit      0x0000000000000554        0xe
- .text.exit     0x0000000000000554        0xe c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x0000000000000554                exit
+.text.exit      0x0000000000000556        0xe
+ .text.exit     0x0000000000000556        0xe c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x0000000000000556                exit
 
 .text.__vector_24
-                0x0000000000000562        0xa
+                0x0000000000000564        0xa
  .text.__vector_24
-                0x0000000000000562        0xa build/default/debug/mcc_generated_files/system/src/pins.o
-                0x0000000000000562                __vector_24
+                0x0000000000000564        0xa build/default/production/mcc_generated_files/system/src/pins.o
+                0x0000000000000564                __vector_24
 
 .text.SYSTEM_Initialize
-                0x000000000000056c        0x8
+                0x000000000000056e        0x8
  .text.SYSTEM_Initialize
-                0x000000000000056c        0x8 build/default/debug/mcc_generated_files/system/src/system.o
-                0x000000000000056c                SYSTEM_Initialize
+                0x000000000000056e        0x8 build/default/production/mcc_generated_files/system/src/system.o
+                0x000000000000056e                SYSTEM_Initialize
 
 .text.protected_write_io
-                0x0000000000000574        0x8
+                0x0000000000000576        0x8
  .text.protected_write_io
-                0x0000000000000574        0x8 build/default/debug/mcc_generated_files/system/src/protected_io.o
-                0x0000000000000574                protected_write_io
+                0x0000000000000576        0x8 build/default/production/mcc_generated_files/system/src/protected_io.o
+                0x0000000000000576                protected_write_io
 
-.text           0x000000000000057c        0x2
- .text          0x000000000000057c        0x2 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
-                0x000000000000057c                __vector_22
-                0x000000000000057c                __vector_28
-                0x000000000000057c                __vector_1
-                0x000000000000057c                __vector_12
-                0x000000000000057c                __bad_interrupt
-                0x000000000000057c                __vector_3
-                0x000000000000057c                __vector_23
-                0x000000000000057c                __vector_25
-                0x000000000000057c                __vector_11
-                0x000000000000057c                __vector_13
-                0x000000000000057c                __vector_17
-                0x000000000000057c                __vector_19
-                0x000000000000057c                __vector_27
-                0x000000000000057c                __vector_5
-                0x000000000000057c                __vector_4
-                0x000000000000057c                __vector_9
-                0x000000000000057c                __vector_2
-                0x000000000000057c                __vector_21
-                0x000000000000057c                __vector_15
-                0x000000000000057c                __vector_29
-                0x000000000000057c                __vector_8
-                0x000000000000057c                __vector_26
-                0x000000000000057c                __vector_14
-                0x000000000000057c                __vector_10
-                0x000000000000057c                __vector_16
-                0x000000000000057c                __vector_18
-                0x000000000000057c                __vector_20
+.text           0x000000000000057e        0x2
+ .text          0x000000000000057e        0x2 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/ATtiny_DFP/3.1.260/xc8/avr/lib/avrxmega3/short-calls/crtattiny424.o
+                0x000000000000057e                __vector_22
+                0x000000000000057e                __vector_28
+                0x000000000000057e                __vector_1
+                0x000000000000057e                __vector_12
+                0x000000000000057e                __bad_interrupt
+                0x000000000000057e                __vector_3
+                0x000000000000057e                __vector_23
+                0x000000000000057e                __vector_25
+                0x000000000000057e                __vector_11
+                0x000000000000057e                __vector_13
+                0x000000000000057e                __vector_17
+                0x000000000000057e                __vector_19
+                0x000000000000057e                __vector_27
+                0x000000000000057e                __vector_5
+                0x000000000000057e                __vector_4
+                0x000000000000057e                __vector_9
+                0x000000000000057e                __vector_2
+                0x000000000000057e                __vector_21
+                0x000000000000057e                __vector_15
+                0x000000000000057e                __vector_29
+                0x000000000000057e                __vector_8
+                0x000000000000057e                __vector_26
+                0x000000000000057e                __vector_14
+                0x000000000000057e                __vector_10
+                0x000000000000057e                __vector_16
+                0x000000000000057e                __vector_18
+                0x000000000000057e                __vector_20
 
 .text.Auto_on_DefaultInterruptHandler
-                0x000000000000057e        0x2
+                0x0000000000000580        0x2
  .text.Auto_on_DefaultInterruptHandler
-                0x000000000000057e        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x000000000000057e                Auto_on_DefaultInterruptHandler
+                0x0000000000000580        0x2 build/default/production/mcc_generated_files/system/src/pins.o
+                0x0000000000000580                Auto_on_DefaultInterruptHandler
 
 .text.Signal_DefaultInterruptHandler
-                0x0000000000000580        0x2
+                0x0000000000000582        0x2
  .text.Signal_DefaultInterruptHandler
-                0x0000000000000580        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x0000000000000580                Signal_DefaultInterruptHandler
+                0x0000000000000582        0x2 build/default/production/mcc_generated_files/system/src/pins.o
+                0x0000000000000582                Signal_DefaultInterruptHandler
 
 .text.Pwr_mon_DefaultInterruptHandler
-                0x0000000000000582        0x2
+                0x0000000000000584        0x2
  .text.Pwr_mon_DefaultInterruptHandler
-                0x0000000000000582        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x0000000000000582                Pwr_mon_DefaultInterruptHandler
+                0x0000000000000584        0x2 build/default/production/mcc_generated_files/system/src/pins.o
+                0x0000000000000584                Pwr_mon_DefaultInterruptHandler
 
 .text.Pulse_DefaultInterruptHandler
-                0x0000000000000584        0x2
+                0x0000000000000586        0x2
  .text.Pulse_DefaultInterruptHandler
-                0x0000000000000584        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x0000000000000584                Pulse_DefaultInterruptHandler
+                0x0000000000000586        0x2 build/default/production/mcc_generated_files/system/src/pins.o
+                0x0000000000000586                Pulse_DefaultInterruptHandler
 
 .text.Led_DefaultInterruptHandler
-                0x0000000000000586        0x2
+                0x0000000000000588        0x2
  .text.Led_DefaultInterruptHandler
-                0x0000000000000586        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x0000000000000586                Led_DefaultInterruptHandler
+                0x0000000000000588        0x2 build/default/production/mcc_generated_files/system/src/pins.o
+                0x0000000000000588                Led_DefaultInterruptHandler
 
 .text.Pwr_ctl_DefaultInterruptHandler
-                0x0000000000000588        0x2
+                0x000000000000058a        0x2
  .text.Pwr_ctl_DefaultInterruptHandler
-                0x0000000000000588        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x0000000000000588                Pwr_ctl_DefaultInterruptHandler
+                0x000000000000058a        0x2 build/default/production/mcc_generated_files/system/src/pins.o
+                0x000000000000058a                Pwr_ctl_DefaultInterruptHandler
 
 .text.Pwr_off_DefaultInterruptHandler
-                0x000000000000058a        0x2
+                0x000000000000058c        0x2
  .text.Pwr_off_DefaultInterruptHandler
-                0x000000000000058a        0x2 build/default/debug/mcc_generated_files/system/src/pins.o
-                0x000000000000058a                Pwr_off_DefaultInterruptHandler
+                0x000000000000058c        0x2 build/default/production/mcc_generated_files/system/src/pins.o
+                0x000000000000058c                Pwr_off_DefaultInterruptHandler
 
 .text.__dummy_fini
-                0x000000000000058c        0x2
+                0x000000000000058e        0x2
  .text.__dummy_fini
-                0x000000000000058c        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x000000000000058c                _fini
+                0x000000000000058e        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x000000000000058e                _fini
 
 .text.__dummy_funcs_on_exit
-                0x000000000000058e        0x2
+                0x0000000000000590        0x2
  .text.__dummy_funcs_on_exit
-                0x000000000000058e        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x000000000000058e                __funcs_on_exit
+                0x0000000000000590        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x0000000000000590                __funcs_on_exit
 
 .text.__dummy_simulator_exit
-                0x0000000000000590        0x2
+                0x0000000000000592        0x2
  .text.__dummy_simulator_exit
-                0x0000000000000590        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x0000000000000590                __simulator_exit
+                0x0000000000000592        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x0000000000000592                __simulator_exit
 
-.text._Exit     0x0000000000000592        0x2
- .text._Exit    0x0000000000000592        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(_Exit.o)
-                0x0000000000000592                _Exit
+.text._Exit     0x0000000000000594        0x2
+ .text._Exit    0x0000000000000594        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(_Exit.o)
+                0x0000000000000594                _Exit

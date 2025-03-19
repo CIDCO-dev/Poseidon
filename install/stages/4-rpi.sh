@@ -43,7 +43,7 @@ sudo bash -c 'echo "dtparam=i2c_arm_baudrate=500000" >> /boot/firmware/usercfg.t
 sudo bash -c 'echo "dtparam=i2c4,pins_6_7" >> /boot/firmware/usercfg.txt'
 
 echo "[+] Turn off SPI"
-sudo sed -i "s/dtparam=spi=on/dtparam=spi=off/g" /boot/firmware/suscfg.txt
+sudo sed -i "s/dtparam=spi=on/dtparam=spi=off/g" /boot/firmware/syscfg.txt
 
 echo "[+] Config uart"
 sudo bash -c 'cat << EOF2 > /boot/firmware/cmdline.txt

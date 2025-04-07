@@ -82,6 +82,12 @@ typedef struct{
 	unsigned int checksum;
 }dptData;
 
+typedef struct{
+	char talkerId[2];
+	double  depthMeters;
+	double  temperature;
+	unsigned int checksum;
+}adsData;
 
 class BaseNmeaClient{
 	
@@ -287,7 +293,34 @@ class BaseNmeaClient{
 			return false;
 		}
 		
-		
+		//parse ADS strings such as $ISADS,ddd.ddd,M,tt.t,C*xx<CR><LF>
+		// Impact Subsea altitude and temperature
+
+		bool extractDBT(std::string & s){
+			adsData ads;
+			
+			if(sscanf(s.c_str(),"$%2sADS,%lf,M,%lf,C*%2x",&ads.talkerId,&ads.depthMeters,&ads.temperature,&ads.checksum) == 4){
+				//TODO: checksum
+				//process depth
+				if(validateChecksum(s)){
+					geometry_msgs::PointStamped msg;
+
+					msg.header.seq=++depthSequenceNumber;
+					msg.header.stamp=ros::Time::now();
+
+					msg.point.z = ads.depthMeters;
+
+					sonarTopic.publish(msg);
+				
+				return true;
+				}
+				else{
+					ROS_ERROR("checksum error");
+				}
+			}			
+			
+			return false;
+		}		
 
 		void readStream(int & fileDescriptor){
 			//read char by char like a dumbass
@@ -309,7 +342,9 @@ class BaseNmeaClient{
 					if(!extractDBT(line)){
 						if(!extractGGA(line)){
 							if(!extractVTG(line)){
-								extractDPT(line);
+								if(!extractDPT(line)){
+									extractADS(line);
+								}
 							}
 						}
 					}

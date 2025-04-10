@@ -296,7 +296,7 @@ class BaseNmeaClient{
 		//parse ADS strings such as $ISADS,ddd.ddd,M,tt.t,C*xx<CR><LF>
 		// Impact Subsea altitude and temperature
 
-		bool extractDBT(std::string & s){
+		bool extractADS(std::string & s){
 			adsData ads;
 			
 			if(sscanf(s.c_str(),"$%2sADS,%lf,M,%lf,C*%2x",&ads.talkerId,&ads.depthMeters,&ads.temperature,&ads.checksum) == 4){

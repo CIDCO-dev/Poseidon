@@ -73,6 +73,10 @@ function connectWebSocket() {
       var mode = msg.loggingMode.the_mode_is;
       processRecordingInfo(isLogging, mode);
     }
+    else if (msg.type && msg.type === "gnss_status") {
+      updateGnssStatus(msg);
+    }
+    
   };
 
   // Displays error info, reconnection is handled by the timer
@@ -373,4 +377,11 @@ if ($(window).width() < 766) {
   $("#btnRecording").parent().css('height', '100%');
 }
 
+function updateGnssStatus(data) {
+  document.getElementById("gnssFixType").innerText = data.fix_type;
+  document.getElementById("gnssNumSV").innerText = data.num_sv;
+  document.getElementById("gnssDiffSoln").innerText = data.diff_soln ? "Yes" : "No";
+  document.getElementById("gnssHAcc").innerText = data.h_acc.toFixed(2) + " m";
+  document.getElementById("gnssVAcc").innerText = data.v_acc.toFixed(2) + " m";
+}
 

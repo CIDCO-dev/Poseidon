@@ -21,6 +21,8 @@
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 #include "binary_stream_msg/Stream.h"
+#include "gnss_zed_f9p/GnssStatus.h"
+
 
 #pragma pack(1)
 typedef struct {
@@ -235,7 +237,7 @@ class ZEDF9P{
 					msg.header.stamp=ros::Time::now();
 					msg.twist.twist.linear.y= speedKmh;
 					speedPublisher.publish(msg);
-					
+
 					gnss_zed_f9p::GnssStatus status_msg;
 					status_msg.fix_type = pvt->fixType;
 					status_msg.diff_soln = (pvt->flags >> 2) & 0x01;

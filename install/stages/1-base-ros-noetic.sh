@@ -13,7 +13,7 @@ echo -e "\e[35m[+] Updating applications\[0m"
 sudo apt upgrade -y | tee -a log.txt
 
 echo -e "\e[35m[+] Installing toolchain\[0m"
-sudo apt install gcc python3-dev python3-pip python3-setuptools git curl zip -y | tee -a log.txt
+sudo apt install gcc python3-dev python3-pip python3-setuptools git curl zip libcurl4-openssl-dev -y | tee -a log.txt
 
 echo -e "\e[35m[+] Installing ROS\[0m"
 

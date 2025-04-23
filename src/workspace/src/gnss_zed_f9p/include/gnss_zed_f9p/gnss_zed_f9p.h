@@ -21,8 +21,7 @@
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 #include "binary_stream_msg/Stream.h"
-#include "gnss_zed_f9p/GnssStatus.h"
-
+#include "gnss_status_msg/GnssDiagnostic.h"
 
 #pragma pack(1)
 typedef struct {
@@ -163,7 +162,7 @@ class ZEDF9P{
 			gnssSubscriber = n.subscribe("fix", 1000, &ZEDF9P::gnssCallback,this);
 			speedPublisher = n.advertise<nav_msgs::Odometry>("speed",1000);
 			gnssBinStreamPublisher = n.advertise<binary_stream_msg::Stream>("gnss_bin_stream",1000);
-			statusPublisher = n.advertise<gnss_zed_f9p::GnssStatus>("gnss_status", 10);
+			statusPublisher = n.advertise<gnss_status_msg::GnssDiagnostic>("gnss_status", 10);
 
 		}
 
@@ -238,7 +237,7 @@ class ZEDF9P{
 					msg.twist.twist.linear.y= speedKmh;
 					speedPublisher.publish(msg);
 
-					gnss_zed_f9p::GnssStatus status_msg;
+					gnss_status_msg::GnssDiagnostic status_msg;
 					status_msg.fix_type = pvt->fixType;
 					status_msg.diff_soln = (pvt->flags >> 2) & 0x01;
 					status_msg.carr_soln = (pvt->flags >> 6) & 0x03;

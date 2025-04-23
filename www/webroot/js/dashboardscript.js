@@ -21,6 +21,18 @@ $(document).ready(function () {
 
 });
 
+function getFixTypeLabel(fixType) {
+  const fixTypes = {
+    0: "No Fix",
+    1: "Dead Reckoning only",
+    2: "2D Fix",
+    3: "3D Fix",
+    4: "GNSS + Dead Reckoning",
+    5: "Time only fix"
+  };
+  return fixTypes[fixType] || `Unknown (${fixType})`;
+}
+
 
 // Function to close the WebSocket and notify the user
 function closeWebSocket() {
@@ -378,7 +390,7 @@ if ($(window).width() < 766) {
 }
 
 function updateGnssStatus(data) {
-  document.getElementById("gnssFixType").innerText = data.fix_type;
+  document.getElementById("gnssFixType").innerText = getFixTypeLabel(data.fix_type);
   document.getElementById("gnssNumSV").innerText = data.num_sv;
   document.getElementById("gnssDiffSoln").innerText = data.diff_soln ? "Yes" : "No";
   document.getElementById("gnssHAcc").innerText = data.h_acc.toFixed(2) + " m";

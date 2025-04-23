@@ -287,89 +287,71 @@
             </div>
           </div>
 
-          <!-- Gauges row -->
-          <div class="row">
 
-            <!-- GNSS Status Card -->
-            <div class="col-lg-8 mb-4">
-              <div class="card shadow mb-4 text-center">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">GNSS Status</h6>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-lg-4">
-                      <div>Fix Type</div>
-                      <div id="gnssFixType" class="text-gray-800 h6 font-weight-bold">--</div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div>Satellites Used</div>
-                      <div id="gnssNumSV" class="text-gray-800 h6 font-weight-bold">--</div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div>Differential</div>
-                      <div id="gnssDiffSoln" class="text-gray-800 h6 font-weight-bold">--</div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6">
-                      <div>Horizontal Accuracy (m)</div>
-                      <div id="gnssHAcc" class="text-gray-800 h6 font-weight-bold">--</div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div>Vertical Accuracy (m)</div>
-                      <div id="gnssVAcc" class="text-gray-800 h6 font-weight-bold">--</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+<div class="row">
 
+  <!-- GNSS Status -->
+  <div class="col-lg-3 mb-4">
+    <div class="card shadow text-center">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">GNSS Status</h6>
+      </div>
+      <div class="card-body">
+        <div>Fix Type</div>
+        <div id="gnssFixType" class="text-gray-800 h6 font-weight-bold">--</div>
+        <div>Satellites Used</div>
+        <div id="gnssNumSV" class="text-gray-800 h6 font-weight-bold">--</div>
+        <div>Differential</div>
+        <div id="gnssDiffSoln" class="text-gray-800 h6 font-weight-bold">--</div>
+        <div>H. Accuracy (m)</div>
+        <div id="gnssHAcc" class="text-gray-800 h6 font-weight-bold">--</div>
+        <div>V. Accuracy (m)</div>
+        <div id="gnssVAcc" class="text-gray-800 h6 font-weight-bold">--</div>
+      </div>
+    </div>
+  </div>
 
-            <!-- Depth Card -->
-            <div class="col-lg-8 mb-4 d-">
-              <div class="card shadow mb-4 text-center">
-
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Depth</h6>
-                </div>
-
-                <div class="card-body">
-                  <div class="chart-area" style="height: fit-content;">
-                    <div id="depthChartContainer" style="height: 20em;">
-                      <canvas id="depthChart"></canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Attitude Card -->
-            <div class="col-lg-4 mb-4">
-              <div class="card shadow mb-4 text-center">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Attitude</h6>
-                </div>
-                <div class="card-body">
-                  <div class="">
-                    <h6 class="text-primary d-inline">Heading</h6>
-                    <br />
-                    <div class="" id="gaugeContainer">
-                      <canvas id="imuz"></canvas>
-                    </div>
-                  </div>
-                  <hr />
-                  <div class="chart-area" style="height: fit-content;">
-                    <div id="chartContainer">
-                      <canvas id="attitudeChart"></canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <!-- Sonar (ou Depth si c’est ce que tu voulais dire) -->
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow text-center">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Sonar</h6>
+      </div>
+      <div class="card-body">
+        <div class="chart-area" style="height: fit-content;">
+          <div id="depthChartContainer" style="height: 20em;">
+            <canvas id="depthChart"></canvas>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Attitude -->
+  <div class="col-lg-3 mb-4">
+    <div class="card shadow text-center">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Attitude</h6>
+      </div>
+      <div class="card-body">
+        <h6 class="text-primary">Heading</h6>
+        <div id="gaugeContainer">
+          <canvas id="imuz"></canvas>
+        </div>
+        <hr />
+        <div class="chart-area" style="height: fit-content;">
+          <div id="chartContainer">
+            <canvas id="attitudeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
       <!-- Footer -->
       <footer class="sticky-footer bg-white footer">
         <div class="container my-auto">

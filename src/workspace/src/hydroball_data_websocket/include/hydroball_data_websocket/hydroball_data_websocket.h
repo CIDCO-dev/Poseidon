@@ -11,14 +11,13 @@
 #include <vector>
 #include <string.h>
 #include <boost/lexical_cast.hpp>
-#include <mutex>
 
 #include "ros/ros.h"
 
 #include "state_controller_msg/State.h"
 #include "geometry_msgs/Quaternion.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-#include "gnss_zed_f9p/GnssStatus.h"
+#include "gnss_status_msg/GnssDiagnostic.h"
 
 
 #include <websocketpp/config/asio_no_tls.hpp>
@@ -62,14 +61,14 @@ public:
 	}
 
 	void broadcastMessage(const std::string& message) {
-		std::lock_guard<std::mutex> lock(mutex_);
+		std::lock_guard<std::mutex> lock(mtx);
 		for (auto& hdl : connections) {
 			srv.send(hdl, message, websocketpp::frame::opcode::text);
 		}
 	}
 	
 
-	void onGnssStatusReceived(const gnss_zed_f9p::GnssStatus::ConstPtr& msg) {
+	void onGnssStatusReceived(const gnss_status_msg::GnssDiagnostic::ConstPtr& msg) {
 		rapidjson::Document doc;
 		doc.SetObject();
 		rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();

@@ -1,3 +1,4 @@
+std_msgs/Header header
 uint8 fix_type
 bool diff_soln
 uint8 carr_soln

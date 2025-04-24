@@ -8,6 +8,7 @@ project(logger_service)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  roscpp
   std_msgs
   message_generation
 )
@@ -59,6 +60,7 @@ add_service_files(
    GetLoggingStatus.srv
    SetLoggingMode.srv
    GetLoggingMode.srv
+  TriggerTransfer.srv
 #   Service2.srv
  )
 
@@ -107,7 +109,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES logger_service
-  CATKIN_DEPENDS std_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs message_runtime
 #  DEPENDS system_lib
 )
 

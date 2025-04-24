@@ -13,6 +13,8 @@
 #include <boost/lexical_cast.hpp>
 #include <mutex>
 #include <filesystem>
+#include <fstream>
+#include <curl/curl.h>
 
 #include "ros/ros.h"
 #include "ros/console.h"
@@ -22,6 +24,7 @@
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+#include "logger_service/TriggerTransfer.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -46,6 +49,17 @@ public:
   		    ROS_INFO_STREAM("File successfully deleted: " << fileToDelete);
   		}
     }
+
+std::vector<std::string> getFilesToTransferFromDisk() {
+    std::vector<std::string> fichiers;
+    std::filesystem::path PATH = logFolder;
+    for (const auto& dir_entry : std::filesystem::directory_iterator{PATH}) {
+        if (dir_entry.is_regular_file()) {
+            fichiers.push_back(dir_entry.path().string());
+        }
+    }
+    return fichiers;
+}
 
     void buildFileListJson(rapidjson::Document & document) {
     	//rapidjson::Document document;
@@ -146,6 +160,85 @@ public:
 		*/
     }
 
+
+
+std::string getApiServerAddress() {
+    std::ifstream file("/opt/Poseidon/config.txt");
+    std::string line;
+
+    if (!file.is_open()) {
+        ROS_ERROR_STREAM("Impossible d'ouvrir /opt/Poseidon/config.txt");
+        return "";
+    }
+
+    while (std::getline(file, line)) {
+        ROS_INFO_STREAM("Ligne lue : " << line);
+        if (line.rfind("apiServer", 0) == 0) {
+            std::string value = line.substr(std::string("apiServer").length());
+
+            // Nettoie les espaces
+            value.erase(0, value.find_first_not_of(" \t\r\n"));
+            value.erase(value.find_last_not_of(" \t\r\n") + 1);
+
+            ROS_INFO_STREAM("Valeur extraite : '" << value << "'");
+
+            // Vérifie si vide, localhost, ou seulement des espaces
+            if (value.empty() || value == "localhost") {
+                ROS_ERROR_STREAM("apiServer non configuré ou invalide (vide ou localhost)");
+                return "";
+            }
+
+            ROS_INFO_STREAM("Adresse serveur API retournée : " << value);
+            return value;
+        }
+    }
+
+    ROS_ERROR_STREAM("Clé 'apiServer=' non trouvée dans /opt/Poseidon/config.txt");
+    return "";
+}
+
+
+
+bool pingAddress(const std::string& address) {
+    std::string command = "ping -c 1 -W 1 " + address + " > /dev/null 2>&1";
+    return (system(command.c_str()) == 0);
+}
+
+
+bool isInternetAvailable() {
+    return pingAddress("google.com");
+}
+
+bool isApiAvailable() {
+    std::string domain = getApiServerAddress();
+    if (domain.empty() || domain == "localhost") return false;
+
+    std::string url = "https://" + domain + "/";  // ou "/health" si tu as un endpoint santé
+//ROS_ERROR_STREAM("Vérification de l'API à : " << url);
+    CURL *curl = curl_easy_init();
+    if (!curl) return false;
+
+    CURLcode res;
+    long http_code = 0;
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 2L);      // Timeout rapide
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);        // HEAD only
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); // Pour ignorer les certificats invalides si nécessaire
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); // Idem
+
+    res = curl_easy_perform(curl);
+    if (res == CURLE_OK) {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+    }
+
+    curl_easy_cleanup(curl);
+
+return (http_code == 200 || http_code == 304);
+}
+
+
+
     void on_message(connection_hdl hdl, server::message_ptr msg) {
 		rapidjson::Document document;
 
@@ -164,75 +257,66 @@ public:
 		    deleteFile(fileToDelete);
 		} else if(document.HasMember("f-list")) {
 		    sendFileList();
-		} else {
+		} 
+		else if (document.HasMember("publishfiles")) {
+    std::thread([this, hdl]() {
+        try {
+            // Étape 1 : Vérification des fichiers à transférer
+            sendStatus(hdl, "Vérification des fichiers à transférer...");
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+std::vector<std::string> fichiers = getFilesToTransferFromDisk();
+            if (fichiers.empty()) {
+                sendStatus(hdl, "❌ Aucun fichier à transférer", true);
+                return;
+            }
+
+            // Étape 2 : Vérification de la connexion internet
+            sendStatus(hdl, "Vérification de la connexion Internet...");
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            if (!isInternetAvailable()) {
+                sendStatus(hdl, "❌ Pas de connexion Internet", true);
+                return;
+            }
+
+            // Étape 3 : Vérification du serveur API
+            sendStatus(hdl, "Vérification du serveur API...");
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            if (!isApiAvailable()) {
+                sendStatus(hdl, "❌ Serveur API injoignable", true);
+                return;
+            }
+
+            // Étape 4 : Transfert des fichiers
+            sendStatus(hdl, "Début du transfert des fichiers...");
+//            int index = 1;
+  //          for (const auto& fichier : fichiers) {
+    //            std::this_thread::sleep_for(std::chrono::milliseconds(800)); // simulation
+      //          sendStatus(hdl, "   → Fichier " + std::to_string(index++) + "/" + std::to_string(fichiers.size()) + " transféré");
+        //    }
+ros::ServiceClient client = n.serviceClient<logger_service::TriggerTransfer>("trigger_transfer");
+logger_service::TriggerTransfer srv;
+if (client.call(srv)) {
+    sendStatus(hdl, "Service terminé : " + srv.response.message, srv.response.success);
+} else {
+    sendStatus(hdl, "❌ Échec de l’appel du service trigger_transfer", true);
+}
+
+            sendStatus(hdl, "✅ Tous les fichiers ont été transférés", true);
+
+        } catch (const std::exception& e) {
+            ROS_ERROR_STREAM("Erreur dans la publication des fichiers : " << e.what());
+            sendStatus(hdl, "❌ Une erreur est survenue pendant le transfert", true);
+        }
+    }).detach();
+}
+
+		else {
 		    //no command found. ignore
 			ROS_ERROR("No command found");
 		}
 	}
 
-	/*
-    void on_messageOld(connection_hdl hdl, server::message_ptr msg) {
-	std::string str;
-	std::string str1;
-	std::string add_lat;
-	std::string add_long;
-	std::string insert_add;
-	data_recived = msg->get_payload();
-	str = data_recived;
-        str.erase (0,2);
-	str.erase (6,(str.length()));
-
-      if (str == "delete") {//supression de fichier log
-		str = data_recived;
-        	str.erase (0,11);
-		str.erase ((str.length()-2),(str.length()));
-		str1 = logFolder;
-		str1.erase ((str1.length()-1));
-		str = str1 + str;
-		if( remove(str.c_str()) != 0 ){
-    			ROS_INFO( "Error deleting file" );}
-  		else{
-    			ROS_INFO( "File successfully deleted" );}
-		//ROS_INFO(str.c_str());
-		
-	}
-	
-	if (str == "f-list") {//creation de la liste de fichier
-		 //Build JSON object to send to web interface
-            std::stringstream ss;
-            ss << "{";
-
-	    //list files and send it over websocket
-	    ss << "\"fileslist\":[" ;
-
-	    glob_t glob_result;	
-	    glob(logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
-	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-	    	str = glob_result.gl_pathv[i];
-		if (i > 0) {ss << "," ;} 
-		ss << "[";
-		str.erase (0,(logFolder.length()-1));
-		ss << "\"" << str << "\"" ; //file name
-		str = glob_result.gl_pathv[i];
-	    	str.erase (0,(logFolder.length()-8));
-	    	ss << "," ; 	
-            	ss << "\"" << str << "\"" ;
-		ss << "]";
-        	}
-     
-            ss << "]";  
-
-	
-
-            ss << "}";
-            std::lock_guard<std::mutex> lock(mtx);
-            for (auto it : connections) {
-                 srv.send(it,ss.str(),websocketpp::frame::opcode::text);
-            }
-		ROS_INFO(str.c_str());
-		}
-	}
-	*/
 
     void on_open(connection_hdl hdl) {
         std::lock_guard<std::mutex> lock(mtx);
@@ -281,6 +365,33 @@ public:
   
     
 private:
+
+
+void sendStatus(connection_hdl hdl, const std::string& message, bool done = false, const std::string& extraFieldKey = "", const std::string& extraFieldValue = "") {
+    rapidjson::Document d;
+    d.SetObject();
+    rapidjson::Document::AllocatorType& a = d.GetAllocator();
+
+    d.AddMember("publishstatus", rapidjson::Value(message.c_str(), a), a);
+    if (done) {
+        d.AddMember("done", true, a);
+    }
+
+    if (!extraFieldKey.empty()) {
+        d.AddMember(rapidjson::Value(extraFieldKey.c_str(), a), rapidjson::Value(extraFieldValue.c_str(), a), a);
+    }
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    d.Accept(writer);
+
+    std::string payload = buffer.GetString();
+
+    std::lock_guard<std::mutex> lock(mtx);
+    srv.send(hdl, payload, websocketpp::frame::opcode::text);
+}
+
+
     typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
 
     server srv;

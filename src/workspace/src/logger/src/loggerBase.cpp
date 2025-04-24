@@ -72,6 +72,30 @@ LoggerBase::~LoggerBase(){
 }
 
 
+void LoggerBase::advertiseTransferService(ros::NodeHandle& nh)
+{
+    transferService = nh.advertiseService("trigger_transfer", &LoggerBase::handleTransferRequest, this);
+}
+
+bool LoggerBase::handleTransferRequest(logger_service::TriggerTransfer::Request& req,
+                                       logger_service::TriggerTransfer::Response& res)
+{
+    transferStatusCallback = [](const std::string& status, int current, int total) {
+        ROS_INFO_STREAM("Transfert : " << status << " (" << current << "/" << total << ")");
+    };
+
+    try {
+        this->transfer();
+        res.success = true;
+        res.message = "Transfert complété";
+    } catch (const std::exception& e) {
+        res.success = false;
+        res.message = std::string("Erreur : ") + e.what();
+    }
+
+    return true;
+}
+
 
 void LoggerBase::updateLoggingMode(){
 	setting_msg::ConfigurationService srv;
@@ -509,25 +533,49 @@ void LoggerBase::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vitals){
 
 void LoggerBase::transfer(){
 	
-	std::filesystem::path outputFolderPath = outputFolder;
-	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
-		if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
-					
-			std::string base64Zip = zip_to_base64(dir_entry.path());
-			std::string json = create_json_str(base64Zip);
-			bool ok = send_job(json);
-			
-			if(!ok){
-				// XXX retry  3-5 time ??
-				break;
-			}
-			else{
-				if(!std::filesystem::remove(dir_entry.path())){
-					ROS_ERROR_STREAM("Could not delete file:" << dir_entry.path());
-				}
-			}
-		}
-	}	
+//	std::filesystem::path outputFolderPath = outputFolder;
+//	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
+//		if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
+//					
+//			std::string base64Zip = zip_to_base64(dir_entry.path());
+//			std::string json = create_json_str(base64Zip);
+//			bool ok = send_job(json);
+//			
+//			if(!ok){
+//				// XXX retry  3-5 time ??
+//				break;
+//			}
+//			else{
+//				if(!std::filesystem::remove(dir_entry.path())){
+//					ROS_ERROR_STREAM("Could not delete file:" << dir_entry.path());
+//				}
+//			}
+//		}
+//	}	
+
+int total = 0;
+for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
+    if (entry.is_regular_file() && entry.path().extension() == ".zip")
+        ++total;
+}
+
+int count = 0;
+for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
+    if (entry.is_regular_file() && entry.path().extension() == ".zip") {
+        std::string name = entry.path().filename().string();
+        if (transferStatusCallback)
+            transferStatusCallback("Transfert de " + name, ++count, total);
+
+        std::string base64Zip = zip_to_base64(entry.path());
+        std::string json = create_json_str(base64Zip);
+        bool ok = send_job(json);
+
+        if (!ok) break;
+
+        std::filesystem::remove(entry.path());
+    }
+}
+
 }
 
 std::string LoggerBase::zip_to_base64(std::string zipPath){

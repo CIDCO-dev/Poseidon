@@ -87,10 +87,10 @@ bool LoggerBase::handleTransferRequest(logger_service::TriggerTransfer::Request&
     try {
         this->transfer();
         res.success = true;
-        res.message = "Transfert complété";
+        res.message = "Transfer done";
     } catch (const std::exception& e) {
         res.success = false;
-        res.message = std::string("Erreur : ") + e.what();
+        res.message = std::string("Error : ") + e.what();
     }
 
     return true;
@@ -532,26 +532,7 @@ void LoggerBase::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vitals){
 }
 
 void LoggerBase::transfer(){
-	
-//	std::filesystem::path outputFolderPath = outputFolder;
-//	for(auto &dir_entry: std::filesystem::directory_iterator{outputFolderPath}){
-//		if(dir_entry.is_regular_file() && dir_entry.path().extension() == ".zip"){
-//					
-//			std::string base64Zip = zip_to_base64(dir_entry.path());
-//			std::string json = create_json_str(base64Zip);
-//			bool ok = send_job(json);
-//			
-//			if(!ok){
-//				// XXX retry  3-5 time ??
-//				break;
-//			}
-//			else{
-//				if(!std::filesystem::remove(dir_entry.path())){
-//					ROS_ERROR_STREAM("Could not delete file:" << dir_entry.path());
-//				}
-//			}
-//		}
-//	}	
+
 
 int total = 0;
 for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
@@ -564,7 +545,7 @@ for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
     if (entry.is_regular_file() && entry.path().extension() == ".zip") {
         std::string name = entry.path().filename().string();
         if (transferStatusCallback)
-            transferStatusCallback("Transfert de " + name, ++count, total);
+            transferStatusCallback("Transfer of " + name, ++count, total);
 
         std::string base64Zip = zip_to_base64(entry.path());
         std::string json = create_json_str(base64Zip);

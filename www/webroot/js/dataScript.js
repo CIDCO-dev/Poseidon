@@ -5,7 +5,7 @@ var linklist = Array();
 var dataArray = [];
 var olddataln = 0;
 var state;
-
+let publishModalInstance = null;
 
 
 
@@ -23,8 +23,13 @@ function startPublish() {
   list.innerHTML = '';
   document.getElementById('publishOkButton').disabled = true;
 
-  const modal = new bootstrap.Modal(document.getElementById('publishModal'));
-  modal.show();
+//  const modal = new bootstrap.Modal(document.getElementById('publishModal'));
+//  modal.show();
+
+const modalEl = document.getElementById('publishModal');
+publishModalInstance = new bootstrap.Modal(modalEl);
+publishModalInstance.show();
+
 
   socket.send(JSON.stringify({ publishfiles: true }));
 }
@@ -311,3 +316,11 @@ $('#perPageSelect').on('change', function() {
   processState(state);
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+  const okBtn = document.getElementById('publishOkButton');
+  okBtn.addEventListener('click', function () {
+    if (publishModalInstance) {
+      publishModalInstance.hide();
+    }
+  });
+});

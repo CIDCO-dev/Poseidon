@@ -90,40 +90,6 @@ std::vector<std::string> getFilesToTransferFromDisk() {
         
         return;
     }
-	/*
-    void buildFileListStringstream(std::stringstream & ss) {
-    	
-    	
-        ss << "{";
-
-	    //list files and send it over websocket
-	    ss << "\"fileslist\":[" ;
-	    glob_logFolder = logFolder + "*";
-	    glob_t glob_result;
-	    glob(glob_logFolder.c_str(),GLOB_TILDE,NULL,&glob_result);
-	    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-	    	std::string str = glob_result.gl_pathv[i];
-	    	//std::cout<<str<<"\n";
-		    if (i > 0) {ss << "," ;}
-
-            ss << "[";
-            //std::cout<<ss<<"\n";
-            str.erase (0,(logFolder.length()));
-            ss << "\"" << str << "\"" ; //file name
-            str = glob_result.gl_pathv[i];
-            str.erase (0,(logFolder.length()-7));
-            std::cout<<str<<"\n\n";
-            ss << "," ;
-            ss << "\"" << str << "\"" ;
-            ss << "]";
-            //std::cout<<ss<<"\n\n";
-            
-        }
-
-        ss << "]";
-        ss << "}";
-        
-    }*/
 
     void sendFileList() {
     	
@@ -141,25 +107,7 @@ std::vector<std::string> getFilesToTransferFromDisk() {
              srv.send(it,json.c_str(),websocketpp::frame::opcode::text);             
         }
 
-		//ROS_ERROR_STREAM("sendFileList()\n" << json.c_str());
-		
-		
-    	/*
-        //Build JSON object to send to web interface
-        std::stringstream ss;
-
-        buildFileListStringstream(ss);
-        std::string toSend = ss.str();
-
-        std::lock_guard<std::mutex> lock(mtx);
-        for (auto it : connections) {
-             srv.send(it,toSend,websocketpp::frame::opcode::text);
-        }
-
-		ROS_INFO(toSend.c_str());
-		*/
-    }
-
+}
 
 
 std::string getApiServerAddress() {
@@ -167,33 +115,33 @@ std::string getApiServerAddress() {
     std::string line;
 
     if (!file.is_open()) {
-        ROS_ERROR_STREAM("Impossible d'ouvrir /opt/Poseidon/config.txt");
+        ROS_ERROR_STREAM("Fail to open /opt/Poseidon/config.txt");
         return "";
     }
 
     while (std::getline(file, line)) {
-        ROS_INFO_STREAM("Ligne lue : " << line);
+        ROS_INFO_STREAM("Line read : " << line);
         if (line.rfind("apiServer", 0) == 0) {
             std::string value = line.substr(std::string("apiServer").length());
 
-            // Nettoie les espaces
+            // Space trim
             value.erase(0, value.find_first_not_of(" \t\r\n"));
             value.erase(value.find_last_not_of(" \t\r\n") + 1);
 
-            ROS_INFO_STREAM("Valeur extraite : '" << value << "'");
+            ROS_INFO_STREAM("Value : '" << value << "'");
 
             // Vérifie si vide, localhost, ou seulement des espaces
             if (value.empty() || value == "localhost") {
-                ROS_ERROR_STREAM("apiServer non configuré ou invalide (vide ou localhost)");
+                ROS_ERROR_STREAM("apiServer empty or localhost");
                 return "";
             }
 
-            ROS_INFO_STREAM("Adresse serveur API retournée : " << value);
+            ROS_INFO_STREAM("Api Server address : " << value);
             return value;
         }
     }
 
-    ROS_ERROR_STREAM("Clé 'apiServer=' non trouvée dans /opt/Poseidon/config.txt");
+    ROS_ERROR_STREAM("key 'apiServer=' not found in /opt/Poseidon/config.txt");
     return "";
 }
 
@@ -213,8 +161,7 @@ bool isApiAvailable() {
     std::string domain = getApiServerAddress();
     if (domain.empty() || domain == "localhost") return false;
 
-    std::string url = "https://" + domain + "/";  // ou "/health" si tu as un endpoint santé
-//ROS_ERROR_STREAM("Vérification de l'API à : " << url);
+    std::string url = "https://" + domain + "/";  
     CURL *curl = curl_easy_init();
     if (!curl) return false;
 
@@ -224,8 +171,8 @@ bool isApiAvailable() {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 2L);      // Timeout rapide
     curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);        // HEAD only
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); // Pour ignorer les certificats invalides si nécessaire
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); // Idem
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L); // Pour ignorer les certificats invalides si nécessaire
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L); // Idem
 
     res = curl_easy_perform(curl);
     if (res == CURLE_OK) {
@@ -261,52 +208,42 @@ return (http_code == 200 || http_code == 304);
 		else if (document.HasMember("publishfiles")) {
     std::thread([this, hdl]() {
         try {
-            // Étape 1 : Vérification des fichiers à transférer
-            sendStatus(hdl, "Vérification des fichiers à transférer...");
+            sendStatus(hdl, "Checking files to transfer...");
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 std::vector<std::string> fichiers = getFilesToTransferFromDisk();
             if (fichiers.empty()) {
-                sendStatus(hdl, "❌ Aucun fichier à transférer", true);
+                sendStatus(hdl, "❌ No files to transfer", true);
                 return;
             }
 
-            // Étape 2 : Vérification de la connexion internet
-            sendStatus(hdl, "Vérification de la connexion Internet...");
+            sendStatus(hdl, "Checking internet connection...");
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             if (!isInternetAvailable()) {
-                sendStatus(hdl, "❌ Pas de connexion Internet", true);
+                sendStatus(hdl, "❌ No internet connection", true);
                 return;
             }
 
-            // Étape 3 : Vérification du serveur API
-            sendStatus(hdl, "Vérification du serveur API...");
+            sendStatus(hdl, "Checking API server connection...");
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             if (!isApiAvailable()) {
-                sendStatus(hdl, "❌ Serveur API injoignable", true);
+                sendStatus(hdl, "❌ No API server connection", true);
                 return;
             }
 
-            // Étape 4 : Transfert des fichiers
-            sendStatus(hdl, "Début du transfert des fichiers...");
-//            int index = 1;
-  //          for (const auto& fichier : fichiers) {
-    //            std::this_thread::sleep_for(std::chrono::milliseconds(800)); // simulation
-      //          sendStatus(hdl, "   → Fichier " + std::to_string(index++) + "/" + std::to_string(fichiers.size()) + " transféré");
-        //    }
+            sendStatus(hdl, "Starting files transfer...");
 ros::ServiceClient client = n.serviceClient<logger_service::TriggerTransfer>("trigger_transfer");
 logger_service::TriggerTransfer srv;
 if (client.call(srv)) {
-    sendStatus(hdl, "Service terminé : " + srv.response.message, srv.response.success);
+    sendStatus(hdl, "✅ Transfer done : " + srv.response.message, srv.response.success);
 } else {
-    sendStatus(hdl, "❌ Échec de l’appel du service trigger_transfer", true);
+    sendStatus(hdl, "❌ Fail to start the file transfer", true);
 }
 
-            sendStatus(hdl, "✅ Tous les fichiers ont été transférés", true);
 
         } catch (const std::exception& e) {
-            ROS_ERROR_STREAM("Erreur dans la publication des fichiers : " << e.what());
-            sendStatus(hdl, "❌ Une erreur est survenue pendant le transfert", true);
+            ROS_ERROR_STREAM("Error in file pub. : " << e.what());
+            sendStatus(hdl, "❌ Error during file transfer", true);
         }
     }).detach();
 }

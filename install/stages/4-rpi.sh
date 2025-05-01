@@ -85,7 +85,6 @@ KillSignal=SIGINT
 ExecStart=/opt/Poseidon/launchROSService.sh
 ExecStop=/usr/bin/pkill -INT roslaunch
 TimeoutStopSec=60
-ExecStopPost=/sbin/shutdown now
 [Install]
 WantedBy=multi-user.target
 EOF3'

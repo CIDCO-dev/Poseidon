@@ -12,11 +12,13 @@ int main(int argc, char **argv)
 	try{
 		ros::init(argc, argv, "logger");
 
-		ros::NodeHandle n;
+		ros::NodeHandle nh;
 
 		std::string outputFolder( argv[1] );
 
 		LoggerBinary logger(outputFolder);
+
+		logger.advertiseTransferService(nh);
 
 		ros::spin();
 	}

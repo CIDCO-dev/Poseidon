@@ -5,6 +5,36 @@ var linklist = Array();
 var dataArray = [];
 var olddataln = 0;
 var state;
+let publishModalInstance = null;
+
+
+
+function updatePublishStatus(message) {
+  const list = document.getElementById('publishStatusList');
+  const item = document.createElement('li');
+  item.className = 'list-group-item';
+  item.innerText = message;
+  list.appendChild(item);
+  list.scrollTop = list.scrollHeight; // Scroll to bottom
+}
+
+function startPublish() {
+  const list = document.getElementById('publishStatusList');
+  list.innerHTML = '';
+  document.getElementById('publishOkButton').disabled = true;
+
+//  const modal = new bootstrap.Modal(document.getElementById('publishModal'));
+//  modal.show();
+
+const modalEl = document.getElementById('publishModal');
+publishModalInstance = new bootstrap.Modal(modalEl);
+publishModalInstance.show();
+
+
+  socket.send(JSON.stringify({ publishfiles: true }));
+}
+
+
 
 function processState(state) {
   //******************************
@@ -92,9 +122,24 @@ time = setInterval(function (list) {
 
 var socket = new WebSocket("ws://" + window.location.hostname + ":9003");
 socket.onmessage = function (event) {
-  // console.log(event.data);
-  state = JSON.parse(event.data);
-  processState(state);
+  try {
+    const message = JSON.parse(event.data);
+
+    // Traitement publication
+    if (message.publishstatus) {
+      updatePublishStatus(message.publishstatus);
+      if (message.done === true) {
+        document.getElementById('publishOkButton').disabled = false;
+      }
+      return;
+    }
+
+    // Traitement fichiers
+    state = message;
+    processState(state);
+  } catch (e) {
+    console.error("Message WebSocket invalide :", e);
+  }
 };
 
 //******************************
@@ -271,3 +316,11 @@ $('#perPageSelect').on('change', function() {
   processState(state);
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+  const okBtn = document.getElementById('publishOkButton');
+  okBtn.addEventListener('click', function () {
+    if (publishModalInstance) {
+      publishModalInstance.hide();
+    }
+  });
+});

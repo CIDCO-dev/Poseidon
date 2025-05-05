@@ -40,7 +40,7 @@ sudo bash -c 'echo "pps-ldisc" >> /etc/modules'
 
 echo "[+] Config I2C"
 sudo bash -c 'echo "dtparam=i2c_arm_baudrate=500000" >> /boot/firmware/usercfg.txt'
-sudo bash -c 'echo "dtparam=i2c4,pins_6_7" >> /boot/firmware/usercfg.txt'
+sudo bash -c 'echo "dtoverlay=i2c4,pins_6_7" >> /boot/firmware/usercfg.txt'
 
 echo "[+] Turn off SPI"
 sudo sed -i "s/dtparam=spi=on/dtparam=spi=off/g" /boot/firmware/syscfg.txt
@@ -85,7 +85,6 @@ KillSignal=SIGINT
 ExecStart=/opt/Poseidon/launchROSService.sh
 ExecStop=/usr/bin/pkill -INT roslaunch
 TimeoutStopSec=60
-ExecStopPost=/sbin/shutdown now
 [Install]
 WantedBy=multi-user.target
 EOF3'

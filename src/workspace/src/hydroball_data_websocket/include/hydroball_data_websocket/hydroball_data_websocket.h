@@ -11,13 +11,14 @@
 #include <vector>
 #include <string.h>
 #include <boost/lexical_cast.hpp>
-#include <mutex>
 
 #include "ros/ros.h"
 
 #include "state_controller_msg/State.h"
 #include "geometry_msgs/Quaternion.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "gnss_status_msg/GnssDiagnostic.h"
+
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -55,7 +56,38 @@ public:
 		getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
 		setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
 		getLoggingStatusService.waitForExistence();
+		gnssStatusSub = n.subscribe("gnss_status", 10, &TelemetryServer::onGnssStatusReceived, this);
+
 	}
+
+	void broadcastMessage(const std::string& message) {
+		std::lock_guard<std::mutex> lock(mtx);
+		for (auto& hdl : connections) {
+			srv.send(hdl, message, websocketpp::frame::opcode::text);
+		}
+	}
+	
+
+	void onGnssStatusReceived(const gnss_status_msg::GnssDiagnostic::ConstPtr& msg) {
+		rapidjson::Document doc;
+		doc.SetObject();
+		rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	
+		doc.AddMember("type", "gnss_status", allocator);
+		doc.AddMember("fix_type", msg->fix_type, allocator);
+		doc.AddMember("diff_soln", msg->diff_soln, allocator);
+		doc.AddMember("carr_soln", msg->carr_soln, allocator);
+		doc.AddMember("num_sv", msg->num_sv, allocator);
+		doc.AddMember("h_acc", msg->horizontal_accuracy, allocator);
+		doc.AddMember("v_acc", msg->vertical_accuracy, allocator);
+	
+		rapidjson::StringBuffer buffer;
+		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+		doc.Accept(writer);
+	
+		broadcastMessage(buffer.GetString());
+	}
+	
 
 	void on_message(connection_hdl hdl, server::message_ptr msg) {
 	rapidjson::Document document;
@@ -352,6 +384,8 @@ private:
 	ros::ServiceClient toggleLoggingService;
 	ros::ServiceClient getLoggingModeServiceClient;
 	ros::ServiceClient setLoggingModeServiceClient;
+	ros::Subscriber gnssStatusSub;
+
 	
 	tf2_ros::Buffer buffer;
 	tf2_ros::TransformListener transformListener;

@@ -1160,7 +1160,19 @@ def send_config(serial_port):
     (130000, 1, 0x40050004),  # Setting time pulse length to 130000 microseconds (130ms)
     (130000, 2, 0x40050004),  # Setting time pulse length to 130000 microseconds (130ms)
     (130000, 4, 0x40050004),  # Setting time pulse length to 130000 microseconds (130ms)
-                
+
+    (1, 1, 0x20910006),  # write 1 to USB port PVT key (layer 1 = RAM)
+    (1, 1, 0x20910010),
+    (1, 1, 0x20910035),
+    (1, 1, 0x2091034F),                
+    (1, 2, 0x20910006),  # write 1 to USB port PVT key (layer 1 = RAM)
+    (1, 2, 0x20910010),
+    (1, 2, 0x20910035),
+    (1, 2, 0x2091034F),
+    (1, 4, 0x20910006),  # write 1 to USB port PVT key (layer 1 = RAM)
+    (1, 4, 0x20910010),
+    (1, 4, 0x20910035),
+    (1, 4, 0x2091034F),
     ]
     
     print("Opening Serial Port...")

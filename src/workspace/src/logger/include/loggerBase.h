@@ -3,6 +3,8 @@
 
 //Ros
 #include "ros/ros.h"
+#include <ros/service_server.h>
+#include <functional>
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/Imu.h"
 #include "sensor_msgs/PointCloud2.h"
@@ -29,6 +31,7 @@
 #include "logger_service/ToggleLogging.h"
 #include "logger_service/GetLoggingMode.h"
 #include "logger_service/SetLoggingMode.h"
+#include "logger_service/TriggerTransfer.h"
 
 //Poseidon custom messages
 #include "setting_msg/Setting.h"
@@ -103,11 +106,17 @@ class LoggerBase{
 		void reset_gnss_timer();
 		void gnss_timer_callback(const ros::TimerEvent& event);
 		ros::Timer noGnssTimer;
+
+	        ros::ServiceServer transferService;
+    		bool handleTransferRequest(logger_service::TriggerTransfer::Request& req,
+	                                   logger_service::TriggerTransfer::Response& res);
 	
 	public:
 		LoggerBase(std::string & outputFolder);
 		~LoggerBase();
-		
+		void advertiseTransferService(ros::NodeHandle& nh);		
+		std::function<void(const std::string&, int, int)> transferStatusCallback;
+
 	protected:
 		void processGnssFix(const sensor_msgs::NavSatFix& gnss);
 		
@@ -202,6 +211,9 @@ class LoggerBase{
 		bool activatedTransfer;
 		std::string apiKey;
 		std::string port;
+
+
+
 };
 	
 #endif

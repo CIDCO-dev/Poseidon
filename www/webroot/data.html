@@ -100,6 +100,24 @@
       <!-- End of Sidebar -->
     </div>
 
+<div class="modal fade" id="publishModal" tabindex="-1" aria-labelledby="publishModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="publishModalLabel">Files transfert</h5>
+      </div>
+      <div class="modal-body">
+        <ul id="publishStatusList" class="list-group">
+          <li class="list-group-item">Initialisation...</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="publishOkButton" class="btn btn-danger" disabled>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
       <!-- Main Content -->
@@ -152,14 +170,13 @@
               <h6 class="m-0 font-weight-bold text-primary">Files</h6>
             </div>
             <div class="card-body row pt-1">
-              <button type="button" id="selectBtn" class="btn btn-primary col-xs-2 m-1 mb-2" onclick="selectall()"
-                data-dismiss="modal">
-                Select All
+              <button type="button" id="selectBtn" class="btn btn-primary col-xs-2 m-1 mb-2" onclick="selectall()" data-dismiss="modal">
+                Select All Files
               </button>
-              <button type="button" id="delBtn" class="btn btn-primary col-xs-2 m-1 mb-2" data-toggle="modal"
-                data-target="#filedel">
-                Delete
+              <button type="button" id="delBtn" class="btn btn-primary col-xs-2 m-1 mb-2" data-toggle="modal" data-target="#filedel">
+                Delete Selected Files
               </button>
+              <button type="button" id="PubBtn" class="btn btn-primary col-xs-2 m-1 mb-2" onclick="startPublish()">Publish All Files</button>
               <div id="searchbarDiv" class="ml-auto col-xs-2 m-1 mb-2">
                 <input class="searchbar form-control-plaintext border border-primary rounded" type="text"
                   name="searchbar" placeholder="Search..." />
@@ -260,6 +277,7 @@
   <!-- Page level custom scripts -->
   <!-- <script src="js/demo/chart-area-demo.js"></script> -->
   <!-- <script src="js/demo/chart-pie-demo.js"></script> -->
+
 </body>
 
 </html>

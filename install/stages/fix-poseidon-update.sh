@@ -7,7 +7,7 @@ cd /opt/gps_umd
 sudo mv gps* /opt/Poseidon/src/workspace/src/
 cd /opt
 sudo rm -rd gps_umd
-
+sudo apt install libcurl4-openssl-dev -y 
 
 
 cd /opt/Poseidon/install/stages

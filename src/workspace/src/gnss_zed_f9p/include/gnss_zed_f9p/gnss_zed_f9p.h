@@ -21,6 +21,7 @@
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 #include "binary_stream_msg/Stream.h"
+#include "gnss_status_msg/GnssDiagnostic.h"
 
 #pragma pack(1)
 typedef struct {
@@ -151,6 +152,7 @@ class ZEDF9P{
 		ros::Subscriber gnssSubscriber;
 		ros::Publisher speedPublisher;
 		ros::Publisher gnssBinStreamPublisher;
+		ros::Publisher statusPublisher;
 
 
 
@@ -160,6 +162,8 @@ class ZEDF9P{
 			gnssSubscriber = n.subscribe("fix", 1000, &ZEDF9P::gnssCallback,this);
 			speedPublisher = n.advertise<nav_msgs::Odometry>("speed",1000);
 			gnssBinStreamPublisher = n.advertise<binary_stream_msg::Stream>("gnss_bin_stream",1000);
+			statusPublisher = n.advertise<gnss_status_msg::GnssDiagnostic>("gnss_status", 10);
+
 		}
 
 		std::string datetime(){
@@ -232,6 +236,15 @@ class ZEDF9P{
 					msg.header.stamp=ros::Time::now();
 					msg.twist.twist.linear.y= speedKmh;
 					speedPublisher.publish(msg);
+
+					gnss_status_msg::GnssDiagnostic status_msg;
+					status_msg.fix_type = pvt->fixType;
+					status_msg.diff_soln = (pvt->flags >> 2) & 0x01;
+					status_msg.carr_soln = (pvt->flags >> 6) & 0x03;
+					status_msg.num_sv = pvt->nbSatellites;
+					status_msg.horizontal_accuracy = pvt->horizontalAccuracy / 1000.0f;
+					status_msg.vertical_accuracy = pvt->verticalAccuracy / 1000.0f;
+					statusPublisher.publish(status_msg);
 				}
 				/*
 				else if(hdr->msgClass == 0x02 && hdr->id == 0x15){

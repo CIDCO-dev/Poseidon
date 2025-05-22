@@ -41,7 +41,7 @@ sudo apt-get install network-manager -y | tee -a log.txt
 sudo systemctl start NetworkManager.service | tee -a log.txt
 sudo systemctl enable NetworkManager.service | tee -a log.txt
 
-/opt/Poseidon/install/stages/ethernet-config.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
+/opt/Poseidon/install/stages/ethernet-config.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass 
 
 sudo netplan apply
    
@@ -59,8 +59,8 @@ else
   wf_if=$4
   wf_ssid=$5
   wf_pass=$6
-  snd_ip=$7
-  if [ ! -z "$hs_if" ] && [ ! -z "$hs_ssid" ] && [ ! -z "$hs_pass" ] && [ ! -z "$wf_if" ] && [ ! -z "$wf_ssid" ] && [ ! -z "$wf_pass" ] && [ ! -z "$snd_ip" ] 
+
+  if [ ! -z "$hs_if" ] && [ ! -z "$hs_ssid" ] && [ ! -z "$hs_pass" ] && [ ! -z "$wf_if" ] && [ ! -z "$wf_ssid" ] && [ ! -z "$wf_pass" ] 
   then
     Config
     exit

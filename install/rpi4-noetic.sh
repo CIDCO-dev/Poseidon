@@ -17,17 +17,16 @@ Help()
    echo "[wifi_if]        Wifi interface name.              $wf_if"
    echo "[wifi_ssid]      Wifi SSID.                        $wf_ssid"
    echo "[wifi_pass]      Wifi Password.                    $wf_pass"
-   echo "[eth_2nd_ip]     Wired ethernet second ip address. $snd_ip"
    echo "[rtc]            Enable Hardware RTC and disable Software RTC"
    echo
    echo "Command line exemple."
    echo "rpi4-noetic.sh -help"
    echo "For Software RTC"
-   echo "rpi4-noetic.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass -eth_2nd_ip "
-   echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' '192.168.2.101'"
+   echo "rpi4-noetic.sh hotspot_if hotspot_ssid -hotspot_pass -wifi_if -wifi_ssid -wifi_pass "
+   echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-test' "
    echo "For Hardware RTC"
-   echo "rpi4-noetic.sh hotspot_if hotspot_ssid hotspot_pass wifi_if wifi_ssid wifi_pass eth_2nd_ip rtc"
-   echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-1234' '192.168.2.101' 'rtc'"
+   echo "rpi4-noetic.sh hotspot_if hotspot_ssid hotspot_pass wifi_if wifi_ssid wifi_pass rtc"
+   echo "rpi4-noetic.sh 'wlan1' 'Hydro-B' 'cidco1234' 'wlan0' 'test' 'pass-1234' 'rtc'"
    
 }
 
@@ -41,7 +40,7 @@ Config()
 
 /opt/Poseidon/install/stages/1-base-ros-noetic.sh
 
-/opt/Poseidon/install/stages/2-rpi4.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass $snd_ip
+/opt/Poseidon/install/stages/2-rpi4.sh $hs_if $hs_ssid $hs_pass $wf_if $wf_ssid $wf_pass
 
 /opt/Poseidon/install/stages/3-network.sh
 
@@ -72,8 +71,8 @@ else
   wf_if=$4
   wf_ssid=$5
   wf_pass=$6
-  snd_ip=$7
-  if [ ! -z "$hs_if" ] && [ ! -z "$hs_ssid" ] && [ ! -z "$hs_pass" ] && [ ! -z "$wf_if" ] && [ ! -z "$wf_ssid" ] && [ ! -z "$wf_pass" ] && [ ! -z "$snd_ip" ] 
+
+  if [ ! -z "$hs_if" ] && [ ! -z "$hs_ssid" ] && [ ! -z "$hs_pass" ] && [ ! -z "$wf_if" ] && [ ! -z "$wf_ssid" ] && [ ! -z "$wf_pass" ]  
   then
     Config
     exit

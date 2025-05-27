@@ -23,7 +23,7 @@ refclock  PPS /dev/pps0  refid PPS  precision 1e-9  poll 3  trust
 # SOCK, gpsd: PPS data from socket provided by gpsd
 #refclock  SOCK /var/run/chrony.pps0.sock  refid PPSy  precision 1e-9  poll 3  trust
 # SHM(0), gpsd: NMEA data from shared memory provided by gpsd
-refclock  SHM 0  refid NMEA  precision 1e-3  offset 0.5  delay 0.2  poll 3  trust  prefer
+refclock  SHM 0  refid NMEA  precision 1e-3  offset 0.0  delay 0.2  poll 3  trust  prefer
 # any NTP clients are allowed to access the NTP server.
 allow
 # allows to appear synchronised to NTP clients, even when it is not.

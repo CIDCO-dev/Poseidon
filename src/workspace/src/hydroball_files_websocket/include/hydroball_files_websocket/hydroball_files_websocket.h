@@ -154,7 +154,7 @@ bool pingAddress(const std::string& address) {
 
 
 bool isInternetAvailable() {
-    return pingAddress("google.com");
+    return pingAddress("ubuntu.com");
 }
 
 bool isApiAvailable() {

@@ -28,7 +28,7 @@
 <node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
 <!--<node pkg="sonar_imagenex852" type="main.py" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>-->
-<node pkg="sonar_imagenex852_c" type="sonar_imagenex852_c_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
+<node pkg="sonar_imagenex852_c" type="sonar_imagenex852_c_node" name="Sonar-Imagenex" output="screen" respawn="true" respawn_delay="1"/>
 
 
 <node pkg="power_management" name="power_management" type="power_management_node" output="screen"/>

@@ -323,12 +323,12 @@ class Imagenex852{
 			
 			//verify capabilities
 
-			if(! hdr.serialStatus & 0x01){
+			if(! (hdr.serialStatus & 0x01)){
 				ROS_ERROR("Echosounder not detected");
 			}
 
 			//Verify that we support automatic trigger mode
-			if(! hdr.serialStatus & 0x04){
+			if(! (hdr.serialStatus & 0x04)){
 				ROS_ERROR("Automatic trigger mode not supported. Pings will be unsynchronized");
 			}
 

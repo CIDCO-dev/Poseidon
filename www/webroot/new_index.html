@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hydroblock Dashboard</title>
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 text-dark font-weight-bold">Hydroblock Dashboard</h1>
+      <div id="RecIcon" class="rounded-circle bg-danger p-2 text-white shadow" title="Statut d'enregistrement">
+        <i class="fas fa-circle"></i>
+      </div>
+    </div>
+
+    <div id="systemStatus" class="alert alert-danger d-none shadow-sm">
+      <strong id="systemStatusTitle">Avertissement :</strong>
+      <span id="systemStatusText"></span>
+    </div>
+
+    <div class="row">
+      <!-- GNSS -->
+      <div class="col-xl-4 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h5 class="font-weight-bold text-primary">GNSS</h5>
+                <div>Longitude : <span id="gnssLongitudeValue">--</span></div>
+                <div>Latitude : <span id="gnssLatitudeValue">--</span></div>
+              </div>
+              <div class="text-gray-300">
+                <i class="fas fa-map-marked-alt fa-2x"></i>
+              </div>
+            </div>
+            <small id="gnssStatusText" class="text-muted">En attente de données...</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMU -->
+      <div class="col-xl-4 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h5 class="font-weight-bold text-success">IMU</h5>
+                <div>Cap : <span id="imuHeadingValue">--</span></div>
+                <div>Tangage : <span id="imuPitchValue">--</span></div>
+                <div>Roulis : <span id="imuRollValue">--</span></div>
+              </div>
+              <div class="text-gray-300">
+                <i class="fas fa-compass fa-2x"></i>
+              </div>
+            </div>
+            <small id="imuStatusText" class="text-muted">En attente de données...</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sonar -->
+      <div class="col-xl-4 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h5 class="font-weight-bold text-warning">Sonar</h5>
+                <div>Profondeur (m) : <span id="sonarDepthValue">--</span></div>
+              </div>
+              <div class="text-gray-300">
+                <i class="fas fa-rss fa-rotate-180 fa-2x"></i>
+              </div>
+            </div>
+            <small id="sonarStatusText" class="text-muted">En attente de données...</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="js/Chart.min.js"></script>
+  <script src="js/gauge.min.js"></script>
+  <script src="js/poseidon.js"></script>
+  <script src="js/dashboardscript.js"></script>
+</body>
+</html>

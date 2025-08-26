@@ -54,6 +54,9 @@
   <build_depend>tf2_geometry_msgs</build_depend>
   <build_depend>tf2</build_depend>
   <build_depend>setting_msg</build_depend>
+  <exec_depend>setting_msg</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend>
 <!--  <build_depend>tf2_ros</build_depend>-->
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
@@ -62,6 +65,9 @@
   <exec_depend>tf2_geometry_msgs</exec_depend>
   <exec_depend>tf2</exec_depend>
   <exec_depend>setting_msg</exec_depend>
+  <exec_depend>gpsd</exec_depend>
+  <exec_depend>gpsd-clients</exec_depend>
+  <exec_depend>python3-gps</exec_depend>
 <!--  <exec_depend>tf2_ros</exec_depend>-->
 
 

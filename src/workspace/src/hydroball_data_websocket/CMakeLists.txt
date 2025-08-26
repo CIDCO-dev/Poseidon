@@ -185,6 +185,13 @@ include_directories(
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
+
+# catkin_install_python(PROGRAMS
+#   scripts/hydroball_data_websocket.py
+#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
+
+
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
  install(TARGETS ${PROJECT_NAME}

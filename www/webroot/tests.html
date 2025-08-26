@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="DataLogger Functional Diagnostics">
+  <meta name="author" content="CIDCO">
+  
+  <title>DataLogger - Diagnostics</title>
+  
+  <link rel="shortcut icon" href="img/cidco_logo-removebg.png">
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="vendor/googleapi/fonts.css" rel="stylesheet">
+  
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  
+</head>
+
+<body id="page-top">
+
+<!-- Navigation et layout identique à diagnostics.html -->
+<!-- Copie le contenu de <nav>, <div id="wrapper">, <div id="content-wrapper"> depuis diagnostics.html -->
+
+  <div class="container-fluid">
+    <h1 class="h3 mb-0 text-gray-800">Tests Firmware</h1>
+    <hr>
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Commandes</h6>
+      </div>
+      <div class="card-body">
+        <button class="btn btn-success mb-2" onclick="sendCommand('powerOn')">Allumer l'appareil</button>
+        <button class="btn btn-danger mb-2" onclick="sendCommand('powerOff')">Éteindre l'appareil</button>
+        <button class="btn btn-warning mb-2" onclick="sendCommand('rotateLogs')">Rotation des logs</button>
+        <!-- <button class="btn btn-info mb-2" onclick="sendCommand('startRecording')">Démarrer l'enregistrement</button> -->
+		        
+		<li class="list-group-item">
+			<div class="container-fluid pl-0">
+
+					<div id="btnRecording" href="#" onclick="toggleRecording()"
+					class="d-inline btn btn-success">
+					<span class="icon-text-white-50"><i class="fas fa-circle"></i></span>
+					<span id="btnRecordingText" class="text">Start Recording</span>
+				</div>
+			</div>
+		</li>
+        <!-- <button class="btn btn-secondary mb-2" onclick="sendCommand('stopRecording')">Arrêter l'enregistrement</button> -->
+      </div>
+    </div>
+  </div>
+
+
+  		<div class="mb-4">
+            <div class="card" id="logCard">
+              <div class="card-header text-lg font-weight-bold text-dark">
+                Data recording :
+                <span id="recordingStatus2" class="text-success">
+                  Active
+                </span>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <div class="">
+                    <div class="border-right-warning d-inline ml-auto">
+                      <div class="text-lg font-weight-bold text-dark"> Logging mode : <span id="modeWidget"
+                          class="h5 mb-0 font-weight-bold d-inline text-primary"></span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="container-fluid pl-0">
+                    <div id="btnRecording" href="#" onclick="toggleRecording()"
+                      class="d-inline btn btn-success">
+                      <span class="icon-text-white-50"><i class="fas fa-circle"></i></span>
+                      <span id="btnRecordingText" class="text">Start Recording</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+        </div>
+
+  <!-- Begin Page Content -->
+			<div class="container-fluid">
+
+				<!-- Page Heading -->
+				<div class="d-sm-flex align-items-center justify-content-between mb-2">
+					<h1 class="h3 mb-0 text-gray-800">Diagnostics</h1>
+				</div>
+				<hr class="hr hr-blurry mt-0" />
+				<div class="row"/>
+
+				<!-- Diagnostic Table -->
+				<div class="card shadow mb-4">
+					<div class="card-header py-3">
+						<h6 class="m-0 font-weight-bold text-primary">Diagnostics</h6>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive">
+							<div class="datatables_wrapper dt-boostrap4">
+								<div class="row">
+									<div id="loading-spinner" class="d-none cols-sm-12 col-md-10">
+										<div class="spinner-border text-primary" role="status">
+										</div>
+									</div>
+								</div>
+									
+								<div clas="row">
+									<div class="cols-sm-12 col-md-6">
+										<button id="diagnosticsButton" class="btn btn-primary">Refresh diagnostics</button>
+									</div>
+								</div>
+								</br>
+									
+								<div clas="row">
+									<div id="diagnostics" class="col-sm-12">
+									<table id="diagnosticsTable" class="table table-bordered dataTable" width="100%" style="width: 100%;">
+										<tr>
+											<th>Status</td>
+											<th>Diagnostic</td>
+											<th>Info</td>
+										</tr>
+									</table>
+									</div>
+								</div>
+								</br>
+								
+								<div clas="row">
+									<div id="runningNodes" class="col-sm-12">
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div><!-- Diagnostic Table -->
+			</div><!-- /.container-fluid -->
+
+
+
+
+    <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Custom script -->
+<!--  <script src="js/script.js"></script>-->
+
+  <!-- page scipt -->
+  <!-- <script src="js/testsScript.js"></script> -->
+  <script src="js/dashboardscript.js"></script>
+
+</body>
+</html>

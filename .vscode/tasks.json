@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Restart ROS",
+      "type": "shell",
+      "command": "sudo systemctl stop ros && sleep 1 && sudo systemctl start ros",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Catkin Build",
+      "type": "shell",
+      "command": "cd /opt/Poseidon/src/workspace && catkin_make clean && catkin_make",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Catkin Build -j1 avec blacklist",
+      "type": "shell",
+      "command": "sudo systemctl stop ros && cd /opt/Poseidon/src/workspace && source /opt/ros/noetic/setup.bash && catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES=\"mavros;libmavconn;mavros_extras;echoboat_odometry;mavros_msgs;test_mavros;video_recorder\" && mkdir -p /opt/Poseidon/www/webroot/record && sudo systemctl start ros",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Lancer test gnss_zed_f9p",
+      "type": "shell",
+      "command": "source /opt/ros/noetic/setup.bash && source /opt/Poseidon/src/workspace/devel/setup.bash && roslaunch gnss_zed_f9p gnss_zed_f9p_test.launch",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Start GNSS virtual serial test",
+      "type": "shell",
+      "command": "sudo /opt/Poseidon/virtual_serial_gnss.sh start",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Stop GNSS virtual serial test",
+      "type": "shell",
+      "command": "sudo /opt/Poseidon/virtual_serial_gnss.sh stop",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}

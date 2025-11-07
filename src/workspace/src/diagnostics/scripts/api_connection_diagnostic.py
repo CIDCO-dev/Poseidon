@@ -46,12 +46,7 @@ class ApiConnectionDiagnostic(DiagnosticsTest):
             self.host = ""
             self.port = "8080"
 
-# API
-        # resp = self.client("apiKey")
-        # self.api_key = trim_spaces(resp.value)
 
-        # headers = {"Authorization": f"Bearer {self.api_key}"}
-        # r = requests.get(url, headers=headers, timeout=2)
 
     
 

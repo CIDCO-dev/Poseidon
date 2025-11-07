@@ -2,7 +2,7 @@
 
 import rospy
 from diagnostic_msgs.msg import DiagnosticStatus
-from binary_stream_msg.msg import Stream  # Assure-toi que ce message est bien généré
+from binary_stream_msg.msg import Stream  
 from diagnostics_test_base import DiagnosticsTest
 
 

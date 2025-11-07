@@ -9,8 +9,8 @@ from diagnostics_test_base import DiagnosticsTest
 
 class SerialNumberDiagnostic(DiagnosticsTest):
     """
-    Vérifie que le hostname suit le pattern: ^[A-Za-z]{2,8}-\\d{6}-\\d{3}$
-    Exemples valides: AB-123456-001, DATALOG-240101-123
+    Checks that the hostname matches the pattern: ^[A-Za-z]{2,8}-\d{6}-\d{3}$
+    Valid examples: AB-123456-001, DATALOG-240101-123
     """
     
     def __init__(self, name="Serial Number Pattern Validation", pattern=r"^[A-Za-z]{2,8}-\d{6}-\d{3}$"):

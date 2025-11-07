@@ -7,12 +7,13 @@ from diagnostics_test_base import DiagnosticsTest
 
 
 class GnssFixDiagnostic(DiagnosticsTest):
+
     """
-    Vérifie qu'une proportion suffisante des NavSatFix ont un 'fix'.
-    - Critère par défaut : msg.status.status >= 0  (FIX/SBAS/GBAS)
-      (Tu peux forcer l'ancien comportement C++ avec use_service_field=True)
-    - OK si ratio_fix >= min_fix_ratio (ex: 0.90)
-    - ERROR sinon, ou si aucun message reçu dans la fenêtre d'observation
+    Checks that a sufficient proportion of NavSatFix messages report a 'fix'.
+    - Default criterion: msg.status.status >= 0 (FIX/SBAS/GBAS)
+    (You can force the legacy C++ behavior with use_service_field=True.)
+    - OK if ratio_fix >= min_fix_ratio (e.g., 0.90)
+    - ERROR otherwise, or if no message was received within the observation window.
     """
 
     def __init__(
@@ -40,10 +41,9 @@ class GnssFixDiagnostic(DiagnosticsTest):
         self._total += 1
         try:
             if self.use_service_field:
-                # Comportement du C++ fourni (probablement une confusion)
                 ok = (msg.status.service >= 0)
             else:
-                # Logique correcte : STATUS_NO_FIX = -1, FIX/SBAS/GBAS >= 0
+                #  STATUS_NO_FIX = -1, FIX/SBAS/GBAS >= 0
                 ok = (msg.status.status >= 0)
             if ok:
                 self._fix += 1

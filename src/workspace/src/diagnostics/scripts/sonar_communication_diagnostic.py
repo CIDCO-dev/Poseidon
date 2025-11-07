@@ -9,10 +9,10 @@ from diagnostics_test_base import DiagnosticsTest
 
 class SonarCommunicationDiagnostic(DiagnosticsTest):
     """
-    Vérifie la réception de messages sondeurs sur un topic (par défaut '/depth').
-    - OK si on reçoit >= (freq * fenêtre * expected_ratio)
-    - WARN si > 0 mais en dessous du seuil
-    - ERROR si 0 message pendant la fenêtre
+    Verifies that the sonar messages are received on a topic (default '/depth').
+    - OK if we receive >= (freq * window * expected_ratio)
+    - WARN if > 0 but below the threshold
+    - ERROR if 0 messages during the window
     """
 
     def __init__(

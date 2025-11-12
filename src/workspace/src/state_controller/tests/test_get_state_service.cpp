@@ -51,6 +51,25 @@ public:
     static constexpr double epsilon = 1e-12;
 };
 
+constexpr double Get_State_Test::testLongitude;
+constexpr double Get_State_Test::testLatitude;
+constexpr double Get_State_Test::testHeight;
+constexpr double Get_State_Test::testRoll;
+constexpr double Get_State_Test::testPitch;
+constexpr double Get_State_Test::testHeading;
+constexpr double Get_State_Test::testDepth;
+constexpr double Get_State_Test::test_cputemp;
+constexpr double Get_State_Test::test_cpuload;
+constexpr double Get_State_Test::test_freeram;
+constexpr double Get_State_Test::test_freehdd;
+constexpr double Get_State_Test::test_uptime;
+constexpr double Get_State_Test::test_temperature;
+constexpr double Get_State_Test::test_voltage;
+constexpr double Get_State_Test::test_humidity;
+constexpr int Get_State_Test::test_ledstate;
+constexpr const char * Get_State_Test::test_status;
+constexpr double Get_State_Test::epsilon;
+
 /*
 void printAllTopics() {
     ros::master::V_TopicInfo topic_infos;

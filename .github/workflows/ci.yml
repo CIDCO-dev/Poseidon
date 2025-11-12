@@ -57,6 +57,7 @@ jobs:
             python3-pip python3-rosdep \
             ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
             ros-noetic-diagnostic-updater ros-noetic-angles \
+            ros-noetic-pcl-ros ros-noetic-pcl-conversions libpcl-dev \
             lcov
           pip3 install --no-cache-dir catkin-lint flake8
           rosdep init || true

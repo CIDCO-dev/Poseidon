@@ -149,6 +149,23 @@ public:
 
 };
 
+constexpr double HydroBallDataWebSocketTest::testLongitude;
+constexpr double HydroBallDataWebSocketTest::testLatitude;
+constexpr double HydroBallDataWebSocketTest::testRoll;
+constexpr double HydroBallDataWebSocketTest::testPitch;
+constexpr double HydroBallDataWebSocketTest::testHeading;
+constexpr double HydroBallDataWebSocketTest::testDepth;
+constexpr double HydroBallDataWebSocketTest::test_cputemp;
+constexpr double HydroBallDataWebSocketTest::test_cpuload;
+constexpr double HydroBallDataWebSocketTest::test_freeram;
+constexpr double HydroBallDataWebSocketTest::test_freehdd;
+constexpr double HydroBallDataWebSocketTest::test_uptime;
+constexpr double HydroBallDataWebSocketTest::test_temperature;
+constexpr double HydroBallDataWebSocketTest::test_voltage;
+constexpr double HydroBallDataWebSocketTest::test_humidity;
+constexpr int HydroBallDataWebSocketTest::test_ledstate;
+constexpr const char * HydroBallDataWebSocketTest::test_status;
+
 
 TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
 

@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Install Git for checkout
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             git ca-certificates
@@ -50,7 +50,7 @@ jobs:
 
       - name: Install base dependencies
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             build-essential cmake ccache \
@@ -64,20 +64,20 @@ jobs:
 
       - name: Resolve ROS package dependencies
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           source /opt/ros/noetic/setup.bash
           rosdep install --rosdistro noetic --from-paths "$CATKIN_WS/src" --ignore-src -r -y
 
       - name: Lint (Python and Catkin)
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           # Keep lint non-blocking initially; tighten later as needed
           flake8 georef || true
           catkin_lint "$CATKIN_WS/src" || true
 
       - name: Configure ccache
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           export CCACHE_DIR=/github/home/.ccache
           ccache -M 1G
 
@@ -86,7 +86,7 @@ jobs:
           CC: "ccache gcc"
           CXX: "ccache g++"
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           source /opt/ros/noetic/setup.bash
           cd "$CATKIN_WS"
           catkin_make -j2 \
@@ -97,7 +97,7 @@ jobs:
 
       - name: Run tests
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           source /opt/ros/noetic/setup.bash
           cd "$CATKIN_WS"
           catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES"
@@ -115,7 +115,7 @@ jobs:
 
       - name: Collect C++ coverage (optional)
         run: |
-          set -euxo pipefail
+          set -eo pipefail
           # Try to collect coverage; ignore failures if toolchain is not configured for it
           lcov --directory . --capture --output-file coverage.info || true
           lcov --remove coverage.info '/usr/*' '*/devel/*' '*/opt/ros/*' --output-file coverage.info || true

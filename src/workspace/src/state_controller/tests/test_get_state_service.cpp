@@ -3,6 +3,8 @@
 
 #include <thread>
 #include <unistd.h>
+#include <cstdint>
+#include <string>
 
 #include "state_controller_msg/GetStateService.h"
 #include "sensor_msgs/NavSatFix.h"
@@ -40,10 +42,11 @@ public:
     static constexpr double test_freeram = 3.0;
     static constexpr double test_freehdd = 4.0;
     static constexpr double test_uptime = 5.0;
-    static constexpr double test_vbat = 6.0;
-    static constexpr double test_rh = 7.0;
-    static constexpr double test_temp = 8.0;
-    static constexpr double test_psi = 9.0;
+    static constexpr double test_temperature = 6.0;
+    static constexpr double test_voltage = 7.0;
+    static constexpr double test_humidity = 8.0;
+    static constexpr int test_ledstate = 1;
+    static constexpr const char * test_status = "Nominal";
 
     static constexpr double epsilon = 1e-12;
 };
@@ -119,10 +122,11 @@ TEST(GetStateServiceTestSuite, testGetState) {
     vitalMsg.freeram = Get_State_Test::test_freeram;
     vitalMsg.freehdd = Get_State_Test::test_freehdd;
     vitalMsg.uptime = Get_State_Test::test_uptime;
-    vitalMsg.vbat = Get_State_Test::test_vbat;
-    vitalMsg.rh = Get_State_Test::test_rh;
-    vitalMsg.temp = Get_State_Test::test_temp;
-    vitalMsg.psi = Get_State_Test::test_psi;
+    vitalMsg.temperature = Get_State_Test::test_temperature;
+    vitalMsg.voltage = Get_State_Test::test_voltage;
+    vitalMsg.humidity = Get_State_Test::test_humidity;
+    vitalMsg.ledstate = static_cast<int8_t>(Get_State_Test::test_ledstate);
+    vitalMsg.status = Get_State_Test::test_status;
     vitalsPublisher.publish(vitalMsg);
 
 	sleep(2); // give enough time for StateController's state to be updated
@@ -161,10 +165,11 @@ TEST(GetStateServiceTestSuite, testGetState) {
         ASSERT_NEAR(Get_State_Test::test_freeram, srv.response.state.vitals.freeram, Get_State_Test::epsilon) << "get_state service didn't return expected freeram";
         ASSERT_NEAR(Get_State_Test::test_freehdd, srv.response.state.vitals.freehdd, Get_State_Test::epsilon) << "get_state service didn't return expected freehdd";
         ASSERT_NEAR(Get_State_Test::test_uptime, srv.response.state.vitals.uptime, Get_State_Test::epsilon) << "get_state service didn't return expected uptime";
-        ASSERT_NEAR(Get_State_Test::test_vbat, srv.response.state.vitals.vbat, Get_State_Test::epsilon) << "get_state service didn't return expected vbat";
-        ASSERT_NEAR(Get_State_Test::test_rh, srv.response.state.vitals.rh, Get_State_Test::epsilon) << "get_state service didn't return expected rh";
-        ASSERT_NEAR(Get_State_Test::test_temp, srv.response.state.vitals.temp, Get_State_Test::epsilon) << "get_state service didn't return expected temp";
-        ASSERT_NEAR(Get_State_Test::test_psi, srv.response.state.vitals.psi, Get_State_Test::epsilon) << "get_state service didn't return expected psi";
+        ASSERT_NEAR(Get_State_Test::test_temperature, srv.response.state.vitals.temperature, Get_State_Test::epsilon) << "get_state service didn't return expected temperature";
+        ASSERT_NEAR(Get_State_Test::test_voltage, srv.response.state.vitals.voltage, Get_State_Test::epsilon) << "get_state service didn't return expected voltage";
+        ASSERT_NEAR(Get_State_Test::test_humidity, srv.response.state.vitals.humidity, Get_State_Test::epsilon) << "get_state service didn't return expected humidity";
+        ASSERT_EQ(Get_State_Test::test_ledstate, srv.response.state.vitals.ledstate) << "get_state service didn't return expected ledstate";
+        ASSERT_EQ(std::string(Get_State_Test::test_status), srv.response.state.vitals.status) << "get_state service didn't return expected status";
     } else {
         ASSERT_TRUE(false) << " get_state service call returned false";
     }

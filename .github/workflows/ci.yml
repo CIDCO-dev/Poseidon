@@ -59,6 +59,7 @@ jobs:
             ros-noetic-diagnostic-updater ros-noetic-angles \
             ros-noetic-tf2-geometry-msgs \
             ros-noetic-pcl-ros ros-noetic-pcl-conversions libpcl-dev \
+            ros-noetic-sbg-driver \
             lcov
           pip3 install --no-cache-dir catkin-lint flake8
           rosdep init || true

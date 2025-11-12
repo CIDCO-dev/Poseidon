@@ -1,0 +1,127 @@
+# GitHub Actions CI for Poseidon (ROS Noetic / Catkin)
+# - Builds and tests the Catkin workspace inside a ROS Noetic (Focal) container
+# - Publishes JUnit test results and optional coverage output
+# - Keeps configuration minimal and aligned with repository conventions
+
+name: CI (ROS Noetic)
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    # Use a ROS Noetic container so the environment matches Ubuntu 20.04 (Focal)
+    container:
+      image: ros:noetic-ros-base-focal
+      options: --ipc=host
+
+    env:
+      CATKIN_WS: src/workspace
+      # Adjust blacklist to skip heavy/non-critical packages on CI if needed
+      CATKIN_BLACKLIST_PACKAGES: "mavros;lidar_filtering"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install base dependencies
+        run: |
+          set -euxo pipefail
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            git build-essential cmake ccache \
+            python3-pip python3-rosdep \
+            ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
+            ros-noetic-diagnostic-updater ros-noetic-angles \
+            lcov
+          pip3 install --no-cache-dir catkin-lint flake8
+          rosdep init || true
+          rosdep update
+
+      - name: Resolve ROS package dependencies
+        run: |
+          set -euxo pipefail
+          source /opt/ros/noetic/setup.bash
+          rosdep install --rosdistro noetic --from-paths "$CATKIN_WS/src" --ignore-src -r -y
+
+      - name: Lint (Python and Catkin)
+        run: |
+          set -euxo pipefail
+          # Keep lint non-blocking initially; tighten later as needed
+          flake8 georef || true
+          catkin_lint "$CATKIN_WS/src" || true
+
+      - name: Configure ccache
+        run: |
+          set -euxo pipefail
+          export CCACHE_DIR=/github/home/.ccache
+          ccache -M 1G
+
+      - name: Build (Debug + sanitizers)
+        env:
+          CC: "ccache gcc"
+          CXX: "ccache g++"
+        run: |
+          set -euxo pipefail
+          source /opt/ros/noetic/setup.bash
+          cd "$CATKIN_WS"
+          catkin_make -j2 \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES" \
+            -DCMAKE_CXX_FLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=address,undefined" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+
+      - name: Run tests
+        run: |
+          set -euxo pipefail
+          source /opt/ros/noetic/setup.bash
+          cd "$CATKIN_WS"
+          catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES"
+          # Report results but do not fail the whole job on first adoption
+          catkin_test_results build/test_results || true
+
+      - name: Upload JUnit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-results
+          path: |
+            src/workspace/build/test_results
+          if-no-files-found: ignore
+
+      - name: Collect C++ coverage (optional)
+        run: |
+          set -euxo pipefail
+          # Try to collect coverage; ignore failures if toolchain is not configured for it
+          lcov --directory . --capture --output-file coverage.info || true
+          lcov --remove coverage.info '/usr/*' '*/devel/*' '*/opt/ros/*' --output-file coverage.info || true
+        continue-on-error: true
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage.info
+          if-no-files-found: ignore
+
+    # Notes for using a self-hosted runner (agent):
+    # - Install a self-hosted runner on a machine with Ubuntu 20.04 and ROS Noetic.
+    # - Add a custom label, e.g. `ros-noetic`.
+    # - Replace `runs-on: ubuntu-latest` and the `container:` section with:
+    #     runs-on: [self-hosted, linux, x64, ros-noetic]
+    # - Ensure `rosdep` is initialized and the same apt dependencies are installed.
+

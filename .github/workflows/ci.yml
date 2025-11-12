@@ -60,6 +60,7 @@ jobs:
             ros-noetic-tf2-geometry-msgs \
             ros-noetic-pcl-ros ros-noetic-pcl-conversions libpcl-dev \
             ros-noetic-sbg-driver \
+            rapidjson-dev libssl-dev libgps-dev libboost-system-dev \
             lcov
           pip3 install --no-cache-dir catkin-lint flake8
           rosdep init || true

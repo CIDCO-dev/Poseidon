@@ -198,6 +198,86 @@ Core nodes used by main launch profiles, with their primary ROS interfaces.
 - wifi_file_transfer_config_node (package `wifi_file_transfer_config`)
   - Subscribes: `configuration` (setting_msg/Setting)
   - Services (client): `get_configuration` to fetch `wifiSSID`, `wifiPassword`, `wifiTransferEnabled`
+
+### Tests (auto-generated)
+
+Note: Coverage percentages are intentionally omitted.
+
+- Package `diagnostics`
+  - Node `diagnostics_node` (C++) — Tests: no tests detected
+  - Node `diagnostics_websocket_node` (C++) — Tests: no tests detected
+- Package `echoboat_odometry`
+  - Node `echoboat_odometry_node` (C++) — Tests: no tests detected
+- Package `gnss_dummy`
+  - Node `gnss_dummy_node` (C++) — Tests: test_gnss_dummy.cpp
+- Package `gnss_mosaic_x5`
+  - Node `gnss_mosaic_x5_node` (C++) — Tests: gnss_mosaic_x5_test.launch, test_gnss_mosaic_x5_node.cpp
+- Package `gnss_zed_f9p`
+  - Node `gnss_zed_f9p_node` (C++) — Tests: gnss_zed_f9p_test.launch, test_gnss_zed_f9p.cpp
+- Package `hydroball_config_websocket`
+  - Node `hydroball_config_websocket_node` (C++) — Tests: test_hydroball_config_websocket.cpp
+- Package `hydroball_data_websocket`
+  - Node `hydroball_data_websocket_node` (C++) — Tests: hydroball_data_websocket_test.launch, test_hydroball_data_websocket.cpp
+- Package `hydroball_files_websocket`
+  - Node `hydroball_files_websocket_node` (C++) — Tests: test_hydroball_files_websocket.cpp
+- Package `i2c_controller`
+  - Node `i2c_controller_node` (C++) — Tests: no tests detected
+- Package `imu_bno055`
+  - Node `bno055_i2c_node` (C++) — Tests: imu_bno055_node.test, test_imu_bno055_node.cpp
+  - Node `bno055_i2c_calibration` (C++) — Tests: imu_bno055_node.test, test_imu_bno055_node.cpp
+- Package `imu_dummy`
+  - Node `imu_dummy_node` (C++) — Tests: test_imu_dummy.cpp
+- Package `imu_null`
+  - Node `imu_null_node` (C++) — Tests: test_imu_null.cpp
+- Package `inertial_sense_ros`
+  - Node `inertial_sense_node` (C++) — Tests: no tests detected
+- Package `ins_piksi`
+  - Node `ins_piksi_node` (C++) — Tests: ins_piksi_test.launch, test_ins_piksi_node.cpp
+- Package `lidar_filtering`
+  - Node `lidar_filtering_node` (C++) — Tests: no tests detected
+- Package `logger`
+  - Node `logger_text_node` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
+  - Node `logger_binary_node` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
+  - Node `poseidonReader` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
+  - Node `lidarGeoreferencer` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
+  - Node `calib_printer` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
+  - Node `vital_printer` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
+- Package `power_control`
+  - Node `main.py` (Python) — Tests: no tests detected
+- Package `power_management`
+  - Node `power_management_node` (C++) — Tests: no tests detected
+- Package `raspberrypi_vitals`
+  - Node `raspberrypi_vitals_node` (C++) — Tests: test_raspberrypi_vitals.cpp
+- Package `sonar_dummy`
+  - Node `sonar_dummy_node` (C++) — Tests: test_sonar_dummy.cpp
+- Package `sonar_imagenex852`
+  - Node `main.py` (Python) — Tests: sonar_imagenex852_node.test, test_sonar_imagenex852_node.cpp
+- Package `sonar_imagenex852_c`
+  - Node `sonar_imagenex852_c_node` (C++) — Tests: no tests detected
+- Package `sonar_nmea_0183_tcp_client`
+  - Node `nmea_device_node` (C++) — Tests: no tests detected
+  - Node `nmea_network_node` (C++) — Tests: no tests detected
+  - Node `device_node` (C++) — Tests: no tests detected
+  - Node `network_node` (C++) — Tests: no tests detected
+- Package `state_controller`
+  - Node `state_controller_node` (C++) — Tests: no tests detected
+- Package `tf`
+  - Node `tf_empty_listener` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `tf_echo` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `tf_change_notifier` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `tf_monitor` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `static_transform_publisher` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `transform_listener_unittest` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp, transform_listener_unittest.cpp, transform_listener_unittest.launch
+  - Node `test_message_filter` (C++) — Tests: test_message_filter.cpp, test_message_filter.xml, tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `testListener` (C++) — Tests: testListener.cpp, tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `testBroadcaster` (C++) — Tests: testBroadcaster.cpp, tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+  - Node `tf_speed_test` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
+- Package `video_recorder`
+  - Node `video_recorder_node` (C++) — Tests: no tests detected
+- Package `water_infiltration`
+  - Node `water_infiltration.py` (Python) — Tests: no tests detected
+- Package `wifi_file_transfer_config`
+  - Node `wifi_file_transfer_config_node` (C++) — Tests: no tests detected
   - Behavior: applies Wi‑Fi config via `nmcli` and (re)activates connection
 
 - echoboat_odometry_node (package `echoboat_odometry`)

@@ -33,6 +33,5 @@ if(CATKIN_ENABLE_TESTING)
   # test with launch file
   find_package(rostest REQUIRED)
   add_rostest_gtest(test_imu_bno055_node tests/imu_bno055_node.test tests/test_imu_bno055_node.cpp)
-  # target_link_libraries(test_imu_bno055_node ...) #what libraries are needed on rpi?
+  target_link_libraries(test_imu_bno055_node ${catkin_LIBRARIES})
 endif()
-

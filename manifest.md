@@ -29,6 +29,32 @@ This document summarizes Poseidon: goals, architecture, dependencies, install/bu
 
 `launchROSService.sh` centralizes common launch profiles and is used by the systemd `ros` service.
 
+## Configurations & Features
+
+### Common Features
+- GNSS via gpsd + vendor node: publishes `fix`, `speed`, `gnss_status`, optional binary stream; `.ubx` logging supported.
+- IMU BNO055 (I2C) with calibration: publishes `/imu/data`, `/imu/raw`, `/imu/mag`, `/imu/temp`.
+- Sonar depth acquisition (NMEA 0183 device or Imagenex 852): publishes `depth` (and `depth_enu` where applicable).
+- I2C board and LED/status handling: `i2c_controller`.
+- System vitals: `raspberrypi_vitals` (CPU temp/load, RAM/HDD, uptime, battery voltage).
+- State aggregation: `state_controller` combines GNSS/IMU/sonar/vitals into `state`.
+- Logging: `logger_text_node` with file rotation, modes (Always/Manual/Speed), geofence and optional API transfer.
+- WebSockets/UI: `hydroball_config_websocket`, `hydroball_data_websocket`, `hydroball_files_websocket`.
+- Diagnostics: `diagnostics` WebSocket diagnostics and communication checks.
+- Shared launch args: `loggerPath`, `configPath`, `gpsdIp`, `gpsdPort`.
+
+### Hydrobox‑Specific
+- Multiple hardware and GNSS variants: RPi and Rock profiles; GNSS receivers include Piksi and Mosaic X5 in addition to ZED‑F9P (see `launch/Hydrobox/*`).
+- Optional “IMU null” profiles (no IMU).
+- Imagenex 852 Python driver variant in some profiles (no trigger control).
+- Optional rosbag record of all topics in certain profiles.
+
+### Hydroball‑Specific
+- Power control and safe shutdown: `power_control` for rails, `power_management` triggers graceful shutdown on low voltage.
+- Imagenex 852 C++ driver with trigger control: `trigger_mode` (auto|manual), `manual_ping_rate`, `data_points`.
+- Alternate sonar ISA500 via NMEA device (`nmea_device_node`).
+- Explicit sonar datagram extension `.img852` configured in logger params.
+
 ## Build
 Prereqs (excerpt):
 - ROS Noetic, catkin, g++, python3-rosdep, ros-noetic-tf2-geometry-msgs, ros-noetic-mavros, ros-noetic-sbg-driver
@@ -199,4 +225,3 @@ Common topic names used across nodes: `fix`, `/imu/data`, `depth`, `speed`, `sta
 - Always source ROS and the workspace (`source /opt/ros/noetic/setup.bash` then `source src/workspace/devel/setup.bash`).
 - When adding a package, follow standard Catkin layout.
 - Keep secrets out of version control; `config.txt` contains placeholders by default.
-

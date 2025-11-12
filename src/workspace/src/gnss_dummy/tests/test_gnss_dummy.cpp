@@ -42,7 +42,8 @@ TEST(GnssDummyTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
     uint32_t sequenceNumber= 0;
     double longitude = 49.00;
     double latitude = 60.00;
-    gnss.message(sequenceNumber, longitude, latitude);
+    int status = 0; // status field required by current GNSS::message signature
+    gnss.message(sequenceNumber, longitude, latitude, status);
 
     //wait a bit for subscriber to pick up message
     sleep(1);

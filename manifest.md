@@ -64,7 +64,7 @@ Steps (VM, per `README.md`):
 1) Clone into `/opt`: `/opt/Poseidon`
 2) Run install scripts for your target, e.g.: `install/stages/1-base-ros-noetic.sh`, `2-x64.sh`, `3-network.sh`, `4-x64.sh`, `5-finalize.sh`
 3) Source ROS: `source /opt/ros/noetic/setup.bash`
-4) Build workspace: `cd src/workspace && catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;...;lidar_filtering"`
+4) Build workspace: `cd src/workspace && catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;...;inertial_sense;lidar_filtering"`
 5) Source workspace: `source devel/setup.bash`
 
 Notes:

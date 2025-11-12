@@ -27,7 +27,7 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 1) Source ROS: `source /opt/ros/noetic/setup.bash`
 2) Build workspace:
    - `cd src/workspace`
-   - VM/CI: `catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;...;lidar_filtering"`
+   - VM/CI: `catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;...;inertial_sense;lidar_filtering"`
    - Embedded: adjust blacklist for RAM/CPU as needed.
 3) Source devel: `source devel/setup.bash`
 
@@ -89,4 +89,3 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 - [ ] Launch files and parameters documented
 - [ ] No secrets or non-portable hardcoded paths
 - [ ] `manifest.md` updated for structural changes
-

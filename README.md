@@ -67,7 +67,7 @@ source ~/.bashrc
 Changes to build poseidon on virtual machine:
 ```
 cd /opt/Poseidon/src/workspace
-catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;raspberrypi_vitals"
+catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;raspberrypi_vitals;inertial_sense"
 ```
 Source poseidon workspace:
 ```
@@ -127,5 +127,4 @@ For help:
 - Always ON : 1
 - Manual : 2
 - Speed based : 3
-
 

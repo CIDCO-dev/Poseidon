@@ -201,5 +201,5 @@ if(CATKIN_ENABLE_TESTING)
   # test with launch file
   find_package(rostest REQUIRED)
   add_rostest_gtest(test_sonar_imagenex852_node tests/sonar_imagenex852_node.test tests/test_sonar_imagenex852_node.cpp)
-  # target_link_libraries(test_sonar_imagenex852_node ...) #what libraries are needed on rpi?
+  target_link_libraries(test_sonar_imagenex852_node ${catkin_LIBRARIES})
 endif()

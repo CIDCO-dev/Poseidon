@@ -209,35 +209,35 @@ Note: Coverage percentages are intentionally omitted.
 - Package `echoboat_odometry`
   - Node `echoboat_odometry_node` (C++) — Tests: no tests detected
 - Package `gnss_dummy`
-  - Node `gnss_dummy_node` (C++) — Tests: test_gnss_dummy.cpp
+  - Node `gnss_dummy_node` (C++) — Tests: test_gnss_dummy.cpp — Functions: GNSS::message
 - Package `gnss_mosaic_x5`
-  - Node `gnss_mosaic_x5_node` (C++) — Tests: gnss_mosaic_x5_test.launch, test_gnss_mosaic_x5_node.cpp
+  - Node `gnss_mosaic_x5_node` (C++) — Tests: gnss_mosaic_x5_test.launch, test_gnss_mosaic_x5_node.cpp — Functions: MosaicX5::run, MosaicX5::processDatagram (override), MosaicX5::openAndInitSerialPort, MosaicX5::readUntilAlignedWithDatagrams, MosaicX5::readAndProcessOneDatagram
 - Package `gnss_zed_f9p`
-  - Node `gnss_zed_f9p_node` (C++) — Tests: gnss_zed_f9p_test.launch, test_gnss_zed_f9p.cpp
+  - Node `gnss_zed_f9p_node` (C++) — Tests: gnss_zed_f9p_test.launch, test_gnss_zed_f9p.cpp — Functions: ZEDF9P::processFrame, ZEDF9P::validateChecksum, ZEDF9P::serialRead
 - Package `hydroball_config_websocket`
-  - Node `hydroball_config_websocket_node` (C++) — Tests: test_hydroball_config_websocket.cpp
+  - Node `hydroball_config_websocket_node` (C++) — Tests: test_hydroball_config_websocket.cpp — Functions: ConfigurationServer::run, ConfigurationServer::broadcastConfiguration, ConfigurationServer::stop
 - Package `hydroball_data_websocket`
-  - Node `hydroball_data_websocket_node` (C++) — Tests: hydroball_data_websocket_test.launch, test_hydroball_data_websocket.cpp
+  - Node `hydroball_data_websocket_node` (C++) — Tests: hydroball_data_websocket_test.launch, test_hydroball_data_websocket.cpp — Functions: TelemetryServer::run, TelemetryServer::stop, TelemetryServer::convertState2json
 - Package `hydroball_files_websocket`
-  - Node `hydroball_files_websocket_node` (C++) — Tests: test_hydroball_files_websocket.cpp
+  - Node `hydroball_files_websocket_node` (C++) — Tests: test_hydroball_files_websocket.cpp — Functions: ControlFiles::run, ControlFiles::sendFileList, ControlFiles::buildFileListJson, ControlFiles::stop
 - Package `i2c_controller`
   - Node `i2c_controller_node` (C++) — Tests: no tests detected
 - Package `imu_bno055`
-  - Node `bno055_i2c_node` (C++) — Tests: imu_bno055_node.test, test_imu_bno055_node.cpp
-  - Node `bno055_i2c_calibration` (C++) — Tests: imu_bno055_node.test, test_imu_bno055_node.cpp
+  - Node `bno055_i2c_node` (C++) — Tests: imu_bno055_node.test, test_imu_bno055_node.cpp — Functions: topic publication only (no specific functions asserted)
+  - Node `bno055_i2c_calibration` (C++) — Tests: imu_bno055_node.test, test_imu_bno055_node.cpp — Functions: topic publication only (no specific functions asserted)
 - Package `imu_dummy`
-  - Node `imu_dummy_node` (C++) — Tests: test_imu_dummy.cpp
+  - Node `imu_dummy_node` (C++) — Tests: test_imu_dummy.cpp — Functions: QuaternionUtils::applyTransform, QuaternionUtils::quaternion2YPR, QuaternionUtils::modulo360, QuaternionUtils::flipHeading, QuaternionUtils::body2Enu
 - Package `imu_null`
-  - Node `imu_null_node` (C++) — Tests: test_imu_null.cpp
+  - Node `imu_null_node` (C++) — Tests: test_imu_null.cpp — Functions: QuaternionUtils::applyTransform, QuaternionUtils::quaternion2YPR, QuaternionUtils::modulo360, QuaternionUtils::flipHeading, QuaternionUtils::body2Enu
 - Package `inertial_sense_ros`
-  - Node `inertial_sense_node` (C++) — Tests: no tests detected
+  - Node `inertial_sense_node` (C++) — Tests: test_inertialsense_node.cpp
 - Package `ins_piksi`
-  - Node `ins_piksi_node` (C++) — Tests: ins_piksi_test.launch, test_ins_piksi_node.cpp
+  - Node `ins_piksi_node` (C++) — Tests: ins_piksi_test.launch, test_ins_piksi_node.cpp — Functions: Piksi::run, Piksi::readUntilAlignedWithDatagrams, Piksi::readAndProcessOneDatagram, Piksi::openAndInitSerialPort, Piksi::processDatagram (override)
 - Package `lidar_filtering`
-  - Node `lidar_filtering_node` (C++) — Tests: no tests detected
+  - Node `lidar_filtering_node` (C++) — Tests: lidar_filters_tests.cpp — Functions: Filters::horizontalAngleFilter, Filters::distanceFilter
 - Package `logger`
-  - Node `logger_text_node` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
-  - Node `logger_binary_node` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
+  - Node `logger_text_node` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp — Functions: LoggerText::finalize, LoggerText::rotate, LoggerText::gnssCallback, LoggerText::imuCallback, LoggerText::sonarCallback, LoggerText::lidarCallBack
+  - Node `logger_binary_node` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp — Functions: LoggerBinary::finalize, LoggerBinary::rotate, LoggerBinary::gnssCallback, LoggerBinary::imuCallback, LoggerBinary::sonarCallback, LoggerBinary::lidarCallBack, PoseidonBinaryReader::read
   - Node `poseidonReader` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
   - Node `lidarGeoreferencer` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
   - Node `calib_printer` (C++) — Tests: logger_binary_node_test.launch, logger_text_node_test.launch, test_logger_binary_node.cpp, test_logger_text_node.cpp
@@ -247,20 +247,20 @@ Note: Coverage percentages are intentionally omitted.
 - Package `power_management`
   - Node `power_management_node` (C++) — Tests: no tests detected
 - Package `raspberrypi_vitals`
-  - Node `raspberrypi_vitals_node` (C++) — Tests: test_raspberrypi_vitals.cpp
+  - Node `raspberrypi_vitals_node` (C++) — Tests: test_raspberrypi_vitals.cpp — Functions: topic field range checks only
 - Package `sonar_dummy`
-  - Node `sonar_dummy_node` (C++) — Tests: test_sonar_dummy.cpp
+  - Node `sonar_dummy_node` (C++) — Tests: test_sonar_dummy.cpp — Functions: Sonar::message
 - Package `sonar_imagenex852`
-  - Node `main.py` (Python) — Tests: sonar_imagenex852_node.test, test_sonar_imagenex852_node.cpp
+  - Node `main.py` (Python) — Tests: sonar_imagenex852_node.test, test_sonar_imagenex852_node.cpp — Functions: topic publication only (no specific functions asserted)
 - Package `sonar_imagenex852_c`
-  - Node `sonar_imagenex852_c_node` (C++) — Tests: no tests detected
+  - Node `sonar_imagenex852_c_node` (C++) — Tests: sonar_imagenex852_node.test, test_sonar_imagenex852_node.cpp — Functions: topic publication only (no specific functions asserted)
 - Package `sonar_nmea_0183_tcp_client`
-  - Node `nmea_device_node` (C++) — Tests: no tests detected
-  - Node `nmea_network_node` (C++) — Tests: no tests detected
-  - Node `device_node` (C++) — Tests: no tests detected
-  - Node `network_node` (C++) — Tests: no tests detected
+  - Node `nmea_device_node` (C++) — Tests: sonar_nmea_0183_test.launch, test_sonar_nmea_0183_device_client.cpp — Functions: BaseNmeaClient::extractGGA, BaseNmeaClient::extractDBT, BaseNmeaClient::extractVTG, BaseNmeaClient::validateChecksum
+  - Node `nmea_network_node` (C++) — Tests: sonar_nmea_0183_test.launch, test_sonar_nmea_0183_device_client.cpp — Functions: BaseNmeaClient::extractGGA, BaseNmeaClient::extractDBT, BaseNmeaClient::extractVTG, BaseNmeaClient::validateChecksum
+  - Node `device_node` (C++) — Tests: sonar_nmea_0183_test.launch, test_sonar_nmea_0183_device_client.cpp — Functions: BaseNmeaClient::extractGGA, BaseNmeaClient::extractDBT, BaseNmeaClient::extractVTG, BaseNmeaClient::validateChecksum
+  - Node `network_node` (C++) — Tests: sonar_nmea_0183_test.launch, test_sonar_nmea_0183_device_client.cpp — Functions: BaseNmeaClient::extractGGA, BaseNmeaClient::extractDBT, BaseNmeaClient::extractVTG, BaseNmeaClient::validateChecksum
 - Package `state_controller`
-  - Node `state_controller_node` (C++) — Tests: no tests detected
+  - Node `state_controller_node` (C++) — Tests: get_state_service_test.launch, test_get_state_service.cpp — Functions: get_state (service handler)
 - Package `tf`
   - Node `tf_empty_listener` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp
   - Node `tf_echo` (C++) — Tests: tf_benchmark.cpp, tf_unittest.cpp, tf_unittest_future.cpp

@@ -1,8 +1,11 @@
 <launch>
 
 	<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+	<arg name="configPath" default="$(find setting_msg)/tests/getConfigurationTestConfig.txt"/>
 
 	<!-- the node launching order matters -->
+	<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
+
 	<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" /> 
 	
 	<node pkg="logger" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>

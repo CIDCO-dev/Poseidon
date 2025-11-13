@@ -59,6 +59,9 @@ TEST(LoggerTextTestSuite, testToggle) {
     ros::ServiceClient getLoggingStatusServiceClient = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
     ros::ServiceClient toggleLoggingServiceClient = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
 
+    ASSERT_TRUE(getLoggingStatusServiceClient.waitForExistence(ros::Duration(10.0)));
+    ASSERT_TRUE(toggleLoggingServiceClient.waitForExistence(ros::Duration(10.0)));
+
     logger_service::GetLoggingStatus status;
     getLoggingStatusServiceClient.call(status);
     
@@ -95,6 +98,9 @@ TEST(LoggerTextTestSuite, testChangingLoggingMode) {
     ros::NodeHandle n;	
     ros::ServiceClient getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
 	ros::ServiceClient setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+
+	ASSERT_TRUE(getLoggingModeServiceClient.waitForExistence(ros::Duration(10.0)));
+	ASSERT_TRUE(setLoggingModeServiceClient.waitForExistence(ros::Duration(10.0)));
 	
 	logger_service::SetLoggingMode newMode;
 	newMode.request.loggingMode = 3;

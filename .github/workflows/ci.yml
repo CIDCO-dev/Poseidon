@@ -33,7 +33,7 @@ jobs:
     env:
       CATKIN_WS: src/workspace
       # Adjust blacklist to skip heavy/non-critical packages on CI if needed
-      CATKIN_BLACKLIST_PACKAGES: "mavros;lidar_filtering;inertial_sense;velodyne"
+      CATKIN_BLACKLIST_PACKAGES: "mavros;lidar_filtering;inertial_sense;velodyne;ins_piksi"
 
     steps:
       - name: Install Git for checkout

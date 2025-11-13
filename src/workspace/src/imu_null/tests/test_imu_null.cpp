@@ -1,4 +1,3 @@
-#include <imu_dummy/imu_dummy.h>
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 

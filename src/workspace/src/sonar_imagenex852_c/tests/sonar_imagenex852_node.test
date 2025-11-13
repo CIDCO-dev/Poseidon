@@ -9,8 +9,8 @@
 
 <node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
 
-<node pkg="sonar_imagenex852" type="sonar_imagenex852_node" name="Sonar" output="screen"/>
+<node pkg="sonar_imagenex852_c" type="sonar_imagenex852_node" name="Sonar" output="screen"/>
 
-<test test-name="test_sonar_imagenex852_node" pkg="sonar_imagenex852" type="test_sonar_imagenex852_node" />
+<test test-name="test_sonar_imagenex852_node" pkg="sonar_imagenex852_c" type="test_sonar_imagenex852_node" />
 
 </launch>

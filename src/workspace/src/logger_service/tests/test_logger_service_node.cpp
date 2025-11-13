@@ -5,10 +5,32 @@
 
 #include <unistd.h>
 
+#include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/NavSatStatus.h>
+
 #include "logger_service/GetLoggingStatus.h"
 #include "logger_service/ToggleLogging.h"
 #include "logger_service/GetLoggingMode.h"
 #include "logger_service/SetLoggingMode.h"
+
+namespace {
+void publishMockFix(ros::NodeHandle& nh) {
+    ros::Publisher fixPublisher = nh.advertise<sensor_msgs::NavSatFix>("/fix", 1, true);
+    sensor_msgs::NavSatFix fix;
+    fix.status.status = sensor_msgs::NavSatStatus::STATUS_FIX;
+    fix.status.service = sensor_msgs::NavSatStatus::SERVICE_GPS;
+    fix.latitude = 48.0;
+    fix.longitude = -68.0;
+    fix.altitude = 0.0;
+
+    for (int i = 0; i < 5 && ros::ok(); ++i) {
+        fix.header.stamp = ros::Time::now();
+        fixPublisher.publish(fix);
+        ros::spinOnce();
+        ros::Duration(0.1).sleep();
+    }
+}
+}
 
 class LoggerTextTestSuite : public ::testing::Test {
   //in case we want some setup, teardown
@@ -56,11 +78,14 @@ TEST(LoggerTextTestSuite, testToggle) {
     //ros::ServiceServer toggleLoggingServiceServer    = n.advertiseService("toggle_logging_local", toggleLoggingCallback);
     
     // setup service clients
-    ros::ServiceClient getLoggingStatusServiceClient = n.serviceClient<logger_service::GetLoggingStatus>("get_logging_status");
-    ros::ServiceClient toggleLoggingServiceClient = n.serviceClient<logger_service::ToggleLogging>("toggle_logging");
+    ros::ServiceClient getLoggingStatusServiceClient = n.serviceClient<logger_service::GetLoggingStatus>("/get_logging_status");
+    ros::ServiceClient toggleLoggingServiceClient = n.serviceClient<logger_service::ToggleLogging>("/toggle_logging");
 
     ASSERT_TRUE(getLoggingStatusServiceClient.waitForExistence(ros::Duration(10.0)));
     ASSERT_TRUE(toggleLoggingServiceClient.waitForExistence(ros::Duration(10.0)));
+
+    publishMockFix(n);
+    ros::Duration(0.2).sleep();
 
     logger_service::GetLoggingStatus status;
     getLoggingStatusServiceClient.call(status);
@@ -96,8 +121,8 @@ TEST(LoggerTextTestSuite, testToggle) {
 TEST(LoggerTextTestSuite, testChangingLoggingMode) {
 
     ros::NodeHandle n;	
-    ros::ServiceClient getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("get_logging_mode");
-	ros::ServiceClient setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("set_logging_mode");
+    ros::ServiceClient getLoggingModeServiceClient = n.serviceClient<logger_service::GetLoggingMode>("/get_logging_mode");
+	ros::ServiceClient setLoggingModeServiceClient = n.serviceClient<logger_service::SetLoggingMode>("/set_logging_mode");
 
 	ASSERT_TRUE(getLoggingModeServiceClient.waitForExistence(ros::Duration(10.0)));
 	ASSERT_TRUE(setLoggingModeServiceClient.waitForExistence(ros::Duration(10.0)));

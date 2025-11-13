@@ -134,14 +134,14 @@ TEST_F(LoggerBinaryTestSuite, testGeneratingFiles) {
     reader.read();
     
     // file parsed properly
-    ASSERT_TRUE(reader.getGnssMessagesCount() == messages.size()) << reader.getGnssMessagesCount() << "!=" << messages.size();
-    ASSERT_TRUE(reader.getSonarMessagesCount() == messages.size()) << reader.getSonarMessagesCount() << "!=" << messages.size();
-    ASSERT_TRUE(reader.getLidarMessagesCount() == messages.size()) << reader.getLidarMessagesCount() << "!=" << messages.size();
+    ASSERT_EQ(reader.getGnssMessagesCount(), static_cast<int>(messages.size())) << reader.getGnssMessagesCount() << "!=" << messages.size();
+    ASSERT_EQ(reader.getSonarMessagesCount(), static_cast<int>(messages.size())) << reader.getSonarMessagesCount() << "!=" << messages.size();
+    ASSERT_EQ(reader.getLidarMessagesCount(), static_cast<int>(messages.size())) << reader.getLidarMessagesCount() << "!=" << messages.size();
     //ASSERT_TRUE(reader.getImuMessagesCount() == messages.size()) << reader.getImuMessagesCount() << "!=" << messages.size();
     
     // checking gnss file content
     auto positions = reader.getPositions();
-    for(int i = 0; i<positions.size(); ++i){
+    for(size_t i = 0; i<positions.size(); ++i){
     	PositionPacket packet = positions.at(i);
     	sleep(0.01);
     	ASSERT_TRUE(packet.longitude == packet.latitude && packet.latitude == packet.altitude) << "1 parsing problem or binary logger problem for packet position: " << i;
@@ -152,7 +152,7 @@ TEST_F(LoggerBinaryTestSuite, testGeneratingFiles) {
     
     // checking sonar file content
     auto depths = reader.getDepths();
-    for(int i = 0; i<depths.size(); ++i){
+    for(size_t i = 0; i<depths.size(); ++i){
     	DepthPacket packet = depths.at(i);
     	sleep(0.01);
     	ASSERT_TRUE(packet.depth_x == packet.depth_y && packet.depth_y == packet.depth_z) << "1 parsing problem or binary logger problem for packet depth: " << i;
@@ -163,7 +163,7 @@ TEST_F(LoggerBinaryTestSuite, testGeneratingFiles) {
     
     // checking lidar file content
     auto laserPoints = reader.getLaserPoints();
-    for(int i = 0; i<laserPoints.size(); ++i){
+    for(size_t i = 0; i<laserPoints.size(); ++i){
     	LidarPacket packet = laserPoints.at(i);
     	sleep(0.01);
     	ASSERT_TRUE(packet.laser_x == packet.laser_y && packet.laser_y == packet.laser_z) << "1 parsing problem or binary logger problem for packet lidar: " << i;

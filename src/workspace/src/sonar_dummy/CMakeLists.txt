@@ -207,11 +207,10 @@ include_directories(
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_${PROJECT_NAME} tests/test_sonar_dummy.cpp)
-target_link_libraries(test_${PROJECT_NAME} ${PROJECT_NAME}  ${sonar_dummy_LIBRARIES})
-add_dependencies(test_${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-
-
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_${PROJECT_NAME} tests/sonar_dummy.test tests/test_sonar_dummy.cpp)
+  target_link_libraries(test_${PROJECT_NAME} ${PROJECT_NAME}  ${sonar_dummy_LIBRARIES})
+  add_dependencies(test_${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 endif()
 
 

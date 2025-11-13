@@ -1,0 +1,3 @@
+<launch>
+  <test test-name="test_sonar_dummy" pkg="sonar_dummy" type="test_sonar_dummy" time-limit="120"/>
+</launch>

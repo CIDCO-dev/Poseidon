@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <iostream>
+#include <cstdio>
 #include "virtual_serial_port.hpp"
 #include "sonar_nmea_0183_tcp_client/sonar_nmea_0183_tcp_client.h"
 class counter{
@@ -48,7 +49,17 @@ TEST(nmeaDeviceTest, testSerialDevice) {
 	$sudo chown -h :dialout /dev/sonar
 	*/
 
-	virtualSerialPort nmeaDevice("/home/ubuntu/sonar", "/home/ubuntu/pty");
+	ros::NodeHandle privateNh("~");
+	std::string slaveDevice;
+	std::string masterDevice;
+	privateNh.param<std::string>("slave_device", slaveDevice, std::string("/tmp/sonar_slave"));
+	privateNh.param<std::string>("master_device", masterDevice, std::string("/tmp/sonar_master"));
+
+	// ensure stale symlinks/files don't block socat
+	std::remove(slaveDevice.c_str());
+	std::remove(masterDevice.c_str());
+
+	virtualSerialPort nmeaDevice(slaveDevice, masterDevice);
 	auto sonar = nmeaDevice.init();
 	sleep(1);
 	while(sonar.running()){

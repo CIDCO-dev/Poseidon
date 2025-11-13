@@ -6,11 +6,11 @@ class LoggerText : public LoggerBase{
 	public:
 		LoggerText(std::string & loggingPath, std::string separator=";");
 		~LoggerText();
+		void finalize()override;
 	
 	private:
 		/* log management methods */
 		void init()override;
-		void finalize()override;
 		void rotate()override;
 		void saveSpeed(const nav_msgs::Odometry& speed) override;
 		void saveVitals(const raspberrypi_vitals_msg::sysinfo& vitals) override;

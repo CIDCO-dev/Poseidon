@@ -5,10 +5,14 @@
 #include "geometry_msgs/PointStamped.h"
 
 #include <thread>
+#include <condition_variable>
+#include <mutex>
+#include <chrono>
 #include <iostream>
 #include <cstdio>
 #include "virtual_serial_port.hpp"
 #include "sonar_nmea_0183_tcp_client/sonar_nmea_0183_tcp_client.h"
+
 class counter{
 	public:
 		counter(int init){ this-> count = init;}
@@ -98,6 +102,181 @@ TEST(nmeaDeviceTest, checksum) {
 	
 	s = "$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*FF";
 	ASSERT_FALSE(BaseNmeaClient::validateChecksum(s));
+}
+
+class TestableNmeaClient : public BaseNmeaClient{
+	public:
+		TestableNmeaClient() : BaseNmeaClient(true,true,true){}
+		void run() override {}
+};
+
+class BaseNmeaClientNodeTest : public ::testing::Test{
+	protected:
+		void SetUp() override{
+			client.initTopics();
+
+			depthSub = nh.subscribe("depth", 10, &BaseNmeaClientNodeTest::depthCallback, this);
+			fixSub = nh.subscribe("fix", 10, &BaseNmeaClientNodeTest::fixCallback, this);
+			speedSub = nh.subscribe("speed", 10, &BaseNmeaClientNodeTest::speedCallback, this);
+
+			// Allow publishers/subscribers to fully connect
+			ros::Duration(0.1).sleep();
+
+			resetFlags();
+		}
+
+		void TearDown() override{
+			depthSub.shutdown();
+			fixSub.shutdown();
+			speedSub.shutdown();
+		}
+
+		void resetFlags(){
+			std::lock_guard<std::mutex> depthLock(depthMutex);
+			depthReady = false;
+			std::lock_guard<std::mutex> fixLock(fixMutex);
+			fixReady = false;
+			std::lock_guard<std::mutex> speedLock(speedMutex);
+			speedReady = false;
+		}
+
+		bool waitForDepth(geometry_msgs::PointStamped &out, double timeoutSec = 1.0){
+			std::unique_lock<std::mutex> lock(depthMutex);
+			if(!depthCv.wait_for(lock, std::chrono::duration<double>(timeoutSec), [&]{return depthReady;})){
+				return false;
+			}
+			out = lastDepth;
+			depthReady = false;
+			return true;
+		}
+
+		bool waitForFix(sensor_msgs::NavSatFix &out, double timeoutSec = 1.0){
+			std::unique_lock<std::mutex> lock(fixMutex);
+			if(!fixCv.wait_for(lock, std::chrono::duration<double>(timeoutSec), [&]{return fixReady;})){
+				return false;
+			}
+			out = lastFix;
+			fixReady = false;
+			return true;
+		}
+
+		bool waitForSpeed(nav_msgs::Odometry &out, double timeoutSec = 1.0){
+			std::unique_lock<std::mutex> lock(speedMutex);
+			if(!speedCv.wait_for(lock, std::chrono::duration<double>(timeoutSec), [&]{return speedReady;})){
+				return false;
+			}
+			out = lastSpeed;
+			speedReady = false;
+			return true;
+		}
+
+		void depthCallback(const geometry_msgs::PointStamped::ConstPtr& msg){
+			std::lock_guard<std::mutex> lock(depthMutex);
+			lastDepth = *msg;
+			depthReady = true;
+			depthCv.notify_all();
+		}
+
+		void fixCallback(const sensor_msgs::NavSatFix::ConstPtr& msg){
+			std::lock_guard<std::mutex> lock(fixMutex);
+			lastFix = *msg;
+			fixReady = true;
+			fixCv.notify_all();
+		}
+
+		void speedCallback(const nav_msgs::Odometry::ConstPtr& msg){
+			std::lock_guard<std::mutex> lock(speedMutex);
+			lastSpeed = *msg;
+			speedReady = true;
+			speedCv.notify_all();
+		}
+
+		TestableNmeaClient client;
+		ros::NodeHandle nh;
+
+		ros::Subscriber depthSub;
+		ros::Subscriber fixSub;
+		ros::Subscriber speedSub;
+
+		geometry_msgs::PointStamped lastDepth;
+		sensor_msgs::NavSatFix lastFix;
+		nav_msgs::Odometry lastSpeed;
+
+		std::mutex depthMutex;
+		std::mutex fixMutex;
+		std::mutex speedMutex;
+		std::condition_variable depthCv;
+		std::condition_variable fixCv;
+		std::condition_variable speedCv;
+		bool depthReady = false;
+		bool fixReady = false;
+		bool speedReady = false;
+};
+
+TEST(BaseNmeaClientChecksumHelpers, ComputeChecksumMatchesPayload){
+	std::string payload = "GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S";
+	ASSERT_EQ(0x3A, BaseNmeaClient::computeChecksum(payload));
+}
+
+TEST(BaseNmeaClientChecksumHelpers, StringChecksumParsesHex){
+	ASSERT_EQ(0x3A, BaseNmeaClient::str2checksum("3A"));
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractDBTPublishesDepth){
+	resetFlags();
+	std::string sentence = "$SDDBT,30.9,f,9.4,M,5.1,F*35";
+	ASSERT_TRUE(client.extractDBT(sentence));
+	geometry_msgs::PointStamped msg;
+	ASSERT_TRUE(waitForDepth(msg));
+	EXPECT_NEAR(9.4, msg.point.z, 1e-6);
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractGGAPublishesFix){
+	resetFlags();
+	std::string sentence = "$GPGGA,133818.75,0100.0000,N,00300.0180,E,1,14,3.1,-13.0,M,-45.3,M,,*52";
+	ASSERT_TRUE(client.extractGGA(sentence));
+	sensor_msgs::NavSatFix fix;
+	ASSERT_TRUE(waitForFix(fix));
+	EXPECT_NEAR(1.0, fix.latitude, 1e-6);
+	EXPECT_NEAR(3.0, fix.longitude, 1e-6);
+	EXPECT_NEAR(-13.0, fix.altitude, 1e-6);
+	EXPECT_EQ(0, fix.status.status);
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractVTGPublishesSpeed){
+	resetFlags();
+	std::string sentence = "$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A";
+	ASSERT_TRUE(client.extractVTG(sentence));
+	nav_msgs::Odometry odom;
+	ASSERT_TRUE(waitForSpeed(odom));
+	EXPECT_NEAR(4.4, odom.twist.twist.linear.y, 1e-6);
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractDPTWithScalePublishesDepth){
+	resetFlags();
+	std::string sentence = "$INDPT,5.0,0.0,0.0*40";
+	ASSERT_TRUE(client.extractDPT(sentence));
+	geometry_msgs::PointStamped depth;
+	ASSERT_TRUE(waitForDepth(depth));
+	EXPECT_NEAR(5.0, depth.point.z, 1e-6);
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractDPTWithoutScalePublishesDepth){
+	resetFlags();
+	std::string sentence = "$INDPT,5.0,0.0*42";
+	ASSERT_TRUE(client.extractDPT(sentence));
+	geometry_msgs::PointStamped depth;
+	ASSERT_TRUE(waitForDepth(depth));
+	EXPECT_NEAR(5.0, depth.point.z, 1e-6);
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractADSPublishesDepth){
+	resetFlags();
+	std::string sentence = "$ISADS,15.5,M,21.5,C*45";
+	ASSERT_TRUE(client.extractADS(sentence));
+	geometry_msgs::PointStamped depth;
+	ASSERT_TRUE(waitForDepth(depth));
+	EXPECT_NEAR(15.5, depth.point.z, 1e-6);
 }
 int main(int argc, char **argv) {
 

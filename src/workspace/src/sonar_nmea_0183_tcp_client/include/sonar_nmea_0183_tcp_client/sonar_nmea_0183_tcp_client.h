@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <exception>
+#include <cctype>
 
 //sockets
 #include <sys/types.h>
@@ -32,7 +33,7 @@
 
 
 typedef struct{
-	char talkerId[2];
+	char talkerId[3];
 	double utcTime;
 	
 	double latitude; 
@@ -58,7 +59,7 @@ typedef struct{
 } ggaData;
 
 typedef struct{
-	char talkerId[2];
+	char talkerId[3];
 	double  depthFeet;
 	double  depthMeters;
 	double  depthFathoms;
@@ -66,7 +67,7 @@ typedef struct{
 }dbtData;
 
 typedef struct{
-	char talkerId[2];
+	char talkerId[3];
 	double degreesDecimal;
 	double degreesMagnetic;
 	double speedKnots;
@@ -75,7 +76,7 @@ typedef struct{
 }vtgData;
 
 typedef struct{
-	char talkerId[2];
+	char talkerId[3];
 	double  depthMeters;
 	double  offsetMeters; 
 	double  maxRangeScale; // i guess it's meters
@@ -83,7 +84,7 @@ typedef struct{
 }dptData;
 
 typedef struct{
-	char talkerId[2];
+	char talkerId[3];
 	double  depthMeters;
 	double  temperature;
 	unsigned int checksum;
@@ -113,43 +114,69 @@ class BaseNmeaClient{
 
 		}
 		
-		static uint8_t computeChecksum(std::string &data){
+		static uint8_t computeChecksum(const std::string &data){
 			
 			uint8_t checksum = 0;
-			for(int i=0; i<data.size(); i++){
-				checksum ^= data.at(i);
+			for(const auto ch : data){
+				checksum ^= static_cast<uint8_t>(ch);
 			}
 			return checksum;
 		}
 		
-		static uint8_t str2checksum(std::string checksumByte){
-			uint8_t msb = checksumByte.at(0);
-			uint8_t lsb = checksumByte.at(1);
-
-			if(msb >= '0' && msb <= '9') msb = msb - '0';
-			else if(msb >='A' && msb <='F') msb = msb -'A'+10;
-			else return false;
-			msb = msb << 4;
-			
-			if(lsb >= '0' && lsb <= '9') lsb = lsb - '0';
-			else if(lsb >='A' && lsb <='F') lsb = lsb -'A'+10;
-			else return false;
-			
-			return msb + lsb;
-		}
-		static bool validateChecksum(std::string &s){
-			std::string bytes = s.substr(s.find("$")+1, s.find("*")-1);
-			uint8_t checksum = computeChecksum(bytes);
-			
-			std::string checksumByte = s.substr(s.find("*")+1, s.find("*")+2);
-			uint8_t controlByte = str2checksum(checksumByte);
-			
-			if(checksum == controlByte){
-				return true;
-			}
-			else{
+		static bool str2checksum(const std::string &checksumByte, uint8_t &checksum){
+			if(checksumByte.size() < 2){
 				return false;
 			}
+
+			auto decode = [](char c, uint8_t &value) -> bool{
+				if(c >= '0' && c <= '9'){
+					value = static_cast<uint8_t>(c - '0');
+					return true;
+				}
+
+				c = std::toupper(static_cast<unsigned char>(c));
+				if(c >= 'A' && c <= 'F'){
+					value = static_cast<uint8_t>(c - 'A' + 10);
+					return true;
+				}
+
+				return false;
+			};
+
+			uint8_t msb = 0;
+			uint8_t lsb = 0;
+			if(!decode(checksumByte.at(0), msb) || !decode(checksumByte.at(1), lsb)){
+				return false;
+			}
+
+			checksum = static_cast<uint8_t>((msb << 4) | lsb);
+			return true;
+		}
+		static bool validateChecksum(const std::string &s){
+			auto start = s.find("$");
+			if(start == std::string::npos){
+				return false;
+			}
+
+			auto star = s.find("*", start);
+			if(star == std::string::npos || star <= start + 1){
+				return false;
+			}
+
+			std::string bytes = s.substr(start + 1, star - (start + 1));
+			uint8_t checksum = computeChecksum(bytes);
+			
+			std::string checksumByte = s.substr(star + 1);
+			if(checksumByte.size() < 2){
+				return false;
+			}
+
+			uint8_t controlByte = 0;
+			if(!str2checksum(checksumByte, controlByte)){
+				return false;
+			}
+			
+			return checksum == controlByte;
 		}
 		
 		void initTopics(){
@@ -161,7 +188,7 @@ class BaseNmeaClient{
 		bool extractGGA(std::string & s){   
 			ggaData data;
 			
-			if(sscanf(s.c_str(),"$%2sGGA,%lf,%lf,%1s,%lf,%1s,%d,%d,%lf,%lf,M,%lf,M,%d,%d*%2x",&data.talkerId,&data.utcTime,&data.latitude,&data.northOrSouth,&data.longitude,&data.eastOrWest,&data.quality,&data.nbSatellites,&data.hdop,&data.antennaAltitude,&data.geoidalSeparation,&data.dgpsAge,&data.dgpsStationId,&data.checksum) >= 8){		
+			if(sscanf(s.c_str(),"$%2sGGA,%lf,%lf,%c,%lf,%c,%d,%d,%lf,%lf,M,%lf,M,%d,%d*%2x",data.talkerId,&data.utcTime,&data.latitude,&data.northOrSouth,&data.longitude,&data.eastOrWest,&data.quality,&data.nbSatellites,&data.hdop,&data.antennaAltitude,&data.geoidalSeparation,&data.dgpsAge,&data.dgpsStationId,&data.checksum) >= 8){		
 				//TODO verify checksum
 				if(validateChecksum(s)){
 					sensor_msgs::NavSatFix msg;
@@ -215,7 +242,7 @@ class BaseNmeaClient{
 		bool extractDBT(std::string & s){
 			dbtData dbt;
 			
-			if(sscanf(s.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",&dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
+			if(sscanf(s.c_str(),"$%2sDBT,%lf,f,%lf,M,%lf,F*%2x",dbt.talkerId,&dbt.depthFeet,&dbt.depthMeters,&dbt.depthFathoms,&dbt.checksum) == 5){
 				//TODO: checksum
 				//process depth
 				if(validateChecksum(s)){
@@ -241,7 +268,7 @@ class BaseNmeaClient{
 		bool extractVTG(std::string & s){
 			vtgData vtg;
 			//$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A\r\n
-			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,%lf,K,S*%2x",&vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6 ){
+			if(sscanf(s.c_str(),"$%2sVTG,%lf,T,%lf,M,%lf,N,%lf,K,S*%2x",vtg.talkerId,&vtg.degreesDecimal,&vtg.degreesMagnetic,&vtg.speedKnots,&vtg.speedKmh,&vtg.checksum) == 6 ){
 				
 				if(validateChecksum(s)){
 					nav_msgs::Odometry msg;

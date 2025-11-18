@@ -290,7 +290,15 @@ class BaseNmeaClient{
 			dptData dpt;
 
 			//$INDPT,5.0,0.0,0.0*46\r\n
-			if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,%lf,S*%2x",&dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.maxRangeScale,&dpt.checksum) == 4 ){
+			bool hasScale = false;
+			if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,%lf,S*%2x",dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.maxRangeScale,&dpt.checksum) == 5){
+				hasScale = true;
+			}
+			else if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,%lf*%2x",dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.maxRangeScale,&dpt.checksum) == 5){
+				hasScale = true;
+			}
+
+			if(hasScale){
 				if(validateChecksum(s)){
 					geometry_msgs::PointStamped msg;
 					msg.header.seq=++depthSequenceNumber;
@@ -304,7 +312,15 @@ class BaseNmeaClient{
 				}
 			}
 			
-			else if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,S*%2x",&dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.checksum) == 3 ){
+			bool withoutScale = false;
+			if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf,S*%2x",dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.checksum) == 4){
+				withoutScale = true;
+			}
+			else if(sscanf(s.c_str(),"$%2sDPT,%lf,%lf*%2x",dpt.talkerId,&dpt.depthMeters,&dpt.offsetMeters,&dpt.checksum) == 4){
+				withoutScale = true;
+			}
+
+			if(withoutScale){
 				if(validateChecksum(s)){
 					geometry_msgs::PointStamped msg;
 					msg.header.seq=++depthSequenceNumber;
@@ -326,7 +342,7 @@ class BaseNmeaClient{
 		bool extractADS(std::string & s){
 			adsData ads;
 			
-			if(sscanf(s.c_str(),"$%2sADS,%lf,M,%lf,C*%2x",&ads.talkerId,&ads.depthMeters,&ads.temperature,&ads.checksum) == 4){
+			if(sscanf(s.c_str(),"$%2sADS,%lf,M,%lf,C*%2x",ads.talkerId,&ads.depthMeters,&ads.temperature,&ads.checksum) == 4){
 				//TODO: checksum
 				//process depth
 				if(validateChecksum(s)){

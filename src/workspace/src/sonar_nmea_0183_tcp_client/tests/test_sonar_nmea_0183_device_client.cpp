@@ -10,8 +10,29 @@
 #include <chrono>
 #include <iostream>
 #include <cstdio>
+#include <iomanip>
+#include <sstream>
+#include <cctype>
 #include "virtual_serial_port.hpp"
 #include "sonar_nmea_0183_tcp_client/sonar_nmea_0183_tcp_client.h"
+
+std::string buildNmeaSentence(const std::string &payload, bool appendCarriageReturn = false){
+	uint8_t checksum = BaseNmeaClient::computeChecksum(payload);
+	std::ostringstream oss;
+	oss << '$' << payload << '*' << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(checksum);
+	if(appendCarriageReturn){
+		oss << '\r';
+	}
+	return oss.str();
+}
+
+std::string corruptChecksum(std::string sentence){
+	auto starPos = sentence.find('*');
+	if(starPos != std::string::npos && starPos + 2 < sentence.size()){
+		sentence[starPos + 1] = (sentence[starPos + 1] == '0') ? '1' : '0';
+	}
+	return sentence;
+}
 
 class counter{
 	public:
@@ -219,7 +240,42 @@ TEST(BaseNmeaClientChecksumHelpers, ComputeChecksumMatchesPayload){
 }
 
 TEST(BaseNmeaClientChecksumHelpers, StringChecksumParsesHex){
-	ASSERT_EQ(0x3A, BaseNmeaClient::str2checksum("3A"));
+	uint8_t checksum = 0;
+	ASSERT_TRUE(BaseNmeaClient::str2checksum("3A", checksum));
+	EXPECT_EQ(0x3A, checksum);
+}
+
+TEST(BaseNmeaClientChecksumHelpers, StringChecksumRejectsInvalidInput){
+	uint8_t checksum = 0;
+	EXPECT_FALSE(BaseNmeaClient::str2checksum("G", checksum));
+	EXPECT_FALSE(BaseNmeaClient::str2checksum("ZZ", checksum));
+}
+
+TEST(BaseNmeaClientChecksumHelpers, ValidateChecksumHandlesCarriageReturn){
+	std::string sentence = buildNmeaSentence("GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S", true);
+	ASSERT_TRUE(BaseNmeaClient::validateChecksum(sentence));
+}
+
+TEST(BaseNmeaClientChecksumHelpers, ValidateChecksumHandlesLowercase){
+	std::string sentence = buildNmeaSentence("GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S");
+	auto star = sentence.find('*');
+	ASSERT_NE(std::string::npos, star);
+	sentence[star + 1] = static_cast<char>(std::tolower(static_cast<unsigned char>(sentence[star + 1])));
+	sentence[star + 2] = static_cast<char>(std::tolower(static_cast<unsigned char>(sentence[star + 2])));
+	ASSERT_TRUE(BaseNmeaClient::validateChecksum(sentence));
+}
+
+TEST(BaseNmeaClientChecksumHelpers, ValidateChecksumRejectsMalformedSentence){
+	std::string missingDollar = "GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S*3A";
+	EXPECT_FALSE(BaseNmeaClient::validateChecksum(missingDollar));
+	std::string missingStar = "$GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S3A";
+	EXPECT_FALSE(BaseNmeaClient::validateChecksum(missingStar));
+}
+
+TEST(BaseNmeaClientChecksumHelpers, ValidateChecksumIgnoresLeadingNoise){
+	std::string base = buildNmeaSentence("GPVTG,82.0,T,77.7,M,2.4,N,4.4,K,S");
+	std::string padded = "\n" + base;
+	ASSERT_TRUE(BaseNmeaClient::validateChecksum(padded));
 }
 
 TEST_F(BaseNmeaClientNodeTest, ExtractDBTPublishesDepth){
@@ -229,6 +285,14 @@ TEST_F(BaseNmeaClientNodeTest, ExtractDBTPublishesDepth){
 	geometry_msgs::PointStamped msg;
 	ASSERT_TRUE(waitForDepth(msg));
 	EXPECT_NEAR(9.4, msg.point.z, 1e-6);
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractDBTRejectsInvalidChecksum){
+	resetFlags();
+	std::string sentence = corruptChecksum("$SDDBT,30.9,f,9.4,M,5.1,F*35");
+	EXPECT_FALSE(client.extractDBT(sentence));
+	geometry_msgs::PointStamped msg;
+	EXPECT_FALSE(waitForDepth(msg, 0.1));
 }
 
 TEST_F(BaseNmeaClientNodeTest, ExtractGGAPublishesFix){
@@ -268,6 +332,15 @@ TEST_F(BaseNmeaClientNodeTest, ExtractDPTWithoutScalePublishesDepth){
 	geometry_msgs::PointStamped depth;
 	ASSERT_TRUE(waitForDepth(depth));
 	EXPECT_NEAR(5.0, depth.point.z, 1e-6);
+}
+
+TEST_F(BaseNmeaClientNodeTest, ExtractDPTWithSourceIndicatorPublishesDepth){
+	resetFlags();
+	std::string sentence = buildNmeaSentence("INDPT,7.1,0.2,10.0,S");
+	ASSERT_TRUE(client.extractDPT(sentence));
+	geometry_msgs::PointStamped depth;
+	ASSERT_TRUE(waitForDepth(depth));
+	EXPECT_NEAR(7.1, depth.point.z, 1e-6);
 }
 
 TEST_F(BaseNmeaClientNodeTest, ExtractADSPublishesDepth){

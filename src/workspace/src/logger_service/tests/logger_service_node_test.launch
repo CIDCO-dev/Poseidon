@@ -3,6 +3,9 @@
 	<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
 	<arg name="configPath" default="$(find setting_msg)/tests/getConfigurationTestConfig.txt"/>
 
+	<param name="/logger/fileExtensionForSonarDatagram" value=".son"/>
+	<param name="/logger/fileExtensionForGpsDatagram" value=".gps"/>
+
 	<!-- the node launching order matters -->
 	<node pkg="logger_service" name="mock_i2c_controller_service" type="mock_i2c_controller_service.py" output="screen"/>
 	<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>

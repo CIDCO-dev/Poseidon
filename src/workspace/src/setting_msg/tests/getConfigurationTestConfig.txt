@@ -5,3 +5,11 @@ sonarAbsorbtion 20
 sonarPulseLength 120
 sonarRange 32
 sonarStartGain 10
+speedThresholdKmh 4.4
+loggingMode 1
+logRotationIntervalSeconds 3600
+apiServer localhost
+apiUrlPath /
+apiPort 8080
+apiKey test-api-key
+geofence MULTIPOLYGON(((-180 -90, -180 90, 180 90, 180 -90, -180 -90)))

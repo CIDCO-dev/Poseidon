@@ -8,8 +8,9 @@ project(setting_msg)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-#  roscpp
+  roscpp
   std_msgs
+  roslib
   message_generation
 )
 
@@ -106,7 +107,7 @@ add_service_files(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES setting_msg
-  CATKIN_DEPENDS std_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs roslib message_runtime
 #  DEPENDS system_lib
 )
 
@@ -117,7 +118,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  # include
   ${catkin_INCLUDE_DIRS}
 )
 

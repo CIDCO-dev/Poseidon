@@ -164,6 +164,7 @@ class LoggerBase{
 		bool loggerEnabled = false;
 		bool bootstrappedGnssTime = false;
 		bool gnssFix = false;
+		bool allowToggleWithoutGps = false;
 		bool hddFreeSpaceOK = true;
 		
 		// log rotation

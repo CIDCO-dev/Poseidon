@@ -35,6 +35,9 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 		ROS_ERROR_STREAM("No Gnss protocol file extention defined, defaulting to .gps");
 		this->fileExtensionForGpsDatagram = ".gps";
 	}
+
+	// Testing/CI hook: allow toggling without GPS bootstrap when explicitly enabled
+	node.param("/logger/allow_toggle_without_gps", allowToggleWithoutGps, false);
 	
 	updateLogRotationInterval();
 	updateApiTransferConfig();
@@ -285,6 +288,10 @@ bool LoggerBase::getLoggingStatus(logger_service::GetLoggingStatus::Request & re
 
 
 bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request, logger_service::ToggleLogging::Response & response){
+
+	if(allowToggleWithoutGps && !bootstrappedGnssTime){
+		bootstrappedGnssTime = true;
+	}
 
 	if(bootstrappedGnssTime){
 		mtx.lock();
@@ -830,5 +837,3 @@ void LoggerBase::reset_gnss_timer(){
 		noGnssTimer.stop();
 		noGnssTimer = node.createTimer(ros::Duration(1.0), &LoggerBase::gnss_timer_callback, this);
 }
-
-

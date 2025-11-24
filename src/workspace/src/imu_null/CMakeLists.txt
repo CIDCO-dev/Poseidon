@@ -110,7 +110,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES imu_null
   CATKIN_DEPENDS roscpp std_msgs tf2 tf2_ros tf2_geometry_msgs
-  DEPENDS system_lib
 )
 
 ###########
@@ -217,4 +216,3 @@ endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-

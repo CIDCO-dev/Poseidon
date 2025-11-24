@@ -203,7 +203,6 @@ catkin_install_python(PROGRAMS
 
 if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
-    find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
     add_rostest_gtest(test_logger_service_node tests/logger_service_node_test.launch tests/test_logger_service_node.cpp)
     target_link_libraries(test_logger_service_node ${catkin_LIBRARIES})
 endif()

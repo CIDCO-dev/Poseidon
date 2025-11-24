@@ -22,7 +22,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES logger
   CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs lidar_filtering
-  DEPENDS system_lib
 )
 
 ###########
@@ -72,11 +71,11 @@ target_link_libraries(calib_printer sbet_decoder)
  )
 
 ## Mark cpp header files for installation
- install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
-   PATTERN ".svn" EXCLUDE
- )
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+  PATTERN ".svn" EXCLUDE
+)
 
 #############
 ## Testing ##

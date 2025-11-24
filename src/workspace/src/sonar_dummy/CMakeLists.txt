@@ -108,7 +108,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sonar_dummy
   CATKIN_DEPENDS roscpp std_msgs setting_msg
-  DEPENDS system_lib
 )
 
 ###########

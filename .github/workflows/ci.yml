@@ -50,7 +50,9 @@ jobs:
             python3-lxml libxml2-dev libxslt1-dev \
             lcov
           sudo -H python3 -m pip install --no-cache-dir catkin-lint flake8
-          sudo rosdep init || true
+          if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
+            sudo rosdep init
+          fi
           rosdep update
 
       - name: Checkout repository
@@ -85,7 +87,7 @@ jobs:
           set -eo pipefail
           source /opt/ros/noetic/setup.bash
           cd "$CATKIN_WS"
-          catkin_make -j1 \
+          catkin_make \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES" \
             -DCMAKE_CXX_FLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=address,undefined" \
@@ -96,7 +98,7 @@ jobs:
           set -eo pipefail
           source /opt/ros/noetic/setup.bash
           cd "$CATKIN_WS"
-          catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES"
+          catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES"
           # Report results but do not fail the whole job on first adoption
           catkin_test_results build/test_results || true
 

@@ -68,6 +68,7 @@
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>tf2_geometry_msgs</exec_depend>
   <exec_depend>logger_service</exec_depend>
+  <test_depend>rostest</test_depend>
   <test_depend>state_controller</test_depend>
   <test_depend>hydroball_config_websocket</test_depend>
 

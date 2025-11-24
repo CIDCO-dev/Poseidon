@@ -106,7 +106,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES raspberrypi_vitals
   CATKIN_DEPENDS roscpp raspberrypi_vitals_msg
-  DEPENDS system_lib
 )
 
 ###########
@@ -209,7 +208,6 @@ endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
 
 
 

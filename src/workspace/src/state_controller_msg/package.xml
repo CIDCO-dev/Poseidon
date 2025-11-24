@@ -62,9 +62,10 @@
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>   
-  <build_export_depend>sensors_msgs</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
   <build_export_depend>geometry_msgs</build_export_depend>
   <build_export_depend>raspberrypi_vitals_msg</build_export_depend>
+  <build_export_depend>nav_msgs</build_export_depend>
 
 
   <exec_depend>roscpp</exec_depend>

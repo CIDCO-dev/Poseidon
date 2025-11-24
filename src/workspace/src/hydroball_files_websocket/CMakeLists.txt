@@ -111,7 +111,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES hydroball_files_websocket
   CATKIN_DEPENDS roscpp std_msgs
-  DEPENDS system_lib CURL
+  DEPENDS CURL
 )
 
 ###########
@@ -188,6 +188,9 @@ ${CURL_LIBRARIES}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
  )
+ install(TARGETS ${PROJECT_NAME}_node
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
@@ -213,6 +216,7 @@ ${CURL_LIBRARIES}
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 if(CATKIN_ENABLE_TESTING)
+find_package(rostest REQUIRED)
 add_rostest_gtest(test_hydroball_files_websocket tests/file_websocket.launch tests/test_hydroball_files_websocket.cpp)
 target_link_libraries(test_hydroball_files_websocket
   hydroball_files_websocket
@@ -222,4 +226,3 @@ target_link_libraries(test_hydroball_files_websocket
 add_dependencies(test_hydroball_files_websocket ${catkin_EXPORTED_TARGETS})
 
 endif()
-

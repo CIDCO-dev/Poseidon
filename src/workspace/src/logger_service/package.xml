@@ -60,6 +60,7 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>i2c_controller_service</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+  <test_depend>rostest</test_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

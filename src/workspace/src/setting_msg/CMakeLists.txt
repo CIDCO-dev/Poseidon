@@ -199,11 +199,6 @@ include_directories(
 
 if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
-    find_package(catkin REQUIRED COMPONENTS
-      roscpp
-      std_msgs
-      roslib
-    )
 
     add_rostest_gtest(test_zero_imu_offset_service tests/zero_imu_offset_test.launch tests/test_zero_imu_offset_service.cpp)
     target_link_libraries(test_zero_imu_offset_service ${catkin_LIBRARIES})

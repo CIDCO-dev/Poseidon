@@ -203,9 +203,7 @@ include_directories(
 #############
 if(CATKIN_ENABLE_TESTING)
 find_package(rostest REQUIRED)
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
 add_rostest_gtest(test_gnss_zed_f9p tests/gnss_zed_f9p_test.launch tests/test_gnss_zed_f9p.cpp) #tests/gnss_zed_f9p_test.launch
 target_link_libraries(test_gnss_zed_f9p gnss_zed_f9p ${gnss_zed_f9p_LIBRARIES})
 add_dependencies(test_gnss_zed_f9p ${catkin_EXPORTED_TARGETS}) #? ${catkin_LIBRARIES}
 endif()
-

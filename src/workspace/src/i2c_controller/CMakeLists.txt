@@ -29,7 +29,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES i2c_controller
   CATKIN_DEPENDS roscpp std_msgs i2c_controller_service
-  DEPENDS system_lib
 )
 
 ###########

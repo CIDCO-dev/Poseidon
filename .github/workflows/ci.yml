@@ -1,5 +1,5 @@
 # GitHub Actions CI for Poseidon (ROS Noetic / Catkin)
-# - Builds and tests the Catkin workspace inside a ROS Noetic (Focal) container
+# - Builds and tests the Catkin workspace on the self-hosted ROS Noetic runner (Ubuntu 20.04/Focal)
 # - Publishes JUnit test results and optional coverage output
 # - Keeps configuration minimal and aligned with repository conventions
 
@@ -23,12 +23,7 @@ concurrency:
 jobs:
   build-and-test:
     name: Build and Test
-    runs-on: ubuntu-latest
-
-    # Use a ROS Noetic container so the environment matches Ubuntu 20.04 (Focal)
-    container:
-      image: ros:noetic-ros-base-focal
-      options: --ipc=host
+    runs-on: [self-hosted, Linux, ARM64]
 
     env:
       CATKIN_WS: src/workspace
@@ -36,23 +31,12 @@ jobs:
       CATKIN_BLACKLIST_PACKAGES: "mavros;lidar_filtering;inertial_sense;velodyne;ins_piksi;velodyne_pointcloud;velodyne_driver;velodyne_laserscan;imu_bno055;raspberrypi_vitals;gnss_mosaic_x5;gnss_zed_f9p;hydroball_files_websocket;tf"
 
     steps:
-      - name: Install Git for checkout
+      - name: Ensure base packages
         run: |
           set -eo pipefail
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            git ca-certificates
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Install base dependencies
-        run: |
-          set -eo pipefail
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --no-install-recommends \
+            git ca-certificates \
             build-essential cmake ccache \
             python3-pip python3-rosdep \
             ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
@@ -64,9 +48,14 @@ jobs:
             libopencv-dev libexiv2-dev libwebsocketpp-dev \
             rapidjson-dev libssl-dev libgps-dev libboost-system-dev \
             lcov
-          pip3 install --no-cache-dir catkin-lint flake8
-          rosdep init || true
+          sudo -H python3 -m pip install --no-cache-dir catkin-lint flake8
+          sudo rosdep init || true
           rosdep update
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Resolve ROS package dependencies
         run: |
@@ -84,7 +73,7 @@ jobs:
       - name: Configure ccache
         run: |
           set -eo pipefail
-          export CCACHE_DIR=/github/home/.ccache
+          export CCACHE_DIR="$HOME/.ccache"
           ccache -M 1G
 
       - name: Build (Debug + sanitizers)
@@ -135,9 +124,7 @@ jobs:
           path: coverage.info
           if-no-files-found: ignore
 
-    # Notes for using a self-hosted runner (agent):
-    # - Install a self-hosted runner on a machine with Ubuntu 20.04 and ROS Noetic.
-    # - Add a custom label, e.g. `ros-noetic`.
-    # - Replace `runs-on: ubuntu-latest` and the `container:` section with:
-    #     runs-on: [self-hosted, linux, x64, ros-noetic]
-    # - Ensure `rosdep` is initialized and the same apt dependencies are installed.
+    # Self-hosted runner notes:
+    # - Runner must be registered on the repository/org with labels: self-hosted, Linux, ARM64.
+    # - Machine should run Ubuntu 20.04 with ROS Noetic installed in /opt/ros/noetic.
+    # - Ensure runner user has passwordless sudo for apt/rosdep during the workflow.

@@ -1,0 +1,32 @@
+FROM ros:noetic-ros-base-focal
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Base build/test dependencies (mirrors CI)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      build-essential cmake ccache \
+      python3-pip python3-rosdep \
+      ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
+      ros-noetic-diagnostic-updater ros-noetic-angles \
+      ros-noetic-tf2-geometry-msgs \
+      ros-noetic-pcl-ros ros-noetic-pcl-conversions libpcl-dev \
+      ros-noetic-sbg-driver \
+      ros-noetic-roslint ros-noetic-nodelet ros-noetic-dynamic-reconfigure ros-noetic-sensor-msgs \
+      libopencv-dev libexiv2-dev libwebsocketpp-dev \
+      rapidjson-dev libssl-dev libgps-dev libboost-system-dev \
+      python3-lxml libxml2-dev libxslt1-dev \
+      lcov \
+    && rm -rf /var/lib/apt/lists/*
+
+# Linting tools
+RUN python3 -m pip install --no-cache-dir catkin-lint flake8
+
+# Rosdep setup (safe if already initialized)
+RUN rosdep init || true
+RUN rosdep update || true
+
+WORKDIR /ws
+ENV CATKIN_WS=/ws/src/workspace
+
+CMD ["/bin/bash"]

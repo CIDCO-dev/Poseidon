@@ -47,6 +47,7 @@ jobs:
             ros-noetic-roslint ros-noetic-nodelet ros-noetic-dynamic-reconfigure ros-noetic-sensor-msgs \
             libopencv-dev libexiv2-dev libwebsocketpp-dev \
             rapidjson-dev libssl-dev libgps-dev libboost-system-dev \
+            python3-lxml libxml2-dev libxslt1-dev \
             lcov
           sudo -H python3 -m pip install --no-cache-dir catkin-lint flake8
           sudo rosdep init || true

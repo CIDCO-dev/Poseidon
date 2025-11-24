@@ -202,7 +202,9 @@ if(CATKIN_ENABLE_TESTING)
 
     add_rostest_gtest(test_zero_imu_offset_service tests/zero_imu_offset_test.launch tests/test_zero_imu_offset_service.cpp)
     target_link_libraries(test_zero_imu_offset_service ${catkin_LIBRARIES})
+    add_dependencies(test_zero_imu_offset_service ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
     add_rostest_gtest(test_get_configuration_service tests/get_configuration_test.launch tests/test_get_configuration.cpp)
     target_link_libraries(test_get_configuration_service ${catkin_LIBRARIES})
+    add_dependencies(test_get_configuration_service ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 endif()

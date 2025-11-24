@@ -122,9 +122,10 @@ include_directories(
 )
 
 ## Declare a C++ library
- add_library(${PROJECT_NAME}
-   src/${PROJECT_NAME}.cpp
- )
+add_library(${PROJECT_NAME}
+  src/${PROJECT_NAME}.cpp
+)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -136,6 +137,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(nmea_device_node nodes/device_node.cpp)
  add_executable(nmea_network_node nodes/network_node.cpp)
+ add_dependencies(nmea_device_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(nmea_network_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

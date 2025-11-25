@@ -605,10 +605,9 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	d.AddMember("jobType", jobType, d.GetAllocator());
 	
 	rapidjson::Value fileData;
-	char* buffer = new char [base64Zip.size()+1];
-	len = sprintf(buffer, "%s", base64Zip.c_str());
-	fileData.SetString(buffer, len, d.GetAllocator());
-	delete buffer;
+	fileData.SetString(base64Zip.c_str(),
+	                   static_cast<rapidjson::SizeType>(base64Zip.size()),
+	                   d.GetAllocator());
 	d.AddMember("fileData", fileData, d.GetAllocator());
 	
 	rapidjson::StringBuffer sb;

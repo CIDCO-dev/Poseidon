@@ -12,7 +12,8 @@ tf2
 tf2_ros 
 tf2_geometry_msgs
 binary_stream_msg
-i2c_controller_service)
+i2c_controller_service
+setting_msg)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package( Threads )
 find_package(Boost REQUIRED COMPONENTS system)
@@ -21,7 +22,7 @@ find_package(OpenSSL REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES logger
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs lidar_filtering
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs logger_service tf2 tf2_ros tf2_geometry_msgs lidar_filtering setting_msg
 )
 
 ###########

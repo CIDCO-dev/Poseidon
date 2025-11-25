@@ -1,6 +1,6 @@
 # Version History (English)
 
-## Unreleased
+## 2025-11-25
 - Added HTTPS transfer integration tests for logger binary and text nodes (local TLS server, payload verification).
 - Added memory-resilience tests: repeated failed transfers must not increase RSS.
 - Fixed `create_json_str` to avoid allocation leak (use `SetString` without manual `new`).
@@ -19,3 +19,4 @@
 - Added Jest test for calibrationScript.js (zeroImu command dispatch).
 - JavaScript: npm test now runs Jest with coverage (collects coverage excluding minified/vendor).
 - Fixed logger text test build by defining `currentRssBytes` helper in `test_logger_text_node.cpp`.
+- CI: add C++ coverage via gcovr, Python coverage via coverage/pytest, JS coverage artifact upload; switched C++ build to `--coverage`.

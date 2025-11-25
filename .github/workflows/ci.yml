@@ -39,6 +39,7 @@ jobs:
             git ca-certificates \
             build-essential cmake ccache \
             python3-pip python3-rosdep \
+            gcovr \
             nodejs npm \
             ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
             ros-noetic-diagnostic-updater ros-noetic-angles \
@@ -50,7 +51,7 @@ jobs:
             rapidjson-dev libssl-dev libgps-dev libboost-system-dev \
             python3-lxml libxml2-dev libxslt1-dev \
             lcov
-          sudo -H python3 -m pip install --no-cache-dir catkin-lint flake8
+          sudo -H python3 -m pip install --no-cache-dir catkin-lint flake8 coverage pytest
           if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
             sudo rosdep init
           fi
@@ -103,8 +104,8 @@ jobs:
           catkin_make \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES" \
-            -DCMAKE_CXX_FLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=address,undefined" \
-            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+            -DCMAKE_CXX_FLAGS="-O0 -g --coverage" \
+            -DCMAKE_EXE_LINKER_FLAGS="--coverage"
 
       - name: Run tests
         run: |
@@ -115,6 +116,27 @@ jobs:
           # Report results but do not fail the whole job on first adoption
           catkin_test_results build/test_results || true
 
+      - name: C++ coverage report (gcovr)
+        run: |
+          set -eo pipefail
+          gcovr -r "$CATKIN_WS/src" "$CATKIN_WS" --xml -o coverage-cpp.xml --html --html-details -o coverage-cpp.html || true
+
+      - name: Python coverage
+        run: |
+          set -eo pipefail
+          cd "$GITHUB_WORKSPACE"
+          coverage run -m pytest src/workspace/src || true
+          coverage xml -o coverage-python.xml || true
+          coverage html -d coverage-python || true
+
+      - name: Upload JS coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-js
+          path: www/webroot/js/coverage
+          if-no-files-found: ignore
+
       - name: Upload JUnit test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -122,6 +144,26 @@ jobs:
           name: junit-test-results
           path: |
             src/workspace/build/test_results
+          if-no-files-found: ignore
+
+      - name: Upload C++ coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-cpp
+          path: |
+            coverage-cpp.xml
+            coverage-cpp.html
+          if-no-files-found: ignore
+
+      - name: Upload Python coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-python
+          path: |
+            coverage-python.xml
+            coverage-python
           if-no-files-found: ignore
 
       - name: Collect C++ coverage (optional)

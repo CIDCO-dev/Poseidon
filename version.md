@@ -25,3 +25,4 @@
 - JS: added Jest jsdom setup with global stubs (window/document/$/WebSocket), guarded polling, and map/WKT fallbacks to stabilize headless tests and avoid npm ci lockfile errors.
 - JS tests: added explicit `jest-environment-jsdom` devDependency to satisfy Jest config.
 - JS housekeeping: generated package-lock for reproducible installs and removed committed coverage output; keep coverage artifacts untracked.
+- hydroball_config_websocket: add message deps (geometry/state/setting) to catkin/package.xml and enforce build order on message targets to fix missing Setting.h during catkin_make.

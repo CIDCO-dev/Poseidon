@@ -4,6 +4,7 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 
 ## Goals
 - Documentation policy: English only across the repository.
+- Maintain a `version.md` file (English) with the current version/history.
 - Make minimal, safe, targeted changes.
 - Respect Catkin structure and separation of C++/Python/launch.
 - Keep compatibility across embedded targets (RPi/RockPi) and VM.

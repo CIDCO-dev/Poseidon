@@ -21,12 +21,15 @@ class MapStub {
 	fitBounds(...args) { fitBoundsMock(...args); return this; }
 }
 
+const control = jest.fn(() => ({
+	addTo: jest.fn(() => ({})),
+	onAdd: null
+}));
+control.scale = jest.fn(() => ({ addTo: jest.fn(() => ({})) }));
+
 const L = {
 	map: () => new MapStub(),
-	control: jest.fn(() => ({
-		addTo: jest.fn(() => ({})),
-		onAdd: null
-	})),
+	control,
 	polyline: jest.fn(() => ({
 		addTo: jest.fn(() => ({})),
 		remove: jest.fn(),
@@ -69,7 +72,14 @@ global.console = console;
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'mapScript.js'), 'utf8');
 	const script = new vm.Script(code, { filename: 'mapScript.js' });
-	const context = vm.createContext(global);
+	const sandbox = {
+		...global,
+		document: global.document,
+		window: global.window,
+		WebSocket: global.WebSocket,
+		console
+	};
+	const context = vm.createContext(sandbox);
 	script.runInContext(context);
 	return context;
 }

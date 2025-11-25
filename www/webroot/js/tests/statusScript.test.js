@@ -30,7 +30,7 @@ function makeElem(id) {
 }
 
 function $(selector) {
-	if (selector.startsWith('#')) {
+	if (typeof selector === 'string' && selector.startsWith('#')) {
 		return makeElem(selector.slice(1));
 	}
 	return makeElem(selector);
@@ -44,7 +44,14 @@ global.WebSocket = function () { return { onmessage: null, send: () => {} }; };
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'statusScript.js'), 'utf8');
 	const script = new vm.Script(code, { filename: 'statusScript.js' });
-	const context = vm.createContext(global);
+	const sandbox = {
+		...global,
+		document: global.document,
+		window: global.window,
+		WebSocket: global.WebSocket,
+		console
+	};
+	const context = vm.createContext(sandbox);
 	script.runInContext(context);
 	return context;
 }

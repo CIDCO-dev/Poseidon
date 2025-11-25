@@ -121,7 +121,13 @@ function chartMetrics() {
   //Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
   //Chart.defaults.global.defaultFontColor = '#858796'
 
-  var ctxAttitude = document.getElementById("attitudeChart").getContext('2d');
+  var attitudeCanvas = document.getElementById("attitudeChart");
+  var depthCanvas = document.getElementById("depthChart");
+  if (!attitudeCanvas || !depthCanvas || !attitudeCanvas.getContext || !depthCanvas.getContext) {
+    return;
+  }
+
+  var ctxAttitude = attitudeCanvas.getContext('2d');
   attitudeChart = new Chart(ctxAttitude, {
     type: 'line',
     data: {
@@ -132,7 +138,7 @@ function chartMetrics() {
     options: { responsive: true, animation: false, elements: { point: { radius: 0 } } }
   });
 
-  var ctxDepth = document.getElementById("depthChart").getContext('2d');
+  var ctxDepth = depthCanvas.getContext('2d');
   depthChart = new Chart(ctxDepth,
     {
       type: 'line',

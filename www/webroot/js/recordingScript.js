@@ -46,9 +46,9 @@ function getLoggingInfo() {
 function processRecordingInfo(isLogging, mode) {
     //console.log(isLogging);
     //console.log(mode);
-    if (mode == "1") {
+	if (mode == "1") {
         hideLoggingButton();
-        $("#modeWidget").text("always ON"); text - success
+        $("#modeWidget").text("always ON"); // text - success
     }
     else if (mode == "2") {
         $("#modeWidget").text("Manual");

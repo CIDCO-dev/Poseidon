@@ -22,9 +22,11 @@ const elements = {
 	depthGauge: {}
 };
 
-global.document = {
-	getElementById: (id) => elements[id]
+const documentStub = {
+	getElementById: (id) => elements[id] || null
 };
+global.document = documentStub;
+global.window = { location: { hostname: 'localhost' } };
 
 // Minimal chart/gauge stubs
 global.Chart = function () { return { update: jest.fn() }; };
@@ -37,13 +39,33 @@ global.WebSocket = function () { return { close: jest.fn() }; };
 global.$ = () => ({
 	removeClass: jest.fn().mockReturnThis(),
 	addClass: jest.fn().mockReturnThis(),
-	text: jest.fn().mockReturnThis()
+	text: jest.fn().mockReturnThis(),
+	width: jest.fn(() => (global.window && global.window.innerWidth) || 1024),
+	on: jest.fn().mockReturnThis(),
+	toggleClass: jest.fn().mockReturnThis(),
+	ready: function (fn) { if (fn) { fn(); } return this; },
+	parent: jest.fn(() => ({
+		toggleClass: jest.fn().mockReturnThis(),
+		parent: jest.fn(() => ({ toggleClass: jest.fn().mockReturnThis() })),
+		css: jest.fn().mockReturnThis()
+	})),
+	css: jest.fn().mockReturnThis()
 });
 
 function loadScript(filename) {
 	const code = fs.readFileSync(filename, 'utf8');
 	const script = new vm.Script(code, { filename });
-	const context = vm.createContext(global);
+	const sandbox = {
+		document: documentStub,
+		window: global.window || {},
+		WebSocket: global.WebSocket,
+		Chart: global.Chart,
+		RadialGauge: global.RadialGauge,
+		$: global.$,
+		console,
+		setTimeout
+	};
+	const context = vm.createContext(sandbox);
 	script.runInContext(context);
 	return context;
 }

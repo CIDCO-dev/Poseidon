@@ -21,6 +21,7 @@ function makeElem(id, tag = 'div') {
 			children: [],
 			appendChild(node) { this.children.push(node); return node; },
 			remove: jest.fn(),
+			addEventListener: jest.fn(),
 			rows: [],
 			insertRow(index) {
 				const row = {
@@ -40,17 +41,42 @@ function makeElem(id, tag = 'div') {
 	return elements[id];
 }
 
-global.document = {
+const documentStub = {
 	getElementById: (id) => makeElem(id),
-	createElement: (tag) => ({ tag, classList: { add: jest.fn() }, appendChild: jest.fn(), insertRow: makeElem('tmp').insertRow })
+	createElement: (tag) => ({
+		tag,
+		classList: { add: jest.fn() },
+		appendChild: jest.fn(),
+		rows: [],
+		insertRow: function (index) {
+			const row = {
+				cells: [],
+				insertCell: function () {
+					const cell = { innerHTML: '', textContent: '', style: {} };
+					this.cells.push(cell);
+					return cell;
+				},
+				appendChild: function (node) { this.cells.push(node); return node; }
+			};
+			this.rows[index] = row;
+			return row;
+		}
+	})
 };
+global.document = documentStub;
 global.window = { location: { hostname: 'localhost' } };
 global.WebSocket = function () { return { send: jest.fn() }; };
 
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'diagnosticsScript.js'), 'utf8');
 	const script = new vm.Script(code, { filename: 'diagnosticsScript.js' });
-	const context = vm.createContext(global);
+	const sandbox = {
+		document: documentStub,
+		window: global.window,
+		WebSocket: global.WebSocket,
+		console
+	};
+	const context = vm.createContext(sandbox);
 	script.runInContext(context);
 	return context;
 }

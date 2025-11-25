@@ -12,18 +12,19 @@ function makeElem(id) {
 	if (!elems[id]) {
 		elems[id] = {
 			classes: new Set(),
-			textContent: '',
-			addClass(cls) { this.classes.add(cls); return this; },
-			removeClass(cls) { this.classes.delete(cls); return this; },
-			hasClass(cls) { return this.classes.has(cls); },
-			text(val) { if (val !== undefined) this.textContent = val; return this; }
-		};
-	}
+		textContent: '',
+		addClass(cls) { this.classes.add(cls); return this; },
+		removeClass(cls) { this.classes.delete(cls); return this; },
+		hasClass(cls) { return this.classes.has(cls); },
+		text(val) { if (val !== undefined) this.textContent = val; return this; },
+		ready(fn) { if (fn) { fn(); } return this; }
+	};
+}
 	return elems[id];
 }
 
 function $(selector) {
-	if (selector.startsWith('#')) return makeElem(selector.slice(1));
+	if (typeof selector === 'string' && selector.startsWith('#')) return makeElem(selector.slice(1));
 	return makeElem(selector);
 }
 $.fn = {};
@@ -38,7 +39,14 @@ global.WebSocket = function () { return { send: (msg) => sent.push(msg) }; };
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'recordingScript.js'), 'utf8');
 	const script = new vm.Script(code, { filename: 'recordingScript.js' });
-	const context = vm.createContext(global);
+	const sandbox = {
+		...global,
+		document: global.document,
+		window: global.window,
+		WebSocket: global.WebSocket,
+		console
+	};
+	const context = vm.createContext(sandbox);
 	script.runInContext(context);
 	return context;
 }

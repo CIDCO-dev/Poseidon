@@ -35,8 +35,8 @@ var curentweight = 23;
 var smootf = 5;
 var currentZoom = 10;
 
-if (typeof L !== "undefined") {
-  navMap = new L.map("navMap").setView([0, 0], 23);
+if (typeof L !== "undefined" && typeof L.map === "function") {
+  navMap = L.map("navMap").setView([0, 0], 23);
 
   L.control.scale().addTo(navMap);
   var legend = L.control({position: 'bottomright'});
@@ -90,7 +90,9 @@ if (typeof L !== "undefined") {
       };
       panControl.addTo(navMap);
 
-  currentZoom = navMap.getZoom();
+  if (navMap && navMap.getZoom) {
+    currentZoom = navMap.getZoom();
+  }
 }
 
 function processState(msg) {

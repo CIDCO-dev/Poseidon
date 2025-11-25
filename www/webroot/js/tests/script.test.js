@@ -19,13 +19,30 @@ function makeElem(id) {
 		on: jest.fn().mockReturnThis(),
 		find: () => ({ attr: () => '/' }),
 		attr: () => '/',
-		css: function (k, v) { this.style[k] = v; return this; }
+		css: function (k, v) { this.style[k] = v; return this; },
+		width: function () { return global.window ? global.window.innerWidth : 0; },
+		each: function (fn) { if (fn) { fn.call(this); } return this; }
 	});
 }
 
+// Window stub
+const windowStub = {
+	location: { pathname: '/home' },
+	innerWidth: 1024
+};
+global.window = windowStub;
+global.document = {};
+
 const $ = (selector) => {
-	if (selector.startsWith('#')) return makeElem(selector.slice(1));
-	if (selector.startsWith('.')) return makeElem(selector.slice(1));
+	if (selector === windowStub) {
+		return {
+			width: () => (windowStub ? windowStub.innerWidth : 0),
+			on: jest.fn().mockReturnThis()
+		};
+	}
+	if (selector && typeof selector === 'object') return selector;
+	if (typeof selector === 'string' && selector.startsWith('#')) return makeElem(selector.slice(1));
+	if (typeof selector === 'string' && selector.startsWith('.')) return makeElem(selector.slice(1));
 	return makeElem(selector);
 };
 $.fn = {};
@@ -33,17 +50,18 @@ $.fn = {};
 global.$ = $;
 global.jQuery = $;
 
-// Window stub
-global.window = {
-	location: { pathname: '/home' },
-	innerWidth: 1024
-};
-global.document = {};
-
 function runScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'script.js'), 'utf8');
 	const script = new vm.Script(code);
-	const context = vm.createContext(global);
+	const sandbox = {
+		document: global.document,
+		window: windowStub,
+		WebSocket: global.WebSocket,
+		$: global.$,
+		jQuery: global.jQuery,
+		console
+	};
+	const context = vm.createContext(sandbox);
 	script.runInContext(context);
 	return context;
 }
@@ -57,15 +75,18 @@ describe('script.js behaviors', () => {
 
 	test('active page highlighting sets active on matching link', () => {
 		// Prepare navbar item with href
-		const liElem = makeElem('navbar-nav');
+		const liElem = makeElem('navbar-nav li');
 		liElem.find = () => ({ attr: () => '/home' });
+		liElem.each = (fn) => { if (fn) { fn.call(liElem); } return liElem; };
+		liElem.addClass = (cls) => { liElem.classes.add(cls); return liElem; };
+		windowStub.location.pathname = '/home';
 		// Trigger script
 		runScript();
 		expect(liElem.classes.has('active')).toBe(true);
 	});
 
 	test('home icon visible on narrow screens', () => {
-		global.window.innerWidth = 500;
+		windowStub.innerWidth = 500;
 		runScript();
 		expect(makeElem('homeIcon').style.display).toBe('block');
 	});

@@ -20,12 +20,13 @@ function makeElem(id) {
 	}
 	return elements[id];
 }
-global.document = {
+const documentStub = {
 	getElementById: (id) => makeElem(id),
 	getElementsByClassName: (cls) => {
 		return Object.values(elements).filter((el) => el.className === cls || (el.classList && el.classList.contains && el.classList.contains(cls)));
 	}
 };
+global.document = documentStub;
 
 // Minimal WebSocket stub
 const sentMessages = [];
@@ -44,7 +45,13 @@ function addConfigField(id, value, cls = 'configurationField') {
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'settingsScript.js'), 'utf8');
 	const script = new vm.Script(code, { filename: 'settingsScript.js' });
-	const context = vm.createContext(global);
+	const sandbox = {
+		document: documentStub,
+		window: global.window,
+		WebSocket: global.WebSocket,
+		console
+	};
+	const context = vm.createContext(sandbox);
 	script.runInContext(context);
 	return context;
 }

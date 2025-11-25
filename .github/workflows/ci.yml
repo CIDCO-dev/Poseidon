@@ -40,7 +40,6 @@ jobs:
             build-essential cmake ccache \
             python3-pip python3-rosdep \
             gcovr \
-            nodejs npm \
             ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
             ros-noetic-diagnostic-updater ros-noetic-angles \
             ros-noetic-tf2-geometry-msgs \
@@ -74,6 +73,11 @@ jobs:
           # Keep lint non-blocking initially; tighten later as needed
           flake8 georef || true
           catkin_lint "$CATKIN_WS/src" || true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
       - name: JavaScript tests (www/webroot/js)
         run: |

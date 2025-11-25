@@ -181,6 +181,17 @@ const char kTestKey[] =
 "UzgV+h5ADeC4cQwg35eCcoknFriN6+YK+OSRKx5tXSUtPZyitj+753NHC/6p7Tmt\n"
 "PQ9Xg/8I9oViS36E41GG4N4=\n"
 "-----END PRIVATE KEY-----\n";
+
+std::size_t currentRssBytes() {
+	std::ifstream f("/proc/self/statm");
+	long dummy = 0;
+	long rssPages = 0;
+	if (!(f >> dummy >> rssPages)) {
+		return 0;
+	}
+	long pageSize = sysconf(_SC_PAGESIZE);
+	return static_cast<std::size_t>(rssPages) * static_cast<std::size_t>(pageSize);
+}
 } // namespace
 
 class LoggerTextTestSuite : public ::testing::Test {

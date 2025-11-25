@@ -18,3 +18,4 @@
 - Added Jest tests for dataScript.js (state processing, publish status UI updates).
 - Added Jest test for calibrationScript.js (zeroImu command dispatch).
 - JavaScript: npm test now runs Jest with coverage (collects coverage excluding minified/vendor).
+- Fixed logger text test build by defining `currentRssBytes` helper in `test_logger_text_node.cpp`.

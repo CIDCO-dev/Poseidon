@@ -9,6 +9,8 @@
     "jest": "^29.7.0"
   },
   "jest": {
+    "testEnvironment": "jsdom",
+    "setupFiles": ["<rootDir>/jest.setup.js"],
     "collectCoverage": true,
     "collectCoverageFrom": [
       "**/*.js",

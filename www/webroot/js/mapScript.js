@@ -33,6 +33,7 @@ var polyLatLngs = [];
 var hotlineLayer;
 var curentweight = 23;
 var smootf = 5;
+var currentZoom = 10;
 
 if (typeof L !== "undefined") {
   navMap = new L.map("navMap").setView([0, 0], 23);
@@ -89,7 +90,7 @@ if (typeof L !== "undefined") {
       };
       panControl.addTo(navMap);
 
-  var currentZoom = navMap.getZoom();
+  currentZoom = navMap.getZoom();
 }
 
 function processState(msg) {
@@ -159,6 +160,9 @@ function processConfig(config) {
 
 
 function drawGeofence(wktString) {
+  if (typeof Wkt === "undefined" || !Wkt.Wkt) {
+    return;
+  }
   var wkt = new Wkt.Wkt();
 
   try {

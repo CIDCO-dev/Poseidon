@@ -8,6 +8,8 @@
 #include <thread>
 #include <chrono>
 #include <cstdlib>
+#include <sstream>
+#include <utility>
 
 namespace {
 class EnvVarGuard {
@@ -119,56 +121,27 @@ public:
 	void runTransfer() { this->transfer(); }
 };
 
-const char kTestCert[] =
-"-----BEGIN CERTIFICATE-----\n"
-"MIIDCTCCAfGgAwIBAgIUElIeSAxyVr2Lhr3mElIcXw2FStswDQYJKoZIhvcNAQEL\n"
-"BQAwFDESMBAGA1UEAwwJMTI3LjAuMC4xMB4XDTI1MTEyNTE1NDQyN1oXDTM1MTEy\n"
-"MzE1NDQyN1owFDESMBAGA1UEAwwJMTI3LjAuMC4xMIIBIjANBgkqhkiG9w0BAQEF\n"
-"AAOCAQ8AMIIBCgKCAQEArD1kO8k3mC3gBUkU6X58Ij1sDHPJIGa4NGKwYlxcj7IF\n"
-"P74m5eFgkwGwuxpT2L1KCIn60SBSfPsDjNea1Gh2ZJ9d444yApUa0TSLM1S6364w\n"
-"ot4xNc57CljMDkwBvk+09eaF5QeeG6RPUWibZYMmELzObsi9uUfgJ8h8eFsvfQlq\n"
-"DB8vE2DmNNjrjpc/w6zGr9Up54NjTqN3P1hn7IqxubMjjxvfr7NkTTYq5Ph3cMpH\n"
-"A2K6mV0vLlvRLUR3sflPmW6K5jsFuW+cXtePdZAcJeQEFCNIKZGdCA1FItm9jw6b\n"
-"9VMrFFZzvCNijnsq4cltJTsM9U3PS1NxERPVx9wK1QIDAQABo1MwUTAdBgNVHQ4E\n"
-"FgQU2e35fKl5DehAX2BD+/pCVRjfX/EwHwYDVR0jBBgwFoAU2e35fKl5DehAX2BD\n"
-"+/pCVRjfX/EwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAb2EP\n"
-"V6DJia8RYrlCUOYU9PuFwINCZNvXX6oGFQycBI0n0X7W0QLif72EAKvnWSnCeuvc\n"
-"C+jr/Q4WIkIGiaqXlckvqdwQdCi2KBR8qqp/YfJ9gY/Rq8ockMeV8cdAXDJ3OQj0\n"
-"e67iqHhtP4hGkaDBG/vKok5k5OQZvNwhnJHva3kCAPlkOsNwWV3cE0D7ee7zzupu\n"
-"JvBatwY1gHYqo0JrBWzbjgMidAdOV5ozDj/+EWEJG1adKy8wHuaX5QSW8NfLzcKq\n"
-"FpmQ9Y5adU/cxJomasYieW6D/TAbBctWQ7B2HhqBkCG6s72BkCYchwtKvQVaSciO\n"
-"J+pAy8NP3HrpeU9C7w==\n"
-"-----END CERTIFICATE-----\n";
+std::pair<std::string, std::string> generateSelfSignedCert() {
+	namespace fs = std::filesystem;
+	auto tmpDir = fs::temp_directory_path() / "logger_binary_ssl";
+	fs::create_directories(tmpDir);
 
-const char kTestKey[] =
-"-----BEGIN PRIVATE KEY-----\n"
-"MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCsPWQ7yTeYLeAF\n"
-"SRTpfnwiPWwMc8kgZrg0YrBiXFyPsgU/vibl4WCTAbC7GlPYvUoIifrRIFJ8+wOM\n"
-"15rUaHZkn13jjjIClRrRNIszVLrfrjCi3jE1znsKWMwOTAG+T7T15oXlB54bpE9R\n"
-"aJtlgyYQvM5uyL25R+AnyHx4Wy99CWoMHy8TYOY02OuOlz/DrMav1Snng2NOo3c/\n"
-"WGfsirG5syOPG9+vs2RNNirk+HdwykcDYrqZXS8uW9EtRHex+U+ZbormOwW5b5xe\n"
-"1491kBwl5AQUI0gpkZ0IDUUi2b2PDpv1UysUVnO8I2KOeyrhyW0lOwz1Tc9LU3ER\n"
-"E9XH3ArVAgMBAAECggEAJoM7rFqbwb1QQB5NPMB5hTZyuH4TVNljCuOeSQAZ+k91\n"
-"+QDNtc0lSPmxyMRkRyxcJ3iiyqwNhcCi1JVJG4GYJ3uzBLTA3e71Jh43meyyNF3A\n"
-"pkpEeqGGxZOBXRkFssYj0nAPNFz1r3yX974KMTKYCloNVpwwQAOgTYT4v/izr6NT\n"
-"D7sliUsH1wHcNrYpcfvKF2CYA/qucUpYfs/37EkwXu0qujC1nJyAlLXe9+bOgzka\n"
-"yPx/lmYBkIo3Aul8y/T2/WGelzGEP2A27SRh9ZMBrh5RYWntqQCGP1ueYTrJ8U79\n"
-"LjtHvayd7bWzowfUN5C0qL4CCFf9bb02BvOACkqj6QKBgQDjDFEn3fHTPFYz6SZO\n"
-"j2+ay37qNqrXgzCwKL9b0e0PCXSjpJWQRPAJ9MljY/vFeb5eeMsGhzrLtGbE3Y7U\n"
-"Qh8isdI0kXhUojJtE8pnLuiKl5DbQiH/Gq3AzkmmiW7x7gDRlR1baMjdE4nE3PV\n"
-"f8WLpSH1aqhHm7QlAJhXr4j6wwKBgQDCM+44U13vH1VYSXl28vNp0aHnJQqtMnhx\n"
-"DC2GvIFA20MwBXAOr7sw9MUuZ2pcv2UbsN0VL7M2ZSwV1IFERpJd+D8jvImk0rdV\n"
-"zfA31S3vHT0oUn5g81vzDaK4QH+K6eB+P4fYv5sbjTGfiKoPD4rY6jtalXo1lV8n\n"
-"GIbUm7gahwKBgFfVZvveP3PxToPMeTZBBPLEMHfY6CRxKv+q88RIpMWBae74d6eV\n"
-"E6s2WEYr4rVVUJDpd9kxrUwqoOsdrui0bnkHkuqX9dKiBCrLpyg46tlkPI0m+/rn\n"
-"aj0ccRp+3YQUUhpqNbgrzsWjc6xoORJp2HkaS9XOCgWRtZHu9gBN9tbTAoGBAJTS\n"
-"1RkHEjJAsdeRnuq/7jfGtar8IP1vcws3COB7LxYzsX5ofGJU2z/+I+mWyNTAu8wH\n"
-"srUcs9rYl3s3OcTHzD0FE+XgAx9zd5ni0tcGoEfhAVAYP88uT+WoKm3Gx7b92dMF\n"
-"/qXk2Am6HzAhvCkEgSQQBGI7sMbFbID6c8EUgHabAoGAbZ6eIay5Qyymh/5+VrKN\n"
-"CJr9Od30sfw9fO15pD1G4JbEMT/sKjeyjqn8j617VPb5ENFRiuu/Fz1MYgVtHPmD\n"
-"UzgV+h5ADeC4cQwg35eCcoknFriN6+YK+OSRKx5tXSUtPZyitj+753NHC/6p7Tmt\n"
-"PQ9Xg/8I9oViS36E41GG4N4=\n"
-"-----END PRIVATE KEY-----\n";
+	auto certPath = tmpDir / "cert.pem";
+	auto keyPath = tmpDir / "key.pem";
+	std::string cmd = "openssl req -x509 -nodes -newkey rsa:2048 -keyout " + keyPath.string() +
+	                  " -out " + certPath.string() + " -days 1 -subj \"/CN=127.0.0.1\" >/dev/null 2>&1";
+	int rc = std::system(cmd.c_str());
+	if (rc != 0) {
+		throw std::runtime_error("Failed to generate self-signed certificate for test");
+	}
+	std::ifstream certStream(certPath);
+	std::ifstream keyStream(keyPath);
+	std::stringstream certBuf;
+	std::stringstream keyBuf;
+	certBuf << certStream.rdbuf();
+	keyBuf << keyStream.rdbuf();
+	return {certBuf.str(), keyBuf.str()};
+}
 
 std::size_t currentRssBytes() {
 	std::ifstream f("/proc/self/statm");
@@ -390,14 +363,15 @@ TEST_F(LoggerBinaryTestSuite, testTransferToLocalHttpsServer) {
 
 	// Write cert so client (logger) trusts it
 	std::string certPath = outPath + "/test_cert.pem";
+	auto [cert, key] = generateSelfSignedCert();
 	{
 		std::ofstream certFile(certPath);
-		certFile << kTestCert;
+		certFile << cert;
 	}
 	EnvVarGuard certGuard("SSL_CERT_FILE", certPath);
 
 	const unsigned short port = 9443;
-	LocalHttpsServer server(port, kTestCert, kTestKey);
+	LocalHttpsServer server(port, cert, key);
 	server.start();
 
 	TestableLoggerBinary logger(outPath);

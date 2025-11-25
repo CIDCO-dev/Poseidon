@@ -90,3 +90,5 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 - [ ] Launch files and parameters documented
 - [ ] No secrets or non-portable hardcoded paths
 - [ ] `manifest.md` updated for structural changes
+- [ ] Run `clang-format` and `clang-tidy` for C++ changes (style/diagnostics)
+- [ ] Run `black` (and applicable linters) for Python changes

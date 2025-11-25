@@ -39,6 +39,7 @@ jobs:
             git ca-certificates \
             build-essential cmake ccache \
             python3-pip python3-rosdep \
+            nodejs npm \
             ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
             ros-noetic-diagnostic-updater ros-noetic-angles \
             ros-noetic-tf2-geometry-msgs \
@@ -72,6 +73,18 @@ jobs:
           # Keep lint non-blocking initially; tighten later as needed
           flake8 georef || true
           catkin_lint "$CATKIN_WS/src" || true
+
+      - name: JavaScript tests (www/webroot/js)
+        run: |
+          set -eo pipefail
+          JS_DIR="www/webroot/js"
+          if [ ! -f "$JS_DIR/package.json" ]; then
+            echo "No package.json in $JS_DIR; skipping JS tests."
+            exit 0
+          fi
+          cd "$JS_DIR"
+          npm ci || npm install
+          npm test --if-present
 
       - name: Configure ccache
         run: |

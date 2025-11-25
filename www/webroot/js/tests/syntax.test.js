@@ -8,7 +8,7 @@ function collectJsFiles(dir) {
 	const entries = fs.readdirSync(dir, { withFileTypes: true });
 	let files = [];
 	for (const entry of entries) {
-		if (entry.name === 'tests') continue;
+		if (entry.name === 'tests' || entry.name === 'node_modules' || entry.name === 'coverage') continue;
 		const full = path.join(dir, entry.name);
 		if (entry.isDirectory()) {
 			files = files.concat(collectJsFiles(full));

@@ -21,3 +21,4 @@
 - Fixed logger text test build by defining `currentRssBytes` helper in `test_logger_text_node.cpp`.
 - CI: add C++ coverage via gcovr, Python coverage via coverage/pytest, JS coverage artifact upload; switched C++ build to `--coverage`.
 - CI: install Node 18 with setup-node to satisfy Jest engine requirements for JS tests.
+- JS: add guards/stubs for WebSocket/jQuery/Leaflet in browser scripts to allow Jest to run headless, and exclude node_modules/coverage from syntax scan.

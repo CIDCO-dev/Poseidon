@@ -111,16 +111,20 @@ function selectall() {
 //******************************
 //Periodically poll for new files
 //******************************
-time = setInterval(function (list) {
-  socket.send('{"f-list":"fileslist"}');
-  setTimeout(list, 500);
-}, 500);
+if (socket && socket.send) {
+  time = setInterval(function (list) {
+    socket.send('{"f-list":"fileslist"}');
+    setTimeout(list, 500);
+  }, 500);
+}
 
 //******************************
 //Open websocket
 //******************************
 
-var socket = new WebSocket("ws://" + window.location.hostname + ":9003");
+var socket = (typeof WebSocket !== "undefined")
+  ? new WebSocket("ws://" + window.location.hostname + ":9003")
+  : { send: function () {} };
 socket.onmessage = function (event) {
   try {
     const message = JSON.parse(event.data);

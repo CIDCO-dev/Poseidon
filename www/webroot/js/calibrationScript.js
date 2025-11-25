@@ -8,7 +8,9 @@ function sendZeroImu() {
 
   }
 
-  var socket = new WebSocket("ws://" + window.location.hostname + ":9004");
+  var socket = (typeof WebSocket !== "undefined")
+    ? new WebSocket("ws://" + window.location.hostname + ":9004")
+    : { send: function () {}, onmessage: null };
 
   socket.onmessage = function (event) {
     var state = JSON.parse(event.data);

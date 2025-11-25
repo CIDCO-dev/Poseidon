@@ -140,10 +140,14 @@ function processState(state) {
 	}
 }
 
-var socket = new WebSocket("ws://" + window.location.hostname + ":9002");
+var socket = (typeof WebSocket !== "undefined")
+	? new WebSocket("ws://" + window.location.hostname + ":9002")
+	: { send: function () {} };
 
-socket.onmessage = function (event) {
-	var state = JSON.parse(event.data);
-	processState(state);
-	//console.log(state);
+if (socket && socket.onmessage !== undefined) {
+	socket.onmessage = function (event) {
+		var state = JSON.parse(event.data);
+		processState(state);
+		//console.log(state);
+	}
 }

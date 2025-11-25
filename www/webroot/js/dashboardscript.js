@@ -9,6 +9,7 @@ var depth = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 var headingGauge;
 
+if (typeof $ !== "undefined") {
 $(document).ready(function () {
 
   chartMetrics();
@@ -20,6 +21,7 @@ $(document).ready(function () {
   startTimer();
 
 });
+}
 
 function getFixTypeLabel(fixType) {
   const fixTypes = {
@@ -396,4 +398,3 @@ function updateGnssStatus(data) {
   document.getElementById("gnssHAcc").innerText = data.h_acc.toFixed(2) + " m";
   document.getElementById("gnssVAcc").innerText = data.v_acc.toFixed(2) + " m";
 }
-

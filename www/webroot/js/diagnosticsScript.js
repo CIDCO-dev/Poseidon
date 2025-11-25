@@ -83,34 +83,44 @@ function updateDiagnostic() {
 	loadingSpinner.classList.remove("d-none");
 	
 	var cmd = { command: "updateDiagnostic" };
-	socket.send(JSON.stringify(cmd));
+	if (socket && socket.send) {
+		socket.send(JSON.stringify(cmd));
+	}
 }
 
 function getRunningNodes() {
 	var cmd = { command: "getRunningNodes" };
-	socket.send(JSON.stringify(cmd));
+	if (socket && socket.send) {
+		socket.send(JSON.stringify(cmd));
+	}
 }
 
 
 //******************************
 // Main
 //******************************
-socket = new WebSocket("ws://" + window.location.hostname + ":9099");
+socket = (typeof WebSocket !== "undefined")
+	? new WebSocket("ws://" + window.location.hostname + ":9099")
+	: { send: function () {} };
 
-socket.onmessage = function (event) {
-	var msg = JSON.parse(event.data);
-	processMessage(msg);
-}
+if (socket && socket.onmessage !== undefined) {
+	socket.onmessage = function (event) {
+		var msg = JSON.parse(event.data);
+		processMessage(msg);
+	}
 
-socket.onopen = function (event) {
-	getRunningNodes();
-	updateDiagnostic();
+	socket.onopen = function (event) {
+		getRunningNodes();
+		updateDiagnostic();
+	}
 }
 	
 	var diagnosticsButton = document.getElementById("diagnosticsButton");
-	diagnosticsButton.addEventListener("click",function(){
-		getRunningNodes();
-		updateDiagnostic();
-	});
+	if (diagnosticsButton) {
+		diagnosticsButton.addEventListener("click",function(){
+			getRunningNodes();
+			updateDiagnostic();
+		});
+	}
 	
 	

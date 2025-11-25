@@ -76,13 +76,17 @@ function getConfig() {
 // Main
 //******************************
 
-socket = new WebSocket("ws://" + window.location.hostname + ":9004");
+socket = (typeof WebSocket !== "undefined")
+  ? new WebSocket("ws://" + window.location.hostname + ":9004")
+  : { send: function () {} };
 
-socket.onmessage = function (event) {
-  var msg = JSON.parse(event.data);
-  processMessage(msg);
-}
+if (socket && socket.onmessage !== undefined) {
+	socket.onmessage = function (event) {
+	  var msg = JSON.parse(event.data);
+	  processMessage(msg);
+	}
 
-socket.onopen = function (event) {
-  getConfig();
+	socket.onopen = function (event) {
+	  getConfig();
+	}
 }

@@ -34,4 +34,4 @@
         $('#homeIcon').css("display", "block");
     }
     
-})(jQuery); // End of use strict
+})(typeof jQuery !== "undefined" ? jQuery : function(){ return { on: function(){}, hasClass: function(){}, css: function(){}, width: function(){ return 0; }, find: function(){ return { attr: function(){ return ''; } }; }, addClass: function(){}, removeClass: function(){}, each: function(){}, } }); // End of use strict

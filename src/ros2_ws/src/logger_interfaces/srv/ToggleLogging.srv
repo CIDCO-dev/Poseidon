@@ -1,0 +1,3 @@
+bool logging_enabled
+---
+bool logging_status

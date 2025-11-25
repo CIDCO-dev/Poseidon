@@ -408,7 +408,7 @@ class BaseNmeaClient{
 
 class NetworkNmeaClient : public BaseNmeaClient{
 public:
-	NetworkNmeaClient(char * serverAddress, char * serverPort, bool useDepth,bool usePosition,bool useAttitude) : BaseNmeaClient(useDepth,usePosition,useAttitude),serverAddress(serverAddress),serverPort(serverPort){
+	NetworkNmeaClient(const std::string & serverAddress, const std::string & serverPort, bool useDepth,bool usePosition,bool useAttitude) : BaseNmeaClient(useDepth,usePosition,useAttitude),serverAddress(serverAddress),serverPort(serverPort){
 	
 	}
 	
@@ -435,6 +435,11 @@ public:
 					throw std::runtime_error("socket");
 				}
 
+				// Set receive timeout so we can reconnect if stream stalls
+				struct timeval tv;
+				tv.tv_sec = 5;
+				tv.tv_usec = 0;
+				setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
 				if(connect(s,res->ai_addr,res->ai_addrlen) == -1){
 					perror("connect");

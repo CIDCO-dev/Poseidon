@@ -26,3 +26,5 @@
 - JS tests: added explicit `jest-environment-jsdom` devDependency to satisfy Jest config.
 - JS housekeeping: generated package-lock for reproducible installs and removed committed coverage output; keep coverage artifacts untracked.
 - hydroball_config_websocket: add message deps (geometry/state/setting) to catkin/package.xml and enforce build order on message targets to fix missing Setting.h during catkin_make.
+- Logger tests: removed embedded PEM key/cert; tests now generate ephemeral self-signed TLS material at runtime to avoid shipping secrets.
+- sonar_nmea_0183_tcp_client: use ROS params for IP/port (instead of argv) and add socket receive timeout to reconnect if the network stream stalls.

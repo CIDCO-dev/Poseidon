@@ -1,0 +1,11 @@
+std_msgs/Header header
+float64 cputemp
+float64 cpuload
+float64 freeram
+float64 freehdd
+float64 uptime
+float64 humidity
+float64 temperature
+float64 voltage
+int8  ledstate
+string status

@@ -7,6 +7,8 @@ Use this file to record all ROS2-specific work (packages, nodes, builds, migrati
 - Logger: removed warning when toggling without GPS fix (ROS2).
 - CI: GitHub Actions posts coverage summary (C++/Python/JS) to workflow summary.
 - CI: Fixed YAML indentation for coverage summary step (workflow parses correctly).
+- CI: Fixed heredoc indentation for coverage summary (line 250 error resolved).
+- CI: Coverage summary heredoc anchored with indentation (python block).
 
 ## 2025-11-25
 - Created ROS2 workspace scaffold `src/ros2_ws` with Python `logger` package (stub) exposing the logging service API (toggle/get/set mode/status, trigger transfer).

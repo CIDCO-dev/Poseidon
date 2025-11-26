@@ -247,7 +247,7 @@ jobs:
                     f.write("## Coverage summary\n")
                     for line in summary:
                         f.write(line + "\n")
-PY
+          PY
 
     # Self-hosted runner notes:
     # - Runner must be registered on the repository/org with labels: self-hosted, Linux, ARM64.

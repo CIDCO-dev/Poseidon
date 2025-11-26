@@ -8,6 +8,7 @@
 - CI: Fixed YAML indentation for coverage summary step (workflow now parses correctly).
 - CI: Coverage summary heredoc anchored with indentation (python block).
 - CI: Coverage summary heredoc flattened (no leading spaces) to avoid Python IndentationError.
+- CI: Coverage summary now runs from a separate script `.github/workflows/scripts/coverage_summary.py`.
 
 ## 2025-11-25
 - Added HTTPS transfer integration tests for logger binary and text nodes (local TLS server, payload verification).

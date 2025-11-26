@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>gnss_zed_f9p</name>
+  <version>0.0.1</version>
+  <description>ROS2 stub for ZED-F9P GNSS node (publishes speed and gnss_status).</description>
+  <maintainer email="info@cidco.ca">CIDCO</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>gnss_status_msg</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

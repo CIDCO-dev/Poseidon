@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>hydroball_ws</name>
+  <version>0.0.1</version>
+  <description>ROS2 Python nodes grouping config/data/files web sockets and diagnostics.</description>
+  <maintainer email="info@cidco.ca">CIDCO</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>websockets</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>tf_transformations</exec_depend>
+  <exec_depend>logger_interfaces</exec_depend>
+  <exec_depend>state_controller_msg</exec_depend>
+  <exec_depend>setting_msg</exec_depend>
+  <exec_depend>gnss_status_msg</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

@@ -1,15 +1,26 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(diagnostics)
 
-find_package(catkin REQUIRED)
+## Compile as C++11, supported in ROS Kinetic and newer
+# add_compile_options(-std=c++11)
 
-catkin_package()
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  tf2_geometry_msgs
+  tf2 
+  setting_msg
+  binary_stream_msg
+  #tf2_ros
+)
+find_package(RapidJSON REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenSSL REQUIRED)
+find_library(libgps REQUIRED)
 
-<<<<<<< HEAD
-catkin_install_python(PROGRAMS
-  scripts/diagnostics_websocket.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-=======
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -103,12 +114,12 @@ catkin_package(
 	INCLUDE_DIRS include
 	#LIBRARIES diagnostics
 	CATKIN_DEPENDS roscpp std_msgs tf2_geometry_msgs tf2
->>>>>>> c801cc66 (Fix build dep and ci)
 )
 
+###########
+## Build ##
+###########
 
-<<<<<<< HEAD
-=======
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -193,4 +204,3 @@ install(DIRECTORY include/
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
->>>>>>> c801cc66 (Fix build dep and ci)

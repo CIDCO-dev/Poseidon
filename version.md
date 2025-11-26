@@ -2,6 +2,7 @@
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); ROS2 install script now installs gpsd/chrony/ros-jazzy-gpsd-client and points lighttpd to `/opt/Poseidon/www/webroot`.
+- Logger: removed warning spam when toggle requested without GPS fix (ROS1).
 
 ## 2025-11-25
 - Added HTTPS transfer integration tests for logger binary and text nodes (local TLS server, payload verification).

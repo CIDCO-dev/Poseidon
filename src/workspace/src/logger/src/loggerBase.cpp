@@ -326,7 +326,6 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 		return true;
 	}
 	else{
-		ROS_WARN("Cannot toggle logger because no gpsfix");
 		return false;
 	}
 }

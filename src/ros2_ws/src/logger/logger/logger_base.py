@@ -335,7 +335,6 @@ class LoggerBase(Node, metaclass=abc.ABCMeta):
             self.bootstrapped_gnss_time = True
 
         if not self.bootstrapped_gnss_time:
-            self.get_logger().warn("Cannot toggle logger because no gpsfix")
             response.logging_status = False
             return response
 

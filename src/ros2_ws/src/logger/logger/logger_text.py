@@ -1,4 +1,5 @@
 import os
+import time
 import zipfile
 from pathlib import Path
 from typing import Tuple
@@ -123,8 +124,7 @@ class LoggerText(LoggerBase):
         self.last_vitals_ts = ts
 
     def transfer(self) -> Tuple[bool, str]:
-        # Placeholder: remote transfer not implemented in this port
-        return False, "transfer not implemented"
+        return self._transfer_zips()
 
     # Helpers
     def _open_file(self, filename: str, header: str):
@@ -135,5 +135,4 @@ class LoggerText(LoggerBase):
         return f
 
     def _timestamp_prefix(self) -> str:
-        now = self.get_clock().now().to_msg()
-        return f"{now.sec}"
+        return time.strftime("%Y%m%d_%H%M%S")

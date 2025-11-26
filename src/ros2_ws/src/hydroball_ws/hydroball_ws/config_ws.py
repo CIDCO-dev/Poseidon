@@ -5,7 +5,7 @@ import os
 import subprocess
 import threading
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Optional
 
 import rclpy
 from geometry_msgs.msg import TransformStamped
@@ -25,6 +25,14 @@ def trim_spaces(s: str) -> str:
 
 
 class ConfigWsNode(BaseWsNode):
+    """
+    ROS2 port of hydroball_config_websocket mirroring ROS1 behaviour:
+    - Serve websocket commands getConfiguration/saveConfiguration/zeroImu
+    - Broadcast configuration topic + TF offsets
+    - Provide get_configuration and zero_imu_offsets services
+    - Update hotspot SSID when changed
+    """
+
     def __init__(self):
         super().__init__("hydroball_config_websocket", port=9004)
         self.config_path = Path(
@@ -39,8 +47,10 @@ class ConfigWsNode(BaseWsNode):
 
         self._config_lock = threading.Lock()
         self.read_configuration_from_file()
+        self.broadcast_configuration()
         self.broadcast_imu_transform()
 
+    # --- File I/O ---
     def read_configuration_from_file(self):
         if not self.config_path.exists():
             self.get_logger().error(f"Cannot open file {self.config_path}")
@@ -71,10 +81,12 @@ class ConfigWsNode(BaseWsNode):
                 for k, v in self.configuration.items():
                     out.write(f"{k} {v}\n")
 
+    # --- Websocket handling ---
     async def handle_message(self, websocket: WebSocketServerProtocol, message: str):
         try:
             doc = json.loads(message)
         except json.JSONDecodeError:
+            self.get_logger().error("Invalid JSON")
             return
         cmd = doc.get("command")
         if cmd == "getConfiguration":
@@ -82,7 +94,6 @@ class ConfigWsNode(BaseWsNode):
         elif cmd == "saveConfiguration":
             self.save_configuration(doc)
         elif cmd == "zeroImu":
-            # Trigger zero-IMU computation
             req = ImuOffsetService.Request()
             res = self.handle_zero_imu(req, ImuOffsetService.Response())
             await websocket.send(json.dumps({"zeroImu": res.value}))
@@ -111,12 +122,19 @@ class ConfigWsNode(BaseWsNode):
                     if key in self.configuration:
                         self.configuration[trim_spaces(key)] = trim_spaces(value)
                         updated = True
+                    else:
+                        self.get_logger().info("Key not found")
+                else:
+                    self.get_logger().info("Configuration object without key/value")
         if updated:
             self.write_configuration_to_file()
             self.broadcast_configuration()
             self.broadcast_imu_transform()
             self.update_hotspot_ssid()
+        else:
+            self.get_logger().error("Configuration array not found")
 
+    # --- ROS interfaces ---
     def broadcast_configuration(self):
         with self._config_lock:
             for k, v in self.configuration.items():
@@ -158,7 +176,6 @@ class ConfigWsNode(BaseWsNode):
         return response
 
     def handle_zero_imu(self, request: ImuOffsetService.Request, response: ImuOffsetService.Response):
-        # Query current state to compute offsets
         if not self.get_state_client.wait_for_service(timeout_sec=2.0):
             response.value = "get_state unavailable"
             return response
@@ -185,25 +202,41 @@ class ConfigWsNode(BaseWsNode):
         response.value = "ok"
         return response
 
+    # --- Hotspot SSID update ---
     def update_hotspot_ssid(self):
         with self._config_lock:
             target_ssid = self.configuration.get("hotspotSSID")
         if not target_ssid:
             return
         try:
-            cmd = ["nmcli", "con", "show", "Hotspot"]
-            result = subprocess.check_output(cmd, text=True)
-            current = ""
-            for line in result.splitlines():
-                if "wireless.ssid" in line:
-                    current = line.split()[-1]
-                    break
-            if current != target_ssid:
+            if not self._is_same_ssid(target_ssid):
                 subprocess.call(["nmcli", "con", "modify", "Hotspot", "802-11-wireless.ssid", target_ssid])
                 subprocess.call(["nmcli", "con", "down", "Hotspot"])
                 subprocess.call(["nmcli", "con", "up", "Hotspot"])
+                if not self._is_same_ssid(target_ssid):
+                    self.get_logger().error("Error in updating hotspotSSID")
         except Exception as exc:  # pragma: no cover
             self.get_logger().warn(f"Failed to update hotspot SSID: {exc}")
+
+    def _is_same_ssid(self, target: str) -> bool:
+        try:
+            result = subprocess.check_output(
+                ["nmcli", "con", "show", "Hotspot"], text=True
+            )
+            current = ""
+            for line in result.splitlines():
+                if "wireless.ssid" in line:
+                    # nmcli output format: "802-11-wireless.ssid:  <ssid>"
+                    parts = line.split(":")
+                    if len(parts) >= 2:
+                        current = parts[1].strip()
+                    break
+            # Filter to alnum to mimic ROS1 clean-up
+            current = "".join(ch for ch in current if ch.isalnum())
+            target_clean = "".join(ch for ch in target if ch.isalnum())
+            return current == target_clean
+        except Exception:
+            return False
 
 
 def main(args=None):

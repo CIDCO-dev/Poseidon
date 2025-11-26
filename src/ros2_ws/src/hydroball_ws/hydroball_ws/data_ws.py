@@ -75,10 +75,13 @@ class DataWsNode(BaseWsNode):
             self.get_logger().error("No command found or unknown command")
 
     async def on_connect(self, websocket: WebSocketServerProtocol):
-        # On new client, send latest gnss status if present
+        # On new client, send latest gnss status and logging info if present
         if self.latest_gnss_status:
             payload = self._gnss_status_payload(self.latest_gnss_status)
             await websocket.send(payload)
+        is_logging = self._get_recording_status()
+        mode = self._get_logging_mode()
+        await self._send_recording_info(websocket, is_logging, mode)
 
     async def on_disconnect(self, websocket: WebSocketServerProtocol):
         return
@@ -100,7 +103,7 @@ class DataWsNode(BaseWsNode):
         }
         return json.dumps(doc)
 
-    def _toggle_logging(self, enabled: bool, websocket: WebSocketServerProtocol):
+    def _toggle_logging(self, enabled: bool, websocket: Optional[WebSocketServerProtocol]):
         req = ToggleLogging.Request()
         req.logging_enabled = enabled
         future = self.toggle_logging.call_async(req)
@@ -108,9 +111,15 @@ class DataWsNode(BaseWsNode):
         if future.done() and future.result():
             status = future.result().logging_status
             mode = self._get_logging_mode()
-            asyncio.run_coroutine_threadsafe(
-                self._send_recording_info(websocket, status, mode), self.loop
-            )
+            if websocket:
+                asyncio.run_coroutine_threadsafe(
+                    self._send_recording_info(websocket, status, mode), self.loop
+                )
+            else:
+                # broadcast to all when no specific websocket
+                asyncio.run_coroutine_threadsafe(
+                    self._broadcast_recording_info(status, mode), self.loop
+                )
         else:
             self.get_logger().error("Error while calling ToggleLogging service")
 
@@ -186,8 +195,8 @@ class DataWsNode(BaseWsNode):
         if not state.imu.header.seq:
             telemetry["attitude"] = []
         else:
-            heading, pitch, roll = self._compute_attitude(state.imu)
-            telemetry["attitude"] = [heading, pitch, roll]
+            attitude = self._compute_attitude(state.imu)
+            telemetry["attitude"] = list(attitude) if attitude else []
 
         if not state.depth.header.seq:
             telemetry["depth"] = []
@@ -241,7 +250,7 @@ class DataWsNode(BaseWsNode):
             return heading, math.degrees(pitch), math.degrees(roll)
         except TransformException as ex:
             self.get_logger().warn(f"IMU transform missing: {ex}")
-            return []
+            return None
 
     @staticmethod
     def _quat_multiply(q1, q2):

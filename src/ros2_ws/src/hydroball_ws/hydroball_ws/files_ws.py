@@ -33,7 +33,10 @@ class FilesWsNode(BaseWsNode):
             return
 
         if "delete" in doc:
-            file_to_delete = self.log_path / doc["delete"]
+            file_name = doc["delete"]
+            if isinstance(file_name, str) and file_name.startswith("record/"):
+                file_name = file_name.split("/", 1)[1]
+            file_to_delete = self.log_path / file_name
             self.delete_file(file_to_delete)
         elif "f-list" in doc:
             await self.send_file_list(websocket)
@@ -43,7 +46,8 @@ class FilesWsNode(BaseWsNode):
             self.get_logger().error("No command found")
 
     async def on_connect(self, websocket: WebSocketServerProtocol):
-        return
+        # Send the initial file list on connection
+        await self.send_file_list(websocket)
 
     async def on_disconnect(self, websocket: WebSocketServerProtocol):
         return

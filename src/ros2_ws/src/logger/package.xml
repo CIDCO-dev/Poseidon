@@ -10,6 +10,13 @@
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>logger_interfaces</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>setting_msg</exec_depend>
+  <exec_depend>raspberrypi_vitals_msg</exec_depend>
+  <exec_depend>binary_stream_msg</exec_depend>
+  <exec_depend>i2c_controller_service</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

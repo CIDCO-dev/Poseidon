@@ -107,6 +107,7 @@ class RpiVitalsNode(Node):
             msg.status = warn_msg
         else:
             msg.status = 'Normal'
+            # Let logger/i2c decide steady LED based on GPS/logging state
 
         self.pub.publish(msg)
 
@@ -128,6 +129,8 @@ class RpiVitalsNode(Node):
             return True, f"[WARNING] Battery Low Voltage detected (voltage: {msg.voltage:.2f}V)"
         if 0.0 < msg.freehdd < 20.0:
             return True, f"[WARNING] Low Hard Disk Space detected (free HDD: {msg.freehdd:.2f}%)"
+        if msg.cputemp >= 75.0:
+            return True, f"[WARNING] High CPU Temperature detected (CPU Temp: {msg.cputemp:.2f}°C)"
         return False, "Normal"
 
     @staticmethod

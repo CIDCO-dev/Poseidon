@@ -9,6 +9,7 @@
   <buildtool_depend>ament_python</buildtool_depend>
 
   <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
   <exec_depend>i2c_controller_service</exec_depend>
   <exec_depend>logger_interfaces</exec_depend>
 

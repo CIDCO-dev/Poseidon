@@ -7,6 +7,7 @@
 - Logger: transfer loop now counts zip files once, reports status, sends, and removes on success; RapidJSON string creation simplified.
 - CI: Fixed YAML indentation for coverage summary step (workflow now parses correctly).
 - CI: Coverage summary heredoc anchored with indentation (python block).
+- CI: Coverage summary heredoc flattened (no leading spaces) to avoid Python IndentationError.
 
 ## 2025-11-25
 - Added HTTPS transfer integration tests for logger binary and text nodes (local TLS server, payload verification).

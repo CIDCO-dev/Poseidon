@@ -1,5 +1,8 @@
 # Version History (English)
 
+## 2025-11-26
+- Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); ROS2 install script now installs gpsd/chrony/ros-jazzy-gpsd-client and points lighttpd to `/opt/Poseidon/www/webroot`.
+
 ## 2025-11-25
 - Added HTTPS transfer integration tests for logger binary and text nodes (local TLS server, payload verification).
 - Added memory-resilience tests: repeated failed transfers must not increase RSS.
@@ -28,3 +31,4 @@
 - hydroball_config_websocket: add message deps (geometry/state/setting) to catkin/package.xml and enforce build order on message targets to fix missing Setting.h during catkin_make.
 - Logger tests: removed embedded PEM key/cert; tests now generate ephemeral self-signed TLS material at runtime to avoid shipping secrets.
 - sonar_nmea_0183_tcp_client: use ROS params for IP/port (instead of argv) and add socket receive timeout to reconnect if the network stream stalls.
+- Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); ROS2 install script now installs gpsd/chrony/ros-jazzy-gpsd-client and points lighttpd to `/opt/Poseidon/www/webroot`.

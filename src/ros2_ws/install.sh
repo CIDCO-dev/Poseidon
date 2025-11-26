@@ -97,23 +97,13 @@ systemctl restart NetworkManager.service
 echo "Hotspot/WiFi can be configured manually with nmcli (see legacy scripts in install/stages/)."
 
 echo "[9/9] Configuring chrony for GPS/NMEA/PPS (basic config)..."
-cat >/etc/chrony/chrony.conf <<'EOF2'
-# PPS: /dev/pps0: Kernel-mode PPS ref-clock for the precise seconds
-refclock  PPS /dev/pps0  refid PPS  precision 1e-9  poll 3  trust
-# SHM(0), gpsd: NMEA data from shared memory provided by gpsd
-refclock  SHM 0  refid NMEA  precision 1e-3  offset 0.0  delay 0.2  poll 3  trust  prefer
-# Allow LAN clients and local stratum when unsynced
-allow
-local
-keyfile /etc/chrony/chrony.keys
-driftfile /var/lib/chrony/chrony.drift
-logdir /var/log/chrony
-maxupdateskew 100.0
-hwclockfile /etc/adjtime
-rtcsync
-makestep 1 3
-EOF2
-systemctl restart chrony || true
+ROOT_DIR="$(realpath "$(dirname "$0")/../..")"
+CHRONY_SCRIPT="$ROOT_DIR/install/scripts/update-chrony.sh"
+if [[ -x "$CHRONY_SCRIPT" ]]; then
+  "$CHRONY_SCRIPT"
+else
+  echo "chrony update script not found at $CHRONY_SCRIPT, skipping"
+fi
 
 cat <<'EOF'
 Done.

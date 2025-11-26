@@ -2,6 +2,9 @@
 
 Use this file to record all ROS2-specific work (packages, nodes, builds, migrations). Keep `version.md` for ROS1/legacy updates.
 
+## 2025-11-26
+- Updated ROS2 install script to install gpsd/chrony/ros-jazzy-gpsd-client and shared chrony config (PPS, NMEA, pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.
+
 ## 2025-11-25
 - Created ROS2 workspace scaffold `src/ros2_ws` with Python `logger` package (stub) exposing the logging service API (toggle/get/set mode/status, trigger transfer).
 - Added ROS2 interface package `logger_interfaces` carrying the logger service definitions for reuse by other ROS2 nodes.
@@ -33,3 +36,4 @@ Use this file to record all ROS2-specific work (packages, nodes, builds, migrati
 - Added ROS2 `sonar_imagenex852_c` node: serial driver for Imagenex 852 (auto/manual trigger, config updates, depth/ENU, binary stream).
 - Added ROS2 `sonar_nmea_0183_tcp_client` node: NMEA TCP client parsing GGA/DBT/DPT/ADS/VTG to publish `depth`, `fix`, and `speed`.
 - Added ROS2 `wifi_file_transfer_config` node: manages WiFi connections via `nmcli` based on config keys (SSID/password/autoconnect).
+- Updated ROS2 install script to install gpsd/chrony/ros-jazzy-gpsd-client and shared chrony config (PPS, NMEA, pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

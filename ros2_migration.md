@@ -19,6 +19,7 @@ Use this document to track which nodes have been migrated to ROS2 and which rema
 - `sonar_imagenex852_c` (ROS2 port: Imagenex 852 serial driver with depth/ENU and binary stream)
 - `sonar_nmea_0183_tcp_client` (ROS2 NMEA-0183 TCP client publishing depth/fix/speed)
 - `wifi_file_transfer_config` (ROS2 WiFi config manager using nmcli)
+- ROS2 install script now installs gpsd/chrony/ros-jazzy-gpsd-client and applies shared chrony config; lighttpd serves `/opt/Poseidon/www/webroot`.
 - `imu_bno055` (Upstream ROS2 driver `ros-jazzy-bno055` installed; local package kept as fallback)
 - `gnss_zed_f9p` (ROS2 port: reads UBX via pyserial when available, publishes speed/gnss_status/binary stream, rotates UBX logs; falls back to dummy if serial unavailable)
 - `i2c_controller` (ROS2 port with HIH8130/INA238 reads and LED control topic)

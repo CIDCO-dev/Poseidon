@@ -5,6 +5,7 @@ Use this file to record all ROS2-specific work (packages, nodes, builds, migrati
 ## 2025-11-26
 - Updated ROS2 install script to install gpsd/chrony/ros-jazzy-gpsd-client and shared chrony config (PPS, NMEA, pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.
 - Logger: removed warning when toggling without GPS fix (ROS2).
+- CI: GitHub Actions posts coverage summary (C++/Python/JS) to workflow summary.
 
 ## 2025-11-25
 - Created ROS2 workspace scaffold `src/ros2_ws` with Python `logger` package (stub) exposing the logging service API (toggle/get/set mode/status, trigger transfer).

@@ -540,28 +540,31 @@ void LoggerBase::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vitals){
 void LoggerBase::transfer(){
 
 
-int total = 0;
-for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
-    if (entry.is_regular_file() && entry.path().extension() == ".zip")
-        ++total;
-}
+	int total = 0;
+	for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
+		if (entry.is_regular_file() && entry.path().extension() == ".zip") ++total;
+	}
 
-int count = 0;
-for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
-    if (entry.is_regular_file() && entry.path().extension() == ".zip") {
-        std::string name = entry.path().filename().string();
-        if (transferStatusCallback)
-            transferStatusCallback("Transfer of " + name, ++count, total);
+	int count = 0;
+	for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
+		if (entry.is_regular_file() && entry.path().extension() == ".zip") {
+			std::string name = entry.path().filename().string();
+			if (transferStatusCallback){
+				transferStatusCallback("Transfer of " + name, ++count, total);
 
-        std::string base64Zip = zip_to_base64(entry.path());
-        std::string json = create_json_str(base64Zip);
-        bool ok = send_job(json);
+				std::string base64Zip = zip_to_base64(entry.path());
+				std::string json = create_json_str(base64Zip);
+				bool ok = send_job(json);
 
-        if (!ok) break;
-
-        std::filesystem::remove(entry.path());
-    }
-}
+				if (ok){
+					std::filesystem::remove(entry.path());
+				}
+				else{
+					break;
+				}
+			}
+		}
+	}
 
 }
 
@@ -595,9 +598,7 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	d.SetObject();
 
 	rapidjson::Value key;
-	char buff[this->apiKey.size()+1];
-	int len = sprintf(buff, "%s", this->apiKey.c_str());
-	key.SetString(buff, len, d.GetAllocator());
+	key.SetString(this->apiKey.c_str(), this->apiKey.size(), d.GetAllocator());
 	d.AddMember("apiKey", key, d.GetAllocator());
 	
 	rapidjson::Value jobType("Hydroball20");

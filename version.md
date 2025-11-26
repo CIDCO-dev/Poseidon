@@ -4,6 +4,7 @@
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); ROS2 install script now installs gpsd/chrony/ros-jazzy-gpsd-client and points lighttpd to `/opt/Poseidon/www/webroot`.
 - Logger: removed warning spam when toggle requested without GPS fix (ROS1).
 - CI: GitHub Actions now posts C++/Python/JS coverage summary to the workflow summary.
+- Logger: transfer loop now counts zip files once, reports status, sends, and removes on success; RapidJSON string creation simplified.
 
 ## 2025-11-25
 - Added HTTPS transfer integration tests for logger binary and text nodes (local TLS server, payload verification).

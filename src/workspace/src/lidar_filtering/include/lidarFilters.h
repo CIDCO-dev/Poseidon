@@ -13,7 +13,7 @@
 class Filters{
 	public:
 		// horizontal angle in degrees
-		static bool horizontalAngleFilter(double x, double y, double &minAngle, double &maxAngle){
+		static bool horizontalAngleFilter(double x, double y, const double &minAngle, const double &maxAngle){
 			// 90° is the heading
 			// 0° is on left side
 			double theta = atan2(y, x) * 180 / LPI;
@@ -30,7 +30,7 @@ class Filters{
 		}
 		
 		// eucledian distance in meters
-		static bool distanceFilter(double x, double y, double z, double &minDistance, double &maxDistance){
+		static bool distanceFilter(double x, double y, double z, const double &minDistance, const double &maxDistance){
 			double distance = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
 			
 			// discard point

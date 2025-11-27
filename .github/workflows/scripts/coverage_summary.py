@@ -148,6 +148,15 @@ def gather_junit_results(
     return total_tests, total_errors, total_failures, total_skipped, details
 
 
+def highlight_if_issue(line: str, errors: int, failures: int, skipped: int) -> str:
+    """
+    Wrap the line in a red span if any non-zero errors/failures/skipped.
+    """
+    if errors > 0 or failures > 0 or skipped > 0:
+        return f"<span style='color:red'>{line}</span>"
+    return line
+
+
 def main():
     summary = []
     cpp = None
@@ -172,15 +181,17 @@ def main():
     if os.path.isdir(junit_base):
         t, e, f, s, details = gather_junit_results(junit_base)
         if t > 0:
-            junit_total_line = (
+            total_line_raw = (
                 f"- Tests: {t} run, {e} errors, {f} failures, {s} skipped "
                 "(artifact: junit-test-results)"
             )
+            junit_total_line = highlight_if_issue(total_line_raw, e, f, s)
             # List all suites (sorted) for clarity.
             for relpath, dt, de, df, ds in sorted(details):
-                junit_detail_lines.append(
+                detail_raw = (
                     f"- {relpath}: {dt} tests, {de} errors, {df} failures, {ds} skipped"
                 )
+                junit_detail_lines.append(highlight_if_issue(detail_raw, de, df, ds))
 
     if cpp is not None:
         summary.append(f"- C++ coverage: {cpp:.1f}%")
@@ -188,16 +199,25 @@ def main():
         summary.append(f"- Python coverage: {py:.1f}%")
     if js is not None:
         summary.append(f"- JS coverage: {js:.1f}%")
-    if summary:
-        out_path = os.environ.get("GITHUB_STEP_SUMMARY", "coverage-summary.md")
+    out_path = os.environ.get("GITHUB_STEP_SUMMARY", "coverage-summary.md")
+
+    # Avoid duplicate coverage sections if the script is invoked multiple times in the same step.
+    existing = ""
+    if os.path.exists(out_path):
+        try:
+            with open(out_path, "r") as f:
+                existing = f.read()
+        except Exception:
+            existing = ""
+
+    if summary and "## Coverage summary" not in existing:
         with open(out_path, "a") as f:
             f.write("## Coverage summary\n")
             for line in summary:
                 f.write(line + "\n")
             f.write("\n")
 
-    if junit_total_line:
-        out_path = os.environ.get("GITHUB_STEP_SUMMARY", "coverage-summary.md")
+    if junit_total_line and "## Test results (JUnit)" not in existing:
         with open(out_path, "a") as f:
             f.write("## Test results (JUnit)\n")
             f.write(junit_total_line + "\n")

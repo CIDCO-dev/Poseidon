@@ -2,6 +2,7 @@
 
 ## 2025-11-27
 - CI: gcovr step split into separate XML/HTML runs (no more skipped HTML output) and coverage summary script now falls back to lcov/HTML when XML is absent.
+- CI: coverage summary now also falls back to JS lcov when coverage-summary.json is missing (ensures JS coverage is reported).
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

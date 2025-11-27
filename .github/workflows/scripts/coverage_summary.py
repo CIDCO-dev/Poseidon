@@ -1,3 +1,4 @@
+import glob
 import json
 import os
 import xml.etree.ElementTree as ET
@@ -88,6 +89,11 @@ def rate_from_js(path: str):
         return None
 
 
+def rate_from_js_lcov(path: str):
+    # Reuse the lcov parser to compute JS coverage if coverage-summary.json is missing.
+    return rate_from_lcov(path)
+
+
 def main():
     summary = []
     cpp = None
@@ -101,6 +107,10 @@ def main():
     py = rate_from_pycoverage("coverage-python.xml") if os.path.exists("coverage-python.xml") else None
     js_path = "www/webroot/js/coverage/coverage-summary.json"
     js = rate_from_js(js_path) if os.path.exists(js_path) else None
+    if js is None:
+        js_lcov = "www/webroot/js/coverage/lcov.info"
+        if os.path.exists(js_lcov):
+            js = rate_from_js_lcov(js_lcov)
 
     if cpp is not None:
         summary.append(f"- C++ coverage: {cpp:.1f}%")
@@ -108,6 +118,15 @@ def main():
         summary.append(f"- Python coverage: {py:.1f}%")
     if js is not None:
         summary.append(f"- JS coverage: {js:.1f}%")
+
+    # Surface presence of JUnit-style test reports to remind readers where to find detailed results.
+    has_junit = bool(
+        glob.glob("src/workspace/build/test_results/**/*.xml", recursive=True)
+    )
+    if has_junit:
+        summary.append(
+            "- Test reports: JUnit XML under src/workspace/build/test_results (artifact: junit-test-results)"
+        )
 
     if summary:
         out_path = os.environ.get("GITHUB_STEP_SUMMARY", "coverage-summary.md")

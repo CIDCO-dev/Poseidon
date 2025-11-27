@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
 
 // Leaflet stubs
 const panToMock = jest.fn();
@@ -71,7 +72,6 @@ global.console = console;
 
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'mapScript.js'), 'utf8');
-	const script = new vm.Script(code, { filename: 'mapScript.js' });
 	const sandbox = {
 		...global,
 		document: global.document,
@@ -80,7 +80,7 @@ function loadScript() {
 		console
 	};
 	const context = vm.createContext(sandbox);
-	script.runInContext(context);
+	runInstrumented(code, 'mapScript.js', context);
 	return context;
 }
 

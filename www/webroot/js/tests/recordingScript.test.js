@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
 
 // jQuery stub
 const elems = {};
@@ -38,7 +39,6 @@ global.WebSocket = function () { return { send: (msg) => sent.push(msg) }; };
 
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'recordingScript.js'), 'utf8');
-	const script = new vm.Script(code, { filename: 'recordingScript.js' });
 	const sandbox = {
 		...global,
 		document: global.document,
@@ -47,7 +47,7 @@ function loadScript() {
 		console
 	};
 	const context = vm.createContext(sandbox);
-	script.runInContext(context);
+	runInstrumented(code, 'recordingScript.js', context);
 	return context;
 }
 

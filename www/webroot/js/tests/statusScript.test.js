@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
 
 // Minimal jQuery stub
 const elements = {};
@@ -43,7 +44,6 @@ global.WebSocket = function () { return { onmessage: null, send: () => {} }; };
 
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'statusScript.js'), 'utf8');
-	const script = new vm.Script(code, { filename: 'statusScript.js' });
 	const sandbox = {
 		...global,
 		document: global.document,
@@ -52,7 +52,7 @@ function loadScript() {
 		console
 	};
 	const context = vm.createContext(sandbox);
-	script.runInContext(context);
+	runInstrumented(code, 'statusScript.js', context);
 	return context;
 }
 

@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
 
 // jQuery and DOM stubs
 const elems = {};
@@ -78,7 +79,6 @@ global.WebSocket = function () { return { send: jest.fn() }; };
 
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'dataScript.js'), 'utf8');
-	const script = new vm.Script(code, { filename: 'dataScript.js' });
 	const sandbox = {
 		document: documentStub,
 		window: global.window,
@@ -90,7 +90,7 @@ function loadScript() {
 		setInterval
 	};
 	const context = vm.createContext(sandbox);
-	script.runInContext(context);
+	runInstrumented(code, 'dataScript.js', context);
 	return context;
 }
 

@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
 
 // DOM stubs
 const elements = {};
@@ -44,7 +45,6 @@ function addConfigField(id, value, cls = 'configurationField') {
 
 function loadScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'settingsScript.js'), 'utf8');
-	const script = new vm.Script(code, { filename: 'settingsScript.js' });
 	const sandbox = {
 		document: documentStub,
 		window: global.window,
@@ -52,7 +52,7 @@ function loadScript() {
 		console
 	};
 	const context = vm.createContext(sandbox);
-	script.runInContext(context);
+	runInstrumented(code, 'settingsScript.js', context);
 	return context;
 }
 

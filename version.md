@@ -4,6 +4,7 @@
 - CI: gcovr step split into separate XML/HTML runs (no more skipped HTML output) and coverage summary script now falls back to lcov/HTML when XML is absent.
 - CI: coverage summary now also falls back to JS lcov when coverage-summary.json is missing (ensures JS coverage is reported).
 - CI: coverage summary surfaces JUnit test totals/errors/failures and lists failing suites (links to junit-test-results artifact).
+- JS: VM-based Jest tests now instrument scripts before execution so coverage is reported correctly (no longer 0%).
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

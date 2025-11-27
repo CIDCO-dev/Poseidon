@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
 
 // Minimal DOM stubs
 const elements = {
@@ -54,7 +55,6 @@ global.$ = () => ({
 
 function loadScript(filename) {
 	const code = fs.readFileSync(filename, 'utf8');
-	const script = new vm.Script(code, { filename });
 	const sandbox = {
 		document: documentStub,
 		window: global.window || {},
@@ -66,7 +66,7 @@ function loadScript(filename) {
 		setTimeout
 	};
 	const context = vm.createContext(sandbox);
-	script.runInContext(context);
+	runInstrumented(code, filename, context);
 	return context;
 }
 

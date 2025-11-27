@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
 
 // Minimal jQuery stub
 const stubbedElems = {};
@@ -52,7 +53,6 @@ global.jQuery = $;
 
 function runScript() {
 	const code = fs.readFileSync(path.join(__dirname, '..', 'script.js'), 'utf8');
-	const script = new vm.Script(code);
 	const sandbox = {
 		document: global.document,
 		window: windowStub,
@@ -62,7 +62,7 @@ function runScript() {
 		console
 	};
 	const context = vm.createContext(sandbox);
-	script.runInContext(context);
+	runInstrumented(code, 'script.js', context);
 	return context;
 }
 

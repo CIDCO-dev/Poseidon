@@ -5,6 +5,7 @@
 - CI: coverage summary now also falls back to JS lcov when coverage-summary.json is missing (ensures JS coverage is reported).
 - CI: coverage summary surfaces JUnit test totals/errors/failures and lists failing suites (links to junit-test-results artifact).
 - JS: VM-based Jest tests now instrument scripts before execution so coverage is reported correctly (no longer 0%).
+- raspberrypi_vitals: ensure targets depend on generated messages (catkin_EXPORTED_TARGETS) and declare i2c_controller_service in CATKIN_DEPENDS to fix missing `raspberrypi_vitals_msg/sysinfo.h` during build.
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

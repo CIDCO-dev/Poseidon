@@ -34,6 +34,51 @@ def rate_from_pycoverage(path: str):
         return None
 
 
+def rate_from_lcov(path: str):
+    """
+    Compute line-rate from an lcov tracefile (coverage.info).
+    Falls back silently if the file cannot be parsed.
+    """
+    try:
+        total_lines = 0
+        hit_lines = 0
+        with open(path) as f:
+            for line in f:
+                if line.startswith("LF:"):
+                    total_lines += int(line.split(":", 1)[1])
+                elif line.startswith("LH:"):
+                    hit_lines += int(line.split(":", 1)[1])
+        if total_lines:
+            return (hit_lines / total_lines) * 100.0
+    except Exception:
+        return None
+    return None
+
+
+def rate_from_gcovr_html(path: str):
+    """
+    Try to extract line coverage from a gcovr HTML report.
+    Looks for patterns like 'Lines: XX%' in the summary table.
+    """
+    import re
+
+    try:
+        with open(path, encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+        # common patterns in gcovr HTML summaries
+        patterns = [
+            r"Lines:\s*([0-9]+(?:\.[0-9]+)?)%",
+            r"Line Coverage:\s*([0-9]+(?:\.[0-9]+)?)%",
+        ]
+        for pat in patterns:
+            match = re.search(pat, content)
+            if match:
+                return float(match.group(1))
+    except Exception:
+        return None
+    return None
+
+
 def rate_from_js(path: str):
     try:
         with open(path) as f:
@@ -45,7 +90,14 @@ def rate_from_js(path: str):
 
 def main():
     summary = []
-    cpp = rate_from_cobertura("coverage-cpp.xml") if os.path.exists("coverage-cpp.xml") else None
+    cpp = None
+    # Prefer lcov, then Cobertura XML, finally try to scrape the HTML if that's all we have.
+    if os.path.exists("coverage.info"):
+        cpp = rate_from_lcov("coverage.info")
+    if cpp is None and os.path.exists("coverage-cpp.xml"):
+        cpp = rate_from_cobertura("coverage-cpp.xml")
+    if cpp is None and os.path.exists("coverage-cpp.html"):
+        cpp = rate_from_gcovr_html("coverage-cpp.html")
     py = rate_from_pycoverage("coverage-python.xml") if os.path.exists("coverage-python.xml") else None
     js_path = "www/webroot/js/coverage/coverage-summary.json"
     js = rate_from_js(js_path) if os.path.exists(js_path) else None

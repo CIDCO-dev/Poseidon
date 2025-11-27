@@ -123,7 +123,9 @@ jobs:
       - name: C++ coverage report (gcovr)
         run: |
           set -eo pipefail
-          gcovr -r "$CATKIN_WS/src" "$CATKIN_WS" --xml -o coverage-cpp.xml --html --html-details -o coverage-cpp.html || true
+          # gcovr 4.x cannot emit XML and HTML in one invocation; split to avoid skipping HTML output.
+          gcovr -r "$CATKIN_WS/src" "$CATKIN_WS" --xml -o coverage-cpp.xml || true
+          gcovr -r "$CATKIN_WS/src" "$CATKIN_WS" --html --html-details -o coverage-cpp.html || true
 
       - name: Python coverage
         run: |

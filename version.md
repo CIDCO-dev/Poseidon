@@ -1,7 +1,10 @@
 # Version History (English)
 
+## 2025-11-27
+- CI: gcovr step split into separate XML/HTML runs (no more skipped HTML output) and coverage summary script now falls back to lcov/HTML when XML is absent.
+
 ## 2025-11-26
-- Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); ROS2 install script now installs gpsd/chrony/ros-jazzy-gpsd-client and points lighttpd to `/opt/Poseidon/www/webroot`.
+- Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.
 - Logger: removed warning spam when toggle requested without GPS fix (ROS1).
 - CI: GitHub Actions now posts C++/Python/JS coverage summary to the workflow summary.
 - Logger: transfer loop now counts zip files once, reports status, sends, and removes on success; RapidJSON string creation simplified.
@@ -39,4 +42,4 @@
 - hydroball_config_websocket: add message deps (geometry/state/setting) to catkin/package.xml and enforce build order on message targets to fix missing Setting.h during catkin_make.
 - Logger tests: removed embedded PEM key/cert; tests now generate ephemeral self-signed TLS material at runtime to avoid shipping secrets.
 - sonar_nmea_0183_tcp_client: use ROS params for IP/port (instead of argv) and add socket receive timeout to reconnect if the network stream stalls.
-- Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); ROS2 install script now installs gpsd/chrony/ros-jazzy-gpsd-client and points lighttpd to `/opt/Poseidon/www/webroot`.
+- Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

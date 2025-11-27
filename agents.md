@@ -4,7 +4,7 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 
 ## Goals
 - Documentation policy: English only across the repository.
-- Track ROS1 changes in `version.md` and ROS2 changes in `version2.md`; keep both up to date.
+- Track ROS1 changes in `version.md`; keep it up to date and group entries by date.
 - Make minimal, safe, targeted changes.
 - Respect Catkin structure and separation of C++/Python/launch.
 - Keep compatibility across embedded targets (RPi/RockPi) and VM.

@@ -1,6 +1,7 @@
 import glob
 import json
 import os
+from typing import List, Optional, Tuple
 import xml.etree.ElementTree as ET
 
 
@@ -94,6 +95,59 @@ def rate_from_js_lcov(path: str):
     return rate_from_lcov(path)
 
 
+def parse_junit_summary(path: str) -> Optional[Tuple[int, int, int, int]]:
+    """
+    Return (tests, errors, failures, skipped) for a JUnit XML file.
+    Handles both <testsuite> and <testsuites>.
+    """
+    try:
+        root = ET.parse(path).getroot()
+    except Exception:
+        return None
+
+    def accum(node) -> Tuple[int, int, int, int]:
+        t = int(node.attrib.get("tests", 0))
+        e = int(node.attrib.get("errors", 0))
+        f = int(node.attrib.get("failures", 0))
+        s = int(node.attrib.get("skipped", 0))
+        return t, e, f, s
+
+    if root.tag == "testsuite":
+        return accum(root)
+    if root.tag == "testsuites":
+        total_t = total_e = total_f = total_s = 0
+        for ts in root.findall("testsuite"):
+            t, e, f, s = accum(ts)
+            total_t += t
+            total_e += e
+            total_f += f
+            total_s += s
+        return total_t, total_e, total_f, total_s
+    return None
+
+
+def gather_junit_results(
+    base_dir: str,
+) -> Tuple[int, int, int, int, List[Tuple[str, int, int, int, int]]]:
+    """
+    Aggregate JUnit results under base_dir.
+    Returns total tests/errors/failures/skipped and per-suite details.
+    """
+    total_tests = total_errors = total_failures = total_skipped = 0
+    details: List[Tuple[str, int, int, int, int]] = []
+    for path in glob.glob(os.path.join(base_dir, "**", "*.xml"), recursive=True):
+        summary = parse_junit_summary(path)
+        if summary is None:
+            continue
+        t, e, f, s = summary
+        total_tests += t
+        total_errors += e
+        total_failures += f
+        total_skipped += s
+        details.append((os.path.relpath(path, base_dir), t, e, f, s))
+    return total_tests, total_errors, total_failures, total_skipped, details
+
+
 def main():
     summary = []
     cpp = None
@@ -112,21 +166,43 @@ def main():
         if os.path.exists(js_lcov):
             js = rate_from_js_lcov(js_lcov)
 
+    junit_base = "src/workspace/build/test_results"
+    junit_total_line: Optional[str] = None
+    junit_detail_lines: List[str] = []
+    if os.path.isdir(junit_base):
+        t, e, f, s, details = gather_junit_results(junit_base)
+        if t > 0:
+            junit_total_line = (
+                f"- Tests: {t} run, {e} errors, {f} failures, {s} skipped "
+                "(artifact: junit-test-results)"
+            )
+            # List all suites (sorted) for clarity.
+            for relpath, dt, de, df, ds in sorted(details):
+                junit_detail_lines.append(
+                    f"- {relpath}: {dt} tests, {de} errors, {df} failures, {ds} skipped"
+                )
+
     if cpp is not None:
         summary.append(f"- C++ coverage: {cpp:.1f}%")
     if py is not None:
         summary.append(f"- Python coverage: {py:.1f}%")
     if js is not None:
         summary.append(f"- JS coverage: {js:.1f}%")
+    if summary:
+        out_path = os.environ.get("GITHUB_STEP_SUMMARY", "coverage-summary.md")
+        with open(out_path, "a") as f:
+            f.write("## Coverage summary\n")
+            for line in summary:
+                f.write(line + "\n")
+            f.write("\n")
 
-    # Surface presence of JUnit-style test reports to remind readers where to find detailed results.
-    has_junit = bool(
-        glob.glob("src/workspace/build/test_results/**/*.xml", recursive=True)
-    )
-    if has_junit:
-        summary.append(
-            "- Test reports: JUnit XML under src/workspace/build/test_results (artifact: junit-test-results)"
-        )
+    if junit_total_line:
+        out_path = os.environ.get("GITHUB_STEP_SUMMARY", "coverage-summary.md")
+        with open(out_path, "a") as f:
+            f.write("## Test results (JUnit)\n")
+            f.write(junit_total_line + "\n")
+            for line in junit_detail_lines:
+                f.write(line + "\n")
 
     if summary:
         out_path = os.environ.get("GITHUB_STEP_SUMMARY", "coverage-summary.md")

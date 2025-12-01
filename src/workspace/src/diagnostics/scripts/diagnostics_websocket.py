@@ -37,10 +37,12 @@ from diagnostics_test_base import DiagnosticsTest
 from api_connection_diagnostic import ApiConnectionDiagnostic
 from binary_stream_gnss_diagnostic import BinaryStreamGnssDiagnostic
 from clock_diagnostic import ClockDiagnostic
+from dns_resolution_diagnostic import DnsResolutionDiagnostic
 from gnss_communication_diagnostic import GnssCommunicationDiagnostic
 from gnss_fix_diagnostic import GnssFixDiagnostic
 from imu_calibration_diagnostic import ImuCalibrationDiagnostic
 from imu_communication_diagnostic import ImuCommunicationDiagnostic
+from internet_connectivity_diagnostic import InternetConnectivityDiagnostic
 from serial_number_diagnostic import SerialNumberDiagnostic
 from sonar_communication_diagnostic import SonarCommunicationDiagnostic
 
@@ -67,7 +69,24 @@ class DiagnosticsServer:
 
                 if command == "updateDiagnostic":
                     msg = DiagnosticArray()
+                    internet_ok = True
+
                     for test in self.tests:
+                        # Run connectivity first; if it fails, skip DNS/API checks to avoid noisy errors.
+                        if isinstance(test, InternetConnectivityDiagnostic):
+                            status = test.update()
+                            internet_ok = status.level == DiagnosticStatus.OK
+                            msg.status.append(status)
+                            continue
+
+                        if isinstance(test, (DnsResolutionDiagnostic, ApiConnectionDiagnostic)) and not internet_ok:
+                            status = DiagnosticStatus()
+                            status.name = getattr(test, "name", "Diagnostic")
+                            status.level = DiagnosticStatus.WARN
+                            status.message = "Skipped: internet connectivity failed"
+                            msg.status.append(status)
+                            continue
+
                         msg.status.append(test.update())
 
                     diagnostics = []
@@ -130,6 +149,9 @@ def main():
     rospy.init_node('diagnostics')
     server = DiagnosticsServer()
 
+    # Connectivity first to gate DNS/API tests
+    server.add_test(InternetConnectivityDiagnostic(url="http://example.com", timeout_s=3.0))
+    server.add_test(DnsResolutionDiagnostic(hostname="google.com"))
     server.add_test(ApiConnectionDiagnostic())
     server.add_test(BinaryStreamGnssDiagnostic(message_frequency=10))
     server.add_test(ClockDiagnostic())

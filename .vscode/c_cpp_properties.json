@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "ROS",
+      "includePath": [
+        "/opt/ros/noetic/include",
+        "/opt/Poseidon/src/workspace/devel/include",
+        "/opt/Poseidon/src",
+        "${workspaceFolder}/**"
+      ],
+      "defines": [],
+      "compilerPath": "/usr/bin/g++",
+      "cStandard": "c11",
+      "cppStandard": "gnu++14",
+      "intelliSenseMode": "linux-gcc-arm64"
+    }
+  ],
+  "version": 4
+}

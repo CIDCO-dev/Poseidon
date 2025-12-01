@@ -44,3 +44,12 @@ sudo mv gps* /opt/Poseidon/src/workspace/src/
 cd /opt
 sudo rm -rd gps_umd
 
+# Install websockets
+if ! python3 -c "import websockets" &> /dev/null; then
+    echo -e "\e[35m[+] Installing Python websockets module\[0m"
+    pip3 install websockets | tee -a log.txt
+else
+    echo -e "\e[35m[=] websockets déjà installé\[0m"
+fi
+
+

@@ -3,12 +3,12 @@ apiPort 8080
 apiServer localhost
 apiUrlPath /
 geofence MULTIPOLYGON(((-180 -90, -180 90, 180 90, 180 -90, -180 -90)))
-headingOffset 0
-hotspotSSID HydroB
+headingOffset 0.020331
+hotspotSSID DOMINIC-240787-007
 logRotationIntervalSeconds 3600
 loggingMode 2
-pitchOffset 0
-rollOffset 0
+pitchOffset -1.447684
+rollOffset 1.609092
 sonarAbsorbtion 20
 sonarPulseLength 120
 sonarRange 20

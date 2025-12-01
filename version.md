@@ -1,5 +1,9 @@
 # Version History (English)
 
+## 2025-12-01
+- diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).
+- raspberrypi_vitals: declare logger_service and power_management_msg dependencies so ToggleLogging and battery message headers exist at build time.
+
 ## 2025-11-27
 - CI: gcovr step split into separate XML/HTML runs (no more skipped HTML output) and coverage summary script now falls back to lcov/HTML when XML is absent.
 - CI: coverage summary now also falls back to JS lcov when coverage-summary.json is missing (ensures JS coverage is reported).

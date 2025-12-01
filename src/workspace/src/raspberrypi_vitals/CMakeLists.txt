@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   raspberrypi_vitals_msg
   i2c_controller_service
+  logger_service
+  power_management_msg
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -105,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES raspberrypi_vitals
-  CATKIN_DEPENDS roscpp raspberrypi_vitals_msg i2c_controller_service
+  CATKIN_DEPENDS roscpp raspberrypi_vitals_msg i2c_controller_service logger_service power_management_msg
 )
 
 ###########
@@ -208,7 +210,6 @@ endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
 
 
 

@@ -1,7 +1,10 @@
 # Version History (English)
 
-## 2025-12-01
+## 2025-12-02
 - Launch: replace missing `diagnostics_node` with `diagnostics_websocket.py` in Hydrobox/Hydroball/Simulator launch files to fix diagnostics startup errors.
+- diagnostics: add package-path fallback so diagnostics_websocket imports sibling diagnostic modules when run from install space (fix ModuleNotFoundError on diagnostics_test_base).
+
+## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).
 - raspberrypi_vitals: declare logger_service and power_management_msg dependencies so ToggleLogging and battery message headers exist at build time.
 - diagnostics: install the websocket integration test script via catkin so rostest can locate/execute it.

@@ -1,12 +1,38 @@
 #!/usr/bin/env python3
-import rospy
 import asyncio
-import websockets
 import json
-import rosgraph.masterapi
+import os
+import sys
 import threading
 
+import rosgraph.masterapi
+import rospkg
+import rospy
+import websockets
+
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus
+
+
+def _add_scripts_dir_to_path():
+    """Ensure the diagnostics/scripts directory is importable when run from install space."""
+    paths = []
+    try:
+        pkg_path = rospkg.RosPack().get_path("diagnostics")
+        paths.append(os.path.join(pkg_path, "scripts"))
+    except rospkg.ResourceNotFound:
+        pass
+
+    # Fallback: directory containing this file (covers devel/source runs)
+    paths.append(os.path.dirname(__file__))
+
+    for p in paths:
+        if p and p not in sys.path:
+            sys.path.insert(0, p)
+
+
+_add_scripts_dir_to_path()
+
+
 from diagnostics_test_base import DiagnosticsTest
 from api_connection_diagnostic import ApiConnectionDiagnostic
 from binary_stream_gnss_diagnostic import BinaryStreamGnssDiagnostic

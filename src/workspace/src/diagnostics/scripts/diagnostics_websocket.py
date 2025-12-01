@@ -152,7 +152,7 @@ def main():
     # Connectivity first to gate DNS/API tests
     server.add_test(InternetConnectivityDiagnostic(url="http://example.com", timeout_s=3.0))
     server.add_test(DnsResolutionDiagnostic(hostname="google.com"))
-    server.add_test(ApiConnectionDiagnostic())
+    server.add_test(ApiConnectionDiagnostic(timeout_s=2.0))
     server.add_test(BinaryStreamGnssDiagnostic(message_frequency=10))
     server.add_test(ClockDiagnostic())
     server.add_test(GnssCommunicationDiagnostic(name="GNSS Communication", message_frequency=2, topic="fix", timeout_s=2))

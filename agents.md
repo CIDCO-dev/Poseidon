@@ -23,6 +23,7 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 - Web UI: `www/webroot`
 - Install scripts: `install/stages/*.sh`
 - Global config: `config.txt`
+- Documentation: keep source in `doc/` as Markdown; CI can generate PDFs for download, but `doc/*.md` remain the source of truth (viewable directly in the repo).
 
 ## Local Build
 1) Source ROS: `source /opt/ros/noetic/setup.bash`

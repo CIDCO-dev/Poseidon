@@ -9,6 +9,8 @@
 - gnss_zed_f9p: declare binary_stream_msg/virtual_serial_port deps and depend on catkin_EXPORTED_TARGETS so generated headers (e.g., Stream.h) exist before building.
 - lidar_filtering: fixed tests by passing min/max angle/distance as const refs in Filters helpers (no more rvalue binding errors).
 - CI: junit summary lines are now highlighted in red when errors/failures/skipped are non-zero for easier scanning.
+- Docs: agent guidance updated to keep Markdown docs in `doc/` (source of truth) with CI able to generate PDFs for download.
+- Docs: README and doc/README now target RPi4 on Ubuntu 20.04, using install/rpi4-noetic.sh as the install path.
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

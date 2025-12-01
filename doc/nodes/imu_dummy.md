@@ -1,16 +1,35 @@
 # imu_dummy_node
 
 ## Overview
-Placeholder for imu_dummy node documentation. Describe how dummy IMU data is generated/published.
-
-## Inputs
-- TODO: list subscribed topics/services and message types.
+- ROS node name: `imu`.
+- Publishes synthetic IMU orientation at 200 Hz on `imu/data` for testing/bring-up.
+- Orientation is a smooth, time-varying quaternion derived from sin/cos of the sequence number.
 
 ## Outputs
-- TODO: list published topics/services/actions and message types.
+- `imu/data` (`sensor_msgs/Imu`): orientation only.
+  - Header: `seq` increments, `stamp` = now.
+  - Orientation:
+    - yaw = `sin(seq / π) * 30°`
+    - pitch = `cos(seq / π) * 20°`
+    - roll = `sin(seq / π) * 10°`
+  - Angular velocity and linear acceleration are left at default zero.
+
+## Inputs
+- None.
 
 ## Parameters
-- TODO: document ROS parameters and defaults.
+- None; topic name and rate (200 Hz) are fixed in code.
+
+## Behavior
+- Main loop: compute orientation, publish IMU message, `ros::spinOnce()`, sleep at 200 Hz.
+- Helper `message(seq, yaw, pitch, roll)` exists to publish arbitrary Euler angles if used by tests.
+
+## Usage
+```bash
+rosrun imu_dummy imu_dummy_node
+rostopic echo /imu/data
+```
 
 ## Notes
-- Update when dummy IMU behavior or message types change.
+- Intended for simulation/headless testing only; replace with a real IMU driver in production.
+- Update this doc if noise models, params, or topic names change.

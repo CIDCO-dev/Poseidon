@@ -15,6 +15,23 @@
 - Docs: added `doc/nodes.md` (ROS nodes list) and `doc/web.md` (web UI pages list); README links updated.
 - Docs: added per-web-page stubs in `doc/web/*.md` (index, status, diagnostics, data, map, settings, calibration, goal).
 - Docs: node/web index now link to specific Markdown docs and source files for easier navigation.
+- Docs: documented `sonar_dummy_node` (overview, published topic, config service keys, behavior).
+- Docs: documented `raspberrypi_vitals_node` (vitals topic fields, I2C service calls, thresholds).
+- Docs: documented `imu_null_node` (zeroed IMU publisher at 200 Hz).
+- Docs: documented `hydroball_config_websocket_node` (websocket config server, services, config file handling, IMU transform broadcast).
+- Docs: documented `logger_binary_node` (binary logging of GNSS/IMU/sonar/lidar/vitals/speed, rotation/transfer).
+- Docs: documented `logger_text_node` (per-stream text logs, rotation/transfer).
+- Docs: documented `gnss_dummy_node` (synthetic NavSatFix publisher with alternating status/path).
+- Docs: documented `gnss_zed_f9p_node` (serial UBX ingest, speed/diag/raw stream).
+- Docs: documented `video_recorder_node` (camera capture → EXIF-tagged PNGs with interpolated GNSS).
+- Docs: documented `hydroball_data_websocket_node` (WebSocket telemetry/recording control on port 9002).
+- Docs: documented `state_controller_node` (aggregates fix/IMU/depth/vitals into state + get_state service).
+- Docs: documented `sonar_nmea_0183_tcp_client` (network + serial NMEA readers publishing depth/fix/speed).
+- Docs: documented `diagnostics_websocket_node` (WebSocket diagnostics/ running-nodes commands on port 9099).
+- Docs: documented `imu_dummy_node` (synthetic IMU on imu/data at 200 Hz).
+- Docs: documented `gnss_mosaic_x5_node` (raw SBF logger; waits for fix, reads serial, writes .sbf).
+- Docs: documented `lidar_filtering_node` (angle/distance pointcloud filter).
+- Docs: documented `hydroball_files_websocket_node` (WebSocket file listing/deletion/transfer control on port 9003).
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

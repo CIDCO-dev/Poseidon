@@ -1,13 +1,21 @@
 # calibration.html
 
 ## Overview
-Placeholder for calibration page documentation. Describe its purpose (e.g., IMU/zeroing) and main UI flows.
+- Calibration utility page (currently limited to IMU zeroing).
+- Uses the config WebSocket (`hydroball_config_websocket_node`, `ws://<host>:9004`) to send commands.
+
+## Actions / Commands
+- “Zero IMU offsets” button calls `sendZeroImu()` → sends `{"command":"zeroImu"}` over the WebSocket.
+- No other UI fields; no feedback is displayed by default (socket `onmessage` is a no-op).
+
+## Data Source
+- WebSocket: `ws://<host>:9004` (shared with settings/config). No authentication.
+- Incoming messages are parsed but ignored (`processState` is empty); extend if server emits acknowledgements.
 
 ## Scripts
-- calibrationScript.js (describe key functions, WebSocket/API usage).
+- `js/calibrationScript.js`: opens WebSocket, defines `sendZeroImu`, placeholder `processState`.
+- Shared includes: `js/script.js`, `js/poseidon.js`, SB Admin 2 assets.
 
-## Inputs/Outputs
-- TODO: document data sources (WebSocket topics/REST endpoints) and UI actions.
-
-## Notes
-- Update when calibration workflows or UI elements change.
+## Notes / Caveats
+- No confirmation or status is shown; users must verify IMU behavior separately.
+- Add server-side support and UI feedback if more calibration flows are introduced.

@@ -50,6 +50,7 @@ Open the web UI at `http://localhost`.
 - `www/webroot`: web UI assets and JS
 - `install/stages`: install scripts
 - `config.txt`: runtime config (no real secrets)
+- Docs index: [`doc/nodes.md`](nodes.md) for ROS nodes, [`doc/web.md`](web.md) for web pages
 
 ## Notes
 - Keep docs up to date here; CI can generate PDFs later if needed.

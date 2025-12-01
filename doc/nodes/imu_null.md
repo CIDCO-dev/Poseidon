@@ -1,16 +1,26 @@
 # imu_null_node
 
 ## Overview
-Placeholder for imu_null node documentation. Describe its purpose (e.g., null/identity IMU data).
+- Publishes a zeroed IMU orientation at high rate (200 Hz) on `imu/data`.
+- Useful as a null/identity IMU source for testing.
+- Node name: `imu`.
 
-## Inputs
-- TODO: list subscribed topics/services and message types.
+## Published topics
+- `imu/data` (`sensor_msgs/Imu`):
+  - `orientation`: RPY = (roll=0, pitch=0, yaw=0) converted to quaternion.
+  - `header.seq`: incremented each publish.
+  - `header.stamp`: `ros::Time::now()`.
 
-## Outputs
-- TODO: list published topics/services/actions and message types.
+## Services / subscriptions
+- None.
 
 ## Parameters
-- TODO: document ROS parameters and defaults.
+- None; outputs are hardcoded zeros.
+
+## Behavior
+- Constructor: advertises `imu/data`.
+- Main loop (200 Hz): `run()` builds `sensor_msgs/Imu` with zero orientation and publishes it.
+- `message()` helper can publish arbitrary RPY if invoked manually (not used in main loop).
 
 ## Notes
-- Update when behavior or interfaces change.
+- Update this doc if the node gains parameters, covariance, or additional fields.

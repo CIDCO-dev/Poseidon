@@ -3,6 +3,8 @@
 ## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).
 - raspberrypi_vitals: declare logger_service and power_management_msg dependencies so ToggleLogging and battery message headers exist at build time.
+- diagnostics: install the websocket integration test script via catkin so rostest can locate/execute it.
+- ROS tests: add pytest skip guards for ROS-dependent Python tests to avoid failures when ROS Python modules are absent.
 
 ## 2025-11-27
 - CI: gcovr step split into separate XML/HTML runs (no more skipped HTML output) and coverage summary script now falls back to lcov/HTML when XML is absent.

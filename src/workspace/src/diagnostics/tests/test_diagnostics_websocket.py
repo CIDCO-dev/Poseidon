@@ -5,6 +5,16 @@ import json
 import time
 import unittest
 
+try:
+    import pytest
+except ImportError:
+    pytest = None
+
+if pytest:
+    pytest.importorskip("rospy", reason="ROS Python modules are not available")
+    pytest.importorskip("rostest", reason="ROS Python modules are not available")
+    pytest.importorskip("websockets", reason="websockets package is required for this integration test")
+
 import rospy
 import rostest
 import websockets

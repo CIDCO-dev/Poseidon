@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 
 import unittest
+
+try:
+    import pytest
+except ImportError:
+    pytest = None
+
+if pytest:
+    pytest.importorskip("rostest", reason="ROS Python modules are not available")
 import rostest
 
 class InitialTest(unittest.TestCase):

@@ -12,5 +12,11 @@ catkin_install_python(PROGRAMS
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
+
+  catkin_install_python(PROGRAMS
+    tests/test_diagnostics_websocket.py
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/tests
+  )
+
   add_rostest(tests/diagnostics_websocket.test)
 endif()

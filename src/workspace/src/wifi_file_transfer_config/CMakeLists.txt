@@ -31,7 +31,6 @@ catkin_install_python(
 )
 
 ## Declare a C++ library
-<<<<<<< HEAD
 # add_library(${PROJECT_NAME} src/wifi_config.cpp)
 =======
 add_library(${PROJECT_NAME} src/wifi_config.cpp)
@@ -72,6 +71,6 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
->>>>>>> 7e7e8ebb (add dependencies)
+
 
 

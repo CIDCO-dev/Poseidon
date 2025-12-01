@@ -113,12 +113,9 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES power_management
-<<<<<<< HEAD
   CATKIN_DEPENDS roscpp std_msgs message_runtime
   DEPENDS system_lib
-=======
   CATKIN_DEPENDS roscpp std_msgs i2c_controller_service
->>>>>>> 7e7e8ebb (add dependencies)
 )
 
 ###########

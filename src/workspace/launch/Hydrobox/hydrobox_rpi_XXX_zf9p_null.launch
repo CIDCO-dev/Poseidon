@@ -31,6 +31,6 @@
 
 <node pkg="rosbag" name="record_all" type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_852_all.bag" />
 
-<node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen" respawn_delay="1"/>
+<node pkg="diagnostics" name="Diagnostics" type="diagnostics_websocket.py" output="screen" respawn_delay="1"/>
 
 </launch>

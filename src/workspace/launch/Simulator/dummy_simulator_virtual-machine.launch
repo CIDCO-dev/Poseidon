@@ -30,7 +30,7 @@
 
 <node pkg="wifi_file_transfer_config" name="wifi_file_transfer_config" type="wifi_file_transfer_config_node" output="screen"/>
 
-<node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen"/>
+<node pkg="diagnostics" name="Diagnostics" type="diagnostics_websocket.py" output="screen"/>
 
 
 </launch>

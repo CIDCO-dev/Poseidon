@@ -12,6 +12,10 @@ Hydrographic surveying platform operating system (ROS Noetic).
 Full documentation lives in `doc/` (Markdown):
 - `doc/README.md`: overview, build, run, tests
 - `doc/install.md`: installation with dependencies (RPi4, Ubuntu 20.04, ROS Noetic)
+- `doc/nodes.md`: list of ROS nodes
+- `doc/web.md`: list of web UI pages
+- `doc/web/*.md`: per-page details (index, status, diagnostics, data, map, settings, calibration, goal)
+- `doc/nodes/*.md`: per-node details with inputs/outputs/params
 
 ## Tests
 - C++/Python/ROS: `catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy;lidar_filtering"`

@@ -12,6 +12,9 @@
 - Docs: agent guidance updated to keep Markdown docs in `doc/` (source of truth) with CI able to generate PDFs for download.
 - Docs: README and doc/README now target RPi4 on Ubuntu 20.04, using install/rpi4-noetic.sh as the install path.
 - Docs: added `doc/install.md` detailing prerequisites and install steps for RPi4 Ubuntu 20.04.
+- Docs: added `doc/nodes.md` (ROS nodes list) and `doc/web.md` (web UI pages list); README links updated.
+- Docs: added per-web-page stubs in `doc/web/*.md` (index, status, diagnostics, data, map, settings, calibration, goal).
+- Docs: node/web index now link to specific Markdown docs and source files for easier navigation.
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

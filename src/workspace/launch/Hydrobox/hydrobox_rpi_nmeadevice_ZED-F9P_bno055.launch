@@ -27,7 +27,7 @@
 <node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
 
-<node pkg="sonar_nmea_0183_tcp_client" type="nmea_device_node" name="Sonar-NMEA" output="screen" respawn="true" respawn_delay="1">
+<node pkg="sonar_nmea_0183_tcp_client" type="nmea_device_node" name="Sonar_NMEA" output="screen" respawn="true" respawn_delay="1">
 	<param name="ip_address" value="127.0.0.1"/>
 	<param name="port" value="5000"/>
 </node>

@@ -89,6 +89,9 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 - [ ] Catkin build OK (VM or target)
 - [ ] Relevant unit tests added/updated
 - [ ] Launch files and parameters documented
+- [ ] Inline code comments/docstrings remain accurate
+- [ ] Related docs in `doc/` updated when behavior/usage changes
+- [ ] `version.md` updated with notable changes
 - [ ] No secrets or non-portable hardcoded paths
 - [ ] `manifest.md` updated for structural changes
 - [ ] Run `clang-format` and `clang-tidy` for C++ changes (style/diagnostics)

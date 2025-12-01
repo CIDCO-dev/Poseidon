@@ -9,7 +9,9 @@ Hydrographic surveying platform operating system (ROS Noetic).
 - Launch simulator: `roslaunch launch/Simulator/dummy_simulator_virtual-machine.launch`, then open the web UI at `http://localhost`.
 
 ## Docs
-Full documentation lives in `doc/` (Markdown). The CI can generate PDFs later if needed. Key topics include install, build, tests, simulator, logging modes, lidar georef, and bag replay.
+Full documentation lives in `doc/` (Markdown):
+- `doc/README.md`: overview, build, run, tests
+- `doc/install.md`: installation with dependencies (RPi4, Ubuntu 20.04, ROS Noetic)
 
 ## Tests
 - C++/Python/ROS: `catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy;lidar_filtering"`

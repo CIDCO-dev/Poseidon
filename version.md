@@ -11,6 +11,7 @@
 - CI: junit summary lines are now highlighted in red when errors/failures/skipped are non-zero for easier scanning.
 - Docs: agent guidance updated to keep Markdown docs in `doc/` (source of truth) with CI able to generate PDFs for download.
 - Docs: README and doc/README now target RPi4 on Ubuntu 20.04, using install/rpi4-noetic.sh as the install path.
+- Docs: added `doc/install.md` detailing prerequisites and install steps for RPi4 Ubuntu 20.04.
 
 ## 2025-11-26
 - Install scripts: added shared chrony update script (PPS/NMEA + pool.ntp.org); lighttpd now points to `/opt/Poseidon/www/webroot`.

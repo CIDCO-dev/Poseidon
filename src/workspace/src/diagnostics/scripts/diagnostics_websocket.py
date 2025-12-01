@@ -82,12 +82,16 @@ class DiagnosticsServer:
 
                 elif command == "getRunningNodes":
                     master = rosgraph.masterapi.Master('/diagnostics_websocket')
-                    nodes = master.getSystemState()
+                    pubs, subs, srvs = master.getSystemState()
                     running_nodes = set()
 
-                    for _, publishers in nodes:
-                        for pub in publishers:
-                            running_nodes.add(pub)
+                    # getSystemState returns three lists of (topic, [node names])
+                    for _, publishers in pubs:
+                        running_nodes.update(publishers)
+                    for _, subscribers in subs:
+                        running_nodes.update(subscribers)
+                    for _, services in srvs:
+                        running_nodes.update(services)
 
                     await websocket.send(json.dumps({"running_nodes": list(running_nodes)}))
 

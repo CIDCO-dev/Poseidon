@@ -3,6 +3,7 @@
 ## 2025-12-02
 - Launch: replace missing `diagnostics_node` with `diagnostics_websocket.py` in Hydrobox/Hydroball/Simulator launch files to fix diagnostics startup errors.
 - diagnostics: add package-path fallback so diagnostics_websocket imports sibling diagnostic modules when run from install space (fix ModuleNotFoundError on diagnostics_test_base).
+- diagnostics: fix `getRunningNodes` handler to unpack publisher/subscriber/service lists correctly (no more "too many values to unpack").
 
 ## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).

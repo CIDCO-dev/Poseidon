@@ -17,6 +17,8 @@
 - install: fixed `ethernet_move_hotspot_rpi4.sh` variable handling (no more escaped `$`/awk errors) and robust interface-name replacement in Hotspot.nmconnection.
 - launch: All Hydrobox profiles now start `wifi_file_transfer_config_node` so Wi‑Fi provisioning is consistent across RPi/Rock and simulator setups.
 - launch: Fixed wifi file transfer node type to `wifi_config_node.py` in all launch profiles/simulator so roslaunch can locate the installed Python node.
+- wifi_file_transfer_config: protect hotspot/non-target interfaces (e.g., wlan1) and force new connections onto `wlan0`; skip deleting hotspot profiles when applying Wi‑Fi config.
+- wifi_file_transfer_config: refuse to apply Wi‑Fi changes if the hotspot interface (default wlan1) is missing and guard against running when the target interface is absent.
 
 ## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).

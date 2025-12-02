@@ -12,6 +12,8 @@ from setting_msg.msg import Setting
 from setting_msg.srv import ConfigurationService, ConfigurationServiceRequest
 
 NM_SYS_CONNS_DIR = "/etc/NetworkManager/system-connections/"
+TARGET_WIFI_IFACE = os.getenv("WIFI_CONFIG_IFACE", "wlan0")
+HOTSPOT_IFACE = os.getenv("WIFI_HOTSPOT_IFACE", "wlan1")
 
 def yes_no(flag: bool) -> str:
     return "yes" if flag else "no"
@@ -149,6 +151,28 @@ class WifiConfigPy:
                 names.append(name)
         return names
 
+    def get_connection_iface(self, name: str) -> str:
+        """Return the interface name bound to the connection, if any."""
+        try:
+            out = self.run(f"nmcli -g connection.interface-name con show '{name}'").stdout
+            return out.strip()
+        except Exception:
+            return ""
+
+    def should_skip_connection(self, name: str) -> bool:
+        """
+        Do not touch hotspot or non-target-interface connections (e.g., wlan1 hotspot).
+        """
+        lower = name.lower()
+        if "hotspot" in lower:
+            return True
+
+        iface = self.get_connection_iface(name)
+        if iface and iface != TARGET_WIFI_IFACE:
+            return True
+
+        return False
+
     def delete_wifi_connection(self, name: str) -> None:
         try:
             self.run(f"sudo nmcli con delete '{name}'")
@@ -160,12 +184,37 @@ class WifiConfigPy:
         Delete all known Wi-Fi connections so only the current config is kept.
         """
         for name in self.list_wifi_connection_names():
+            if self.should_skip_connection(name):
+                continue
             self.delete_wifi_connection(name)
         self.wifi_connections = {}
 
+    def iface_exists(self, iface: str) -> bool:
+        return bool(iface) and os.path.exists(f"/sys/class/net/{iface}")
+
+    def can_apply_wifi_config(self) -> bool:
+        """
+        Apply Wi‑Fi config only when hotspot iface exists (to avoid breaking it)
+        and the target Wi‑Fi iface is present.
+        """
+        if HOTSPOT_IFACE and not self.iface_exists(HOTSPOT_IFACE):
+            rospy.logwarn(
+                "Hotspot interface '%s' missing; skipping Wi‑Fi config to avoid altering hotspot",
+                HOTSPOT_IFACE,
+            )
+            return False
+
+        if not self.iface_exists(TARGET_WIFI_IFACE):
+            rospy.logwarn(
+                "Target Wi‑Fi interface '%s' missing; skipping Wi‑Fi config", TARGET_WIFI_IFACE
+            )
+            return False
+
+        return True
+
     def add_connection_to_nmcli(self, ssid: str, password: str, autoconnect: str) -> None:
         cmd = (
-            f"nmcli connection add type wifi ssid '{ssid}' "
+            f"nmcli connection add type wifi ifname '{TARGET_WIFI_IFACE}' ssid '{ssid}' "
             f"wifi-sec.key-mgmt wpa-psk wifi-sec.psk '{password}' "
             f"autoconnect {autoconnect} con-name '{ssid}'"
         )
@@ -176,10 +225,13 @@ class WifiConfigPy:
 
     def modify_nmcli_connection(self, ssid: str, password: str, autoconnect: str) -> None:
         try:
-            self.run(f"sudo nmcli con modify '{ssid}' wifi-sec.psk '{password}' autoconnect {autoconnect}")
+            self.run(
+                f"sudo nmcli con modify '{ssid}' wifi-sec.psk '{password}' autoconnect {autoconnect} "
+                f"connection.interface-name '{TARGET_WIFI_IFACE}'"
+            )
             # bounce de la connexion
             if self.run(f"sudo nmcli con down '{ssid}'").returncode == 0:
-                self.run(f"sudo nmcli con up '{ssid}'")
+                self.run(f"sudo nmcli con up '{ssid}' ifname '{TARGET_WIFI_IFACE}'")
         except Exception:
             rospy.logerr("Failed to modify/bounce connection '%s'", ssid)
 
@@ -201,6 +253,9 @@ class WifiConfigPy:
 
         if not self.current_ssid:
             rospy.logwarn("wifiSSID empty: nothing to do for now.")
+            return
+
+        if not self.can_apply_wifi_config():
             return
 
         # Purge all previous Wi-Fi connections and recreate only the new one
@@ -234,6 +289,8 @@ class WifiConfigPy:
 
         # Apply once we received the 3 fields (same logic as C++)
         if self.config_callback_counter >= 3:
+            if not self.can_apply_wifi_config():
+                return
             # Clean all Wi-Fi connections and recreate only the received one
             self.purge_wifi_connections()
             self.add_connection_to_nmcli(

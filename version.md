@@ -21,6 +21,7 @@
 - wifi_file_transfer_config: refuse to apply Wi‑Fi changes if the hotspot interface (default wlan1) is missing and guard against running when the target interface is absent.
 - hydroball_data_websocket: use nmcli to populate Wi‑Fi SSID/state, drop iwgetid dependency, and clear SSID when disconnected.
 - Web UI (status): Wi‑Fi row matches other bars (full-width gradient green/red) with SSID + state inline in the header; bar color now follows `wifi.state` up/down.
+- Tests: update statusScript Jest stubs to support `.css()` chaining after Wi‑Fi bar changes.
 
 ## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).

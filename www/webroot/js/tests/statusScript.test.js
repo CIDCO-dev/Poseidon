@@ -18,6 +18,7 @@ function makeElem(id) {
 			textContent: '',
 			widthValue: '',
 			classes: new Set(),
+			css(k, v) { if (k && v !== undefined) { this.style[k] = v; } return this; },
 			parent: () => ({ hide: () => { elements[id].hidden = true; }, show: () => { elements[id].hidden = false; } }),
 			hide() { this.hidden = true; return this; },
 			show() { this.hidden = false; return this; },

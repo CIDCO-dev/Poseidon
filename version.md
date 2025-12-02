@@ -19,6 +19,7 @@
 - launch: Fixed wifi file transfer node type to `wifi_config_node.py` in all launch profiles/simulator so roslaunch can locate the installed Python node.
 - wifi_file_transfer_config: protect hotspot/non-target interfaces (e.g., wlan1) and force new connections onto `wlan0`; skip deleting hotspot profiles when applying Wi‑Fi config.
 - wifi_file_transfer_config: refuse to apply Wi‑Fi changes if the hotspot interface (default wlan1) is missing and guard against running when the target interface is absent.
+- hydroball_data_websocket: use nmcli to populate Wi‑Fi SSID/state, drop iwgetid dependency, and clear SSID when disconnected.
 
 ## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).

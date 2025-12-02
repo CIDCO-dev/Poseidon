@@ -237,21 +237,38 @@ public:
 			wf.close();
 		}
 
-		// Try to get SSID via iwgetid (does not rely on nmcli)
-		FILE* pipe = popen("iwgetid -r 2>/dev/null", "r");
-		if(pipe){
+		// Query nmcli for device state + active connection on wlan0
+		FILE* nmc = popen("nmcli -t -f DEVICE,STATE,CONNECTION dev status | grep '^wlan0:' | head -n1 2>/dev/null", "r");
+		if(nmc){
 			char buf[256] = {0};
-			if(fgets(buf, sizeof(buf), pipe)){
-				wifiSsid = buf;
-				wifiSsid.erase(std::remove(wifiSsid.begin(), wifiSsid.end(), '\n'), wifiSsid.end());
+			if(fgets(buf, sizeof(buf), nmc)){
+				std::string line(buf);
+				line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
+				const auto first = line.find(':');
+				const auto second = line.find(':', first + 1);
+				if(first != std::string::npos && second != std::string::npos){
+					const std::string state = line.substr(first + 1, second - first - 1);
+					const std::string conn = line.substr(second + 1);
+					wifiConnected = (state == "connected" || state == "connected (site)");
+					if(wifiConnected && !conn.empty()){
+						wifiSsid = conn;
+					}
+				}
+				wifiHasData = true; // nmcli responded
 			}
-			pclose(pipe);
+			pclose(nmc);
 		}
 
+		// If still no data, rely on operstate
 		if(!wifiHasData && !wifiState.empty()){
-			// Still publish something even if /proc/net/wireless missing
 			wifiHasData = true;
 		}
+
+		// Clear SSID when not connected
+		if(!wifiConnected){
+			wifiSsid.clear();
+		}
+
 	}
 
 	void convertState2json(const state_controller_msg::State & state, std::string & json) {

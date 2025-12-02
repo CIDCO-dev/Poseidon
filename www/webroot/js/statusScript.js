@@ -142,13 +142,32 @@ function processState(state) {
 	// Wi-Fi status
 	const wifi = state.telemetry.wifi;
 	if (wifi) {
-		const stateText = wifi.state || (wifi.connected ? "connected" : "disconnected");
 		const ssidText = (wifi.ssid && wifi.ssid.length > 0) ? wifi.ssid : "Not connected";
-		$("#wifiStateText").text(stateText);
-		$("#wifiSsidText").text("SSID: " + ssidText);
+		const stateText = wifi.state || (wifi.connected ? "connected" : "disconnected");
+
+		$("#wifiStateText").text(ssidText ? ("SSID: " + ssidText) : "SSID: Not connected");
+
+		const stateEl = $("#wifiSsidText");
+		stateEl.removeClass("text-success text-danger text-muted");
+		if (wifi.connected) {
+			stateEl.addClass("text-success");
+		} else {
+			stateEl.addClass("text-danger");
+		}
+		stateEl.text(stateText);
+
+		const bar = $("#wifiBar");
+		bar.removeClass("bg-success bg-danger bg-secondary");
+		if (wifi.connected) {
+			bar.addClass("bg-success");
+		} else {
+			bar.addClass("bg-danger");
+		}
+		bar.css("width", "100%");
 	} else {
-		$("#wifiStateText").text("N/A");
-		$("#wifiSsidText").text("SSID: N/A");
+		$("#wifiStateText").text("SSID: N/A");
+		$("#wifiSsidText").removeClass("text-success text-danger").addClass("text-muted").text("N/A");
+		$("#wifiBar").removeClass("bg-success bg-danger").addClass("bg-secondary").css("width", "100%");
 	}
 }
 

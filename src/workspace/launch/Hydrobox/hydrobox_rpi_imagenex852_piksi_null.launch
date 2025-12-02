@@ -20,7 +20,7 @@
 
   
 
-<node pkg="wifi_file_transfer_config" type="wifi_file_transfer_config_node" name="wifi_config" output="screen" respawn="true" respawn_delay="1"/>
+<node pkg="wifi_file_transfer_config" type="wifi_config_node.py" name="wifi_config" output="screen" respawn="true" respawn_delay="1"/>
 
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
 

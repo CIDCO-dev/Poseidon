@@ -116,7 +116,7 @@ function processState(state) {
 	if (state.telemetry.vitals[6] === -555) {
         $("#battery").parent().hide();
 		$("#batteryText").parent().hide();
-    } else {
+	} else {
 	var voltageElement = $("#battery");
 	var voltage = state.telemetry.vitals[6];
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
@@ -137,6 +137,18 @@ function processState(state) {
 			$("#battery").width(voltage * 4 + "%");
 	}
 	$("#batteryText").text(state.telemetry.vitals[6] + "V");
+	}
+
+	// Wi-Fi status
+	const wifi = state.telemetry.wifi;
+	if (wifi) {
+		const stateText = wifi.state || (wifi.connected ? "connected" : "disconnected");
+		const ssidText = (wifi.ssid && wifi.ssid.length > 0) ? wifi.ssid : "Not connected";
+		$("#wifiStateText").text(stateText);
+		$("#wifiSsidText").text("SSID: " + ssidText);
+	} else {
+		$("#wifiStateText").text("N/A");
+		$("#wifiSsidText").text("SSID: N/A");
 	}
 }
 

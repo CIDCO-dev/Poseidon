@@ -105,6 +105,7 @@ Launch files commonly pass `configPath` and `loggerPath` to WebSocket/logger nod
 ## Web UI
 - Static assets in `www/webroot` (SB Admin 2, MIT): `index.html`, `status.html`, `settings.html`, `map.html`, etc.
 - WebSocket nodes (`hydroball_*_websocket`) expose configuration, data and files to the UI.
+- Status page now surfaces Wi‑Fi state/SSID (wlan0) from telemetry.
 
 ## Network and Ports (common)
 - Internal API: `apiPort` (8080 default in `config.txt`).
@@ -189,6 +190,7 @@ Core nodes used by main launch profiles, with their primary ROS interfaces.
 - hydroball_data_websocket_node (package `hydroball_data_websocket`)
   - Subscribes: `state` (state_controller_msg/State), `gnss_status` (gnss_status_msg/GnssDiagnostic)
   - Services (client): `get_logging_status`, `toggle_logging`, `get_logging_mode`, `set_logging_mode`
+  - Emits telemetry over WebSocket (port 9002) including `telemetry.wifi` (wlan0 state/connected/ssid from sysfs/proc)
   - Args: `loggerPath` (for exposing recent logs over WS)
 
 - hydroball_files_websocket_node (package `hydroball_files_websocket`)
@@ -198,6 +200,7 @@ Core nodes used by main launch profiles, with their primary ROS interfaces.
 - wifi_file_transfer_config_node (package `wifi_file_transfer_config`)
   - Subscribes: `configuration` (setting_msg/Setting)
   - Services (client): `get_configuration` to fetch `wifiSSID`, `wifiPassword`, `wifiTransferEnabled`
+  - Behavior: purges existing Wi‑Fi profiles and recreates the configured SSID via nmcli (autoconnect toggle)
 
 ### Tests (auto-generated)
 

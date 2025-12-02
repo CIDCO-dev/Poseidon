@@ -1,6 +1,9 @@
 # Version History (English)
 
 ## 2025-12-02
+- Web UI: System Status now shows wlan0 state + SSID using sysfs/proc+iwgetid (no nmcli dependency in telemetry path).
+- hydroball_data_websocket: publish Wi‑Fi status/SSID in telemetry payload (`telemetry.wifi`), sourced from `/sys/class/net/wlan0/operstate` and `/proc/net/wireless`.
+- wifi_file_transfer_config: remove legacy C++ backups; node now purges old Wi‑Fi connections on config change and documentation/comments converted to English.
 - Launch: replace missing `diagnostics_node` with `diagnostics_websocket.py` in Hydrobox/Hydroball/Simulator launch files to fix diagnostics startup errors.
 - diagnostics: add package-path fallback so diagnostics_websocket imports sibling diagnostic modules when run from install space (fix ModuleNotFoundError on diagnostics_test_base).
 - diagnostics: fix `getRunningNodes` handler to unpack publisher/subscriber/service lists correctly (no more "too many values to unpack").

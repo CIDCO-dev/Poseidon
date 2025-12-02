@@ -10,6 +10,9 @@
 #include <istream>
 #include <vector>
 #include <string.h>
+#include <cstdio>
+#include <algorithm>
+#include <fstream>
 #include <boost/lexical_cast.hpp>
 
 #include "ros/ros.h"
@@ -199,6 +202,58 @@ public:
 	return status.response.status;
 	}
 
+	void refreshWifiInfo(){
+		// refresh at most every 5 seconds to avoid hammering the system
+		const double now = ros::Time::now().toSec();
+		if(wifiHasData && (now - lastWifiQuery) < 5.0){
+			return;
+		}
+
+		lastWifiQuery = now;
+		wifiHasData = false;
+		wifiConnected = false;
+		wifiState = "unknown";
+		wifiSsid.clear();
+
+		// Read operstate from sysfs
+		std::ifstream opf("/sys/class/net/wlan0/operstate");
+		if(opf.good()){
+			std::getline(opf, wifiState);
+			opf.close();
+		}
+
+		// Check presence in /proc/net/wireless to guess link availability
+		std::ifstream wf("/proc/net/wireless");
+		if(wf.good()){
+			std::string line;
+			while(std::getline(wf, line)){
+				if(line.find("wlan0:") != std::string::npos){
+					wifiHasData = true;
+					// if there is a line, assume interface is up-ish
+					wifiConnected = (wifiState == "up" || wifiState == "unknown" || wifiState == "dormant");
+					break;
+				}
+			}
+			wf.close();
+		}
+
+		// Try to get SSID via iwgetid (does not rely on nmcli)
+		FILE* pipe = popen("iwgetid -r 2>/dev/null", "r");
+		if(pipe){
+			char buf[256] = {0};
+			if(fgets(buf, sizeof(buf), pipe)){
+				wifiSsid = buf;
+				wifiSsid.erase(std::remove(wifiSsid.begin(), wifiSsid.end(), '\n'), wifiSsid.end());
+			}
+			pclose(pipe);
+		}
+
+		if(!wifiHasData && !wifiState.empty()){
+			// Still publish something even if /proc/net/wireless missing
+			wifiHasData = true;
+		}
+	}
+
 	void convertState2json(const state_controller_msg::State & state, std::string & json) {
 		rapidjson::Document document(rapidjson::kObjectType);
 		rapidjson::Document telemetry(rapidjson::kObjectType);
@@ -304,6 +359,26 @@ public:
 			telemetry.AddMember("status", status, telemetry.GetAllocator());
 		}
 
+		// Wi-Fi info
+		refreshWifiInfo();
+		rapidjson::Value wifi(rapidjson::Type::kObjectType);
+		const std::string ifaceName = "wlan0";
+		rapidjson::Value iface;
+		iface.SetString(ifaceName.c_str(), static_cast<rapidjson::SizeType>(ifaceName.size()), telemetry.GetAllocator());
+		wifi.AddMember("interface", iface, telemetry.GetAllocator());
+
+		rapidjson::Value stateStr;
+		stateStr.SetString(wifiState.c_str(), static_cast<rapidjson::SizeType>(wifiState.size()), telemetry.GetAllocator());
+		wifi.AddMember("state", stateStr, telemetry.GetAllocator());
+		wifi.AddMember("connected", wifiConnected, telemetry.GetAllocator());
+
+		rapidjson::Value ssidVal;
+		ssidVal.SetString(wifiSsid.c_str(), static_cast<rapidjson::SizeType>(wifiSsid.size()), telemetry.GetAllocator());
+		wifi.AddMember("ssid", ssidVal, telemetry.GetAllocator());
+		wifi.AddMember("hasData", wifiHasData, telemetry.GetAllocator());
+
+		telemetry.AddMember("wifi", wifi, telemetry.GetAllocator());
+
 		document.AddMember("telemetry", telemetry, document.GetAllocator());
 		rapidjson::StringBuffer sb;
 		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
@@ -385,6 +460,13 @@ private:
 	ros::ServiceClient getLoggingModeServiceClient;
 	ros::ServiceClient setLoggingModeServiceClient;
 	ros::Subscriber gnssStatusSub;
+
+	// Wi-Fi cache
+	double lastWifiQuery = 0.0;
+	bool wifiHasData = false;
+	bool wifiConnected = false;
+	std::string wifiState = "unknown";
+	std::string wifiSsid;
 
 	
 	tf2_ros::Buffer buffer;

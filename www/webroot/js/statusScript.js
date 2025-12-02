@@ -143,7 +143,9 @@ function processState(state) {
 	const wifi = state.telemetry.wifi;
 	if (wifi) {
 		const ssidText = (wifi.ssid && wifi.ssid.length > 0) ? wifi.ssid : "Not connected";
-		const stateText = wifi.state || (wifi.connected ? "up" : "down");
+		const rawState = (wifi.state || "").toLowerCase();
+		const stateText = rawState || (wifi.connected ? "up" : "down");
+		const stateIsUp = rawState ? (rawState === "up") : wifi.connected;
 
 		// Header: SSID and state inline
 		const headerText = ssidText ? ("SSID: " + ssidText + " - " + stateText) : "SSID: Not connected";
@@ -154,10 +156,10 @@ function processState(state) {
 		stateEl.removeClass("text-success text-danger text-muted").addClass("text-muted");
 		stateEl.text(""); // keep line but no extra label
 
-		// Bar styling matches other bars; color by connected flag only
+		// Bar styling matches other bars; color by state (up/down)
 		const bar = $("#wifiBar");
 		bar.removeClass("bg-success bg-danger bg-secondary bg-gradient-success bg-gradient-danger");
-		if (wifi.connected) {
+		if (stateIsUp) {
 			bar.addClass("bg-gradient-success");
 		} else {
 			bar.addClass("bg-gradient-danger");

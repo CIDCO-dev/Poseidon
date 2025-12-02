@@ -15,6 +15,7 @@
 - diagnostics: install the websocket integration test into the package bin path and skip cleanly when the `websockets` module is missing, so rostest can locate/execute it without false negatives.
 - install: rewrote `install/stages/ethernet_move_hotspot_rpi4.sh` with Unix line endings so the bash shebang runs without `/bin/bash^M` errors.
 - install: fixed `ethernet_move_hotspot_rpi4.sh` variable handling (no more escaped `$`/awk errors) and robust interface-name replacement in Hotspot.nmconnection.
+- launch: All Hydrobox profiles now start `wifi_file_transfer_config_node` so Wi‑Fi provisioning is consistent across RPi/Rock and simulator setups.
 
 ## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).

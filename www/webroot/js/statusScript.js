@@ -149,25 +149,21 @@ function processState(state) {
 
 		const stateEl = $("#wifiSsidText");
 		stateEl.removeClass("text-success text-danger text-muted");
-		if (wifi.connected) {
-			stateEl.addClass("text-success");
-		} else {
-			stateEl.addClass("text-danger");
-		}
-		stateEl.text(stateText);
+		stateEl.addClass("text-muted");
+		stateEl.text(ssidText ? stateText : "Not connected");
 
 		const bar = $("#wifiBar");
-		bar.removeClass("bg-success bg-danger bg-secondary");
+		bar.removeClass("bg-success bg-danger bg-secondary bg-gradient-success bg-gradient-danger");
 		if (wifi.connected) {
-			bar.addClass("bg-success");
+			bar.addClass("bg-gradient-success");
 		} else {
-			bar.addClass("bg-danger");
+			bar.addClass("bg-gradient-danger");
 		}
 		bar.css("width", "100%");
 	} else {
 		$("#wifiStateText").text("SSID: N/A");
 		$("#wifiSsidText").removeClass("text-success text-danger").addClass("text-muted").text("N/A");
-		$("#wifiBar").removeClass("bg-success bg-danger").addClass("bg-secondary").css("width", "100%");
+		$("#wifiBar").removeClass("bg-success bg-danger bg-gradient-success bg-gradient-danger").addClass("bg-secondary").css("width", "100%");
 	}
 }
 

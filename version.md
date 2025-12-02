@@ -20,7 +20,7 @@
 - wifi_file_transfer_config: protect hotspot/non-target interfaces (e.g., wlan1) and force new connections onto `wlan0`; skip deleting hotspot profiles when applying Wi‑Fi config.
 - wifi_file_transfer_config: refuse to apply Wi‑Fi changes if the hotspot interface (default wlan1) is missing and guard against running when the target interface is absent.
 - hydroball_data_websocket: use nmcli to populate Wi‑Fi SSID/state, drop iwgetid dependency, and clear SSID when disconnected.
-- Web UI (status): Wi‑Fi row now uses a 100% progress bar colored green/red for up/down with SSID in the header.
+- Web UI (status): Wi‑Fi row now matches other bars (full-width gradient green/red) with SSID in the header and connection state inline, instead of a separate dot/text block.
 
 ## 2025-12-01
 - diagnostics: added rostest that launches the WebSocket node and validates `updateDiagnostic` response payload (catkin test friendly).

@@ -18,5 +18,6 @@ if(CATKIN_ENABLE_TESTING)
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/tests
   )
 
+  catkin_add_nosetests(tests/test_diagnostics_unit.py)
   add_rostest(tests/diagnostics_websocket.test)
 endif()

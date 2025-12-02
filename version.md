@@ -12,6 +12,7 @@
 - diagnostics: run Internet connectivity first and skip DNS/API checks when connectivity fails to reduce noisy errors.
 - diagnostics: API connection test now uses a configurable timeout (default 2s) to avoid hanging when the API domain is blocked.
 - diagnostics: added unit tests for the diagnostics websocket node (commands, node listing, lifecycle helpers) to cover its behaviors without ROS master dependencies.
+- diagnostics: install the websocket integration test into the package bin path and skip cleanly when the `websockets` module is missing, so rostest can locate/execute it without false negatives.
 - install: rewrote `install/stages/ethernet_move_hotspot_rpi4.sh` with Unix line endings so the bash shebang runs without `/bin/bash^M` errors.
 - install: fixed `ethernet_move_hotspot_rpi4.sh` variable handling (no more escaped `$`/awk errors) and robust interface-name replacement in Hotspot.nmconnection.
 

@@ -6,18 +6,15 @@ import time
 import unittest
 
 try:
-    import pytest
+    import rospy
+    import rostest
+except ImportError as exc:  # pragma: no cover - environment guard
+    raise unittest.SkipTest(f"ROS Python modules are required: {exc}")
+
+try:
+    import websockets
 except ImportError:
-    pytest = None
-
-if pytest:
-    pytest.importorskip("rospy", reason="ROS Python modules are not available")
-    pytest.importorskip("rostest", reason="ROS Python modules are not available")
-    pytest.importorskip("websockets", reason="websockets package is required for this integration test")
-
-import rospy
-import rostest
-import websockets
+    websockets = None
 
 
 WEBSOCKET_URI = "ws://localhost:9099"
@@ -27,6 +24,7 @@ RESPONSE_TIMEOUT = 30.0
 RETRY_DELAY = 0.5
 
 
+@unittest.skipUnless(websockets, "websockets package is required for this integration test")
 class DiagnosticsWebsocketTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

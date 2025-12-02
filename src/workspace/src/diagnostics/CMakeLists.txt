@@ -15,7 +15,7 @@ if(CATKIN_ENABLE_TESTING)
 
   catkin_install_python(PROGRAMS
     tests/test_diagnostics_websocket.py
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/tests
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
 
   catkin_add_nosetests(tests/test_diagnostics_unit.py)

@@ -143,15 +143,18 @@ function processState(state) {
 	const wifi = state.telemetry.wifi;
 	if (wifi) {
 		const ssidText = (wifi.ssid && wifi.ssid.length > 0) ? wifi.ssid : "Not connected";
-		const stateText = wifi.state || (wifi.connected ? "connected" : "disconnected");
+		const stateText = wifi.state || (wifi.connected ? "up" : "down");
 
-		$("#wifiStateText").text(ssidText ? ("SSID: " + ssidText) : "SSID: Not connected");
+		// Header: SSID and state inline
+		const headerText = ssidText ? ("SSID: " + ssidText + " - " + stateText) : "SSID: Not connected";
+		$("#wifiStateText").text(headerText);
 
+		// State text under bar muted
 		const stateEl = $("#wifiSsidText");
-		stateEl.removeClass("text-success text-danger text-muted");
-		stateEl.addClass("text-muted");
-		stateEl.text(ssidText ? stateText : "Not connected");
+		stateEl.removeClass("text-success text-danger text-muted").addClass("text-muted");
+		stateEl.text(""); // keep line but no extra label
 
+		// Bar styling matches other bars; color by connected flag only
 		const bar = $("#wifiBar");
 		bar.removeClass("bg-success bg-danger bg-secondary bg-gradient-success bg-gradient-danger");
 		if (wifi.connected) {
@@ -162,7 +165,7 @@ function processState(state) {
 		bar.css("width", "100%");
 	} else {
 		$("#wifiStateText").text("SSID: N/A");
-		$("#wifiSsidText").removeClass("text-success text-danger").addClass("text-muted").text("N/A");
+		$("#wifiSsidText").removeClass("text-success text-danger").addClass("text-muted").text("");
 		$("#wifiBar").removeClass("bg-success bg-danger bg-gradient-success bg-gradient-danger").addClass("bg-secondary").css("width", "100%");
 	}
 }

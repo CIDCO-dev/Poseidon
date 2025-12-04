@@ -30,7 +30,6 @@ catkin_install_python(
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-## Declare a C++ library
-# add_library(${PROJECT_NAME} src/wifi_config.cpp)
-
-
+if(CATKIN_ENABLE_TESTING)
+  catkin_add_nosetests(tests/test_wifi_config_node.py)
+endif()

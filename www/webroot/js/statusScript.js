@@ -116,7 +116,7 @@ function processState(state) {
 	if (state.telemetry.vitals[6] === -555) {
         $("#battery").parent().hide();
 		$("#batteryText").parent().hide();
-    } else {
+	} else {
 	var voltageElement = $("#battery");
 	var voltage = state.telemetry.vitals[6];
 	voltageElement.removeClass("bg-gradient-success bg-gradient-warning bg-gradient-danger");
@@ -138,12 +138,48 @@ function processState(state) {
 	}
 	$("#batteryText").text(state.telemetry.vitals[6] + "V");
 	}
+
+	// Wi-Fi status
+	const wifi = state.telemetry.wifi;
+	if (wifi) {
+		const ssidText = (wifi.ssid && wifi.ssid.length > 0) ? wifi.ssid : "Not connected";
+		const rawState = (wifi.state || "").toLowerCase();
+		const stateText = rawState || (wifi.connected ? "up" : "down");
+		const stateIsUp = rawState ? (rawState === "up") : wifi.connected;
+
+		// Header: SSID and state inline
+		const headerText = ssidText ? ("SSID: " + ssidText + " - " + stateText) : "SSID: Not connected";
+		$("#wifiStateText").text(headerText);
+
+		// State text under bar muted
+		const stateEl = $("#wifiSsidText");
+		stateEl.removeClass("text-success text-danger text-muted").addClass("text-muted");
+		stateEl.text(""); // keep line but no extra label
+
+		// Bar styling matches other bars; color by state (up/down)
+		const bar = $("#wifiBar");
+		bar.removeClass("bg-success bg-danger bg-secondary bg-gradient-success bg-gradient-danger");
+		if (stateIsUp) {
+			bar.addClass("bg-gradient-success");
+		} else {
+			bar.addClass("bg-gradient-danger");
+		}
+		bar.css("width", "100%");
+	} else {
+		$("#wifiStateText").text("SSID: N/A");
+		$("#wifiSsidText").removeClass("text-success text-danger").addClass("text-muted").text("");
+		$("#wifiBar").removeClass("bg-success bg-danger bg-gradient-success bg-gradient-danger").addClass("bg-secondary").css("width", "100%");
+	}
 }
 
-var socket = new WebSocket("ws://" + window.location.hostname + ":9002");
+var socket = (typeof WebSocket !== "undefined")
+	? new WebSocket("ws://" + window.location.hostname + ":9002")
+	: { send: function () {} };
 
-socket.onmessage = function (event) {
-	var state = JSON.parse(event.data);
-	processState(state);
-	//console.log(state);
+if (socket && socket.onmessage !== undefined) {
+	socket.onmessage = function (event) {
+		var state = JSON.parse(event.data);
+		processState(state);
+		//console.log(state);
+	}
 }

@@ -1,131 +1,27 @@
 # Poseidon
-Hydrographic surveying platform operating system
+Hydrographic surveying platform operating system (ROS Noetic).
 
-NOTE: 
-Clone the repo in /opt for proper use.
-call the installation file located in install/ acording to the environement you have.
+## Getting started (RPi4, Ubuntu 20.04, ROS Noetic)
+- Clone under `/opt`: `sudo chown $USER:$USER /opt && cd /opt && git clone --recursive <repo>`
+- Install: run `install/rpi4-noetic.sh` (RPi4 target).
+- Build: `cd /opt/Poseidon/src/workspace && catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;inertial_sense;velodyne;ins_piksi;velodyne_pointcloud;velodyne_driver;velodyne_laserscan;gnss_mosaic_x5;tf"`
+- Source: `source /opt/ros/noetic/setup.bash` then `source /opt/Poseidon/src/workspace/devel/setup.bash`.
+- Launch simulator: `roslaunch launch/Simulator/dummy_simulator_virtual-machine.launch`, then open the web UI at `http://localhost`.
 
-### Google Cartographer installation
+## Docs
+Full documentation lives in `doc/` (Markdown):
+- `doc/README.md`: overview, build, run, tests
+- `doc/install.md`: installation with dependencies (RPi4, Ubuntu 20.04, ROS Noetic)
+- `doc/nodes.md`: list of ROS nodes
+- `doc/web.md`: list of web UI pages
+- `doc/web/*.md`: per-page details (index, status, diagnostics, data, map, settings, calibration, goal)
+- `doc/nodes/*.md`: per-node details with inputs/outputs/params
 
-On ROS Noetic:
+## Tests
+- C++/Python/ROS: `catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy;lidar_filtering"`
+- JS: `cd www/webroot/js && npm test --coverage`
 
-```
-sudo apt-get install -y python3-wstool python3-rosdep ninja-build stow
-mkdir catkin_ws
-cd catkin_ws
-wstool init src
-wstool merge -t src https://raw.githubusercontent.com/cartographer-project/cartographer_ros/master/cartographer_ros.rosinstall
-wstool update -t src
-```
-according to : https://github.com/cartographer-project/cartographer_ros/issues/1726
-delete line 46 or the line containing`<depend>libabsl-dev</depend>`
-```
-sed -i '46d' filename
-```
-```
-sudo rosdep init
-rosdep update
-rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
-sh src/cartographer/scripts/install_abseil.sh
-catkin_make_isolated --install --use-ninja
-```
-
-### Compile and run Poseidon on virtual machine
-
-Instruction:
-```
-sudo apt install git
-sudo chown $USER:$USER /opt
-cd /opt
-git clone --recursive <poseidon repo>
-```
-Run these scripts:
-- /opt/Poseidon/install/stages/1-base-ros-noetic.sh
-- /opt/Poseidon/install/stages/2-x64.sh
-- /opt/Poseidon/install/stages/3-network.sh
-- /opt/Poseidon/install/stages/4-x64.sh
-- /opt/Poseidon/install/stages/5-finalize.sh
-
-Example :
-```
-sh /opt/Poseidon/install/stages/1-base-ros-noetic.sh
-```
-Source ros environement:
-```
-source /opt/ros/noetic/setup.bash
-```
-
-Optional, automatic sourcing ros environement:
-```
-echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
-```
-Start new terminal or :
-```
-source ~/.bashrc
-```
-
-Changes to build poseidon on virtual machine:
-```
-cd /opt/Poseidon/src/workspace
-catkin_make -j1 -DCATKIN_BLACKLIST_PACKAGES="mavros;mavros_extras;mavros_msgs;test_mavros;libmavconn;raspberrypi_vitals"
-```
-Source poseidon workspace:
-```
-source devel/setup.bash
-```
-Or
-```
-echo "source /opt/Poseidon/src/workspace/devel/setup.bash" >> ~/.bashrc
-```
-Start new terminal or :
-```
-source ~/.bashrc
-```
-
-Launch simulator:
-```
-roslaunch launch/Simulator/dummy_simulator_virtual-machine.launch
-```
-
-Start browser and navigate to localhost or 127.0.0.1
-
-### Unit test
-
-See readme for tests :
-- sonar_nmea_0183_tcp_client
-- gnss_zed_f9p
-
-
-Run tests
-```
-catkin_make run_tests -j1 -DCATKIN_BLACKLIST_PACKAGES="ins_piksi;libmavconn;echoboat_odometry;mavros_msgs;mavros;mavros_extras;test_mavros;gnss_mosaic_x5;imu_bno055;sonar_imagenex852;inertial_sense;raspberrypi_vitals;imu_null;sonar_dummy;gnss_dummy;lidar_filtering"
-```
-
-### Replay Echoboat Rosbag
-In poseidon workspace:
-```
-roslaunch launch/Echoboat/rosbag_replay.launch bag_filename:=rosbag.bag
-```
-
-### Geo-reference Lidar
-In poseidon workspace:
-```
-./devel/lib/logger/lidarGeoreferencer file > outputFile.txt
-```
-Activate filtering:
-```
-./devel/lib/logger/lidarGeoreferencer -f -a -135 -b -45 -d 1 -e 5 file > outputFile.txt
-```
-For help:
-```
-./devel/lib/logger/lidarGeoreferencer
-```
-
-
-### Logging mode
-
-- Always ON : 1
-- Manual : 2
-- Speed based : 3
-
-
+## Tools
+- Rosbag replay: `roslaunch launch/Echoboat/rosbag_replay.launch bag_filename:=rosbag.bag`
+- Lidar georef: `./devel/lib/logger/lidarGeoreferencer -h` (supports filtering options)
+- Logging modes: 1=Always ON, 2=Manual, 3=Speed based

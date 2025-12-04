@@ -46,7 +46,7 @@ generate_messages(
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES inertial_sense_ros
-    CATKIN_DEPENDS roscpp sensor_msgs geometry_msgs
+    CATKIN_DEPENDS roscpp std_msgs message_runtime sensor_msgs geometry_msgs
 )
 
 include_directories(include
@@ -66,10 +66,21 @@ add_dependencies(inertial_sense_ros inertial_sense_generate_messages_cpp)
 add_executable(inertial_sense_node src/inertial_sense_node.cpp)
 target_link_libraries(inertial_sense_node inertial_sense_ros ${catkin_LIBRARIES})
 
+install(TARGETS inertial_sense_ros inertial_sense_node
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+)
+
 
 if(CATKIN_ENABLE_TESTING)
   # test with launch file
   find_package(rostest REQUIRED)
   add_rostest_gtest(test_inertialsense_node tests/inertialsense_node.test tests/test_inertialsense_node.cpp)
-  # target_link_libraries(test_inertialsense_node ...) #what libraries are needed on rpi?
+  target_link_libraries(test_inertialsense_node inertial_sense_ros ${catkin_LIBRARIES})
 endif()

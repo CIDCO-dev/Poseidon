@@ -108,7 +108,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sonar_nmea_0183_tcp_client
   CATKIN_DEPENDS roscpp std_msgs
-  DEPENDS system_lib
 )
 
 ###########
@@ -123,9 +122,10 @@ include_directories(
 )
 
 ## Declare a C++ library
- add_library(${PROJECT_NAME}
-   src/${PROJECT_NAME}.cpp
- )
+add_library(${PROJECT_NAME}
+  src/${PROJECT_NAME}.cpp
+)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -137,6 +137,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(nmea_device_node nodes/device_node.cpp)
  add_executable(nmea_network_node nodes/network_node.cpp)
+ add_dependencies(nmea_device_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(nmea_network_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -190,6 +192,9 @@ include_directories(
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
  )
+ install(TARGETS nmea_device_node nmea_network_node
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
@@ -212,7 +217,6 @@ include_directories(
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
 find_package(rostest REQUIRED)
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
 add_rostest_gtest(test_sonar_nmea_0183_device_client tests/sonar_nmea_0183_test.launch tests/test_sonar_nmea_0183_device_client.cpp)
 target_link_libraries(test_sonar_nmea_0183_device_client sonar_nmea_0183_tcp_client ${sonar_nmea_0183_tcp_client_LIBRARIES})
 add_dependencies(test_sonar_nmea_0183_device_client ${catkin_EXPORTED_TARGETS}) #? ${catkin_LIBRARIES}

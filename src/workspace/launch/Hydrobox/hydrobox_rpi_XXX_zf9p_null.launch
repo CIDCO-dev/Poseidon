@@ -16,6 +16,8 @@
 
 <node pkg="gpsd_client" name="GPS" type="gpsd_client" output="screen" respawn="true" respawn_delay="1" args="$(arg gpsdIp) $(arg gpsdPort)"/>
 
+<node pkg="wifi_file_transfer_config" type="wifi_config_node.py" name="wifi_config" output="screen" respawn="true" respawn_delay="1"/>
+
 <node pkg="raspberrypi_vitals" name="Vitals" type="raspberrypi_vitals_node" output="screen" respawn="true" respawn_delay="1"/>
 
 <node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen" respawn="true" respawn_delay="1"/>
@@ -31,6 +33,6 @@
 
 <node pkg="rosbag" name="record_all" type="record" args="-a -O /home/ubuntu/Poseidon/www/webroot/record/$(arg time_now)_x5_852_all.bag" />
 
-<node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen" respawn_delay="1"/>
+<node pkg="diagnostics" name="Diagnostics" type="diagnostics_websocket.py" output="screen" respawn_delay="1"/>
 
 </launch>

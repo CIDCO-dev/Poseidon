@@ -26,65 +26,74 @@ var quakePoints8 = Array(10);
 currentpolyline = currentpolyline.filter(item => item);
 quakePoints = quakePoints.filter(item => item);
 var oldstate = 0;
-navMap = new L.map("navMap").setView([0, 0], 23);
 var polycolor = "";
-
-
-
-L.control.scale().addTo(navMap);
-var legend = L.control({position: 'bottomright'});
-
-var polynew = new L.polyline([]).addTo(navMap);
-var polyline = new L.polyline([]).addTo(navMap);
+var navMap;
+var polyline;
 var polyLatLngs = [];
-
-var newhotline = new L.hotline([], {}).addTo(navMap);
-var hotlineLayer = new L.hotline([], {}).addTo(navMap);
-var hotlineLayer1 = new L.hotline([], {}).addTo(navMap);
-var hotqp = [];
-
+var hotlineLayer;
 var curentweight = 23;
 var smootf = 5;
+var currentZoom = 10;
 
-var shpfile = new L.Shapefile("map/ne_10m_bathymetry_L_0.zip", {
-  onEachFeature: function (feature, layer) {
-    if (feature.properties) {
-      layer.bindPopup(Object.keys(feature.properties).map(function (k) {
-        return k + ": " + feature.properties[k];
-      }).join("<br />"), {
-        maxHeight: 200
-      });
+if (typeof L !== "undefined" && typeof L.map === "function") {
+  navMap = L.map("navMap").setView([0, 0], 23);
+
+  L.control.scale().addTo(navMap);
+  var legend = L.control({position: 'bottomright'});
+
+  var polynew = new L.polyline([]).addTo(navMap);
+  polyline = new L.polyline([]).addTo(navMap);
+  polyLatLngs = [];
+
+  var newhotline = new L.hotline([], {}).addTo(navMap);
+  hotlineLayer = new L.hotline([], {}).addTo(navMap);
+  var hotlineLayer1 = new L.hotline([], {}).addTo(navMap);
+  var hotqp = [];
+
+  curentweight = 23;
+  smootf = 5;
+
+  var shpfile = new L.Shapefile("map/ne_10m_bathymetry_L_0.zip", {
+    onEachFeature: function (feature, layer) {
+      if (feature.properties) {
+        layer.bindPopup(Object.keys(feature.properties).map(function (k) {
+          return k + ": " + feature.properties[k];
+        }).join("<br />"), {
+          maxHeight: 200
+        });
+      }
     }
+  });
+
+  shpfile.addTo(navMap);
+
+  shpfile.once("data:loaded", function () {
+    console.log("finished loaded shapefile");
+  });
+
+  legend.onAdd = function (navMap) {
+              var div = L.DomUtil.create('div', 'legend');
+              div.innerHTML +=
+                  '<i style="background: blue"></i> Bathymetry<br>' +
+                  '<i style="background: green"></i> Geofence<br>';
+              return div;
+          };
+
+          legend.addTo(navMap);
+
+  var panControl = L.control({position: 'topright'});
+      panControl.onAdd = function (navMap) {
+          var btn = L.DomUtil.create('button', '');
+          btn.innerHTML = 'Auto Pan On';
+          btn.onclick = toggleAutoPan;
+          return btn;
+      };
+      panControl.addTo(navMap);
+
+  if (navMap && navMap.getZoom) {
+    currentZoom = navMap.getZoom();
   }
-});
-
-shpfile.addTo(navMap);
-
-shpfile.once("data:loaded", function () {
-  console.log("finished loaded shapefile");
-});
-
-legend.onAdd = function (navMap) {
-            var div = L.DomUtil.create('div', 'legend');
-            div.innerHTML +=
-                '<i style="background: blue"></i> Bathymetry<br>' +
-                '<i style="background: green"></i> Geofence<br>';
-            return div;
-        };
-
-        legend.addTo(navMap);
-
-var panControl = L.control({position: 'topright'});
-    panControl.onAdd = function (navMap) {
-        var btn = L.DomUtil.create('button', '');
-        btn.innerHTML = 'Auto Pan On';
-        btn.onclick = toggleAutoPan;
-        return btn;
-    };
-    panControl.addTo(navMap);
-
-var currentZoom = navMap.getZoom();
-
+}
 
 function processState(msg) {
   // Assurez-vous que msg et msg.telemetry existent et contiennent les propriétés attendues
@@ -95,7 +104,7 @@ function processState(msg) {
           curentweight = (23 - currentZoom) * 6 + 23;
 
           // Positionne la carte sur la position GPS
-          if (autoPan) {
+          if (autoPan && navMap && navMap.panTo) {
                navMap.panTo([msg.telemetry.position[1], msg.telemetry.position[0]]);
           }
           // Dessine la ligne parcourue
@@ -108,27 +117,29 @@ function processState(msg) {
         
           currentpolyline.push(latlon);
           quakePoints.push(qp);
-          polyline.remove();
-          hotlineLayer.remove();
-          polyline = L.polyline([currentpolyline], { weight: 2, opacity: 1, smoothFactor: smootf, color: 'red' }).addTo(navMap);
-          hotlineLayer = L.hotline(quakePoints, {
-            min: 7,
-            max: 10,
-            palette: {
-                0.0: '#ff0000',
-                0.2: '#ffff00',
-                0.4: '#00ff00',
-                0.6: '#00ffff',
-                0.8: '#0000ff',
-                0.9: '#8000ff',
-                1.0: '#000000'
-            },
-            smoothFactor: smootf,
-            weight: curentweight,
-            outlineColor: '#000000',
-            outlineWidth: 0
-        }).addTo(navMap);
-          polyLatLngs = polyline.getLatLngs();
+          if (polyline && polyline.remove && typeof L !== "undefined") {
+            polyline.remove();
+            hotlineLayer.remove();
+            polyline = L.polyline([currentpolyline], { weight: 2, opacity: 1, smoothFactor: smootf, color: 'red' }).addTo(navMap);
+            hotlineLayer = L.hotline(quakePoints, {
+              min: 7,
+              max: 10,
+              palette: {
+                  0.0: '#ff0000',
+                  0.2: '#ffff00',
+                  0.4: '#00ff00',
+                  0.6: '#00ffff',
+                  0.8: '#0000ff',
+                  0.9: '#8000ff',
+                  1.0: '#000000'
+              },
+              smoothFactor: smootf,
+              weight: curentweight,
+              outlineColor: '#000000',
+              outlineWidth: 0
+          }).addTo(navMap);
+            polyLatLngs = polyline.getLatLngs();
+          }
       }
   } else {
       console.log("Invalid message or missing telemetry data");
@@ -151,6 +162,9 @@ function processConfig(config) {
 
 
 function drawGeofence(wktString) {
+  if (typeof Wkt === "undefined" || !Wkt.Wkt) {
+    return;
+  }
   var wkt = new Wkt.Wkt();
 
   try {
@@ -164,7 +178,9 @@ function drawGeofence(wktString) {
 
       // Ajout à la carte
       geofence.addTo(navMap);
-      navMap.fitBounds(geofence.getBounds());
+      if (navMap && navMap.fitBounds) {
+        navMap.fitBounds(geofence.getBounds());
+      }
   } catch (e) {
       console.error('Error parsing WKT', e);
   }
@@ -190,7 +206,9 @@ function toggleAutoPan() {
 
 function initWebSockets() {
   // Initialisation du WebSocket pour la configuration
-  configSocket = new WebSocket("ws://" + window.location.hostname + ":9004"); // Assurez-vous que le port est correct
+  configSocket = (typeof WebSocket !== "undefined")
+    ? new WebSocket("ws://" + window.location.hostname + ":9004")
+    : { send: function () {} }; // Assurez-vous que le port est correct
   configSocket.onmessage = function (event) {
       var msg = JSON.parse(event.data);
       processConfigMessage(msg);
@@ -200,7 +218,9 @@ function initWebSockets() {
   };
 
   // Initialisation du WebSocket pour la télémétrie
-  telemetrySocket = new WebSocket("ws://" + window.location.hostname + ":9002"); // Assurez-vous que le port est correct
+  telemetrySocket = (typeof WebSocket !== "undefined")
+    ? new WebSocket("ws://" + window.location.hostname + ":9002")
+    : { send: function () {} }; // Assurez-vous que le port est correct
   telemetrySocket.onmessage = function (event) {
       var msg = JSON.parse(event.data);
       if (msg.telemetry) {
@@ -214,4 +234,3 @@ function initWebSockets() {
 
 // Init websocket
 initWebSockets();
-

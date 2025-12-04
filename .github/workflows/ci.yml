@@ -1,0 +1,200 @@
+# GitHub Actions CI for Poseidon (ROS Noetic / Catkin)
+# - Builds and tests the Catkin workspace on the self-hosted ROS Noetic runner (Ubuntu 20.04/Focal)
+# - Publishes JUnit test results and optional coverage output
+# - Keeps configuration minimal and aligned with repository conventions
+
+name: CI (ROS Noetic)
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: [self-hosted, Linux, ARM64]
+
+    env:
+      CATKIN_WS: src/workspace
+      # Adjust blacklist to skip heavy/non-critical packages on CI if needed
+      CATKIN_BLACKLIST_PACKAGES: "mavros;inertial_sense;velodyne;ins_piksi;velodyne_pointcloud;velodyne_driver;velodyne_laserscan;gnss_mosaic_x5;tf"
+
+    steps:
+      - name: Ensure base packages
+        run: |
+          set -eo pipefail
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --no-install-recommends \
+            git ca-certificates \
+            build-essential cmake ccache \
+            python3-pip python3-rosdep \
+            gcovr \
+            ros-noetic-catkin ros-noetic-rostest ros-noetic-rosbash \
+            ros-noetic-diagnostic-updater ros-noetic-angles \
+            ros-noetic-tf2-geometry-msgs \
+            ros-noetic-pcl-ros ros-noetic-pcl-conversions libpcl-dev \
+            ros-noetic-sbg-driver \
+            ros-noetic-roslint ros-noetic-nodelet ros-noetic-dynamic-reconfigure ros-noetic-sensor-msgs \
+            libopencv-dev libexiv2-dev libwebsocketpp-dev \
+            rapidjson-dev libssl-dev libgps-dev libboost-system-dev \
+            python3-lxml libxml2-dev libxslt1-dev \
+            lcov
+          sudo -H python3 -m pip install --no-cache-dir catkin-lint flake8 coverage pytest
+          if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
+            sudo rosdep init
+          fi
+          rosdep update
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Resolve ROS package dependencies
+        run: |
+          set -eo pipefail
+          source /opt/ros/noetic/setup.bash
+          rosdep install --rosdistro noetic --from-paths "$CATKIN_WS/src" --ignore-src -r -y
+
+      - name: Lint (Python and Catkin)
+        run: |
+          set -eo pipefail
+          # Keep lint non-blocking initially; tighten later as needed
+          flake8 georef || true
+          catkin_lint "$CATKIN_WS/src" || true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: JavaScript tests (www/webroot/js)
+        run: |
+          set -eo pipefail
+          JS_DIR="www/webroot/js"
+          if [ ! -f "$JS_DIR/package.json" ]; then
+            echo "No package.json in $JS_DIR; skipping JS tests."
+            exit 0
+          fi
+          cd "$JS_DIR"
+          npm ci || npm install
+          npm test --if-present
+
+      - name: Configure ccache
+        run: |
+          set -eo pipefail
+          export CCACHE_DIR="$HOME/.ccache"
+          ccache -M 1G
+
+      - name: Build (Debug + sanitizers)
+        env:
+          CC: "ccache gcc"
+          CXX: "ccache g++"
+        run: |
+          set -eo pipefail
+          source /opt/ros/noetic/setup.bash
+          cd "$CATKIN_WS"
+          catkin_make \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES" \
+            -DCMAKE_CXX_FLAGS="-O0 -g --coverage" \
+            -DCMAKE_EXE_LINKER_FLAGS="--coverage"
+
+      - name: Run tests
+        run: |
+          set -eo pipefail
+          source /opt/ros/noetic/setup.bash
+          cd "$CATKIN_WS"
+          catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES"
+          # Report results but do not fail the whole job on first adoption
+          catkin_test_results build/test_results || true
+
+      - name: C++ coverage report (gcovr)
+        run: |
+          set -eo pipefail
+          # gcovr 4.x cannot emit XML and HTML in one invocation; split to avoid skipping HTML output.
+          gcovr -r "$CATKIN_WS/src" "$CATKIN_WS" --xml -o coverage-cpp.xml || true
+          gcovr -r "$CATKIN_WS/src" "$CATKIN_WS" --html --html-details -o coverage-cpp.html || true
+
+      - name: Python coverage
+        run: |
+          set -eo pipefail
+          cd "$GITHUB_WORKSPACE"
+          coverage run -m pytest src/workspace/src || true
+          coverage xml -o coverage-python.xml || true
+          coverage html -d coverage-python || true
+
+      - name: Upload JS coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-js
+          path: www/webroot/js/coverage
+          if-no-files-found: ignore
+
+      - name: Upload JUnit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-results
+          path: |
+            src/workspace/build/test_results
+          if-no-files-found: ignore
+
+      - name: Upload C++ coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-cpp
+          path: |
+            coverage-cpp.xml
+            coverage-cpp.html
+          if-no-files-found: ignore
+
+      - name: Upload Python coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-python
+          path: |
+            coverage-python.xml
+            coverage-python
+          if-no-files-found: ignore
+
+      - name: Collect C++ coverage (optional)
+        run: |
+          set -eo pipefail
+          # Try to collect coverage; ignore failures if toolchain is not configured for it
+          lcov --directory . --capture --output-file coverage.info || true
+          lcov --remove coverage.info '/usr/*' '*/devel/*' '*/opt/ros/*' --output-file coverage.info || true
+        continue-on-error: true
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage.info
+          if-no-files-found: ignore
+
+      - name: Coverage summary (CPP/Python/JS)
+        if: always()
+        run: |
+          set -eo pipefail
+          python3 .github/workflows/scripts/coverage_summary.py
+
+    # Self-hosted runner notes:
+    # - Runner must be registered on the repository/org with labels: self-hosted, Linux, ARM64.
+    # - Machine should run Ubuntu 20.04 with ROS Noetic installed in /opt/ros/noetic.
+    # - Ensure runner user has passwordless sudo for apt/rosdep during the workflow.

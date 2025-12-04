@@ -35,6 +35,9 @@ LoggerBase::LoggerBase(std::string & outputFolder):outputFolder(outputFolder), t
 		ROS_ERROR_STREAM("No Gnss protocol file extention defined, defaulting to .gps");
 		this->fileExtensionForGpsDatagram = ".gps";
 	}
+
+	// Testing/CI hook: allow toggling without GPS bootstrap when explicitly enabled
+	node.param("/logger/allow_toggle_without_gps", allowToggleWithoutGps, false);
 	
 	updateLogRotationInterval();
 	updateApiTransferConfig();
@@ -286,6 +289,10 @@ bool LoggerBase::getLoggingStatus(logger_service::GetLoggingStatus::Request & re
 
 bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request, logger_service::ToggleLogging::Response & response){
 
+	if(allowToggleWithoutGps && !bootstrappedGnssTime){
+		bootstrappedGnssTime = true;
+	}
+
 	if(bootstrappedGnssTime){
 		mtx.lock();
 		if(!loggerEnabled && request.loggingEnabled && hddFreeSpaceOK){
@@ -319,7 +326,6 @@ bool LoggerBase::toggleLogging(logger_service::ToggleLogging::Request & request,
 		return true;
 	}
 	else{
-		ROS_WARN("Cannot toggle logger because no gpsfix");
 		return false;
 	}
 }
@@ -534,28 +540,31 @@ void LoggerBase::vitalsCallback(const raspberrypi_vitals_msg::sysinfo& vitals){
 void LoggerBase::transfer(){
 
 
-int total = 0;
-for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
-    if (entry.is_regular_file() && entry.path().extension() == ".zip")
-        ++total;
-}
+	int total = 0;
+	for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
+		if (entry.is_regular_file() && entry.path().extension() == ".zip") ++total;
+	}
 
-int count = 0;
-for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
-    if (entry.is_regular_file() && entry.path().extension() == ".zip") {
-        std::string name = entry.path().filename().string();
-        if (transferStatusCallback)
-            transferStatusCallback("Transfer of " + name, ++count, total);
+	int count = 0;
+	for (const auto& entry : std::filesystem::directory_iterator{outputFolder}) {
+		if (entry.is_regular_file() && entry.path().extension() == ".zip") {
+			std::string name = entry.path().filename().string();
+			if (transferStatusCallback){
+				transferStatusCallback("Transfer of " + name, ++count, total);
 
-        std::string base64Zip = zip_to_base64(entry.path());
-        std::string json = create_json_str(base64Zip);
-        bool ok = send_job(json);
+				std::string base64Zip = zip_to_base64(entry.path());
+				std::string json = create_json_str(base64Zip);
+				bool ok = send_job(json);
 
-        if (!ok) break;
-
-        std::filesystem::remove(entry.path());
-    }
-}
+				if (ok){
+					std::filesystem::remove(entry.path());
+				}
+				else{
+					break;
+				}
+			}
+		}
+	}
 
 }
 
@@ -589,19 +598,16 @@ std::string LoggerBase::create_json_str(std::string &base64Zip){
 	d.SetObject();
 
 	rapidjson::Value key;
-	char buff[this->apiKey.size()+1];
-	int len = sprintf(buff, "%s", this->apiKey.c_str());
-	key.SetString(buff, len, d.GetAllocator());
+	key.SetString(this->apiKey.c_str(), this->apiKey.size(), d.GetAllocator());
 	d.AddMember("apiKey", key, d.GetAllocator());
 	
 	rapidjson::Value jobType("Hydroball20");
 	d.AddMember("jobType", jobType, d.GetAllocator());
 	
 	rapidjson::Value fileData;
-	char* buffer = new char [base64Zip.size()+1];
-	len = sprintf(buffer, "%s", base64Zip.c_str());
-	fileData.SetString(buffer, len, d.GetAllocator());
-	delete buffer;
+	fileData.SetString(base64Zip.c_str(),
+	                   static_cast<rapidjson::SizeType>(base64Zip.size()),
+	                   d.GetAllocator());
 	d.AddMember("fileData", fileData, d.GetAllocator());
 	
 	rapidjson::StringBuffer sb;
@@ -830,5 +836,3 @@ void LoggerBase::reset_gnss_timer(){
 		noGnssTimer.stop();
 		noGnssTimer = node.createTimer(ros::Duration(1.0), &LoggerBase::gnss_timer_callback, this);
 }
-
-

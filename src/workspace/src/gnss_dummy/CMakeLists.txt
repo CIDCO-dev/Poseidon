@@ -106,7 +106,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp std_msgs
-  DEPENDS system_lib
 )
 
 ###########
@@ -201,10 +200,10 @@ include_directories(
 
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_gnss_dummy tests/test_gnss_dummy.cpp)
-target_link_libraries(test_gnss_dummy gnss_dummy  ${gnss_dummy_LIBRARIES})
-add_dependencies(test_gnss_dummy ${catkin_EXPORTED_TARGETS})
-
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_gnss_dummy tests/gnss_dummy.test tests/test_gnss_dummy.cpp)
+  target_link_libraries(test_gnss_dummy gnss_dummy ${catkin_LIBRARIES})
+  add_dependencies(test_gnss_dummy ${catkin_EXPORTED_TARGETS})
 endif()
 
 
@@ -213,4 +212,3 @@ endif()
 
 #add_executable(gnss_dummy src/gnss_dummy.cpp)
 #target_link_libraries(gnss_dummy ${catkin_LIBRARIES})
-

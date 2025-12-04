@@ -29,6 +29,7 @@
 
 #include <thread>
 #include <chrono>
+#include <cstdint>
 
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
@@ -58,10 +59,11 @@ public:
     static constexpr double test_freeram = 3.0;
     static constexpr double test_freehdd = 4.0;
     static constexpr double test_uptime = 5.0;
-    static constexpr double test_vbat = 6.0;
-    static constexpr double test_rh = 7.0;
-    static constexpr double test_temp = 8.0;
-    static constexpr double test_psi = 9.0;
+    static constexpr double test_temperature = 6.0;
+    static constexpr double test_voltage = 7.0;
+    static constexpr double test_humidity = 8.0;
+    static constexpr int test_ledstate = 9;
+    static constexpr const char * test_status = "Nominal";
 
     double epsilon = 1e-12;
 
@@ -126,10 +128,17 @@ public:
                 ASSERT_NEAR(test_freeram, vitals[2].GetDouble(), epsilon) << "client didn't receive expected freeram";
                 ASSERT_NEAR(test_freehdd, vitals[3].GetDouble(), epsilon) << "client didn't receive expected freehdd";
                 ASSERT_NEAR(test_uptime, vitals[4].GetDouble(), epsilon) << "client didn't receive expected uptime";
-                ASSERT_NEAR(test_vbat, vitals[5].GetDouble(), epsilon) << "client didn't receive expected vbat";
-                ASSERT_NEAR(test_rh, vitals[6].GetDouble(), epsilon) << "client didn't receive expected rh";
-                ASSERT_NEAR(test_temp, vitals[7].GetDouble(), epsilon) << "client didn't receive expected temp";
-                ASSERT_NEAR(test_psi, vitals[8].GetDouble(), epsilon) << "client didn't receive expected psi";
+                ASSERT_NEAR(test_temperature, vitals[5].GetDouble(), epsilon) << "client didn't receive expected temperature";
+                ASSERT_NEAR(test_voltage, vitals[6].GetDouble(), epsilon) << "client didn't receive expected voltage";
+                ASSERT_NEAR(test_humidity, vitals[7].GetDouble(), epsilon) << "client didn't receive expected humidity";
+                ASSERT_EQ(test_ledstate, vitals[8].GetInt()) << "client didn't receive expected ledstate";
+            }
+
+            if(! telemetry.HasMember("status")) {
+                ASSERT_TRUE(false) << "Message does not contain status";
+            } else {
+                ASSERT_TRUE(telemetry["status"].IsString()) << "status is not a string";
+                ASSERT_STREQ(test_status, telemetry["status"].GetString()) << "client didn't receive expected status";
             }
         }
     }
@@ -139,6 +148,23 @@ public:
     }
 
 };
+
+constexpr double HydroBallDataWebSocketTest::testLongitude;
+constexpr double HydroBallDataWebSocketTest::testLatitude;
+constexpr double HydroBallDataWebSocketTest::testRoll;
+constexpr double HydroBallDataWebSocketTest::testPitch;
+constexpr double HydroBallDataWebSocketTest::testHeading;
+constexpr double HydroBallDataWebSocketTest::testDepth;
+constexpr double HydroBallDataWebSocketTest::test_cputemp;
+constexpr double HydroBallDataWebSocketTest::test_cpuload;
+constexpr double HydroBallDataWebSocketTest::test_freeram;
+constexpr double HydroBallDataWebSocketTest::test_freehdd;
+constexpr double HydroBallDataWebSocketTest::test_uptime;
+constexpr double HydroBallDataWebSocketTest::test_temperature;
+constexpr double HydroBallDataWebSocketTest::test_voltage;
+constexpr double HydroBallDataWebSocketTest::test_humidity;
+constexpr int HydroBallDataWebSocketTest::test_ledstate;
+constexpr const char * HydroBallDataWebSocketTest::test_status;
 
 
 TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
@@ -240,10 +266,11 @@ TEST(DataWebsocketTestSuite, testCaseSubscriberReceivedWhatIsPublished) {
         state.vitals.freeram = HydroBallDataWebSocketTest::test_freeram;
         state.vitals.freehdd = HydroBallDataWebSocketTest::test_freehdd;
         state.vitals.uptime = HydroBallDataWebSocketTest::test_uptime;
-        state.vitals.vbat = HydroBallDataWebSocketTest::test_vbat;
-        state.vitals.rh = HydroBallDataWebSocketTest::test_rh;
-        state.vitals.temp = HydroBallDataWebSocketTest::test_temp;
-        state.vitals.psi = HydroBallDataWebSocketTest::test_psi;
+        state.vitals.temperature = HydroBallDataWebSocketTest::test_temperature;
+        state.vitals.voltage = HydroBallDataWebSocketTest::test_voltage;
+        state.vitals.humidity = HydroBallDataWebSocketTest::test_humidity;
+        state.vitals.ledstate = static_cast<int8_t>(HydroBallDataWebSocketTest::test_ledstate);
+        state.vitals.status = HydroBallDataWebSocketTest::test_status;
 
 
 

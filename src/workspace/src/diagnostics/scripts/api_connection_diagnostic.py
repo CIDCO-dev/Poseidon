@@ -13,11 +13,12 @@ def trim_spaces(s):
 
 
 class ApiConnectionDiagnostic(DiagnosticsTest):
-    def __init__(self):
+    def __init__(self, timeout_s=2.0):
         super().__init__()
         self.name = "API Connection"
         self.host = ""
         self.port = "8080"
+        self.timeout_s = timeout_s
         self.node = rospy
         self.client = rospy.ServiceProxy('get_configuration', ConfigurationService)
 
@@ -64,7 +65,7 @@ class ApiConnectionDiagnostic(DiagnosticsTest):
         url = f"http://{self.host}:{self.port}/"
 
         try:
-            r = requests.get(url, timeout=2)
+            r = requests.get(url, timeout=self.timeout_s)
             if r.status_code == 200:
                 status.level = DiagnosticStatus.OK
                 status.message = f"API reachable at {url}"

@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   message_generation
+  i2c_controller_service
 )
 
 ## System dependencies are found with CMake's conventions
@@ -109,7 +110,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES logger_service
-  CATKIN_DEPENDS roscpp std_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs message_runtime i2c_controller_service
 #  DEPENDS system_lib
 )
 
@@ -163,10 +164,10 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+catkin_install_python(PROGRAMS
+  tests/mock_i2c_controller_service.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
@@ -202,8 +203,6 @@ include_directories(
 
 if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
-    find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
     add_rostest_gtest(test_logger_service_node tests/logger_service_node_test.launch tests/test_logger_service_node.cpp)
     target_link_libraries(test_logger_service_node ${catkin_LIBRARIES})
 endif()
-

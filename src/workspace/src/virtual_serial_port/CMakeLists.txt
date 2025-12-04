@@ -112,6 +112,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(${catkin_INCLUDE_DIRS})
+include_directories(include)
 
 ## Declare a C++ library
 #add_library(${PROJECT_NAME}
@@ -172,11 +173,9 @@ include_directories(${catkin_INCLUDE_DIRS})
 # )
 
 ## Mark cpp header files for installation
- install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
-   PATTERN ".svn" EXCLUDE
- )
+install(FILES include/virtual_serial_port.hpp
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

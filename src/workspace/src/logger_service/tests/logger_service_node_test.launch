@@ -1,11 +1,19 @@
 <launch>
 
 	<arg name="loggerPath" value="/home/ubuntu/Poseidon/www/webroot/record/"/>
+	<arg name="configPath" default="$(find setting_msg)/tests/getConfigurationTestConfig.txt"/>
+
+	<param name="/logger/fileExtensionForSonarDatagram" value=".son"/>
+	<param name="/logger/fileExtensionForGpsDatagram" value=".gps"/>
+	<param name="/logger/allow_toggle_without_gps" value="true"/>
 
 	<!-- the node launching order matters -->
+	<node pkg="logger_service" name="mock_i2c_controller_service" type="mock_i2c_controller_service.py" output="screen"/>
+	<node pkg="hydroball_config_websocket" name="hydroball_config_websocket" type="hydroball_config_websocket_node" args="$(arg configPath)" output="screen"/>
+
 	<node pkg="gnss_dummy" name="GNSS" type="gnss_dummy_node" output="screen" /> 
 	
-	<node pkg="logger_text" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
+	<node pkg="logger" name="logger_text" type="logger_text_node" output="screen" args="$(arg loggerPath)"/>
 	
 	<node pkg="state_controller" name="state_controller" type="state_controller_node" output="screen"/>
 	

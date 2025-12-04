@@ -17,6 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   state_controller
   setting_msg
+  state_controller_msg
+  geometry_msgs
   tf2
   tf2_ros
   tf2_geometry_msgs
@@ -114,7 +116,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES hydroball_config_websocket
   CATKIN_DEPENDS roscpp std_msgs setting_msg geometry_msgs state_controller_msg tf2 tf2_ros tf2_geometry_msgs
-  DEPENDS system_lib
 )
 
 ###########
@@ -152,7 +153,7 @@ add_executable(${PROJECT_NAME}_node nodes/hydroball_config_websocket_node.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
@@ -189,6 +190,9 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
  )
+ install(TARGETS ${PROJECT_NAME}_node
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header Files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
@@ -214,15 +218,11 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 if(CATKIN_ENABLE_TESTING)
-#find_package(rostest REQUIRED)
-#find_package(catkin REQUIRED COMPONENTS roscpp std_msgs )
-add_rostest_gtest(test_hydroball_config_websocket tests/config_websocket.launch tests/test_hydroball_config_websocket.cpp)
-target_link_libraries(test_hydroball_config_websocket hydroball_config_websocket  ${hydroball_config_websocket_LIBRARIES})
-add_dependencies(test_hydroball_config_websocket ${catkin_EXPORTED_TARGETS})
-
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_hydroball_config_websocket tests/config_websocket.launch tests/test_hydroball_config_websocket.cpp)
+  target_link_libraries(test_hydroball_config_websocket hydroball_config_websocket ${catkin_LIBRARIES})
+  add_dependencies(test_hydroball_config_websocket ${catkin_EXPORTED_TARGETS})
 endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-

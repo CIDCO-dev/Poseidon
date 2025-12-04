@@ -1,6 +1,9 @@
 var socket;
+if (typeof $ !== "undefined") {
 $(document).ready(function () {
-    socket = new WebSocket("ws://" + window.location.hostname + ":9002");
+    socket = (typeof WebSocket !== "undefined")
+        ? new WebSocket("ws://" + window.location.hostname + ":9002")
+        : { send: function () {} };
 
     socket.onmessage = function (event) {
         //console.log(event.data);
@@ -31,18 +34,21 @@ $(document).ready(function () {
         console.log('Close reason:', event.reason);
     }
 });
+}
 
 function getLoggingInfo() {
     var cmd = { command: "getLoggingInfo" };
-    socket.send(JSON.stringify(cmd));
+    if (socket && socket.send) {
+        socket.send(JSON.stringify(cmd));
+    }
 }
 
 function processRecordingInfo(isLogging, mode) {
     //console.log(isLogging);
     //console.log(mode);
-    if (mode == "1") {
+	if (mode == "1") {
         hideLoggingButton();
-        $("#modeWidget").text("always ON"); text - success
+        $("#modeWidget").text("always ON"); // text - success
     }
     else if (mode == "2") {
         $("#modeWidget").text("Manual");
@@ -64,10 +70,14 @@ function processRecordingInfo(isLogging, mode) {
 function toggleRecording() {
     if ($("#RecIcon").hasClass("text-success")) {
         var cmd = { command: "startLogging" };
-        socket.send(JSON.stringify(cmd));
+        if (socket && socket.send) {
+            socket.send(JSON.stringify(cmd));
+        }
     } else if ($("#RecIcon").hasClass("text-danger")) {
         var cmd = { command: "stopLogging" };
-        socket.send(JSON.stringify(cmd));
+        if (socket && socket.send) {
+            socket.send(JSON.stringify(cmd));
+        }
     }
 }
 

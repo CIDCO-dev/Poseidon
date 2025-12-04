@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="diagnostics" type="diagnostics_websocket.py" name="diagnostics_websocket" output="screen"/>
+  <test test-name="diagnostics_websocket_integration" pkg="diagnostics" type="test_diagnostics_websocket.py" time-limit="60"/>
+</launch>

@@ -30,8 +30,8 @@ int main(int argc,char** argv){
 		if(
 			port > 0 && port <= 65535
 		){
-			//TODO: get useDepth/usePOsition/useAttitude from parameters
-			NetworkNmeaClient nmea(argv[1],argv[2],true,true,true);
+			//TODO: get useDepth/usePosition/useAttitude from parameters
+			NetworkNmeaClient nmea(addr, std::to_string(port), true, true, true);
 			nmea.run();
 		}
 		else{
@@ -42,4 +42,3 @@ int main(int argc,char** argv){
 		std::cerr << "Bad IP address: " << addr << std::endl;
 	}
 }
-

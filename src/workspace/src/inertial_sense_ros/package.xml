@@ -14,5 +14,12 @@
   <depend>geometry_msgs</depend>
   <depend>message_generation</depend>
   <depend>tf</depend>
+  <build_depend>std_msgs</build_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <build_depend>message_runtime</build_depend>
+  <build_export_depend>message_runtime</build_export_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <test_depend>rostest</test_depend>
   
 </package>

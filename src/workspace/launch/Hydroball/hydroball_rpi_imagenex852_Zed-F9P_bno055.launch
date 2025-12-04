@@ -11,6 +11,9 @@
 
 <arg name="boardVersion" value="2.1"/>
 
+<arg name="trigger_mode" default="manual"/><!-- auto | manual -->
+<arg name="manual_ping_rate" default="2.0"/>     <!-- pings par seconde en mode manual -->
+
 <node pkg="power_control" type="main.py" name="Pwr_Ctrl" output="screen" respawn="true" respawn_delay="1"/>
 
 <node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" args="$(arg boardVersion)" respawn="true" respawn_delay="1"/>
@@ -28,8 +31,11 @@
 <node pkg="gnss_zed_f9p" name="gnss_zed_f9p" type="gnss_zed_f9p_node" output="screen" respawn="true" respawn_delay="1" args="$(arg loggerPath) $(arg gnssPortPath)"/>
 
 <!--<node pkg="sonar_imagenex852" type="main.py" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>-->
-<node pkg="sonar_imagenex852_c" type="sonar_imagenex852_c_node" name="Sonar" output="screen" respawn="true" respawn_delay="1"/>
-
+<node pkg="sonar_imagenex852_c" type="sonar_imagenex852_c_node" name="Sonar_Imagenex" output="screen" respawn="true" respawn_delay="1">
+        <param name="trigger_mode" value="$(arg trigger_mode)"/>
+        <param name="manual_ping_rate" value="$(arg manual_ping_rate)"/>
+        <param name="data_points" value="25"/>
+        </node>
 
 <node pkg="power_management" name="power_management" type="power_management_node" output="screen"/>
 
@@ -45,7 +51,7 @@
 
 <node pkg="hydroball_files_websocket" name="hydroball_files_websocket" type="hydroball_files_websocket_node" args="$(arg loggerPath)" respawn="true" respawn_delay="1"/>
 
-<node pkg="diagnostics" name="Diagnostics" type="diagnostics_node" output="screen" respawn_delay="1"/>
+<node pkg="diagnostics" name="Diagnostics" type="diagnostics_websocket.py" output="screen" respawn_delay="1"/>
 
 <node pkg="logger" name="logger" type="logger_text_node" output="screen" args="$(arg loggerPath)" respawn="true" respawn_delay="1">
 <!--	file extension cannot be numbers only -> rosparam will think its a number instead of a string-->

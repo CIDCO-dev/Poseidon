@@ -113,7 +113,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES state_controller
   CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_runtime raspberrypi_vitals_msg state_controller_msg
-  DEPENDS system_lib
 )
 
 ###########
@@ -131,6 +130,7 @@ include_directories(
  add_library(${PROJECT_NAME}
    src/state_controller.cpp
  )
+ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -141,6 +141,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(${PROJECT_NAME}_node nodes/state_controller_node.cpp)
+ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -187,6 +188,9 @@ include_directories(
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
  )
+ install(TARGETS ${PROJECT_NAME}_node
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
@@ -209,12 +213,7 @@ include_directories(
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
-    find_package(catkin REQUIRED COMPONENTS
-      roscpp
-      std_msgs
-    )
 
     add_rostest_gtest(test_get_state_service tests/get_state_service_test.launch tests/test_get_state_service.cpp)
     target_link_libraries(test_get_state_service ${catkin_LIBRARIES})
 endif()
-

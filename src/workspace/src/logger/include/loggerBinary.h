@@ -7,11 +7,11 @@ class LoggerBinary : public LoggerBase{
 	public:
 		LoggerBinary(std::string & loggingPath);
 		~LoggerBinary();
+		void finalize()override;
 		
 	private:
 		/* log management methods */
 		void init()override;
-		void finalize()override;
 		void rotate()override;
 		void saveSpeed(const nav_msgs::Odometry& speed) override;
 		void saveVitals(const raspberrypi_vitals_msg::sysinfo& vitals) override;

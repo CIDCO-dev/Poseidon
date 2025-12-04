@@ -1,0 +1,34 @@
+/**
+ * Tests for calibrationScript.js
+ */
+
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+const { runInstrumented } = require('./helpers/coverage');
+
+const sent = [];
+global.WebSocket = function () { return { send: (msg) => sent.push(msg) }; };
+global.window = { location: { hostname: 'localhost' } };
+
+function loadScript() {
+	const code = fs.readFileSync(path.join(__dirname, '..', 'calibrationScript.js'), 'utf8');
+	const sandbox = {
+		...global,
+		document: global.document,
+		window: global.window,
+		WebSocket: global.WebSocket,
+		console
+	};
+	const context = vm.createContext(sandbox);
+	runInstrumented(code, 'calibrationScript.js', context);
+	return context;
+}
+
+describe('calibrationScript', () => {
+	test('sendZeroImu sends correct command', () => {
+		const ctx = loadScript();
+		ctx.sendZeroImu();
+		expect(sent.pop()).toBe(JSON.stringify({ command: 'zeroImu' }));
+	});
+});

@@ -54,9 +54,11 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 ############################
 #      Hydroball    #
 ############################
+# Hydroball with IMAGENEX
 #roslaunch /opt/Poseidon/src/workspace/launch/Hydroball/hydroball_rpi_imagenex852_Zed-F9P_bno055.launch
 
-
+#Hydroball with Impact Subsea ISA500
+#roslaunch /opt/Poseidon/src/workspace/launch/Hydroball/hydroball_rpi_isa500_Zed-F9P_bno055.launch
 
 ############################
 #      Hydroblock  Rock    #

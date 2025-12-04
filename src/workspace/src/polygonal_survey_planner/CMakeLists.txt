@@ -7,5 +7,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
+catkin_package(
+  CATKIN_DEPENDS rospy std_msgs
+)
+
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

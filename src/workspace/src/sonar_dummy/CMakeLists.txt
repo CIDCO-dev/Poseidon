@@ -108,7 +108,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sonar_dummy
   CATKIN_DEPENDS roscpp std_msgs setting_msg
-  DEPENDS system_lib
 )
 
 ###########
@@ -130,7 +129,7 @@ include_directories(
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -145,7 +144,7 @@ include_directories(
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
@@ -207,11 +206,10 @@ include_directories(
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 if(CATKIN_ENABLE_TESTING)
-catkin_add_gtest(test_${PROJECT_NAME} tests/test_sonar_dummy.cpp)
-target_link_libraries(test_${PROJECT_NAME} ${PROJECT_NAME}  ${sonar_dummy_LIBRARIES})
-add_dependencies(test_${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-
-
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_${PROJECT_NAME} tests/sonar_dummy.test tests/test_sonar_dummy.cpp)
+  target_link_libraries(test_${PROJECT_NAME} ${PROJECT_NAME}  ${sonar_dummy_LIBRARIES})
+  add_dependencies(test_${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 endif()
 
 

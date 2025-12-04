@@ -5,7 +5,7 @@ var linklist = Array();
 var dataArray = [];
 var olddataln = 0;
 var state;
-let publishModalInstance = null;
+var publishModalInstance = (typeof publishModalInstance !== "undefined") ? publishModalInstance : null;
 
 
 
@@ -111,36 +111,42 @@ function selectall() {
 //******************************
 //Periodically poll for new files
 //******************************
-time = setInterval(function (list) {
-  socket.send('{"f-list":"fileslist"}');
-  setTimeout(list, 500);
-}, 500);
+if (socket && socket.send) {
+  time = setInterval(function (list) {
+    socket.send('{"f-list":"fileslist"}');
+    setTimeout(list, 500);
+  }, 500);
+}
 
 //******************************
 //Open websocket
 //******************************
 
-var socket = new WebSocket("ws://" + window.location.hostname + ":9003");
-socket.onmessage = function (event) {
-  try {
-    const message = JSON.parse(event.data);
+var socket = (typeof WebSocket !== "undefined")
+  ? new WebSocket("ws://" + window.location.hostname + ":9003")
+  : { send: function () {} };
+if (socket && socket.onmessage !== undefined) {
+	socket.onmessage = function (event) {
+	  try {
+		const message = JSON.parse(event.data);
 
-    // Traitement publication
-    if (message.publishstatus) {
-      updatePublishStatus(message.publishstatus);
-      if (message.done === true) {
-        document.getElementById('publishOkButton').disabled = false;
-      }
-      return;
-    }
+		// Traitement publication
+		if (message.publishstatus) {
+		  updatePublishStatus(message.publishstatus);
+		  if (message.done === true) {
+			document.getElementById('publishOkButton').disabled = false;
+		  }
+		  return;
+		}
 
-    // Traitement fichiers
-    state = message;
-    processState(state);
-  } catch (e) {
-    console.error("Message WebSocket invalide :", e);
-  }
-};
+		// Traitement fichiers
+		state = message;
+		processState(state);
+	  } catch (e) {
+		console.error("Message WebSocket invalide :", e);
+	  }
+	};
+}
 
 //******************************
 //Open websocket

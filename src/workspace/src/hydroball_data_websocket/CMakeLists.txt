@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   state_controller
   hydroball_config_websocket
+  roslib
   tf2
   tf2_ros
   tf2_geometry_msgs
@@ -117,7 +118,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES hydroball_data_websocket
   CATKIN_DEPENDS roscpp std_msgs tf2 tf2_ros tf2_geometry_msgs
-  DEPENDS system_lib
 )
 
 ###########
@@ -157,13 +157,13 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES} # ${PROJECT_NAME}
- )
+target_link_libraries(${PROJECT_NAME}_node
+  ${catkin_LIBRARIES} # ${PROJECT_NAME}
+)
 
- target_link_libraries(${PROJECT_NAME}
-   ${catkin_LIBRARIES}
- )
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -199,6 +199,9 @@ include_directories(
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
  )
+ install(TARGETS ${PROJECT_NAME}_node
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
@@ -219,21 +222,7 @@ include_directories(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-    find_package(catkin REQUIRED COMPONENTS
-      roscpp
-      std_msgs
-      state_controller
-      sensor_msgs
-      geometry_msgs
-      message_generation
-      raspberrypi_vitals_msg
-      state_controller_msg
-      tf2
-      tf2_ros
-      tf2_geometry_msgs
-      roslib
-    )
-
+    find_package(rostest REQUIRED)
     add_rostest_gtest(test_hydroball_data_websocket tests/hydroball_data_websocket_test.launch tests/test_hydroball_data_websocket.cpp)
     target_link_libraries(test_hydroball_data_websocket ${catkin_LIBRARIES} ${PROJECT_NAME}  ${hydroball_data_websocket_LIBRARIES})
     add_dependencies(test_hydroball_data_websocket ${catkin_EXPORTED_TARGETS})

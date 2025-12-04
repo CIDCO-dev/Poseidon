@@ -12,6 +12,8 @@ from setting_msg.msg import Setting
 from setting_msg.srv import ConfigurationService, ConfigurationServiceRequest
 
 NM_SYS_CONNS_DIR = "/etc/NetworkManager/system-connections/"
+TARGET_WIFI_IFACE = os.getenv("WIFI_CONFIG_IFACE", "wlan0")
+HOTSPOT_IFACE = os.getenv("WIFI_HOTSPOT_IFACE", "wlan1")
 
 def yes_no(flag: bool) -> str:
     return "yes" if flag else "no"
@@ -25,24 +27,24 @@ class WifiConfigPy:
         self.node_name = "wifi_config"
         rospy.init_node(self.node_name, anonymous=False)
 
-        # Etat courant
+        # Current state
         self.wifi_connections: Dict[str, Dict[str, str]] = {}  # ssid -> {password, autoconnect}
         self.current_ssid: str = ""
         self.current_password: str = ""
         self.autoconnect_status: bool = False
         self.config_callback_counter: int = 0
 
-        # --- Service client (attend l’existence)
+        # --- Service client (wait for availability)
         rospy.loginfo("Waiting for 'get_configuration' service…")
         rospy.wait_for_service("get_configuration")
         self.cfg_client = rospy.ServiceProxy("get_configuration", ConfigurationService)
 
-        # --- Subscribing aux changements de config
+        # --- Subscribing to config changes
         self.cfg_sub = rospy.Subscriber(
             "configuration", Setting, self.configuration_callback, queue_size=1000
         )
 
-        # --- Lecture NM + application de la config
+        # --- Read NM + apply config
         self.get_nmcli_connections()
         self.get_wifi_config()
 
@@ -51,10 +53,10 @@ class WifiConfigPy:
             self.autoconnect_status, self.current_ssid, self.current_password
         )
 
-    # -------------------- Utilitaires NM --------------------
+    # -------------------- NM helpers --------------------
 
     def run(self, cmd: str) -> subprocess.CompletedProcess:
-        """Exécute une commande shell et log en cas d’échec."""
+        """Run a shell command and log on failure."""
         try:
             return subprocess.run(
                 cmd, shell=True, check=True, text=True,
@@ -66,8 +68,8 @@ class WifiConfigPy:
 
     def get_auto_connect_status(self) -> None:
         """
-        Remplit self.wifi_connections[ssid]['autoconnect'] avec 'yes'/'no'.
-        On découpe par la fin pour tolérer les SSID avec espaces.
+        Populate self.wifi_connections[ssid]['autoconnect'] with 'yes'/'no'.
+        Split from the end to tolerate SSIDs containing spaces.
         """
         try:
             out = self.run("nmcli -f NAME,AUTOCONNECT con show").stdout.splitlines()
@@ -77,12 +79,12 @@ class WifiConfigPy:
         if not out:
             return
 
-        # sauter l’en-tête
+        # skip header
         for line in out[1:]:
             line = line.strip()
             if not line:
                 continue
-            # séparer le dernier token (= AUTOCONNECT)
+            # split last token (= AUTOCONNECT)
             parts = line.rsplit(None, 1)
             if len(parts) != 2:
                 continue
@@ -92,9 +94,9 @@ class WifiConfigPy:
 
     def add_connection_infos(self, path: str) -> None:
         """
-        Parse sommairement un fichier *.nmconnection :
+        Lightly parse a *.nmconnection file:
             id=..., ssid=..., psk=...
-        Hypothèse identique à ton C++ : id == ssid.
+        Same assumption as original C++: id == ssid.
         """
         ssid = password = cid = ""
         try:
@@ -108,29 +110,111 @@ class WifiConfigPy:
                     elif line.startswith("id="):
                         cid = line[3:].strip()
         except Exception as e:
-            rospy.logwarn("Impossible d'ouvrir %s: %s", path, e)
+            rospy.logwarn("Failed to open %s: %s", path, e)
             return
 
         if ssid and cid and ssid == cid:
             self.wifi_connections.setdefault(ssid, {})["password"] = password
         else:
-            # même TODO que le C++ original
+            # same TODO as original C++
             pass
 
     def get_nmcli_connections(self) -> None:
-        # Parcours des connexions persistées
+        # Iterate over persisted connections
         try:
             for nmfile in glob.glob(os.path.join(NM_SYS_CONNS_DIR, "*")):
                 self.add_connection_infos(nmfile)
         except Exception as e:
-            rospy.logwarn("Erreur lecture %s: %s", NM_SYS_CONNS_DIR, e)
+            rospy.logwarn("Failed reading %s: %s", NM_SYS_CONNS_DIR, e)
 
-        # Compléter avec l’auto-connect
+        # Complete with autoconnect flag
         self.get_auto_connect_status()
+
+    def list_wifi_connection_names(self) -> list:
+        """
+        Return the Wi-Fi connection names (type 802-11-wireless) known by NM.
+        """
+        try:
+            out = self.run("nmcli -t -f NAME,TYPE con show").stdout.splitlines()
+        except Exception:
+            return []
+
+        names = []
+        for line in out:
+            if not line:
+                continue
+            parts = line.split(":", 1)
+            if len(parts) != 2:
+                continue
+            name, ctype = parts[0].strip(), parts[1].strip()
+            if ctype == "802-11-wireless" and name:
+                names.append(name)
+        return names
+
+    def get_connection_iface(self, name: str) -> str:
+        """Return the interface name bound to the connection, if any."""
+        try:
+            out = self.run(f"nmcli -g connection.interface-name con show '{name}'").stdout
+            return out.strip()
+        except Exception:
+            return ""
+
+    def should_skip_connection(self, name: str) -> bool:
+        """
+        Do not touch hotspot or non-target-interface connections (e.g., wlan1 hotspot).
+        """
+        lower = name.lower()
+        if "hotspot" in lower:
+            return True
+
+        iface = self.get_connection_iface(name)
+        if iface and iface != TARGET_WIFI_IFACE:
+            return True
+
+        return False
+
+    def delete_wifi_connection(self, name: str) -> None:
+        try:
+            self.run(f"sudo nmcli con delete '{name}'")
+        except Exception:
+            rospy.logwarn("Impossible de supprimer la connexion Wi‑Fi '%s'", name)
+
+    def purge_wifi_connections(self) -> None:
+        """
+        Delete all known Wi-Fi connections so only the current config is kept.
+        """
+        for name in self.list_wifi_connection_names():
+            if self.should_skip_connection(name):
+                continue
+            self.delete_wifi_connection(name)
+        self.wifi_connections = {}
+
+    def iface_exists(self, iface: str) -> bool:
+        return bool(iface) and os.path.exists(f"/sys/class/net/{iface}")
+
+    def can_apply_wifi_config(self) -> bool:
+        """
+        Apply Wi‑Fi config only when hotspot iface exists (to avoid breaking it)
+        and the target Wi‑Fi iface is present.
+        """
+        if HOTSPOT_IFACE and not self.iface_exists(HOTSPOT_IFACE):
+            rospy.logwarn(
+                "Hotspot interface '%s' missing; skipping Wi‑Fi config to avoid altering hotspot",
+                HOTSPOT_IFACE,
+            )
+            return False
+
+        if not self.iface_exists(TARGET_WIFI_IFACE):
+            rospy.logwarn(
+                "Target Wi‑Fi interface '%s' missing; skipping Wi‑Fi config", TARGET_WIFI_IFACE
+            )
+            return False
+
+        return True
 
     def add_connection_to_nmcli(self, ssid: str, password: str, autoconnect: str) -> None:
         cmd = (
-            f"nmcli connection add type wifi ssid '{ssid}' "
+            f"nmcli connection add type wifi ifname '{TARGET_WIFI_IFACE}' ssid '{ssid}' "
             f"wifi-sec.key-mgmt wpa-psk wifi-sec.psk '{password}' "
             f"autoconnect {autoconnect} con-name '{ssid}'"
         )
@@ -141,14 +225,17 @@ class WifiConfigPy:
 
     def modify_nmcli_connection(self, ssid: str, password: str, autoconnect: str) -> None:
         try:
-            self.run(f"sudo nmcli con modify '{ssid}' wifi-sec.psk '{password}' autoconnect {autoconnect}")
+            self.run(
+                f"sudo nmcli con modify '{ssid}' wifi-sec.psk '{password}' autoconnect {autoconnect} "
+                f"connection.interface-name '{TARGET_WIFI_IFACE}'"
+            )
             # bounce de la connexion
             if self.run(f"sudo nmcli con down '{ssid}'").returncode == 0:
-                self.run(f"sudo nmcli con up '{ssid}'")
+                self.run(f"sudo nmcli con up '{ssid}' ifname '{TARGET_WIFI_IFACE}'")
         except Exception:
             rospy.logerr("Failed to modify/bounce connection '%s'", ssid)
 
-    # -------------------- Lecture config via service --------------------
+    # -------------------- Read config via service --------------------
 
     def get_config_value(self, key: str) -> str:
         req = ConfigurationServiceRequest(key=key)
@@ -156,7 +243,7 @@ class WifiConfigPy:
             resp = self.cfg_client(req)
             return resp.value
         except Exception as e:
-            rospy.logerr("Service get_configuration('%s') a échoué: %s", key, e)
+            rospy.logerr("Service get_configuration('%s') failed: %s", key, e)
             return ""
 
     def get_wifi_config(self) -> None:
@@ -165,23 +252,21 @@ class WifiConfigPy:
         self.autoconnect_status = truthy(self.get_config_value("wifiTransferEnabled"))
 
         if not self.current_ssid:
-            rospy.logwarn("wifiSSID vide: rien à faire pour le moment.")
+            rospy.logwarn("wifiSSID empty: nothing to do for now.")
             return
 
-        # Créer ou modifier
-        cfg = self.wifi_connections.get(self.current_ssid)
-        if cfg is None:
-            self.wifi_connections[self.current_ssid] = {
-                "password": self.current_password,
-                "autoconnect": yes_no(self.autoconnect_status),
-            }
-            self.add_connection_to_nmcli(
-                self.current_ssid, self.current_password, yes_no(self.autoconnect_status)
-            )
-        else:
-            self.modify_nmcli_connection(
-                self.current_ssid, self.current_password, yes_no(self.autoconnect_status)
-            )
+        if not self.can_apply_wifi_config():
+            return
+
+        # Purge all previous Wi-Fi connections and recreate only the new one
+        self.purge_wifi_connections()
+        self.add_connection_to_nmcli(
+            self.current_ssid, self.current_password, yes_no(self.autoconnect_status)
+        )
+        self.wifi_connections[self.current_ssid] = {
+            "password": self.current_password,
+            "autoconnect": yes_no(self.autoconnect_status),
+        }
 
     # -------------------- Callback topic 'configuration' --------------------
 
@@ -202,20 +287,19 @@ class WifiConfigPy:
             self.autoconnect_status = truthy(val)
             self.config_callback_counter += 1
 
-        # Appliquer quand on a reçu les 3 champs (même logique que le C++)
+        # Apply once we received the 3 fields (same logic as C++)
         if self.config_callback_counter >= 3:
-            if self.current_ssid not in self.wifi_connections:
-                self.wifi_connections[self.current_ssid] = {
-                    "password": self.current_password,
-                    "autoconnect": yes_no(self.autoconnect_status),
-                }
-                self.add_connection_to_nmcli(
-                    self.current_ssid, self.current_password, yes_no(self.autoconnect_status)
-                )
-            else:
-                self.modify_nmcli_connection(
-                    self.current_ssid, self.current_password, yes_no(self.autoconnect_status)
-                )
+            if not self.can_apply_wifi_config():
+                return
+            # Clean all Wi-Fi connections and recreate only the received one
+            self.purge_wifi_connections()
+            self.add_connection_to_nmcli(
+                self.current_ssid, self.current_password, yes_no(self.autoconnect_status)
+            )
+            self.wifi_connections[self.current_ssid] = {
+                "password": self.current_password,
+                "autoconnect": yes_no(self.autoconnect_status),
+            }
             self.config_callback_counter = 0
 
     # -------------------- Run --------------------

@@ -8,8 +8,9 @@ project(setting_msg)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-#  roscpp
+  roscpp
   std_msgs
+  roslib
   message_generation
 )
 
@@ -106,7 +107,7 @@ add_service_files(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES setting_msg
-  CATKIN_DEPENDS std_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs roslib message_runtime
 #  DEPENDS system_lib
 )
 
@@ -117,7 +118,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  # include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -199,15 +200,12 @@ include_directories(
 
 if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
-    find_package(catkin REQUIRED COMPONENTS
-      roscpp
-      std_msgs
-      roslib
-    )
 
     add_rostest_gtest(test_zero_imu_offset_service tests/zero_imu_offset_test.launch tests/test_zero_imu_offset_service.cpp)
     target_link_libraries(test_zero_imu_offset_service ${catkin_LIBRARIES})
+    add_dependencies(test_zero_imu_offset_service ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
     add_rostest_gtest(test_get_configuration_service tests/get_configuration_test.launch tests/test_get_configuration.cpp)
     target_link_libraries(test_get_configuration_service ${catkin_LIBRARIES})
+    add_dependencies(test_get_configuration_service ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 endif()

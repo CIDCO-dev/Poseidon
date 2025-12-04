@@ -1,8 +1,17 @@
 <launch>
 
+	<arg name="devicePath" default="/tmp/sonar_virtual_device"/>
+	<arg name="masterPath" default="/tmp/sonar_virtual_master"/>
+
+	<param name="Sonar/device" value="$(arg devicePath)"/>
+
 	<!-- the node launching order matters -->
-	<test test-name="test_sonar_nmea_device_node" pkg="sonar_nmea_0183_tcp_client" type="test_sonar_nmea_0183_device_client" />
+	<test test-name="test_sonar_nmea_device_node" pkg="sonar_nmea_0183_tcp_client" type="test_sonar_nmea_0183_device_client">
+		<param name="slave_device" value="$(arg devicePath)"/>
+		<param name="master_device" value="$(arg masterPath)"/>
+	</test>
 	<node pkg="sonar_nmea_0183_tcp_client" type="nmea_device_node" name="Sonar" output="screen" respawn="true" respawn_delay="1">
+		<param name="device" value="$(arg devicePath)"/>
 	</node>
 	
 	

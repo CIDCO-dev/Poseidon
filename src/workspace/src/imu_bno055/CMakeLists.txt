@@ -19,10 +19,16 @@ include_directories(${catkin_INCLUDE_DIRS})
 target_link_libraries(bno055_i2c_node ${catkin_LIBRARIES})
 target_link_libraries(bno055_i2c_calibration ${catkin_LIBRARIES})
 
-install(TARGETS bno055_i2c_node
+install(TARGETS bno055_i2c_node bno055_i2c_calibration
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+  PATTERN ".svn" EXCLUDE
 )
 
 #############
@@ -33,6 +39,5 @@ if(CATKIN_ENABLE_TESTING)
   # test with launch file
   find_package(rostest REQUIRED)
   add_rostest_gtest(test_imu_bno055_node tests/imu_bno055_node.test tests/test_imu_bno055_node.cpp)
-  # target_link_libraries(test_imu_bno055_node ...) #what libraries are needed on rpi?
+  target_link_libraries(test_imu_bno055_node ${catkin_LIBRARIES})
 endif()
-

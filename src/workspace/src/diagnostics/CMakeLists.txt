@@ -19,5 +19,6 @@ if(CATKIN_ENABLE_TESTING)
   )
 
   catkin_add_nosetests(tests/test_diagnostics_unit.py)
+  catkin_add_nosetests(tests/test_launchrosservice_websocket.py)
   add_rostest(tests/diagnostics_websocket.test)
 endif()

@@ -1,5 +1,9 @@
 # Version History (English)
 
+## 2025-12-03
+- diagnostics: added end-to-end nosetest that launches `launchROSService.sh`, waits for the 9099 diagnostics websocket, sends `updateDiagnostic`, and validates the returned payload; optional DBT feed on `DIAGNOSTICS_FAKE_SERIAL_PORT` (default `/dev/ttyUSB1`) to drive sonar without touching `/dev/sonar`.
+- diagnostics: declare `python3-websockets` as exec/test dependency so websocket clients/servers are available during integration runs.
+
 ## 2025-12-02
 - Web UI: System Status now shows wlan0 state + SSID using sysfs/proc+iwgetid (no nmcli dependency in telemetry path).
 - hydroball_data_websocket: publish Wi‑Fi status/SSID in telemetry payload (`telemetry.wifi`), sourced from `/sys/class/net/wlan0/operstate` and `/proc/net/wireless`.

@@ -103,10 +103,10 @@ class LaunchRosServiceWebsocketTest(unittest.TestCase):
                 return
 
             try:
-            cls.process.wait(timeout=15)
-        except subprocess.TimeoutExpired:
-            os.killpg(os.getpgid(cls.process.pid), signal.SIGTERM)
-            cls.process.wait(timeout=10)
+                cls.process.wait(timeout=15)
+            except subprocess.TimeoutExpired:
+                os.killpg(os.getpgid(cls.process.pid), signal.SIGTERM)
+                cls.process.wait(timeout=10)
 
     @staticmethod
     def _maybe_start_fake_serial_writer():

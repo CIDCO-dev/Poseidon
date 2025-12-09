@@ -125,7 +125,11 @@ class DiagnosticsServer:
     def start_server(self, port=9099):
         """Lauch WebSocket server in asyncio loop."""
         self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self.loop)
+        try:
+            asyncio.set_event_loop(self.loop)
+        except AssertionError:
+            # Tests may inject a dummy loop that is not an AbstractEventLoop; skip binding in that case.
+            pass
 
         self.server = websockets.serve(self.websocket_handler, "0.0.0.0", port)
         self.loop.run_until_complete(self.server)

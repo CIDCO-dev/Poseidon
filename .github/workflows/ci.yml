@@ -147,6 +147,8 @@ jobs:
           POSEIDON_E2E_TIMEOUT_MS: "120000"
           # Fail early if these expected rows disappear.
           POSEIDON_E2E_REQUIRED_DIAGNOSTICS: "GNSS Fix,IMU Communication,Sonar Communication"
+          # Avoid port/node conflicts with a system-installed Poseidon service on the bench.
+          POSEIDON_E2E_EXCLUSIVE: "1"
           # Make comm diagnostics more tolerant on benches where rates can be lower than nominal.
           POSEIDON_DIAG_IMU_HZ: "5"
           POSEIDON_DIAG_IMU_WINDOW: "2.0"

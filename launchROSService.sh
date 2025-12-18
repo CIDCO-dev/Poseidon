@@ -112,11 +112,13 @@ source "$POSEIDON_ROOT/src/workspace/devel/setup.bash"
 
 LOGGER_PATH="${POSEIDON_LOGGER_PATH:-"$POSEIDON_ROOT/www/webroot/record/"}"
 CONFIG_PATH="${POSEIDON_CONFIG_PATH:-"$POSEIDON_ROOT/config.txt"}"
+SONAR_DEVICE="${POSEIDON_SONAR_DEVICE:-"/dev/sonar"}"
 
 roslaunch "$POSEIDON_ROOT/src/workspace/launch/Hydrobox/hydrobox_rpi_nmeadevice_ZED-F9P_bno055.launch" \
   time_now:=$(date +%Y.%m.%d_%H%M%S) \
   loggerPath:="$LOGGER_PATH" \
-  configPath:="$CONFIG_PATH"
+  configPath:="$CONFIG_PATH" \
+  sonarDevice:="$SONAR_DEVICE"
 
 ########################
 #    Configuration     #

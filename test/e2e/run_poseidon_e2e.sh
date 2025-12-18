@@ -12,7 +12,8 @@ export POSEIDON_E2E_BASE_URL="${POSEIDON_E2E_BASE_URL:-http://127.0.0.1:${POSEID
 export DIAGNOSTICS_WS_PORT="${DIAGNOSTICS_WS_PORT:-9099}"
 export POSEIDON_TELEMETRY_WS_PORT="${POSEIDON_TELEMETRY_WS_PORT:-9002}"
 export POSEIDON_E2E="1"
-export POSEIDON_E2E_REUSE_RUNNING="1"
+export POSEIDON_E2E_REUSE_RUNNING="${POSEIDON_E2E_REUSE_RUNNING:-0}"
+export POSEIDON_E2E_EXCLUSIVE="${POSEIDON_E2E_EXCLUSIVE:-0}"
 
 mkdir -p "${POSEIDON_E2E_ARTIFACT_DIR}"
 
@@ -35,6 +36,16 @@ if [[ -z "${POSEIDON_LOGGER_PATH:-}" ]]; then
 fi
 mkdir -p "${POSEIDON_LOGGER_PATH}"
 
+# If a dedicated "fake sonar" serial adapter exists, use it as the sonar source for this run.
+# This avoids touching /dev/sonar and makes /depth deterministic for E2E.
+if [[ -z "${POSEIDON_SONAR_DEVICE:-}" ]]; then
+  if [[ -n "${DIAGNOSTICS_FAKE_SERIAL_PORT:-}" && -e "${DIAGNOSTICS_FAKE_SERIAL_PORT}" && "${DIAGNOSTICS_FAKE_SERIAL_PORT}" != "/dev/sonar" ]]; then
+    export POSEIDON_SONAR_DEVICE="${DIAGNOSTICS_FAKE_SERIAL_PORT}"
+  else
+    export POSEIDON_SONAR_DEVICE="/dev/sonar"
+  fi
+fi
+
 HTTP_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/http.log"
 SERVICE_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/launchROSService.log"
 
@@ -44,6 +55,11 @@ cleanup() {
   if [[ -n "${HTTP_PID:-}" ]] && kill -0 "${HTTP_PID}" 2>/dev/null; then
     kill "${HTTP_PID}" 2>/dev/null || true
     wait "${HTTP_PID}" 2>/dev/null || true
+  fi
+
+  if [[ -n "${NMEA_WRITER_PID:-}" ]] && kill -0 "${NMEA_WRITER_PID}" 2>/dev/null; then
+    kill "${NMEA_WRITER_PID}" 2>/dev/null || true
+    wait "${NMEA_WRITER_PID}" 2>/dev/null || true
   fi
 
   if [[ -n "${SERVICE_PID:-}" ]] && kill -0 "${SERVICE_PID}" 2>/dev/null; then
@@ -61,8 +77,49 @@ python3 -m http.server "${POSEIDON_HTTP_PORT}" --bind 127.0.0.1 >"${HTTP_LOG}" 2
 HTTP_PID=$!
 popd >/dev/null
 
-setsid bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
-SERVICE_PID=$!
+if [[ "${POSEIDON_E2E_EXCLUSIVE}" == "1" ]]; then
+  # Best-effort cleanup of existing Poseidon instances on a bench.
+  if command -v systemctl >/dev/null 2>&1; then
+    sudo systemctl stop ros 2>/dev/null || true
+  fi
+  if command -v fuser >/dev/null 2>&1; then
+    sudo fuser -k 9002/tcp 9099/tcp 9003/tcp 9004/tcp 2>/dev/null || true
+  fi
+fi
+
+if [[ "${POSEIDON_E2E_REUSE_RUNNING}" != "1" ]]; then
+  setsid bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
+  SERVICE_PID=$!
+fi
+
+# Keep a fake NMEA DBT feed alive during both backend and UI phases (if the port exists).
+if [[ -n "${DIAGNOSTICS_FAKE_SERIAL_PORT:-}" && -e "${DIAGNOSTICS_FAKE_SERIAL_PORT}" && "${DIAGNOSTICS_FAKE_SERIAL_PORT}" != "/dev/sonar" ]]; then
+  python3 - <<'PY' &
+import os
+import time
+from pathlib import Path
+
+port = Path(os.environ["DIAGNOSTICS_FAKE_SERIAL_PORT"])
+
+def checksum(payload: str) -> str:
+    cs = 0
+    for ch in payload:
+        cs ^= ord(ch)
+    return f"{cs:02X}"
+
+payload = "SDDBT,30.9,f,9.4,M,5.1,F"
+sentence = f"${payload}*{checksum(payload)}\r\n".encode("ascii")
+
+while True:
+    try:
+        with open(port, "wb", buffering=0) as fd:
+            fd.write(sentence)
+    except Exception:
+        pass
+    time.sleep(1.0)
+PY
+  NMEA_WRITER_PID=$!
+fi
 
 if ! python3 - <<'PY'
 import os
@@ -93,7 +150,9 @@ if pending:
 PY
 then
   echo "[!] Poseidon did not expose required ports in time."
-  echo "[!] launchROSService PID: ${SERVICE_PID}"
+  if [[ -n "${SERVICE_PID:-}" ]]; then
+    echo "[!] launchROSService PID: ${SERVICE_PID}"
+  fi
   echo "[!] Tail of ${SERVICE_LOG}:"
   tail -n 200 "${SERVICE_LOG}" || true
   exit 1

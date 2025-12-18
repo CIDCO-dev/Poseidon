@@ -10,6 +10,13 @@
 <arg name="configPath" default="/opt/Poseidon/config.txt"/>
 
 <arg name="boardVersion" value="2.2"/>
+<arg name="sonarDevice" default="/dev/sonar"/>
+
+<!-- sonar_nmea_0183_tcp_client/nmea_device_node reads global params under /Sonar/* -->
+<param name="/Sonar/device" value="$(arg sonarDevice)"/>
+<param name="/Sonar/useDepth" value="true"/>
+<param name="/Sonar/usePosition" value="false"/>
+<param name="/Sonar/useAttitude" value="false"/>
 
 <node pkg="i2c_controller" name="i2c_controller" type="i2c_controller_node" output="screen" args="$(arg boardVersion)" respawn="true" respawn_delay="1"/>
 
@@ -28,8 +35,6 @@
 
 
 <node pkg="sonar_nmea_0183_tcp_client" type="nmea_device_node" name="Sonar_NMEA" output="screen" respawn="true" respawn_delay="1">
-	<param name="ip_address" value="127.0.0.1"/>
-	<param name="port" value="5000"/>
 </node>
  
 <node pkg="wifi_file_transfer_config" type="wifi_config_node.py" name="wifi_config" output="screen" respawn="true" respawn_delay="1"/>

@@ -13,6 +13,9 @@
 - e2e: allow tuning diagnostics refresh polling delay via `POSEIDON_E2E_DIAGNOSTICS_REFRESH_DELAY_MS` for longer-running diagnostics windows.
 - e2e: on UI failure, runner now dumps `roslaunch` tail + basic `rostopic`/diagnostics websocket debug into the job logs for faster triage.
 - e2e: avoid `set -u` in the E2E runner when sourcing ROS setup scripts (prevents `ROS_DISTRO: unbound variable` on some environments).
+- e2e: keep a DBT NMEA writer running for the whole E2E so `/depth` can be validated when `DIAGNOSTICS_FAKE_SERIAL_PORT` is available.
+- e2e: optional exclusive mode (`POSEIDON_E2E_EXCLUSIVE=1`) stops the system `ros` service and frees websocket ports before starting Poseidon to avoid port conflicts on benches.
+- launch: pass `sonarDevice` into the Hydrobox launch and map it to `/Sonar/device` so the sonar node can be pointed at a test serial adapter.
 
 ## 2025-12-03
 - diagnostics: added end-to-end nosetest that launches `launchROSService.sh`, waits for the 9099 diagnostics websocket, sends `updateDiagnostic`, and validates the returned payload; optional DBT feed on `DIAGNOSTICS_FAKE_SERIAL_PORT` (default `/dev/ttyUSB1`) to drive sonar without touching `/dev/sonar`.

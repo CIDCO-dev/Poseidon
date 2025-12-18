@@ -1,5 +1,13 @@
 # Version History (English)
 
+## 2025-12-18
+- e2e: added Playwright-based headless UI smoke test (verifies `status.html` uptime renders and `diagnostics.html` populates diagnostics + running nodes tables).
+- e2e: added unified runner script that starts Poseidon, serves `www/webroot`, waits for ports, runs backend websocket E2E + UI headless checks, and stores artifacts under `test/e2e/artifacts`.
+- diagnostics/e2e: gated the launchROSService websocket test behind `POSEIDON_E2E=1` and added `POSEIDON_E2E_REUSE_RUNNING=1` to support CI benches that already run ROS.
+- launch: made `launchROSService.sh` relocatable via `POSEIDON_ROOT` (no longer hard-coded to `/opt/Poseidon`).
+- launch: allowed overriding `loggerPath` and `configPath` in `hydrobox_rpi_nmeadevice_ZED-F9P_bno055.launch` via `POSEIDON_LOGGER_PATH` / `POSEIDON_CONFIG_PATH`.
+- CI: added optional "hardware E2E" workflow steps (Playwright install, run E2E, upload artifacts) triggered on `workflow_dispatch` or pushes to `main/master`.
+
 ## 2025-12-03
 - diagnostics: added end-to-end nosetest that launches `launchROSService.sh`, waits for the 9099 diagnostics websocket, sends `updateDiagnostic`, and validates the returned payload; optional DBT feed on `DIAGNOSTICS_FAKE_SERIAL_PORT` (default `/dev/ttyUSB1`) to drive sonar without touching `/dev/sonar`.
 - diagnostics: declare `python3-websockets` as exec/test dependency so websocket clients/servers are available during integration runs.

@@ -17,6 +17,8 @@ DEFAULT_PORT = int(os.environ.get("DIAGNOSTICS_WS_PORT", "9099"))
 LAUNCH_TIMEOUT = int(os.environ.get("DIAGNOSTICS_WS_LAUNCH_TIMEOUT", "60"))
 RESPONSE_TIMEOUT = int(os.environ.get("DIAGNOSTICS_WS_RESPONSE_TIMEOUT", "45"))
 FAKE_SERIAL_PORT = os.environ.get("DIAGNOSTICS_FAKE_SERIAL_PORT", "/dev/ttyUSB1")
+E2E_ENABLED = os.environ.get("POSEIDON_E2E", "0") == "1"
+REUSE_RUNNING = os.environ.get("POSEIDON_E2E_REUSE_RUNNING", "0") == "1"
 
 
 def find_launch_script():
@@ -59,9 +61,14 @@ class LaunchRosServiceWebsocketTest(unittest.TestCase):
 
     process = None
     launch_script = None
+    _stdout_handle = None
+    _stderr_handle = None
 
     @classmethod
     def setUpClass(cls):
+        if not E2E_ENABLED:
+            raise unittest.SkipTest("POSEIDON_E2E is not enabled; skipping hardware E2E test.")
+
         # Allow overriding the script location for installed vs. source trees.
         env_override = os.environ.get("POSEIDON_LAUNCH_SCRIPT")
         if env_override:
@@ -69,17 +76,26 @@ class LaunchRosServiceWebsocketTest(unittest.TestCase):
         else:
             cls.launch_script = find_launch_script()
 
-        if not cls.launch_script or not cls.launch_script.is_file():
-            raise unittest.SkipTest("launchROSService.sh not found; cannot run integration test.")
+        if not REUSE_RUNNING:
+            if not cls.launch_script or not cls.launch_script.is_file():
+                raise unittest.SkipTest("launchROSService.sh not found; cannot run integration test.")
 
         cls.fake_serial_stop = cls._maybe_start_fake_serial_writer()
 
-        cls.process = subprocess.Popen(
-            ["bash", str(cls.launch_script)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            preexec_fn=os.setsid,
-        )
+        if not REUSE_RUNNING:
+            stdout_path = os.environ.get("POSEIDON_E2E_STDOUT_PATH")
+            stderr_path = os.environ.get("POSEIDON_E2E_STDERR_PATH")
+            cls._stdout_handle = open(stdout_path, "ab") if stdout_path else None
+            cls._stderr_handle = open(stderr_path, "ab") if stderr_path else None
+            stdout_target = cls._stdout_handle if cls._stdout_handle else subprocess.DEVNULL
+            stderr_target = cls._stderr_handle if cls._stderr_handle else subprocess.DEVNULL
+
+            cls.process = subprocess.Popen(
+                ["bash", str(cls.launch_script)],
+                stdout=stdout_target,
+                stderr=stderr_target,
+                preexec_fn=os.setsid,
+            )
 
         try:
             asyncio.run(wait_for_websocket(DEFAULT_PORT, LAUNCH_TIMEOUT))
@@ -108,6 +124,14 @@ class LaunchRosServiceWebsocketTest(unittest.TestCase):
                 os.killpg(os.getpgid(cls.process.pid), signal.SIGTERM)
                 cls.process.wait(timeout=10)
 
+        for handle_name in ("_stdout_handle", "_stderr_handle"):
+            handle = getattr(cls, handle_name, None)
+            if handle:
+                try:
+                    handle.close()
+                finally:
+                    setattr(cls, handle_name, None)
+
     @staticmethod
     def _maybe_start_fake_serial_writer():
         """
@@ -115,6 +139,9 @@ class LaunchRosServiceWebsocketTest(unittest.TestCase):
         If the port exists and is writable, launch a background writer so sonar diagnostics can consume data.
         """
         if not FAKE_SERIAL_PORT:
+            return None
+
+        if FAKE_SERIAL_PORT == "/dev/sonar":
             return None
 
         port_path = Path(FAKE_SERIAL_PORT)

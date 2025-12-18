@@ -2,8 +2,14 @@
 
 # Used to call a launch file as a service on boot
 
+set -euo pipefail
+
+# Allow overriding the Poseidon root (useful for CI where the repo is checked out elsewhere).
+POSEIDON_ROOT="${POSEIDON_ROOT:-"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"}"
+export POSEIDON_ROOT
+
 source /opt/ros/noetic/setup.bash
-source /opt/Poseidon/src/workspace/devel/setup.bash
+source "$POSEIDON_ROOT/src/workspace/devel/setup.bash"
 
 ########################
 #      Echoboat        #
@@ -104,7 +110,7 @@ source /opt/Poseidon/src/workspace/devel/setup.bash
 # Dummy simulator
 #roslaunch /opt/Poseidon/src/workspace/launch/Simulator/dummy_simulator.launch
 
-roslaunch /opt/Poseidon/src/workspace/launch/Hydrobox/hydrobox_rpi_nmeadevice_ZED-F9P_bno055.launch time_now:=$(date +%Y.%m.%d_%H%M%S)
+roslaunch "$POSEIDON_ROOT/src/workspace/launch/Hydrobox/hydrobox_rpi_nmeadevice_ZED-F9P_bno055.launch" time_now:=$(date +%Y.%m.%d_%H%M%S)
 
 ########################
 #    Configuration     #

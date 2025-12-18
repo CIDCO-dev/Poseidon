@@ -10,7 +10,13 @@ on:
     branches: ["**"]
   pull_request:
     branches: ["**"]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      run_hardware_e2e:
+        description: "Run hardware E2E (backend websocket + headless UI)"
+        required: false
+        type: boolean
+        default: false
 
 defaults:
   run:
@@ -49,7 +55,8 @@ jobs:
             libopencv-dev libexiv2-dev libwebsocketpp-dev \
             rapidjson-dev libssl-dev libgps-dev libboost-system-dev \
             python3-lxml libxml2-dev libxslt1-dev \
-            lcov
+            lcov \
+            python3-websockets
           sudo -H python3 -m pip install --no-cache-dir catkin-lint flake8 coverage pytest
           if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
             sudo rosdep init
@@ -119,6 +126,38 @@ jobs:
           catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="$CATKIN_BLACKLIST_PACKAGES"
           # Report results but do not fail the whole job on first adoption
           catkin_test_results build/test_results || true
+
+      - name: Setup Playwright (hardware E2E)
+        if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.run_hardware_e2e == 'true') || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) }}
+        run: |
+          set -eo pipefail
+          cd test/e2e
+          npm install --no-package-lock
+          npx playwright install --with-deps chromium
+
+      - name: Run hardware E2E (backend + headless UI)
+        if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.run_hardware_e2e == 'true') || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) }}
+        env:
+          # Hardware-specific: set this to the USB serial adapter used for injecting fake NMEA DBT strings.
+          # Must NOT point at /dev/sonar.
+          DIAGNOSTICS_FAKE_SERIAL_PORT: "/dev/ttyUSB1"
+          # Relaxed defaults; adjust if the bench needs longer to come up.
+          POSEIDON_E2E_WAIT_SECONDS: "120"
+          DIAGNOSTICS_WS_LAUNCH_TIMEOUT: "120"
+          POSEIDON_E2E_TIMEOUT_MS: "120000"
+          # Fail early if these expected rows disappear.
+          POSEIDON_E2E_REQUIRED_DIAGNOSTICS: "GNSS Fix,IMU Communication,Sonar Communication"
+        run: |
+          set -eo pipefail
+          bash test/e2e/run_poseidon_e2e.sh
+
+      - name: Upload hardware E2E artifacts
+        if: ${{ always() && ((github.event_name == 'workflow_dispatch' && github.event.inputs.run_hardware_e2e == 'true') || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'))) }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: test/e2e/artifacts
+          if-no-files-found: ignore
 
       - name: C++ coverage report (gcovr)
         run: |

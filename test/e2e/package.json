@@ -1,0 +1,12 @@
+{
+  "name": "poseidon-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test:ui": "node ui_test.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.50.1"
+  }
+}
+

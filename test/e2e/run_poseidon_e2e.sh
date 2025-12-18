@@ -54,7 +54,7 @@ popd >/dev/null
 setsid bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
 SERVICE_PID=$!
 
-python3 - <<'PY'
+if ! python3 - <<'PY'
 import os
 import socket
 import time
@@ -81,6 +81,13 @@ while pending and time.time() < deadline:
 if pending:
     raise SystemExit(f"Timed out waiting for ports: {sorted(pending)} (last error: {last_err})")
 PY
+then
+  echo "[!] Poseidon did not expose required ports in time."
+  echo "[!] launchROSService PID: ${SERVICE_PID}"
+  echo "[!] Tail of ${SERVICE_LOG}:"
+  tail -n 200 "${SERVICE_LOG}" || true
+  exit 1
+fi
 
 python3 "${POSEIDON_ROOT}/src/workspace/src/diagnostics/tests/test_launchrosservice_websocket.py"
 

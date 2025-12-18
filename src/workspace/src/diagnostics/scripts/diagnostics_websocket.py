@@ -131,13 +131,31 @@ class DiagnosticsServer:
             # Tests may inject a dummy loop that is not an AbstractEventLoop; skip binding in that case.
             pass
 
-        self.server = websockets.serve(self.websocket_handler, "0.0.0.0", port)
-        self.loop.run_until_complete(self.server)
+        async def _start_server():
+            # Newer versions of `websockets` require `serve()` to be called from a running loop.
+            return await websockets.serve(self.websocket_handler, "0.0.0.0", port)
+
+        try:
+            self.server = self.loop.run_until_complete(_start_server())
+        except Exception as exc:
+            ws_version = getattr(websockets, "__version__", "unknown")
+            rospy.logerr(
+                f"Failed to start DiagnosticsServer WebSocket on port {port} "
+                f"(websockets={ws_version}, python={sys.version.split()[0]}): {exc}"
+            )
+            return
+
         rospy.loginfo(f"DiagnosticsServer WebSocket listen to port {port}")
         self.loop.run_forever()
 
     def stop_server(self):
         """Stop WebSocket server."""
+        if self.server:
+            try:
+                self.server.close()
+            except Exception:
+                pass
+
         if self.loop and self.loop.is_running():
             rospy.loginfo("Stopping WebSocket server...")
             self.loop.call_soon_threadsafe(self.loop.stop)

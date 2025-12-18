@@ -16,6 +16,16 @@ export POSEIDON_E2E_REUSE_RUNNING="1"
 
 mkdir -p "${POSEIDON_E2E_ARTIFACT_DIR}"
 
+# Best-effort: make ROS tools (rostopic) available for debugging.
+if [[ -f /opt/ros/noetic/setup.bash ]]; then
+  # shellcheck disable=SC1091
+  source /opt/ros/noetic/setup.bash
+fi
+if [[ -f "${POSEIDON_ROOT}/src/workspace/devel/setup.bash" ]]; then
+  # shellcheck disable=SC1091
+  source "${POSEIDON_ROOT}/src/workspace/devel/setup.bash"
+fi
+
 if [[ -z "${POSEIDON_CONFIG_PATH:-}" ]]; then
   export POSEIDON_CONFIG_PATH="${POSEIDON_ROOT}/config.txt"
 fi
@@ -95,5 +105,56 @@ pushd "${SCRIPT_DIR}" >/dev/null
 if [[ ! -d node_modules ]]; then
   npm install --silent --no-package-lock
 fi
+set +e
 node ui_test.js
+UI_STATUS=$?
+set -e
+
+if [[ "${UI_STATUS}" -ne 0 ]]; then
+  echo "[!] UI E2E failed with exit code ${UI_STATUS}"
+  echo "[!] Tail of ${SERVICE_LOG}:"
+  tail -n 200 "${SERVICE_LOG}" || true
+
+  if command -v rostopic >/dev/null 2>&1; then
+    echo "[!] rostopic list (first 200):"
+    rostopic list 2>/dev/null | head -n 200 || true
+    echo "[!] rostopic hz /imu/data (5s):"
+    timeout 5s rostopic hz /imu/data || true
+    echo "[!] rostopic hz /depth (5s):"
+    timeout 5s rostopic hz /depth || true
+  else
+    echo "[!] rostopic not found; skipping ROS topic debug."
+  fi
+
+  python3 - <<'PY' || true
+import asyncio
+import json
+import os
+
+try:
+    import websockets
+except Exception as exc:
+    raise SystemExit(f"websockets not available: {exc}")
+
+PORT = int(os.environ.get("DIAGNOSTICS_WS_PORT", "9099"))
+URL = f"ws://127.0.0.1:{PORT}"
+
+async def main():
+    async with websockets.connect(URL) as ws:
+        await ws.send(json.dumps({"command": "updateDiagnostic"}))
+        raw = await ws.recv()
+        msg = json.loads(raw)
+        diags = {d.get("name"): d for d in msg.get("diagnostics", [])}
+        for key in ("GNSS Fix", "IMU Communication", "Sonar Communication"):
+            d = diags.get(key)
+            if not d:
+                print(f"[diagnostics] missing: {key}")
+                continue
+            print(f"[diagnostics] {key}: status={d.get('status')} message={d.get('message')}")
+
+asyncio.run(main())
+PY
+
+  exit "${UI_STATUS}"
+fi
 popd >/dev/null

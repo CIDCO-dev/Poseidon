@@ -171,6 +171,18 @@ def main():
     rospy.init_node('diagnostics')
     server = DiagnosticsServer()
 
+    def _env_int(name: str, default: int) -> int:
+        try:
+            return int(os.environ.get(name, str(default)))
+        except Exception:
+            return default
+
+    def _env_float(name: str, default: float) -> float:
+        try:
+            return float(os.environ.get(name, str(default)))
+        except Exception:
+            return default
+
     # Connectivity first to gate DNS/API tests
     server.add_test(InternetConnectivityDiagnostic(url="http://example.com", timeout_s=3.0))
     server.add_test(DnsResolutionDiagnostic(hostname="google.com"))
@@ -190,18 +202,18 @@ def main():
     ))
     server.add_test(ImuCommunicationDiagnostic(
         name="IMU Communication",
-        message_frequency=100,  
-        topic="/imu/data",
-        timeout_s=1.0,
-        expected_ratio=0.8
+        message_frequency=_env_int("POSEIDON_DIAG_IMU_HZ", 100),
+        topic=os.environ.get("POSEIDON_DIAG_IMU_TOPIC", "/imu/data"),
+        timeout_s=_env_float("POSEIDON_DIAG_IMU_WINDOW", 1.0),
+        expected_ratio=_env_float("POSEIDON_DIAG_IMU_RATIO", 0.8),
     ))
     server.add_test(SerialNumberDiagnostic(name="Serial Number Pattern Validation"))
     server.add_test(SonarCommunicationDiagnostic(
         name="Sonar Communication",
-        message_frequency=1,   # car /depth ≈ 1 Hz
-        topic="/depth",
-        timeout_s=1.5,
-        expected_ratio=0.8
+        message_frequency=_env_int("POSEIDON_DIAG_SONAR_HZ", 1),   # /depth is often ~1 Hz
+        topic=os.environ.get("POSEIDON_DIAG_SONAR_TOPIC", "/depth"),
+        timeout_s=_env_float("POSEIDON_DIAG_SONAR_WINDOW", 1.5),
+        expected_ratio=_env_float("POSEIDON_DIAG_SONAR_RATIO", 0.8),
     ))
 
 

@@ -9,6 +9,10 @@ const timeoutMs = Number.parseInt(
   process.env.POSEIDON_E2E_TIMEOUT_MS || "90000",
   10,
 );
+const refreshDelayMs = Number.parseInt(
+  process.env.POSEIDON_E2E_DIAGNOSTICS_REFRESH_DELAY_MS || "6000",
+  10,
+);
 const requireTelemetry =
   (process.env.POSEIDON_E2E_REQUIRE_TELEMETRY || "0") === "1";
 
@@ -17,6 +21,8 @@ const requiredDiagnostics = (process.env.POSEIDON_E2E_REQUIRED_DIAGNOSTICS ||
   .split(",")
   .map((name) => name.trim())
   .filter(Boolean);
+const requireOk =
+  (process.env.POSEIDON_E2E_REQUIRE_DIAGNOSTICS_OK || "1") === "1";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -89,7 +95,7 @@ async function run() {
         await btn.click();
       }
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(refreshDelayMs);
 
       diagStatus = await page.evaluate(() => {
         const table = document.querySelector("#diagnosticsTable");
@@ -97,22 +103,35 @@ async function run() {
         const out = {};
         for (const row of rows) {
           const cells = row.querySelectorAll("td");
-          if (cells.length < 2) continue;
+          if (cells.length < 3) continue;
           const status = (cells[0].textContent || "").trim();
           const name = (cells[1].textContent || "").trim();
+          const info = (cells[2].textContent || "").trim();
           if (!name) continue;
           out[name] = {
             ok: status.includes("✅"),
             status,
+            info,
           };
         }
         return out;
       });
 
       const missing = requiredDiagnostics.filter((name) => !diagStatus[name]);
-      const failing = requiredDiagnostics.filter(
-        (name) => diagStatus[name] && !diagStatus[name].ok,
-      );
+      const failing = requiredDiagnostics.filter((name) => {
+        if (!diagStatus[name]) return false;
+        if (diagStatus[name].ok) return false;
+        if (!requireOk) {
+          // Accept WARN-like cases where messages are flowing but the rate is below threshold.
+          // Fail only if it clearly indicates no messages.
+          const info = (diagStatus[name].info || "").toLowerCase();
+          if (info.includes("no imu message received")) return true;
+          if (info.includes("no message received")) return true;
+          if (info.includes("0 msg")) return true;
+          return false;
+        }
+        return true;
+      });
 
       if (missing.length === 0 && failing.length === 0) {
         break;
@@ -127,11 +146,22 @@ async function run() {
     }
 
     const failing = requiredDiagnostics.filter(
-      (name) => diagStatus[name] && !diagStatus[name].ok,
+      (name) => {
+        if (!diagStatus[name]) return false;
+        if (diagStatus[name].ok) return false;
+        if (!requireOk) {
+          const info = (diagStatus[name].info || "").toLowerCase();
+          if (info.includes("no imu message received")) return true;
+          if (info.includes("no message received")) return true;
+          if (info.includes("0 msg")) return true;
+          return false;
+        }
+        return true;
+      },
     );
     if (failing.length) {
       const details = failing
-        .map((name) => `${name}=${diagStatus[name].status}`)
+        .map((name) => `${name}=${diagStatus[name].status} (${diagStatus[name].info})`)
         .join(", ");
       throw new Error(`diagnostics.html diagnostics not OK: ${details}`);
     }

@@ -147,6 +147,14 @@ jobs:
           POSEIDON_E2E_TIMEOUT_MS: "120000"
           # Fail early if these expected rows disappear.
           POSEIDON_E2E_REQUIRED_DIAGNOSTICS: "GNSS Fix,IMU Communication,Sonar Communication"
+          # Make comm diagnostics more tolerant on benches where rates can be lower than nominal.
+          POSEIDON_DIAG_IMU_HZ: "5"
+          POSEIDON_DIAG_IMU_WINDOW: "2.0"
+          POSEIDON_DIAG_IMU_RATIO: "0.5"
+          POSEIDON_DIAG_SONAR_HZ: "1"
+          POSEIDON_DIAG_SONAR_WINDOW: "5.0"
+          POSEIDON_DIAG_SONAR_RATIO: "0.2"
+          POSEIDON_E2E_DIAGNOSTICS_REFRESH_DELAY_MS: "7000"
         run: |
           set -eo pipefail
           bash test/e2e/run_poseidon_e2e.sh

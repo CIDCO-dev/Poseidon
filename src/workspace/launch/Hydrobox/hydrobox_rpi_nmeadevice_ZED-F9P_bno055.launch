@@ -6,8 +6,8 @@
 <arg name="gpsdIp" default="localhost"/>
 <arg name="gpsdPort" default="2947"/>
 
-<arg name="loggerPath" default="$(optenv POSEIDON_LOGGER_PATH $(optenv POSEIDON_ROOT /opt/Poseidon)/www/webroot/record/)"/>
-<arg name="configPath" default="$(optenv POSEIDON_CONFIG_PATH $(optenv POSEIDON_ROOT /opt/Poseidon)/config.txt)"/>
+<arg name="loggerPath" default="/opt/Poseidon/www/webroot/record/"/>
+<arg name="configPath" default="/opt/Poseidon/config.txt"/>
 
 <arg name="boardVersion" value="2.2"/>
 

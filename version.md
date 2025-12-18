@@ -7,7 +7,7 @@
 - diagnostics: start the WebSocket server from inside the asyncio loop to be compatible with newer `websockets` versions (fixes port 9099 not opening on some systems).
 - launch: made `launchROSService.sh` relocatable via `POSEIDON_ROOT` (no longer hard-coded to `/opt/Poseidon`).
 - launch: avoid `set -u` in `launchROSService.sh` so sourcing `/opt/ros/noetic/setup.bash` does not fail when ROS scripts reference unset variables (fixes CI E2E startup).
-- launch: allowed overriding `loggerPath` and `configPath` in `hydrobox_rpi_nmeadevice_ZED-F9P_bno055.launch` via `POSEIDON_LOGGER_PATH` / `POSEIDON_CONFIG_PATH`.
+- launch/e2e: pass `loggerPath` and `configPath` from `POSEIDON_LOGGER_PATH` / `POSEIDON_CONFIG_PATH` via `launchROSService.sh` (avoids invalid nested `$(optenv ...)` substitutions in roslaunch args).
 - CI: added optional "hardware E2E" workflow steps (Playwright install, run E2E, upload artifacts) triggered on `workflow_dispatch` or pushes to `main/master`.
 
 ## 2025-12-03

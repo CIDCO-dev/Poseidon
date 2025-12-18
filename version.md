@@ -12,6 +12,7 @@
 - diagnostics/e2e: make IMU/sonar communication thresholds configurable via env vars (`POSEIDON_DIAG_IMU_*`, `POSEIDON_DIAG_SONAR_*`) to reduce false negatives on slower benches.
 - e2e: allow tuning diagnostics refresh polling delay via `POSEIDON_E2E_DIAGNOSTICS_REFRESH_DELAY_MS` for longer-running diagnostics windows.
 - e2e: on UI failure, runner now dumps `roslaunch` tail + basic `rostopic`/diagnostics websocket debug into the job logs for faster triage.
+- e2e: avoid `set -u` in the E2E runner when sourcing ROS setup scripts (prevents `ROS_DISTRO: unbound variable` on some environments).
 
 ## 2025-12-03
 - diagnostics: added end-to-end nosetest that launches `launchROSService.sh`, waits for the 9099 diagnostics websocket, sends `updateDiagnostic`, and validates the returned payload; optional DBT feed on `DIAGNOSTICS_FAKE_SERIAL_PORT` (default `/dev/ttyUSB1`) to drive sonar without touching `/dev/sonar`.

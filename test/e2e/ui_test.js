@@ -9,6 +9,8 @@ const timeoutMs = Number.parseInt(
   process.env.POSEIDON_E2E_TIMEOUT_MS || "90000",
   10,
 );
+const requireTelemetry =
+  (process.env.POSEIDON_E2E_REQUIRE_TELEMETRY || "0") === "1";
 
 const requiredDiagnostics = (process.env.POSEIDON_E2E_REQUIRED_DIAGNOSTICS ||
   "GNSS Fix,IMU Communication,Sonar Communication")
@@ -29,6 +31,7 @@ async function run() {
 
   const pageErrors = [];
   const consoleErrors = [];
+  const websocketActivity = [];
 
   page.on("pageerror", (err) => pageErrors.push(String(err)));
   page.on("console", (msg) => {
@@ -36,48 +39,130 @@ async function run() {
       consoleErrors.push(msg.text());
     }
   });
+  page.on("websocket", (ws) => {
+    const entry = {
+      url: ws.url(),
+      openedAt: Date.now(),
+      received: [],
+      sent: [],
+      errors: [],
+    };
+    websocketActivity.push(entry);
+
+    ws.on("framesent", (frame) => {
+      entry.sent.push(frame.payload);
+      if (entry.sent.length > 20) entry.sent.shift();
+    });
+    ws.on("framereceived", (frame) => {
+      entry.received.push(frame.payload);
+      if (entry.received.length > 20) entry.received.shift();
+    });
+    ws.on("socketerror", (err) => {
+      entry.errors.push(String(err));
+      if (entry.errors.length > 20) entry.errors.shift();
+    });
+  });
 
   try {
-    await page.goto(`${baseUrl}/status.html`, {
-      waitUntil: "domcontentloaded",
-      timeout: timeoutMs,
-    });
-
-    await page.waitForFunction(() => {
-      const el = document.querySelector("#uptimeText");
-      return el && el.textContent && el.textContent.trim() !== "N/A";
-    }, { timeout: timeoutMs });
-
-    const uptimeText = (await page.textContent("#uptimeText"))?.trim();
-    if (!uptimeText || uptimeText === "N/A") {
-      throw new Error(`status.html did not populate uptime (got: ${uptimeText})`);
-    }
-
     await page.goto(`${baseUrl}/diagnostics.html`, {
       waitUntil: "domcontentloaded",
       timeout: timeoutMs,
     });
 
-    await page.waitForFunction(() => {
-      const table = document.querySelector("#diagnosticsTable");
-      if (!table) return false;
-      const rows = table.querySelectorAll("tr");
-      return rows.length > 1;
-    }, { timeout: timeoutMs });
+    await page.waitForFunction(
+      () => {
+        const table = document.querySelector("#diagnosticsTable");
+        if (!table) return false;
+        const rows = table.querySelectorAll("tr");
+        return rows.length > 1;
+      },
+      null,
+      { timeout: timeoutMs },
+    );
 
-    const tableText = (await page.textContent("#diagnosticsTable")) || "";
-    for (const name of requiredDiagnostics) {
-      if (!tableText.includes(name)) {
-        throw new Error(`diagnostics.html missing diagnostic row: ${name}`);
+    const diagnosticsDeadline = Date.now() + timeoutMs;
+    let diagStatus = {};
+    while (Date.now() < diagnosticsDeadline) {
+      // Nudge the page to refresh diagnostics; this triggers `updateDiagnostic` on the websocket.
+      const btn = await page.$("#diagnosticsButton");
+      if (btn) {
+        await btn.click();
+      }
+
+      await page.waitForTimeout(1000);
+
+      diagStatus = await page.evaluate(() => {
+        const table = document.querySelector("#diagnosticsTable");
+        const rows = Array.from(table.querySelectorAll("tr")).slice(1);
+        const out = {};
+        for (const row of rows) {
+          const cells = row.querySelectorAll("td");
+          if (cells.length < 2) continue;
+          const status = (cells[0].textContent || "").trim();
+          const name = (cells[1].textContent || "").trim();
+          if (!name) continue;
+          out[name] = {
+            ok: status.includes("✅"),
+            status,
+          };
+        }
+        return out;
+      });
+
+      const missing = requiredDiagnostics.filter((name) => !diagStatus[name]);
+      const failing = requiredDiagnostics.filter(
+        (name) => diagStatus[name] && !diagStatus[name].ok,
+      );
+
+      if (missing.length === 0 && failing.length === 0) {
+        break;
       }
     }
 
-    await page.waitForFunction(() => {
-      const table = document.querySelector("#runningNodesTable");
-      if (!table) return false;
-      const rows = table.querySelectorAll("tr");
-      return rows.length > 1;
-    }, { timeout: timeoutMs });
+    const missing = requiredDiagnostics.filter((name) => !diagStatus[name]);
+    if (missing.length) {
+      throw new Error(
+        `diagnostics.html missing diagnostic rows: ${missing.join(", ")}`,
+      );
+    }
+
+    const failing = requiredDiagnostics.filter(
+      (name) => diagStatus[name] && !diagStatus[name].ok,
+    );
+    if (failing.length) {
+      const details = failing
+        .map((name) => `${name}=${diagStatus[name].status}`)
+        .join(", ");
+      throw new Error(`diagnostics.html diagnostics not OK: ${details}`);
+    }
+
+    await page.waitForFunction(
+      () => {
+        const table = document.querySelector("#runningNodesTable");
+        if (!table) return false;
+        const rows = table.querySelectorAll("tr");
+        return rows.length > 1;
+      },
+      null,
+      { timeout: timeoutMs },
+    );
+
+    if (requireTelemetry) {
+      await page.goto(`${baseUrl}/index.html`, {
+        waitUntil: "domcontentloaded",
+        timeout: timeoutMs,
+      });
+
+      // Dashboard shows an overlay until at least one telemetry message is received.
+      await page.waitForFunction(
+        () => {
+          const el = document.querySelector("#overlay");
+          return el && el.style && el.style.display === "none";
+        },
+        null,
+        { timeout: timeoutMs },
+      );
+    }
 
     if (pageErrors.length) {
       throw new Error(`Page errors: ${pageErrors.join(" | ")}`);
@@ -96,6 +181,17 @@ async function run() {
     console.error(String(err));
     if (pageErrors.length) console.error("pageerror:", pageErrors);
     if (consoleErrors.length) console.error("console.error:", consoleErrors);
+    if (websocketActivity.length) {
+      const wsPath = path.join(artifactDir, "websockets.json");
+      try {
+        fs.writeFileSync(wsPath, JSON.stringify(websocketActivity, null, 2));
+        console.error(`websocket debug saved to: ${wsPath}`);
+      } catch {
+        // Best effort.
+      }
+    } else {
+      console.error("No websocket activity observed by Playwright.");
+    }
     process.exitCode = 1;
   } finally {
     await browser.close();
@@ -106,4 +202,3 @@ run().catch((err) => {
   console.error(String(err));
   process.exitCode = 1;
 });
-

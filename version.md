@@ -1,7 +1,7 @@
 # Version History (English)
 
 ## 2025-12-18
-- e2e: added Playwright-based headless UI smoke test (verifies `status.html` uptime renders and `diagnostics.html` populates diagnostics + running nodes tables).
+- e2e: added Playwright-based headless UI smoke test (verifies `diagnostics.html` populates diagnostics + running nodes tables and required sensor diagnostics report OK; optional telemetry check on `index.html`).
 - e2e: added unified runner script that starts Poseidon, serves `www/webroot`, waits for ports, runs backend websocket E2E + UI headless checks, and stores artifacts under `test/e2e/artifacts`.
 - diagnostics/e2e: gated the launchROSService websocket test behind `POSEIDON_E2E=1` and added `POSEIDON_E2E_REUSE_RUNNING=1` to support CI benches that already run ROS.
 - diagnostics: start the WebSocket server from inside the asyncio loop to be compatible with newer `websockets` versions (fixes port 9099 not opening on some systems).

@@ -2,7 +2,7 @@
 
 # Used to call a launch file as a service on boot
 
-set -euo pipefail
+set -eo pipefail
 
 # Allow overriding the Poseidon root (useful for CI where the repo is checked out elsewhere).
 POSEIDON_ROOT="${POSEIDON_ROOT:-"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"}"

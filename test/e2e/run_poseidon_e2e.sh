@@ -14,6 +14,7 @@ export POSEIDON_TELEMETRY_WS_PORT="${POSEIDON_TELEMETRY_WS_PORT:-9002}"
 export POSEIDON_E2E="1"
 export POSEIDON_E2E_REUSE_RUNNING="${POSEIDON_E2E_REUSE_RUNNING:-0}"
 export POSEIDON_E2E_EXCLUSIVE="${POSEIDON_E2E_EXCLUSIVE:-0}"
+export POSEIDON_E2E_LAUNCH_AS_ROOT="${POSEIDON_E2E_LAUNCH_AS_ROOT:-0}"
 
 mkdir -p "${POSEIDON_E2E_ARTIFACT_DIR}"
 
@@ -48,6 +49,14 @@ fi
 
 HTTP_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/http.log"
 SERVICE_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/launchROSService.log"
+SERVICE_LAUNCHED_AS_ROOT="0"
+
+if [[ "${POSEIDON_E2E_LAUNCH_AS_ROOT}" == "1" && "$(id -u)" -ne 0 ]]; then
+  if ! sudo -n true 2>/dev/null; then
+    echo "[!] POSEIDON_E2E_LAUNCH_AS_ROOT=1 requires passwordless sudo."
+    exit 1
+  fi
+fi
 
 cleanup() {
   set +e
@@ -63,11 +72,23 @@ cleanup() {
   fi
 
   if [[ -n "${SERVICE_PID:-}" ]] && kill -0 "${SERVICE_PID}" 2>/dev/null; then
-    kill -INT -- "-${SERVICE_PID}" 2>/dev/null || true
+    if [[ "${SERVICE_LAUNCHED_AS_ROOT}" == "1" ]]; then
+      sudo kill -INT -- "-${SERVICE_PID}" 2>/dev/null || true
+    else
+      kill -INT -- "-${SERVICE_PID}" 2>/dev/null || true
+    fi
     sleep 8
-    kill -TERM -- "-${SERVICE_PID}" 2>/dev/null || true
+    if [[ "${SERVICE_LAUNCHED_AS_ROOT}" == "1" ]]; then
+      sudo kill -TERM -- "-${SERVICE_PID}" 2>/dev/null || true
+    else
+      kill -TERM -- "-${SERVICE_PID}" 2>/dev/null || true
+    fi
     sleep 3
-    kill -KILL -- "-${SERVICE_PID}" 2>/dev/null || true
+    if [[ "${SERVICE_LAUNCHED_AS_ROOT}" == "1" ]]; then
+      sudo kill -KILL -- "-${SERVICE_PID}" 2>/dev/null || true
+    else
+      kill -KILL -- "-${SERVICE_PID}" 2>/dev/null || true
+    fi
   fi
 }
 trap cleanup EXIT INT TERM
@@ -88,7 +109,12 @@ if [[ "${POSEIDON_E2E_EXCLUSIVE}" == "1" ]]; then
 fi
 
 if [[ "${POSEIDON_E2E_REUSE_RUNNING}" != "1" ]]; then
-  setsid bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
+  if [[ "${POSEIDON_E2E_LAUNCH_AS_ROOT}" == "1" && "$(id -u)" -ne 0 ]]; then
+    setsid sudo -E bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
+    SERVICE_LAUNCHED_AS_ROOT="1"
+  else
+    setsid bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
+  fi
   SERVICE_PID=$!
 fi
 

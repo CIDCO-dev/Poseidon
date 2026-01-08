@@ -1,5 +1,9 @@
 # Version History (English)
 
+## 2026-01-08
+- e2e: allow launching `launchROSService.sh` via sudo when `POSEIDON_E2E_LAUNCH_AS_ROOT=1`, with root-aware cleanup for the service process.
+- CI: set `POSEIDON_E2E_LAUNCH_AS_ROOT=1` for hardware E2E runs to ensure sensor access.
+
 ## 2025-12-18
 - e2e: added Playwright-based headless UI smoke test (verifies `diagnostics.html` populates diagnostics + running nodes tables and required sensor diagnostics report OK; optional telemetry check on `index.html`).
 - e2e: added unified runner script that starts Poseidon, serves `www/webroot`, waits for ports, runs backend websocket E2E + UI headless checks, and stores artifacts under `test/e2e/artifacts`.

@@ -145,6 +145,7 @@ jobs:
           POSEIDON_E2E_WAIT_SECONDS: "120"
           DIAGNOSTICS_WS_LAUNCH_TIMEOUT: "120"
           POSEIDON_E2E_TIMEOUT_MS: "120000"
+          POSEIDON_E2E_LAUNCH_AS_ROOT: "1"
           # Fail early if these expected rows disappear.
           POSEIDON_E2E_REQUIRED_DIAGNOSTICS: "GNSS Fix,IMU Communication,Sonar Communication"
           # Avoid port/node conflicts with a system-installed Poseidon service on the bench.

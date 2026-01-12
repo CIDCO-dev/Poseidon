@@ -19,6 +19,7 @@ RESPONSE_TIMEOUT = int(os.environ.get("DIAGNOSTICS_WS_RESPONSE_TIMEOUT", "45"))
 FAKE_SERIAL_PORT = os.environ.get("DIAGNOSTICS_FAKE_SERIAL_PORT", "/dev/ttyUSB1")
 E2E_ENABLED = os.environ.get("POSEIDON_E2E", "0") == "1"
 REUSE_RUNNING = os.environ.get("POSEIDON_E2E_REUSE_RUNNING", "0") == "1"
+LAUNCH_AS_ROOT = os.environ.get("POSEIDON_E2E_LAUNCH_AS_ROOT", "1") == "1"
 
 
 def find_launch_script():
@@ -83,6 +84,19 @@ class LaunchRosServiceWebsocketTest(unittest.TestCase):
         cls.fake_serial_stop = cls._maybe_start_fake_serial_writer()
 
         if not REUSE_RUNNING:
+            if LAUNCH_AS_ROOT and os.geteuid() != 0:
+                try:
+                    subprocess.run(
+                        ["sudo", "-n", "true"],
+                        check=True,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
+                except subprocess.CalledProcessError as exc:
+                    raise RuntimeError(
+                        "POSEIDON_E2E_LAUNCH_AS_ROOT=1 requires passwordless sudo."
+                    ) from exc
+
             stdout_path = os.environ.get("POSEIDON_E2E_STDOUT_PATH")
             stderr_path = os.environ.get("POSEIDON_E2E_STDERR_PATH")
             cls._stdout_handle = open(stdout_path, "ab") if stdout_path else None
@@ -90,8 +104,12 @@ class LaunchRosServiceWebsocketTest(unittest.TestCase):
             stdout_target = cls._stdout_handle if cls._stdout_handle else subprocess.DEVNULL
             stderr_target = cls._stderr_handle if cls._stderr_handle else subprocess.DEVNULL
 
+            cmd = ["bash", str(cls.launch_script)]
+            if LAUNCH_AS_ROOT and os.geteuid() != 0:
+                cmd = ["sudo", "-E", "bash", str(cls.launch_script)]
+
             cls.process = subprocess.Popen(
-                ["bash", str(cls.launch_script)],
+                cmd,
                 stdout=stdout_target,
                 stderr=stderr_target,
                 preexec_fn=os.setsid,

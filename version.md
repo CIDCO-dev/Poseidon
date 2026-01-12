@@ -1,7 +1,9 @@
 # Version History (English)
 
 ## 2026-01-08
-- e2e: allow launching `launchROSService.sh` via sudo when `POSEIDON_E2E_LAUNCH_AS_ROOT=1`, with root-aware cleanup for the service process.
+- e2e: require root launch by default (`POSEIDON_E2E_LAUNCH_AS_ROOT=1`) and reuse the already-started service during the E2E run to avoid duplicate roslaunch.
+- diagnostics/e2e: honor `POSEIDON_E2E_LAUNCH_AS_ROOT=1` when the websocket integration test launches `launchROSService.sh`.
+- e2e: split the E2E runner into explicit phases (start ROS + wait for nodes, backend test, UI test) with optional required node gating (`POSEIDON_E2E_REQUIRED_NODES`).
 - CI: set `POSEIDON_E2E_LAUNCH_AS_ROOT=1` for hardware E2E runs to ensure sensor access.
 
 ## 2025-12-18

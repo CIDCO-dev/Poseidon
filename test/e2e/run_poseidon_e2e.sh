@@ -14,7 +14,8 @@ export POSEIDON_TELEMETRY_WS_PORT="${POSEIDON_TELEMETRY_WS_PORT:-9002}"
 export POSEIDON_E2E="1"
 export POSEIDON_E2E_REUSE_RUNNING="${POSEIDON_E2E_REUSE_RUNNING:-0}"
 export POSEIDON_E2E_EXCLUSIVE="${POSEIDON_E2E_EXCLUSIVE:-0}"
-export POSEIDON_E2E_LAUNCH_AS_ROOT="${POSEIDON_E2E_LAUNCH_AS_ROOT:-0}"
+export POSEIDON_E2E_LAUNCH_AS_ROOT="${POSEIDON_E2E_LAUNCH_AS_ROOT:-1}"
+export POSEIDON_E2E_REQUIRED_NODES="${POSEIDON_E2E_REQUIRED_NODES:-Diagnostics}"
 
 mkdir -p "${POSEIDON_E2E_ARTIFACT_DIR}"
 
@@ -51,7 +52,11 @@ HTTP_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/http.log"
 SERVICE_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/launchROSService.log"
 SERVICE_LAUNCHED_AS_ROOT="0"
 
-if [[ "${POSEIDON_E2E_LAUNCH_AS_ROOT}" == "1" && "$(id -u)" -ne 0 ]]; then
+if [[ "$(id -u)" -ne 0 ]]; then
+  if [[ "${POSEIDON_E2E_LAUNCH_AS_ROOT}" != "1" ]]; then
+    echo "[!] E2E requires root for I2C/GPIO access; set POSEIDON_E2E_LAUNCH_AS_ROOT=1."
+    exit 1
+  fi
   if ! sudo -n true 2>/dev/null; then
     echo "[!] POSEIDON_E2E_LAUNCH_AS_ROOT=1 requires passwordless sudo."
     exit 1
@@ -93,34 +98,42 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-pushd "${POSEIDON_ROOT}/www/webroot" >/dev/null
-python3 -m http.server "${POSEIDON_HTTP_PORT}" --bind 127.0.0.1 >"${HTTP_LOG}" 2>&1 &
-HTTP_PID=$!
-popd >/dev/null
+start_http_server() {
+  pushd "${POSEIDON_ROOT}/www/webroot" >/dev/null
+  python3 -m http.server "${POSEIDON_HTTP_PORT}" --bind 127.0.0.1 >"${HTTP_LOG}" 2>&1 &
+  HTTP_PID=$!
+  popd >/dev/null
+}
 
-if [[ "${POSEIDON_E2E_EXCLUSIVE}" == "1" ]]; then
-  # Best-effort cleanup of existing Poseidon instances on a bench.
-  if command -v systemctl >/dev/null 2>&1; then
-    sudo systemctl stop ros 2>/dev/null || true
+stop_existing_poseidon() {
+  if [[ "${POSEIDON_E2E_EXCLUSIVE}" == "1" ]]; then
+    # Best-effort cleanup of existing Poseidon instances on a bench.
+    if command -v systemctl >/dev/null 2>&1; then
+      sudo systemctl stop ros 2>/dev/null || true
+    fi
+    if command -v fuser >/dev/null 2>&1; then
+      sudo fuser -k 9002/tcp 9099/tcp 9003/tcp 9004/tcp 2>/dev/null || true
+    fi
   fi
-  if command -v fuser >/dev/null 2>&1; then
-    sudo fuser -k 9002/tcp 9099/tcp 9003/tcp 9004/tcp 2>/dev/null || true
-  fi
-fi
+}
 
-if [[ "${POSEIDON_E2E_REUSE_RUNNING}" != "1" ]]; then
-  if [[ "${POSEIDON_E2E_LAUNCH_AS_ROOT}" == "1" && "$(id -u)" -ne 0 ]]; then
-    setsid sudo -E bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
-    SERVICE_LAUNCHED_AS_ROOT="1"
-  else
-    setsid bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
+start_poseidon_service() {
+  if [[ "${POSEIDON_E2E_REUSE_RUNNING}" != "1" ]]; then
+    if [[ "${POSEIDON_E2E_LAUNCH_AS_ROOT}" == "1" && "$(id -u)" -ne 0 ]]; then
+      setsid sudo -E bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
+      SERVICE_LAUNCHED_AS_ROOT="1"
+    else
+      setsid bash "${POSEIDON_ROOT}/launchROSService.sh" >"${SERVICE_LOG}" 2>&1 &
+    fi
+    SERVICE_PID=$!
+    export POSEIDON_E2E_REUSE_RUNNING="1"
   fi
-  SERVICE_PID=$!
-fi
+}
 
-# Keep a fake NMEA DBT feed alive during both backend and UI phases (if the port exists).
-if [[ -n "${DIAGNOSTICS_FAKE_SERIAL_PORT:-}" && -e "${DIAGNOSTICS_FAKE_SERIAL_PORT}" && "${DIAGNOSTICS_FAKE_SERIAL_PORT}" != "/dev/sonar" ]]; then
-  python3 - <<'PY' &
+start_fake_nmea_writer() {
+  # Keep a fake NMEA DBT feed alive during both backend and UI phases (if the port exists).
+  if [[ -n "${DIAGNOSTICS_FAKE_SERIAL_PORT:-}" && -e "${DIAGNOSTICS_FAKE_SERIAL_PORT}" && "${DIAGNOSTICS_FAKE_SERIAL_PORT}" != "/dev/sonar" ]]; then
+    python3 - <<'PY' &
 import os
 import time
 from pathlib import Path
@@ -144,10 +157,12 @@ while True:
         pass
     time.sleep(1.0)
 PY
-  NMEA_WRITER_PID=$!
-fi
+    NMEA_WRITER_PID=$!
+  fi
+}
 
-if ! python3 - <<'PY'
+wait_for_ports() {
+  if ! python3 - <<'PY'
 import os
 import socket
 import time
@@ -174,44 +189,117 @@ while pending and time.time() < deadline:
 if pending:
     raise SystemExit(f"Timed out waiting for ports: {sorted(pending)} (last error: {last_err})")
 PY
-then
-  echo "[!] Poseidon did not expose required ports in time."
+  then
+    echo "[!] Poseidon did not expose required ports in time."
+    if [[ -n "${SERVICE_PID:-}" ]]; then
+      echo "[!] launchROSService PID: ${SERVICE_PID}"
+    fi
+    echo "[!] Tail of ${SERVICE_LOG}:"
+    tail -n 200 "${SERVICE_LOG}" || true
+    exit 1
+  fi
+}
+
+wait_for_ros_nodes() {
+  if ! command -v rosnode >/dev/null 2>&1; then
+    echo "[!] rosnode not found; skipping ROS node wait."
+    return 0
+  fi
+
+  local deadline
+  deadline=$(( $(date +%s) + ${POSEIDON_E2E_WAIT_SECONDS:-90} ))
+
+  local -a required_nodes=()
+  if [[ -n "${POSEIDON_E2E_REQUIRED_NODES}" ]]; then
+    IFS=',' read -r -a required_nodes <<< "${POSEIDON_E2E_REQUIRED_NODES}"
+  fi
+
+  local trimmed
+  local -a normalized_required=()
+  for node in "${required_nodes[@]}"; do
+    trimmed="${node#"${node%%[![:space:]]*}"}"
+    trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
+    [[ -z "${trimmed}" ]] && continue
+    if [[ "${trimmed}" != /* ]]; then
+      trimmed="/${trimmed}"
+    fi
+    normalized_required+=("${trimmed}")
+  done
+
+  while [[ "$(date +%s)" -le "${deadline}" ]]; do
+    local nodes
+    nodes="$(timeout 3s rosnode list 2>/dev/null || true)"
+    if [[ -n "${nodes}" ]]; then
+      if [[ "${#normalized_required[@]}" -eq 0 ]]; then
+        return 0
+      fi
+
+      local missing=()
+      for req in "${normalized_required[@]}"; do
+        if ! printf '%s\n' "${nodes}" | grep -Fxq "${req}"; then
+          missing+=("${req}")
+        fi
+      done
+
+      if [[ "${#missing[@]}" -eq 0 ]]; then
+        return 0
+      fi
+    fi
+    sleep 2
+  done
+
+  echo "[!] Timed out waiting for ROS nodes: ${normalized_required[*]:-<any>}"
   if [[ -n "${SERVICE_PID:-}" ]]; then
     echo "[!] launchROSService PID: ${SERVICE_PID}"
   fi
   echo "[!] Tail of ${SERVICE_LOG}:"
   tail -n 200 "${SERVICE_LOG}" || true
   exit 1
-fi
+}
 
-python3 "${POSEIDON_ROOT}/src/workspace/src/diagnostics/tests/test_launchrosservice_websocket.py"
+phase_start_ros() {
+  echo "[phase 1] start ROS and wait for nodes"
+  start_http_server
+  stop_existing_poseidon
+  start_poseidon_service
+  start_fake_nmea_writer
+  wait_for_ports
+  wait_for_ros_nodes
+}
 
-pushd "${SCRIPT_DIR}" >/dev/null
-if [[ ! -d node_modules ]]; then
-  npm install --silent --no-package-lock
-fi
-set +e
-node ui_test.js
-UI_STATUS=$?
-set -e
+phase_backend_test() {
+  echo "[phase 2] run backend websocket test"
+  python3 "${POSEIDON_ROOT}/src/workspace/src/diagnostics/tests/test_launchrosservice_websocket.py"
+}
 
-if [[ "${UI_STATUS}" -ne 0 ]]; then
-  echo "[!] UI E2E failed with exit code ${UI_STATUS}"
-  echo "[!] Tail of ${SERVICE_LOG}:"
-  tail -n 200 "${SERVICE_LOG}" || true
-
-  if command -v rostopic >/dev/null 2>&1; then
-    echo "[!] rostopic list (first 200):"
-    rostopic list 2>/dev/null | head -n 200 || true
-    echo "[!] rostopic hz /imu/data (5s):"
-    timeout 5s rostopic hz /imu/data || true
-    echo "[!] rostopic hz /depth (5s):"
-    timeout 5s rostopic hz /depth || true
-  else
-    echo "[!] rostopic not found; skipping ROS topic debug."
+phase_ui_test() {
+  echo "[phase 3] run UI test"
+  pushd "${SCRIPT_DIR}" >/dev/null
+  if [[ ! -d node_modules ]]; then
+    npm install --silent --no-package-lock
   fi
+  set +e
+  node ui_test.js
+  UI_STATUS=$?
+  set -e
 
-  python3 - <<'PY' || true
+  if [[ "${UI_STATUS}" -ne 0 ]]; then
+    echo "[!] UI E2E failed with exit code ${UI_STATUS}"
+    echo "[!] Tail of ${SERVICE_LOG}:"
+    tail -n 200 "${SERVICE_LOG}" || true
+
+    if command -v rostopic >/dev/null 2>&1; then
+      echo "[!] rostopic list (first 200):"
+      rostopic list 2>/dev/null | head -n 200 || true
+      echo "[!] rostopic hz /imu/data (5s):"
+      timeout 5s rostopic hz /imu/data || true
+      echo "[!] rostopic hz /depth (5s):"
+      timeout 5s rostopic hz /depth || true
+    else
+      echo "[!] rostopic not found; skipping ROS topic debug."
+    fi
+
+    python3 - <<'PY' || true
 import asyncio
 import json
 import os
@@ -240,6 +328,11 @@ async def main():
 asyncio.run(main())
 PY
 
-  exit "${UI_STATUS}"
-fi
-popd >/dev/null
+    exit "${UI_STATUS}"
+  fi
+  popd >/dev/null
+}
+
+phase_start_ros
+phase_backend_test
+phase_ui_test

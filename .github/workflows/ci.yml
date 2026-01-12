@@ -63,6 +63,13 @@ jobs:
           fi
           rosdep update
 
+      - name: Pre-clean workspace (sudo)
+        run: |
+          set -eo pipefail
+          sudo rm -rf "$GITHUB_WORKSPACE"/*
+          sudo mkdir -p "$GITHUB_WORKSPACE"
+          sudo chown -R "$USER:$USER" "$GITHUB_WORKSPACE"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:

@@ -2,6 +2,7 @@
 
 ## 2026-01-12
 - CI: clean Catkin build/devel/logs on self-hosted runners before builds to avoid `.built_by` permission errors.
+- CI: pre-clean the GitHub Actions workspace with sudo before checkout to avoid permission errors during repository cleanup.
 
 ## 2026-01-08
 - e2e: require root launch by default (`POSEIDON_E2E_LAUNCH_AS_ROOT=1`) and reuse the already-started service during the E2E run to avoid duplicate roslaunch.

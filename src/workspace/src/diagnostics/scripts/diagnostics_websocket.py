@@ -125,15 +125,37 @@ class DiagnosticsServer:
     def start_server(self, port=9099):
         """Lauch WebSocket server in asyncio loop."""
         self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self.loop)
+        try:
+            asyncio.set_event_loop(self.loop)
+        except AssertionError:
+            # Tests may inject a dummy loop that is not an AbstractEventLoop; skip binding in that case.
+            pass
 
-        self.server = websockets.serve(self.websocket_handler, "0.0.0.0", port)
-        self.loop.run_until_complete(self.server)
+        async def _start_server():
+            # Newer versions of `websockets` require `serve()` to be called from a running loop.
+            return await websockets.serve(self.websocket_handler, "0.0.0.0", port)
+
+        try:
+            self.server = self.loop.run_until_complete(_start_server())
+        except Exception as exc:
+            ws_version = getattr(websockets, "__version__", "unknown")
+            rospy.logerr(
+                f"Failed to start DiagnosticsServer WebSocket on port {port} "
+                f"(websockets={ws_version}, python={sys.version.split()[0]}): {exc}"
+            )
+            return
+
         rospy.loginfo(f"DiagnosticsServer WebSocket listen to port {port}")
         self.loop.run_forever()
 
     def stop_server(self):
         """Stop WebSocket server."""
+        if self.server:
+            try:
+                self.server.close()
+            except Exception:
+                pass
+
         if self.loop and self.loop.is_running():
             rospy.loginfo("Stopping WebSocket server...")
             self.loop.call_soon_threadsafe(self.loop.stop)
@@ -148,6 +170,18 @@ class DiagnosticsServer:
 def main():
     rospy.init_node('diagnostics')
     server = DiagnosticsServer()
+
+    def _env_int(name: str, default: int) -> int:
+        try:
+            return int(os.environ.get(name, str(default)))
+        except Exception:
+            return default
+
+    def _env_float(name: str, default: float) -> float:
+        try:
+            return float(os.environ.get(name, str(default)))
+        except Exception:
+            return default
 
     # Connectivity first to gate DNS/API tests
     server.add_test(InternetConnectivityDiagnostic(url="http://example.com", timeout_s=3.0))
@@ -168,18 +202,18 @@ def main():
     ))
     server.add_test(ImuCommunicationDiagnostic(
         name="IMU Communication",
-        message_frequency=100,  
-        topic="/imu/data",
-        timeout_s=1.0,
-        expected_ratio=0.8
+        message_frequency=_env_int("POSEIDON_DIAG_IMU_HZ", 100),
+        topic=os.environ.get("POSEIDON_DIAG_IMU_TOPIC", "/imu/data"),
+        timeout_s=_env_float("POSEIDON_DIAG_IMU_WINDOW", 1.0),
+        expected_ratio=_env_float("POSEIDON_DIAG_IMU_RATIO", 0.8),
     ))
     server.add_test(SerialNumberDiagnostic(name="Serial Number Pattern Validation"))
     server.add_test(SonarCommunicationDiagnostic(
         name="Sonar Communication",
-        message_frequency=1,   # car /depth ≈ 1 Hz
-        topic="/depth",
-        timeout_s=1.5,
-        expected_ratio=0.8
+        message_frequency=_env_int("POSEIDON_DIAG_SONAR_HZ", 1),   # /depth is often ~1 Hz
+        topic=os.environ.get("POSEIDON_DIAG_SONAR_TOPIC", "/depth"),
+        timeout_s=_env_float("POSEIDON_DIAG_SONAR_WINDOW", 1.5),
+        expected_ratio=_env_float("POSEIDON_DIAG_SONAR_RATIO", 0.8),
     ))
 
 

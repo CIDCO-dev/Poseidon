@@ -6,6 +6,7 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 - Documentation policy: English only across the repository.
 - Track ROS1 changes in `version.md`; keep it up to date and group entries by date.
 - When editing `version.md`, add new notes under the heading matching the current date (do not add entries under older dates).
+- Keep contributor guidance current; update `agents.md`, `version.md`, and `manifest.md` when conventions or structure change.
 - Make minimal, safe, targeted changes.
 - Respect Catkin structure and separation of C++/Python/launch.
 - Keep compatibility across embedded targets (RPi/RockPi) and VM.
@@ -93,6 +94,7 @@ This guide targets contributors (humans or agents) working in Poseidon. It cover
 - [ ] Inline code comments/docstrings remain accurate
 - [ ] Related docs in `doc/` updated when behavior/usage changes
 - [ ] `version.md` updated with notable changes
+- [ ] `agents.md` updated when contributor or automation guidance changes
 - [ ] No secrets or non-portable hardcoded paths
 - [ ] `manifest.md` updated for structural changes
 - [ ] Run `clang-format` and `clang-tidy` for C++ changes (style/diagnostics)

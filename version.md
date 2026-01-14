@@ -1,5 +1,38 @@
 # Version History (English)
 
+## 2026-01-12
+- CI: clean Catkin build/devel/logs on self-hosted runners before builds to avoid `.built_by` permission errors.
+- CI: pre-clean the GitHub Actions workspace with sudo before checkout to avoid permission errors during repository cleanup.
+
+## 2026-01-08
+- e2e: require root launch by default (`POSEIDON_E2E_LAUNCH_AS_ROOT=1`) and reuse the already-started service during the E2E run to avoid duplicate roslaunch.
+- diagnostics/e2e: honor `POSEIDON_E2E_LAUNCH_AS_ROOT=1` when the websocket integration test launches `launchROSService.sh`.
+- e2e: split the E2E runner into explicit phases (start ROS + wait for nodes, backend test, UI test) with optional required node gating (`POSEIDON_E2E_REQUIRED_NODES`).
+- CI: set `POSEIDON_E2E_LAUNCH_AS_ROOT=1` for hardware E2E runs to ensure sensor access.
+
+## 2025-12-18
+- e2e: added Playwright-based headless UI smoke test (verifies `diagnostics.html` populates diagnostics + running nodes tables and required sensor diagnostics report OK; optional telemetry check on `index.html`).
+- e2e: added unified runner script that starts Poseidon, serves `www/webroot`, waits for ports, runs backend websocket E2E + UI headless checks, and stores artifacts under `test/e2e/artifacts`.
+- diagnostics/e2e: gated the launchROSService websocket test behind `POSEIDON_E2E=1` and added `POSEIDON_E2E_REUSE_RUNNING=1` to support CI benches that already run ROS.
+- diagnostics: start the WebSocket server from inside the asyncio loop to be compatible with newer `websockets` versions (fixes port 9099 not opening on some systems).
+- launch: made `launchROSService.sh` relocatable via `POSEIDON_ROOT` (no longer hard-coded to `/opt/Poseidon`).
+- launch: avoid `set -u` in `launchROSService.sh` so sourcing `/opt/ros/noetic/setup.bash` does not fail when ROS scripts reference unset variables (fixes CI E2E startup).
+- launch/e2e: pass `loggerPath` and `configPath` from `POSEIDON_LOGGER_PATH` / `POSEIDON_CONFIG_PATH` via `launchROSService.sh` (avoids invalid nested `$(optenv ...)` substitutions in roslaunch args).
+- CI: added optional "hardware E2E" workflow steps (Playwright install, run E2E, upload artifacts) triggered on `workflow_dispatch` or pushes to `main/master`.
+- diagnostics/e2e: make IMU/sonar communication thresholds configurable via env vars (`POSEIDON_DIAG_IMU_*`, `POSEIDON_DIAG_SONAR_*`) to reduce false negatives on slower benches.
+- e2e: allow tuning diagnostics refresh polling delay via `POSEIDON_E2E_DIAGNOSTICS_REFRESH_DELAY_MS` for longer-running diagnostics windows.
+- e2e: on UI failure, runner now dumps `roslaunch` tail + basic `rostopic`/diagnostics websocket debug into the job logs for faster triage.
+- e2e: avoid `set -u` in the E2E runner when sourcing ROS setup scripts (prevents `ROS_DISTRO: unbound variable` on some environments).
+- e2e: keep a DBT NMEA writer running for the whole E2E so `/depth` can be validated when `DIAGNOSTICS_FAKE_SERIAL_PORT` is available.
+- e2e: optional exclusive mode (`POSEIDON_E2E_EXCLUSIVE=1`) stops the system `ros` service and frees websocket ports before starting Poseidon to avoid port conflicts on benches.
+- launch: pass `sonarDevice` into the Hydrobox launch and map it to `/Sonar/device` so the sonar node can be pointed at a test serial adapter.
+
+## 2025-12-03
+- diagnostics: added end-to-end nosetest that launches `launchROSService.sh`, waits for the 9099 diagnostics websocket, sends `updateDiagnostic`, and validates the returned payload; optional DBT feed on `DIAGNOSTICS_FAKE_SERIAL_PORT` (default `/dev/ttyUSB1`) to drive sonar without touching `/dev/sonar`.
+- diagnostics: declare `python3-websockets` as exec/test dependency so websocket clients/servers are available during integration runs.
+- diagnostics: fixed indentation in the launchROSService websocket test teardown to avoid SyntaxErrors during nosetests.
+- diagnostics: guarded `asyncio.set_event_loop` in `diagnostics_websocket.start_server` to prevent dummy-loop `AssertionError` in unit tests.
+
 ## 2025-12-02
 - Web UI: System Status now shows wlan0 state + SSID using sysfs/proc+iwgetid (no nmcli dependency in telemetry path).
 - hydroball_data_websocket: publish Wi‑Fi status/SSID in telemetry payload (`telemetry.wifi`), sourced from `/sys/class/net/wlan0/operstate` and `/proc/net/wireless`.

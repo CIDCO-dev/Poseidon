@@ -16,6 +16,7 @@ export POSEIDON_E2E_REUSE_RUNNING="${POSEIDON_E2E_REUSE_RUNNING:-0}"
 export POSEIDON_E2E_EXCLUSIVE="${POSEIDON_E2E_EXCLUSIVE:-0}"
 export POSEIDON_E2E_LAUNCH_AS_ROOT="${POSEIDON_E2E_LAUNCH_AS_ROOT:-1}"
 export POSEIDON_E2E_REQUIRED_NODES="${POSEIDON_E2E_REQUIRED_NODES:-Diagnostics}"
+export POSEIDON_E2E_INSTALL_GPSD_CLIENT="${POSEIDON_E2E_INSTALL_GPSD_CLIENT:-1}"
 
 mkdir -p "${POSEIDON_E2E_ARTIFACT_DIR}"
 
@@ -38,15 +39,8 @@ if [[ -z "${POSEIDON_LOGGER_PATH:-}" ]]; then
 fi
 mkdir -p "${POSEIDON_LOGGER_PATH}"
 
-# If a dedicated "fake sonar" serial adapter exists, use it as the sonar source for this run.
-# This avoids touching /dev/sonar and makes /depth deterministic for E2E.
-if [[ -z "${POSEIDON_SONAR_DEVICE:-}" ]]; then
-  if [[ -n "${DIAGNOSTICS_FAKE_SERIAL_PORT:-}" && -e "${DIAGNOSTICS_FAKE_SERIAL_PORT}" && "${DIAGNOSTICS_FAKE_SERIAL_PORT}" != "/dev/sonar" ]]; then
-    export POSEIDON_SONAR_DEVICE="${DIAGNOSTICS_FAKE_SERIAL_PORT}"
-  else
-    export POSEIDON_SONAR_DEVICE="/dev/sonar"
-  fi
-fi
+# The E2E now expects a real or externally simulated sonar device.
+export POSEIDON_SONAR_DEVICE="${POSEIDON_SONAR_DEVICE:-/dev/sonar}"
 
 HTTP_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/http.log"
 SERVICE_LOG="${POSEIDON_E2E_ARTIFACT_DIR}/launchROSService.log"
@@ -71,11 +65,6 @@ cleanup() {
     wait "${HTTP_PID}" 2>/dev/null || true
   fi
 
-  if [[ -n "${NMEA_WRITER_PID:-}" ]] && kill -0 "${NMEA_WRITER_PID}" 2>/dev/null; then
-    kill "${NMEA_WRITER_PID}" 2>/dev/null || true
-    wait "${NMEA_WRITER_PID}" 2>/dev/null || true
-  fi
-
   if [[ -n "${SERVICE_PID:-}" ]] && kill -0 "${SERVICE_PID}" 2>/dev/null; then
     if [[ "${SERVICE_LAUNCHED_AS_ROOT}" == "1" ]]; then
       sudo kill -INT -- "-${SERVICE_PID}" 2>/dev/null || true
@@ -97,6 +86,72 @@ cleanup() {
   fi
 }
 trap cleanup EXIT INT TERM
+
+run_with_root() {
+  if [[ "$(id -u)" -eq 0 ]]; then
+    "$@"
+  else
+    sudo "$@"
+  fi
+}
+
+integrate_gpsd_client() {
+  if [[ "${POSEIDON_E2E_INSTALL_GPSD_CLIENT}" != "1" ]]; then
+    echo "[phase 0] skip gpsd_client integration (POSEIDON_E2E_INSTALL_GPSD_CLIENT=${POSEIDON_E2E_INSTALL_GPSD_CLIENT})"
+    return 0
+  fi
+
+  local workspace_src="${POSEIDON_ROOT}/src/workspace/src"
+  local workspace_root="${POSEIDON_ROOT}/src/workspace"
+  local gpsd_repo_url="https://github.com/CIDCO-dev/gps_umd.git"
+  local gpsd_tmp_dir="/opt/gps_umd"
+
+  if [[ ! -d "${workspace_src}" ]]; then
+    echo "[!] Workspace source directory not found: ${workspace_src}"
+    exit 1
+  fi
+
+  if [[ -d "${workspace_src}/gpsd_client" ]]; then
+    echo "[phase 0] gpsd_client already integrated"
+    return 0
+  fi
+
+  echo "[phase 0] integrate gpsd_client into Poseidon workspace"
+  if ! command -v git >/dev/null 2>&1; then
+    echo "[!] git is required to install gps_umd."
+    exit 1
+  fi
+
+  # Equivalent to the field workflow: clone -> move gps* packages -> cleanup.
+  run_with_root rm -rf "${gpsd_tmp_dir}" 2>/dev/null || true
+  run_with_root git clone "${gpsd_repo_url}" "${gpsd_tmp_dir}"
+  run_with_root env GPSD_TMP_DIR="${gpsd_tmp_dir}" WORKSPACE_SRC="${workspace_src}" bash -lc '
+    set -e
+    shopt -s nullglob
+    pkgs=("$GPSD_TMP_DIR"/gps*)
+    if [[ ${#pkgs[@]} -eq 0 ]]; then
+      echo "[!] No gps* packages found in $GPSD_TMP_DIR." >&2
+      exit 1
+    fi
+    mv "${pkgs[@]}" "$WORKSPACE_SRC/"
+  '
+  run_with_root rm -rf "${gpsd_tmp_dir}"
+
+  if ! command -v catkin_make >/dev/null 2>&1; then
+    echo "[!] catkin_make not found; cannot build workspace after gps_umd install."
+    exit 1
+  fi
+
+  echo "[phase 0] rebuild workspace after gpsd_client integration"
+  pushd "${workspace_root}" >/dev/null
+  catkin_make
+  popd >/dev/null
+
+  if [[ -f "${POSEIDON_ROOT}/src/workspace/devel/setup.bash" ]]; then
+    # shellcheck disable=SC1091
+    source "${POSEIDON_ROOT}/src/workspace/devel/setup.bash"
+  fi
+}
 
 start_http_server() {
   pushd "${POSEIDON_ROOT}/www/webroot" >/dev/null
@@ -127,37 +182,6 @@ start_poseidon_service() {
     fi
     SERVICE_PID=$!
     export POSEIDON_E2E_REUSE_RUNNING="1"
-  fi
-}
-
-start_fake_nmea_writer() {
-  # Keep a fake NMEA DBT feed alive during both backend and UI phases (if the port exists).
-  if [[ -n "${DIAGNOSTICS_FAKE_SERIAL_PORT:-}" && -e "${DIAGNOSTICS_FAKE_SERIAL_PORT}" && "${DIAGNOSTICS_FAKE_SERIAL_PORT}" != "/dev/sonar" ]]; then
-    python3 - <<'PY' &
-import os
-import time
-from pathlib import Path
-
-port = Path(os.environ["DIAGNOSTICS_FAKE_SERIAL_PORT"])
-
-def checksum(payload: str) -> str:
-    cs = 0
-    for ch in payload:
-        cs ^= ord(ch)
-    return f"{cs:02X}"
-
-payload = "SDDBT,30.9,f,9.4,M,5.1,F"
-sentence = f"${payload}*{checksum(payload)}\r\n".encode("ascii")
-
-while True:
-    try:
-        with open(port, "wb", buffering=0) as fd:
-            fd.write(sentence)
-    except Exception:
-        pass
-    time.sleep(1.0)
-PY
-    NMEA_WRITER_PID=$!
   fi
 }
 
@@ -262,7 +286,6 @@ phase_start_ros() {
   start_http_server
   stop_existing_poseidon
   start_poseidon_service
-  start_fake_nmea_writer
   wait_for_ports
   wait_for_ros_nodes
 }
@@ -333,6 +356,7 @@ PY
   popd >/dev/null
 }
 
+integrate_gpsd_client
 phase_start_ros
 phase_backend_test
 phase_ui_test

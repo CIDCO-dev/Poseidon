@@ -1,5 +1,10 @@
 # Version History (English)
 
+## 2026-02-19
+- e2e: removed the internal fake sonar DBT writer from `test/e2e/run_poseidon_e2e.sh`; E2E now expects a real sonar or an external sonar simulator via `POSEIDON_SONAR_DEVICE`.
+- e2e: added an automatic pre-test GPSD client integration phase (`POSEIDON_E2E_INSTALL_GPSD_CLIENT=1` by default) that clones `gps_umd`, moves `gps*` packages into `src/workspace/src`, and rebuilds with `catkin_make` when `gpsd_client` is missing.
+- docs: updated `docs/test/hardware_e2e.md` to reflect external sonar usage and the new automatic GPSD integration behavior.
+
 ## 2026-01-12
 - CI: clean Catkin build/devel/logs on self-hosted runners before builds to avoid `.built_by` permission errors.
 - CI: pre-clean the GitHub Actions workspace with sudo before checkout to avoid permission errors during repository cleanup.
